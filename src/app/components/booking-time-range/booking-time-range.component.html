@@ -1,0 +1,26 @@
+
+<p-card>
+    <ng-template pTemplate="title">
+        Duration
+    </ng-template>
+    <ng-template pTemplate="subtitle">
+        Choose your time length
+    </ng-template>
+    <ng-template pTemplate="content">
+        <div class="p-fluid formgrid grid">
+            <div class="field col-12 md:col-6">
+                <label for="time">Time Length</label>
+                <p-dropdown id="time" [options]="appointmentService.tableSessions" [(ngModel)]="timeInformation.noOfSession" (onChange)="storeUserPref($event)" optionLabel="name" optionValue="code"></p-dropdown>
+            </div>
+        </div>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <div class="grid grid-nogutter justify-content-end">
+            <p-button label="Date & Time" (onClick)="nextPage()" icon="pi pi-angle-right" iconPos="right"></p-button>
+        </div>
+        <div class="grid grid-nogutter justify-content-end">
+            <div class="flex align-items-center justify-content-center p-2 border-round mr-1">Selected: {{ selectedDescription() }}</div>
+        </div>
+    </ng-template>
+</p-card>
+

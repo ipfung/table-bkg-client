@@ -1,0 +1,7 @@
+<ng-container *ngIf="isAutorized(); else notAuthorized">
+    <router-outlet></router-outlet>
+</ng-container>
+
+<ng-template #notAuthorized>
+    <router-outlet></router-outlet>
+</ng-template>

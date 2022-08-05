@@ -1,0 +1,69 @@
+<p-card>
+    <ng-template pTemplate="title">
+        Payment Information
+    </ng-template>
+    <ng-template pTemplate="subtitle">
+        Enter your card details
+    </ng-template>
+    <ng-template pTemplate="content">
+        <div class="p-fluid formgrid grid">
+            <div class="field col-12">
+                <p-card styleClass="p-card-shadow text-right mb-3">
+                    <div class="text-xl pb-2 -mt-4  ">
+                        Appointment Summary
+                    </div>
+                    <span class="font-bold">{{ selectedPreviousDescription() }}</span>
+                    <br />
+                    <span class="font-bold">{{ appointmentService.getSessionName(timeInformation.noOfSession) }}</span>
+                    <ng-template pTemplate="footer">
+                        Total: <b>HK${{ paymentInformation.price }}</b>
+                    </ng-template>
+                </p-card>
+            </div>
+        </div>
+        <div class="p-fluid formgrid grid">
+                <div class="col-12 md:col-6 lg:col-4 p-4" *ngFor="let mtd of appointmentService.paymentMethods">
+                    <p-button [styleClass]="getPaymentBtnCls(mtd)" [style]="{'height': '12rem'}" (click)="selectPayment(mtd)">
+                        <ng-template pTemplate="content">
+                            <div class="block">
+                                <img src="assets/layout/images/branding/{{ mtd.image }}" class="img-fluid" [style]="{'width': mtd.width}" />
+                            </div>
+<!--                            <div class="block text-2xl text-center pt-1">-->
+<!--                                {{ mtd.name }}-->
+<!--                            </div>-->
+                        </ng-template>
+                    </p-button>
+                </div>
+<!--                    <div class="field col-12">-->
+<!--                        <label for="card_name">Card Holder Name</label>-->
+<!--                        <input type="text" id="card_name" required pInputText [(ngModel)]="paymentInformation.cardholderName">-->
+<!--                    </div>-->
+<!--                    <div class="field col-8">-->
+<!--                        <label for="card_number">Number</label>-->
+<!--                        <p-inputMask inputId="number" id="card_number" mask="9999-9999-9999-9999" [(ngModel)]="paymentInformation.cardholderNumber"></p-inputMask>-->
+<!--                    </div>-->
+<!--                    <div class="field col-2">-->
+<!--                        <label id="date" for="date">Date</label>-->
+<!--                        <p-inputMask inputId="date" mask="99/99" [(ngModel)]="paymentInformation.date"></p-inputMask>-->
+<!--                    </div>-->
+<!--                    <div class="field col-2">-->
+<!--                        <label for="cvv">CVV</label>-->
+<!--                        <p-inputMask id="cvv" mask="999" [(ngModel)]="paymentInformation.cvv"></p-inputMask>-->
+<!--                    </div>-->
+<!--            <div class="field-checkbox col-12">-->
+<!--                <p-checkbox id="remember" [binary]="true" [(ngModel)]="paymentInformation.remember"></p-checkbox>-->
+<!--                <label for="remember" class="p-checkbox-label">Save credit card information for future</label>-->
+<!--            </div>-->
+        </div>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <div class="grid grid-nogutter justify-content-between ng-star-inserted">
+            <p-button label="Change Date & Time" (onClick)="prevPage()" icon="pi pi-angle-left"></p-button>
+            <p-button label="Confirmation" (onClick)="nextPage()" icon="pi pi-angle-right" iconPos="right"></p-button>
+        </div>
+        <div class="grid grid-nogutter justify-content-between ng-star-inserted">
+            <div class="flex align-items-center justify-content-center p-2 border-round mr-1">Selected: {{ selectedPreviousDescription() }}</div>
+            <div class="flex align-items-center justify-content-center p-2 border-round mr-1">Selected: {{ selectedDescription() }}</div>
+        </div>
+    </ng-template>
+</p-card>

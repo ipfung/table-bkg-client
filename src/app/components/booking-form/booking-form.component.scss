@@ -1,0 +1,45 @@
+:host ::ng-deep .myWid70 {
+    table td {
+        padding: 0.1rem; // use as per your requirement. ref: https://stackoverflow.com/questions/54821153/how-to-change-the-primeng-calendar-height
+    }
+}
+
+:host .timeslot {
+    border: 1px solid #e2e6ec;
+    margin: 4px;
+    display: inline-grid;
+    padding: 10px 20px;
+    p-radioButton {
+        display: none;
+    }
+    .timelabel {
+        width: 168px;
+    }
+}
+
+:host ::ng-deep .timeslot-btn {
+    //display: block;
+    width: 100%;
+    text-align: left;
+}
+
+// ::ng-deep ref: https://stackoverflow.com/questions/52392390/primeng-styleclass-not-change-style-of-p-panel/52392534#52392534
+:host ::ng-deep .ts-btn {
+    display: block;
+    height: 250px;
+    max-height: 250px;
+    overflow-y: auto;
+    .p-button {
+        margin: 4px;
+        width: 163px;
+        display: inline-block;
+        font-size: .8em;
+        font-weight: 600;
+        &:first-of-type, &:not(:first-of-type):not(:last-of-type), &:last-child {
+            border-radius: 6px;
+        }
+        &:not(:last-child) {
+            border-right: 1px solid #ced4da;
+        }
+    }
+}

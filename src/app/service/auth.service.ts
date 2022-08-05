@@ -1,0 +1,94 @@
+import {Injectable} from '@angular/core';
+import {ActivatedRouteSnapshot, CanActivate, Router} from '@angular/router';
+import {ApiService} from './api.service';
+
+@Injectable()
+export class AuthService {
+    private loggedIn = false;
+    static readonly TOKEN = 'lemonade-token';
+    static readonly USER_NAME = 'lemonade-username';
+    static readonly LOGIN_ID = 'lemonade-login';
+    static readonly EMAIL = 'lemonade-email';
+
+    private myRole: string;
+
+    constructor(private router: Router, private api: ApiService) {
+        if (this.token) {
+            this.loggedIn = true;
+        }
+    }
+
+    logIn(login: string, passord: string, remem: boolean): void {
+        console.log('login name-', login, passord);
+        this.api.get('sanctum/csrf-cookie').subscribe(resp => {
+            this.api.post('api/login', {
+                email: login,
+                password: passord,
+                remember: remem
+            }).subscribe(res => {
+                console.log('login res-', res);
+                this.loggedIn = true;
+                localStorage.setItem(AuthService.USER_NAME, res.name);
+                localStorage.setItem(AuthService.EMAIL, login);
+                localStorage.setItem(AuthService.LOGIN_ID, login);   // should move inside remem.
+                if (remem) {
+                    localStorage.setItem(AuthService.TOKEN, res.token);
+                } else {
+                    // use session storage which will be destroyed once logout/browser close.
+                    sessionStorage.setItem(AuthService.TOKEN, res.token);
+                }
+                this.router.navigate(['/appointment']);
+            });
+        });
+    }
+
+    logOut(): void {
+        this.loggedIn = false;
+        this.myRole = undefined;
+        localStorage.removeItem(AuthService.TOKEN);
+        localStorage.removeItem(AuthService.USER_NAME);
+        this.router.navigate(['/login-form']);
+    }
+
+    get isLoggedIn(): boolean {
+        return this.loggedIn;
+    }
+
+    get userName(): string {
+        return localStorage.getItem(AuthService.USER_NAME);
+    }
+
+    get email(): string {
+        return localStorage.getItem(AuthService.EMAIL);
+    }
+
+    get loginId(): string {
+        return localStorage.getItem(AuthService.LOGIN_ID);
+    }
+
+    get token(): string {
+        return localStorage.getItem(AuthService.TOKEN) || sessionStorage.getItem(AuthService.TOKEN);
+    }
+}
+
+
+@Injectable()
+export class AuthGuardService implements CanActivate {
+    constructor(private router: Router, private authService: AuthService) {}
+
+    canActivate(route: ActivatedRouteSnapshot): boolean {
+        const isLoggedIn = this.authService.isLoggedIn;
+        const isLoginForm = route.routeConfig.path === 'login';
+
+        if (isLoggedIn && isLoginForm) {
+            this.router.navigate(['/']);
+            return false;
+        }
+
+        if (!isLoggedIn && !isLoginForm) {
+            this.router.navigate(['/login']);
+        }
+
+        return isLoggedIn || isLoginForm;
+    }
+}
