@@ -1,6 +1,14 @@
-# Sakai
+# Lemonade Appointment System Client
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.0.4.
+## Implemented
+- User login.
+- Create a new Appointment.
+- See My Booking.
+- Customer Check-in.
+
+## To be implemented
+- Change appointment time.
+- Payment gateway.
 
 ## Development server
 
