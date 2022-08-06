@@ -48,11 +48,19 @@ export class AppointmentListComponent implements OnInit {
         return duration.hours + 'h ' + (duration.minutes > 0 ? duration.minutes + 'min' : '');
     }
 
+    isPaid(appointment) {
+        return appointment.payment_status === 'approved';
+    }
+
+    makePayment(appointment) {
+        alert("to be implemented");
+    }
+
     ableCheckin(booking) {
         const start_time = new Date(booking.start_time);
         const hour_ago = subHours(start_time, 1);
         // check is now between 1 hour before of start time and start time itself.
-        return !booking.checkin && isWithinInterval(new Date(), { start: hour_ago, end: start_time });
+        return !booking.checkin && isWithinInterval(new Date(), { start: hour_ago, end: new Date(booking.end_time) });
     }
 
     punchIn(booking) {
@@ -60,8 +68,10 @@ export class AppointmentListComponent implements OnInit {
             this.confirmationService.confirm({
                 message: 'Check in now?',
                 accept: () => {
-                    this.api.post('api/booking-checkin/' + booking.id, {}).subscribe(res => {
-                        console.log('checkin=', res);
+                    this.api.post('api/booking-checkin/' + booking.id, {
+                        t: Math.floor(new Date().getTime()/1000.0)
+                    }).subscribe(res => {
+                        // console.log('checkin=', res);
                         if (res.success == true) {
                             booking.checkin = res.checkin;
                         } else {
