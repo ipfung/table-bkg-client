@@ -1,10 +1,13 @@
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClient, HttpClientModule} from '@angular/common/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { LocationStrategy, HashLocationStrategy } from '@angular/common';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
+
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
 import { StyleClassModule } from 'primeng/styleclass';
 import { AccordionModule } from 'primeng/accordion';
@@ -152,12 +155,23 @@ import {AppointmentService} from "./service/appointmentservice";
 import {AuthInterceptor} from "./interceptors/auth-interceptor";
 import { AppointmentListComponent } from './components/appointment-list/appointment-list.component';
 
+export function createTranslateLoader(http: HttpClient) {
+    return new TranslateHttpLoader(http, './assets/lang/', '.json');
+}
+
 @NgModule({
     imports: [
         BrowserModule,
         FormsModule,
         AppRoutingModule,
         HttpClientModule,
+        TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: (createTranslateLoader),
+                deps: [HttpClient]
+            }
+        }),
         BrowserAnimationsModule,
         AccordionModule,
         AutoCompleteModule,
