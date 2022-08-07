@@ -4,6 +4,7 @@ import format from "date-fns/format";
 import {AuthService} from "./auth.service";
 import {ActivatedRouteSnapshot, CanActivate, Router} from '@angular/router';
 import {ApiService} from "./api.service";
+import {TranslateService} from "@ngx-translate/core";
 
 @Injectable()
 export class AppointmentService {
@@ -14,11 +15,11 @@ export class AppointmentService {
     public readonly colors = ["1788FB","FBC22D","FA3C52","D696B8","689BCA","26CC2B","4BBEC6","FD7E35","E38587","774DFB","31CDF3","6AB76C","FD5FA1","A697C5"];
     // for display only and should be retrieved from server
     public readonly tableSessions = [
-        {name: '1 Hour', code: 2},
-        {name: '1.5 Hour', code: 3},
-        {name: '2 Hours', code: 4},
-        {name: '2.5 Hours', code: 5},
-        {name: '3 Hours', code: 6},
+        {name: '1 Hour', code: 2, hour: 1},
+        {name: '1.5 Hour', code: 3, hour: 1.5},
+        {name: '2 Hours', code: 4, hour: 2},
+        {name: '2.5 Hours', code: 5, hour: 2.5},
+        {name: '3 Hours', code: 6, hour: 3},
     ];
 
     public readonly paymentMethods = [{
@@ -85,7 +86,7 @@ export class AppointmentService {
 
     paymentComplete$ = this.paymentComplete.asObservable();
 
-    constructor(public api: ApiService) {
+    constructor(public api: ApiService, private translateService: TranslateService) {
     }
 
     updateUserSelection() {
@@ -154,7 +155,7 @@ export class AppointmentService {
         // submit to server.
         this.api.post('api/appointment', data).subscribe( res => {
             console.log('complete res=', res);
-            if (res['success'] === true) {
+            if (res.success === true) {
                 this.clearUserSelection();
                 this.paymentComplete.next(this.apply({
                     success: true
@@ -204,14 +205,25 @@ export class AppointmentService {
     }
 
     getBookedDateTime(date, timeEpoch, sessionInterval) {
-        return date + "  " + this.formatTime(timeEpoch) + " to " + this.formatTime(parseInt(timeEpoch, 10) + (this.appointmentInformation.timeInformation.noOfSession * sessionInterval));
+        let result = '';
+        this.translateService.get('to').subscribe( res => {
+            result = date + "  " + this.formatTime(timeEpoch) + " " + res + " " + this.formatTime(parseInt(timeEpoch, 10) + (this.appointmentInformation.timeInformation.noOfSession * sessionInterval));
+        });
+        return result;
     }
 
     getSessionName(noOfSession) {
 // console.log("getsessionname=", this.tableSessions, noOfSession);
         if (this.tableSessions.length > 0) {
             let timeLen = this.tableSessions.find(el => el.code == noOfSession);
-            return timeLen.name;
+            let name = timeLen.name;
+            this.translateService.get('hour Hours', {
+                hour: timeLen.hour,
+                s: timeLen.hour
+            }).subscribe( res => {
+                name = res;
+            });
+            return name;
         }
         return '';
     }

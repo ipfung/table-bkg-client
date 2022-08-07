@@ -3,6 +3,7 @@ import {MenuItem, MessageService} from "primeng/api";
 import {AppointmentService} from "../../service/appointmentservice";
 import {Subscription} from "rxjs";
 import {Router} from "@angular/router";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
     selector: 'app-appointment-steps',
@@ -15,23 +16,26 @@ export class AppointmentStepsComponent implements OnInit {
     activeIndex = 0;
     subscription: Subscription;
 
-    constructor(public messageService: MessageService, public appointmentService: AppointmentService, private router: Router) {
+    constructor(public messageService: MessageService, public appointmentService: AppointmentService, private router: Router, private translateService: TranslateService) {
     }
 
     ngOnInit(): void {
-        this.items = [{
-            label: 'Duration',
-            routerLink: 'time-range'
-        }, {
-            label: 'Date & Time',
-            routerLink: 'datetime'
-        }, {
-            label: 'Payment',
-            routerLink: 'payment'
-        }, {
-            label: 'Confirmation',
-            routerLink: 'confirmation'
-        }];
+        this.translateService.get(['Duration', 'Date & Time', 'Payment', 'Confirmation']).subscribe( res => {
+            console.log('res.Confirmation=', res);
+            this.items = [{
+                label: res.Duration,
+                routerLink: 'time-range'
+            }, {
+                label: res['Date & Time'],
+                routerLink: 'datetime'
+            }, {
+                label: res['Payment'],
+                routerLink: 'payment'
+            }, {
+                label: res.Confirmation,
+                routerLink: 'confirmation'
+            }];
+        });
 
         this.subscription = this.appointmentService.paymentComplete$.subscribe((data) => {
             if (data.success === true) {

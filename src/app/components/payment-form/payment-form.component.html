@@ -1,22 +1,22 @@
 <p-card>
     <ng-template pTemplate="title">
-        Payment Information
+        {{ 'Payment Method' | translate }}
     </ng-template>
     <ng-template pTemplate="subtitle">
-        Enter your card details
+        {{ 'Select payment method' | translate }}
     </ng-template>
     <ng-template pTemplate="content">
         <div class="p-fluid formgrid grid">
             <div class="field col-12">
                 <p-card styleClass="p-card-shadow text-right mb-3">
                     <div class="text-xl pb-2 -mt-4  ">
-                        Appointment Summary
+                        {{ 'Appointment Summary' | translate }}
                     </div>
                     <span class="font-bold">{{ selectedPreviousDescription() }}</span>
                     <br />
                     <span class="font-bold">{{ appointmentService.getSessionName(timeInformation.noOfSession) }}</span>
                     <ng-template pTemplate="footer">
-                        Total: <b>HK${{ paymentInformation.price }}</b>
+                        {{ 'Total' | translate }}: <b>{{ paymentInformation.price | currency:'HK$' }}</b>
                     </ng-template>
                 </p-card>
             </div>
@@ -58,12 +58,12 @@
     </ng-template>
     <ng-template pTemplate="footer">
         <div class="grid grid-nogutter justify-content-between ng-star-inserted">
-            <p-button label="Change Date & Time" (onClick)="prevPage()" icon="pi pi-angle-left"></p-button>
-            <p-button label="Confirmation" (onClick)="nextPage()" icon="pi pi-angle-right" iconPos="right"></p-button>
+            <p-button label="{{ 'Change Date & Time' | translate }}" (onClick)="prevPage()" icon="pi pi-angle-left"></p-button>
+            <p-button label="{{ 'Confirmation' | translate }}" (onClick)="nextPage()" icon="pi pi-angle-right" iconPos="right"></p-button>
         </div>
         <div class="grid grid-nogutter justify-content-between ng-star-inserted">
-            <div class="flex align-items-center justify-content-center p-2 border-round mr-1">Selected: {{ selectedPreviousDescription() }}</div>
-            <div class="flex align-items-center justify-content-center p-2 border-round mr-1">Selected: {{ selectedDescription() }}</div>
+            <div class="flex align-items-center justify-content-center p-2 border-round mr-1">{{ 'Selected' | translate }}: {{ selectedPreviousDescription() }}</div>
+            <div class="flex align-items-center justify-content-center p-2 border-round mr-1">{{ 'Selected' | translate }}: {{ selectedDescription() }}</div>
         </div>
     </ng-template>
 </p-card>

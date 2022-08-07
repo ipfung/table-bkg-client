@@ -1,25 +1,32 @@
 
 <p-card>
     <ng-template pTemplate="title">
-        Duration
+        {{ 'Duration' | translate }}
     </ng-template>
     <ng-template pTemplate="subtitle">
-        Choose your time length
+        {{ 'Choose your time length' | translate }}
     </ng-template>
     <ng-template pTemplate="content">
         <div class="p-fluid formgrid grid">
             <div class="field col-12 md:col-6">
-                <label for="time">Time Length</label>
-                <p-dropdown id="time" [options]="appointmentService.tableSessions" [(ngModel)]="timeInformation.noOfSession" (onChange)="storeUserPref($event)" optionLabel="name" optionValue="code"></p-dropdown>
+                <label for="time">{{ 'Time Length' | translate }}</label>
+                <p-dropdown id="time" [options]="appointmentService.tableSessions" [(ngModel)]="timeInformation.noOfSession" (onChange)="storeUserPref($event)" optionValue="code">
+                    <ng-template pTemplate="selectedItem">
+                        {{ appointmentService.getSessionName(timeInformation.noOfSession) }}
+                    </ng-template>
+                    <ng-template let-time pTemplate="item">
+                        <div [translate]="'hour Hours'" [translateParams]="{hour: time.hour, s: time.hour >= 2 ? 's' : ''}"></div>
+                    </ng-template>
+                </p-dropdown>
             </div>
         </div>
     </ng-template>
     <ng-template pTemplate="footer">
         <div class="grid grid-nogutter justify-content-end">
-            <p-button label="Date & Time" (onClick)="nextPage()" icon="pi pi-angle-right" iconPos="right"></p-button>
+            <p-button label="{{ 'Date & Time' | translate }}" (onClick)="nextPage()" icon="pi pi-angle-right" iconPos="right"></p-button>
         </div>
         <div class="grid grid-nogutter justify-content-end">
-            <div class="flex align-items-center justify-content-center p-2 border-round mr-1">Selected: {{ selectedDescription() }}</div>
+            <div class="flex align-items-center justify-content-center p-2 border-round mr-1">{{ 'Selected' | translate }}: {{ selectedDescription() }}</div>
         </div>
     </ng-template>
 </p-card>
