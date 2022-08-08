@@ -1,0 +1,72 @@
+<h4>{{ 'Reschedule' | translate }}</h4>
+<p-card>
+    <p-toast></p-toast>
+
+    <ng-template pTemplate="title">
+        {{ 'Date & Time' | translate }}
+    </ng-template>
+    <ng-template pTemplate="subtitle">
+        {{ 'Choose reschedule date & time' | translate }}
+    </ng-template>
+    <ng-template pTemplate="content">
+        <div class="p-fluid formgrid grid">
+            <div class="field col-12">
+                <label for="date">{{ 'Original Date & Time' | translate }}</label>
+                <b>{{ appointmentService.formatDate(reschedule.appointment.start_time, true) }} {{ appointmentService.formatDateTime(reschedule.appointment.start_time) }} - {{ appointmentService.formatDateTime(reschedule.appointment.end_time) }}</b>
+            </div>
+            <div class="field col-12 md:col-6">
+                <label for="date">{{ 'New Date' | translate }}</label>
+                <p-calendar id="date" [(ngModel)]="reschedule.date" dateFormat="dd/mm/yy" [minDate]="minDate" [maxDate]="maxDate" [showIcon]="true" [readonlyInput]="true" (onSelect)="changeDate()"></p-calendar>
+            </div>
+            <div class="field col-12 md:col-6">
+                <label for="time">{{ 'New Time' | translate }}</label>
+                <p-dropdown id="time" [disabled]="dateTimeSlots && dateTimeSlots.length == 0" [options]="dateTimeSlots" [(ngModel)]="reschedule.time" optionValue="time">
+                    <ng-template pTemplate="selectedItem">
+                        {{ appointmentService.formatTime(reschedule.time) }}
+                    </ng-template>
+                    <ng-template let-time pTemplate="item">
+                        {{ appointmentService.formatTime(time.time) }}
+                    </ng-template>
+                </p-dropdown>
+            </div>
+        </div>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <div class="grid grid-nogutter justify-content-between ng-star-inserted">
+            <p-button label="{{ 'Back' | translate }}" (onClick)="back()" icon="pi pi-angle-left"></p-button>
+            <p-button label="{{ 'Confirmation' | translate }}" icon="pi pi-angle-right" iconPos="right" (click)="confirmModal = true;"></p-button>
+        </div>
+        <div class="grid grid-nogutter justify-content-end">
+            <div class="flex align-items-center justify-content-center p-2 border-round mr-1">{{ 'Selected' | translate }}: {{ selectedDescription() }}</div>
+        </div>
+    </ng-template>
+</p-card>
+
+<p-dialog #cd header="{{ 'Reschedule Confirmation' | translate }}" [(visible)]="confirmModal" position="bottom" icon="pi pi-clock" [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '50vw'}">
+    <div class="col-12">
+        <p-messages [value]="msgs"></p-messages>
+    </div>
+        <div class="field col-12">
+            <label for="date">{{ 'Original Date & Time' | translate }}</label>
+            <b>{{ appointmentService.formatDate(reschedule.appointment.start_time, true) }} {{ appointmentService.formatDateTime(reschedule.appointment.start_time) }} - {{ appointmentService.formatDateTime(reschedule.appointment.end_time) }}</b>
+        </div>
+        <div class="field col-12">
+            <label>{{ 'New Date & Time' | translate }}</label>
+            <b>{{ selectedDescription() }} </b>
+        </div>
+        <div class="field col-12">
+            <label>{{ 'Duration' | translate }}</label>
+            <b>{{ appointmentService.getSessionName(reschedule.noOfSession) }}</b>
+        </div>
+    <ng-template pTemplate="footer">
+        <div *ngIf="!success">
+            <button type="button" pButton icon="pi pi-times" label="{{ 'No' | translate }}" (click)="confirmModal = false;"></button>
+            <button type="button" pButton icon="pi pi-check" label="{{ 'Yes' | translate }}" (click)="complete()"></button>
+        </div>
+        <div *ngIf="success">
+            <div></div>
+            <button type="button" pButton icon="pi pi-power-off" label="{{ 'Close' | translate }}" (click)="back()"></button>
+        </div>
+    </ng-template>
+</p-dialog>
+

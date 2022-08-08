@@ -5,9 +5,12 @@
 - Create a new Appointment.
 - See My Booking.
 - Customer Check-in.
+- i18n
+- Reschedule.
+
+## In progress
 
 ## To be implemented
-- Change appointment time.
 - Payment gateway.
 
 ## Development server

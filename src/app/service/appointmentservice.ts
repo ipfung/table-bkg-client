@@ -5,12 +5,15 @@ import {AuthService} from "./auth.service";
 import {ActivatedRouteSnapshot, CanActivate, Router} from '@angular/router';
 import {ApiService} from "./api.service";
 import {TranslateService} from "@ngx-translate/core";
+import { enUS, zhHK } from 'date-fns/locale'
 
 @Injectable()
 export class AppointmentService {
     static readonly APPOINTMENT_SESSION = 'user.preferred.appointment';
     static readonly APPOINTMENT_EXPIRY_TIME = 'user.preferred.appointment_expiry_time';
     static readonly EXPIRY_TIME = 8;     // hour
+
+    lang: any;
 
     public readonly colors = ["1788FB","FBC22D","FA3C52","D696B8","689BCA","26CC2B","4BBEC6","FD7E35","E38587","774DFB","31CDF3","6AB76C","FD5FA1","A697C5"];
     // for display only and should be retrieved from server
@@ -57,7 +60,7 @@ export class AppointmentService {
         image: 'Stripe_(company)-Logo.wine.svg'
     }];
 
-    private appointmentInformation = {
+    private readonly defaultAppointment = {
         timeInformation: {
             serviceId: 1,
             roomId: 1,
@@ -82,11 +85,44 @@ export class AppointmentService {
         }
     };
 
+    private appointmentInformation;
+
+    reschedule = {
+        appointment: null,
+        bookId: 0,
+        date: '',
+        time: '',
+        noOfSession: 2,  // from server side
+        sessionInterval: 0,  // from server side
+    };
+
     private paymentComplete = new Subject<any>();
 
     paymentComplete$ = this.paymentComplete.asObservable();
 
     constructor(public api: ApiService, private translateService: TranslateService) {
+        this.lang = this.translateService.getDefaultLang() === 'zh' ? zhHK : enUS;
+        // init, copy from default data.
+        this.appointmentInformation = this.apply({}, this.defaultAppointment);
+    }
+
+    formatPostDate(d) {
+        if (d)
+            return format(d, 'yyyy-MM-dd');
+        return '';
+    }
+
+    getBookings(date1, date2) {
+        return this.api.get('api/booking', {
+            from_date: this.formatPostDate(date1),
+            to_date: this.formatPostDate(date2)
+        });
+    }
+
+    punchIn(bookId) {
+        return this.api.post('api/booking-checkin/' + bookId, {
+            t: Math.floor(new Date().getTime()/1000.0)
+        });
     }
 
     updateUserSelection() {
@@ -100,6 +136,8 @@ export class AppointmentService {
     clearUserSelection() {
         sessionStorage.removeItem(AppointmentService.APPOINTMENT_EXPIRY_TIME);
         sessionStorage.removeItem(AppointmentService.APPOINTMENT_SESSION);
+        // cleanup, copy from default data.
+        this.appointmentInformation = this.apply({}, this.defaultAppointment);
     }
 
     isAppointmentValid() {
@@ -125,6 +163,10 @@ export class AppointmentService {
         this.appointmentInformation = appointmentInformation;
     }
 
+    isDefined(v){
+        return typeof v !== 'undefined';
+    }
+
     /**
      * this acts like Ext.apply().
      * TODO move to util file if it exists.
@@ -138,6 +180,23 @@ export class AppointmentService {
             }
         }
         return o;
+    }
+
+    applyIf(o, c){
+        if(o){
+            for(var p in c){
+                if(!this.isDefined(o[p])){
+                    o[p] = c[p];
+                }
+            }
+        }
+        return o;
+    }
+
+    getRescheduleTimeslots() {
+        return this.api.get('api/appointment', {
+            bookId: this.reschedule.bookId
+        });
     }
 
     getTimeslots() {
@@ -166,17 +225,39 @@ export class AppointmentService {
         });
     }
 
+    saveReschedule() {
+        this.api.post('api/reschedule/' + this.reschedule.bookId, this.applyIf( {
+            date: this.formatPostDate(this.reschedule.date)
+        }, this.reschedule)).subscribe( res => {
+            console.log('reschedule res=', res);
+            if (res.success === true) {
+                this.paymentComplete.next(this.apply({
+                    success: true,
+                    room: res.room
+                }, this.reschedule));
+            } else {
+                this.paymentComplete.next(res);
+            }
+        });
+    }
+
+    getLang() {
+        return this.lang;
+    }
 
     formatDate(date, showWeekNo?: boolean) {
-        if (showWeekNo) {
-            return format(new Date(date), "EEE d/M");
+        if (date) {
+            if (showWeekNo) {
+                return format(new Date(date), "EEE d/M", {locale: this.lang});
+            }
+            return format(new Date(date), "d/M", {locale: this.lang});
         }
-        return format(new Date(date), "d/M");
+        return '';
     }
 
     formatDateTime(datetime: string) {
         if (datetime)
-            return format(new Date(datetime), 'h:mm aa');
+            return format(new Date(datetime), 'h:mm aa', {locale: this.lang});
         return '';
     }
 
@@ -187,7 +268,7 @@ export class AppointmentService {
     formatTime(t: number, date?) {
         let content = '';
         if (date) {   // optional show date.
-            content += format(new Date(date), "dd/MMM") + " - ";
+            content += format(new Date(date), "EEE d/M", {locale: this.lang}) + " - ";
         }
         const days = parseInt(String(t / 86400), 10);
         t = t - (days * 86400);
@@ -204,12 +285,8 @@ export class AppointmentService {
         return content;
     }
 
-    getBookedDateTime(date, timeEpoch, sessionInterval) {
-        let result = '';
-        this.translateService.get('to').subscribe( res => {
-            result = date + "  " + this.formatTime(timeEpoch) + " " + res + " " + this.formatTime(parseInt(timeEpoch, 10) + (this.appointmentInformation.timeInformation.noOfSession * sessionInterval));
-        });
-        return result;
+    getBookedDateTime(date, timeEpoch, sessionInterval, noOfSession) {
+        return this.formatDate(date, true) + "  " + this.formatDateTime('1990-01-31 ' + this.formatTime(timeEpoch)) + " - " + this.formatDateTime('1990-01-31 ' + this.formatTime(parseInt(timeEpoch, 10) + (noOfSession * sessionInterval)));
     }
 
     getSessionName(noOfSession) {

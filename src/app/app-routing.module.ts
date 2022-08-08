@@ -36,6 +36,7 @@ import {BookingTimeRangeComponent} from "./components/booking-time-range/booking
 import {AuthGuardService} from "./service/auth.service";
 import {AppointmentStepsGuardService} from "./service/appointmentservice";
 import {AppointmentListComponent} from "./components/appointment-list/appointment-list.component";
+import {RescheduleComponent} from "./components/reschedule/reschedule.component";
 @NgModule({
     imports: [
         RouterModule.forRoot([
@@ -71,6 +72,7 @@ import {AppointmentListComponent} from "./components/appointment-list/appointmen
                     // {path: 'icons', component: IconsComponent},
                     // {path: 'blocks', component: BlocksComponent},
                     // {path: 'documentation', component: DocumentationComponent}
+                    {path:'reschedule/:id', component: RescheduleComponent, canActivate: [ AuthGuardService ]},
                     {path:'appointment-list', component: AppointmentListComponent, canActivate: [ AuthGuardService ]},
                 ],
             },

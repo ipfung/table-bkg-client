@@ -32,7 +32,7 @@ export class PaymentFormComponent implements OnInit {
     }
 
     selectedPreviousDescription() {
-        return this.appointmentService.getBookedDateTime(this.timeInformation.date, this.timeInformation.time, this.timeInformation.sessionInterval);
+        return this.appointmentService.getBookedDateTime(this.timeInformation.date, this.timeInformation.time, this.timeInformation.sessionInterval, this.timeInformation.noOfSession);
     }
 
     selectedDescription() {

@@ -1,8 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {ApiService} from "../../service/api.service";
+import {Router} from "@angular/router";
 import {AppointmentService} from "../../service/appointmentservice";
-import {intervalToDuration, isWithinInterval, parseISO, subHours} from "date-fns";
+import {addDays, intervalToDuration, isWithinInterval, subHours} from "date-fns";
 import {ConfirmationService, MessageService} from "primeng/api";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
     selector: 'app-appointment-list',
@@ -17,18 +18,26 @@ export class AppointmentListComponent implements OnInit {
 
     customers: any[];
 
-    constructor(private api: ApiService, public appointmentService: AppointmentService, private confirmationService: ConfirmationService, private messageService: MessageService) {
+    // search fields
+    rangeDates: Date[];
+
+    constructor(public appointmentService: AppointmentService, private router: Router, private confirmationService: ConfirmationService, private messageService: MessageService, private translateService: TranslateService) {
     }
 
     ngOnInit(): void {
-        // this.appointments = [{
-        //
-        // }];
-        this.loading = true;
-        this.api.get('api/booking').subscribe( res => {
-           this.bookings = res;
-            this.loading = false;
-        });
+        this.rangeDates = [new Date(), addDays(new Date(), 14)];
+        this.loadData();
+    }
+
+    loadData() {
+//console.log('date range2===', this.rangeDates);
+        if (this.rangeDates.length == 2 && this.rangeDates[1]) {
+            this.loading = true;
+            this.appointmentService.getBookings(this.rangeDates[0], this.rangeDates[1]).subscribe(res => {
+                this.bookings = res;
+                this.loading = false;
+            });
+        }
     }
 
     getInitial(name) {
@@ -65,26 +74,38 @@ export class AppointmentListComponent implements OnInit {
 
     punchIn(booking) {
         if (this.ableCheckin(booking)) {
-            this.confirmationService.confirm({
-                message: 'Check in now?',
-                accept: () => {
-                    this.api.post('api/booking-checkin/' + booking.id, {
-                        t: Math.floor(new Date().getTime()/1000.0)
-                    }).subscribe(res => {
-                        // console.log('checkin=', res);
-                        if (res.success == true) {
-                            booking.checkin = res.checkin;
-                        } else {
-                            this.messageService.add({
-                                severity: 'error',
-                                summary: 'Error',
-                                detail: res.error
-                            });
-                        }
-                    });
-                }
+            this.translateService.get(['Check in now?', 'Error']).subscribe( res => {
+                this.confirmationService.confirm({
+                    message: res['Check in now?'],
+                    accept: () => {
+                        this.appointmentService.punchIn(booking.id).subscribe(res => {
+                            // console.log('checkin=', res);
+                            if (res.success == true) {
+                                booking.checkin = res.checkin;
+                            } else {
+                                this.messageService.add({
+                                    severity: 'error',
+                                    summary: res['Error'],
+                                    detail: res.error
+                                });
+                            }
+                        });
+                    }
+                });
             });
         }
+    }
+
+    canAmend(appointment) {
+        const now = new Date(),
+            start_time = (new Date(appointment.start_time));
+        const hour48_ago = subHours(start_time, 48);
+        return (now < hour48_ago);
+    }
+
+    reschedule(appointment) {
+        this.appointmentService.reschedule.appointment = appointment;
+        this.router.navigate(['/reschedule', appointment.id]);
     }
 
     calculateCustomerTotal(name) {
