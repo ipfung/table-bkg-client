@@ -47,7 +47,7 @@ export class AuthService {
         this.myRole = undefined;
         localStorage.removeItem(AuthService.TOKEN);
         localStorage.removeItem(AuthService.USER_NAME);
-        this.router.navigate(['/login-form']);
+        this.router.navigate(['/login']);
     }
 
     get isLoggedIn(): boolean {
