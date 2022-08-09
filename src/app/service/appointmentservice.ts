@@ -6,6 +6,7 @@ import {ActivatedRouteSnapshot, CanActivate, Router} from '@angular/router';
 import {ApiService} from "./api.service";
 import {TranslateService} from "@ngx-translate/core";
 import { enUS, zhHK } from 'date-fns/locale'
+import {addDays} from "date-fns";
 
 @Injectable()
 export class AppointmentService {
@@ -266,27 +267,22 @@ export class AppointmentService {
      * @param t
      */
     formatTime(t: number, date?) {
-        let content = '';
-        if (date) {   // optional show date.
-            content += format(new Date(date), "EEE d/M", {locale: this.lang}) + " - ";
-        }
         const days = parseInt(String(t / 86400), 10);
         t = t - (days * 86400);
         const hours = parseInt(String(t / 3600), 10);
         t = t - (hours * 3600);
         const minutes = parseInt(String(t / 60), 10);
         t = t - (minutes * 60);
-        if (days) content += days + " days";    // FIXME throw error if time more than a day?
-        if (hours || days) {
-            if (days) content += ", ";
-            content += hours + ":";
+        if (date) {
+            const d = addDays(new Date(date), days);
+            return format(new Date(d.getFullYear(), d.getMonth(), d.getDate(), hours, minutes), "EEE d/M - h:mm aa", {locale: this.lang});
         }
-        content += (minutes + "").padStart(2, '0');
-        return content;
+        const d = new Date();   // give it a fake date for below formatting.
+        return format(new Date(d.getFullYear(), d.getMonth(), d.getDate(), hours, minutes), "h:mm aa", {locale: this.lang});
     }
 
     getBookedDateTime(date, timeEpoch, sessionInterval, noOfSession) {
-        return this.formatDate(date, true) + "  " + this.formatDateTime('1990-01-31 ' + this.formatTime(timeEpoch)) + " - " + this.formatDateTime('1990-01-31 ' + this.formatTime(parseInt(timeEpoch, 10) + (noOfSession * sessionInterval)));
+        return this.formatTime(timeEpoch, date) + " - " + this.formatTime(parseInt(timeEpoch, 10) + (noOfSession * sessionInterval));
     }
 
     getSessionName(noOfSession) {
