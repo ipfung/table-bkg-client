@@ -96,16 +96,57 @@ export class AppointmentListComponent implements OnInit {
         }
     }
 
+    /**
+     * pending or approved = valid.
+     * rejected or canceled = invalid.
+     * @param appointment
+     */
+    isValidStatus(appointment) {
+        return (appointment.status == 'approved' || appointment.status == 'pending');
+    }
+
+    /**
+     * action must be done X hour before start_time
+     * @param appointment
+     */
     canAmend(appointment) {
         const now = new Date(),
             start_time = (new Date(appointment.start_time));
         const hour48_ago = subHours(start_time, 48);
-        return (now < hour48_ago);
+        return (now < hour48_ago && this.isValidStatus(appointment));
     }
 
     reschedule(appointment) {
         this.appointmentService.reschedule.appointment = appointment;
         this.router.navigate(['/reschedule', appointment.id]);
+    }
+
+    /**
+     * only unpaid appointment can be canceled.
+     * @param booking
+     */
+    cancel(booking) {
+        if (!this.isPaid(booking)) {
+            this.translateService.get(['Are you sure to cancel booking?', 'Warning']).subscribe( res => {
+                this.confirmationService.confirm({
+                    message: res['Are you sure to cancel booking?'],
+                    accept: () => {
+                        this.appointmentService.cancel(booking.id).subscribe(res => {
+                            // console.log('checkin=', res);
+                            if (res.success == true) {
+                                booking.status = res.status;
+                            } else {
+                                this.messageService.add({
+                                    severity: 'error',
+                                    summary: res['Error'],
+                                    detail: res.error
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+        }
     }
 
     calculateCustomerTotal(name) {

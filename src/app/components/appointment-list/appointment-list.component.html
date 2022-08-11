@@ -78,8 +78,9 @@
 <!--                    / <span class="">{{ appointmentService.formatDateTime(appointment.checkout) }}</span>-->
                 </td>
                 <td style="min-width:20px">
-                    <button pButton type="button" *ngIf="canAmend(appointment)" pTooltip="{{ 'Reschedule' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-pencil" (click)="reschedule(appointment)"></button>
-                    <button pButton type="button" *ngIf="!isPaid(appointment)" pTooltip="{{ 'Pay Now' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-credit-card" (click)="makePayment(appointment)"></button>
+                    <button pButton type="button" [disabled]="!canAmend(appointment)" pTooltip="{{ 'Reschedule' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-pencil" (click)="reschedule(appointment)"></button>
+                    <button pButton type="button" [disabled]="isPaid(appointment) || !canAmend(appointment)" pTooltip="{{ 'Cancel Booking' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-times" (click)="cancel(appointment)"></button>
+                    <button pButton type="button" [disabled]="isPaid(appointment) || !isValidStatus(appointment)" pTooltip="{{ 'Pay Now' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-credit-card" (click)="makePayment(appointment)"></button>
                 </td>
             </tr>
         </ng-template>
