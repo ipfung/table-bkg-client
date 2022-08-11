@@ -58,7 +58,7 @@ export class AppointmentListComponent implements OnInit {
     }
 
     isPaid(appointment) {
-        return appointment.payment_status === 'approved';
+        return appointment.payment_status === 'paid';
     }
 
     makePayment(appointment) {
