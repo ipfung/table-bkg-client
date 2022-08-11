@@ -37,12 +37,14 @@ import {AuthGuardService} from "./service/auth.service";
 import {AppointmentStepsGuardService} from "./service/appointmentservice";
 import {AppointmentListComponent} from "./components/appointment-list/appointment-list.component";
 import {RescheduleComponent} from "./components/reschedule/reschedule.component";
+import {UserListComponent} from "./components/user-list/user-list.component";
 @NgModule({
     imports: [
         RouterModule.forRoot([
             {
                 path: '', component: AppMainComponent,
                 children: [
+                    {path: 'user-list', component: UserListComponent, canActivate: [ AuthGuardService ]},
                     {path: 'appointment', component: AppointmentStepsComponent, children:[
                         {path:'', redirectTo: 'time-range', pathMatch: 'full'},
                         {path: 'time-range', component: BookingTimeRangeComponent, canActivate: [ AuthGuardService ]},

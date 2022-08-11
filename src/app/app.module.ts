@@ -155,6 +155,7 @@ import {AppointmentService} from "./service/appointmentservice";
 import {AuthInterceptor} from "./interceptors/auth-interceptor";
 import { AppointmentListComponent } from './components/appointment-list/appointment-list.component';
 import { RescheduleComponent } from './components/reschedule/reschedule.component';
+import { UserListComponent } from './components/user-list/user-list.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/lang/', '.json');
@@ -307,6 +308,7 @@ export function createTranslateLoader(http: HttpClient) {
         BookingTimeRangeComponent,
         AppointmentListComponent,
         RescheduleComponent,
+        UserListComponent,
     ],
     providers: [
         {provide: LocationStrategy, useClass: HashLocationStrategy},

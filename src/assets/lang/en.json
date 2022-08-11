@@ -42,5 +42,8 @@
     "You must reschedule before 48 hours of appointment start time.": "You must reschedule before 48 hours of appointment start time.",
     "You have been rescheduled several times.": "You have been rescheduled {{param}} times.",
     "Congratulations, booking rescheduled successfully.": "🎉 Congratulations, booking rescheduled successfully.",
+    "User": "User",
+    "Avatar": "Avatar",
+    "Role": "Role",
     "Error": "Error"
 }

@@ -1,0 +1,67 @@
+<h4>{{ 'User' | translate }}</h4>
+<div class="card">
+    <p-progressSpinner *ngIf="loading" class="align-self-center justify-content-center align-items-center align-content-center"></p-progressSpinner>
+
+<!--    &lt;!&ndash; Search fields &ndash;&gt;-->
+<!--    <div class="p-fluid grid">-->
+<!--        <div class="field col-12 md:col-6">-->
+<!--            <p-calendar [(ngModel)]="rangeDates" selectionMode="range" [readonlyInput]="true" (onSelect)="loadData()" inputId="range"></p-calendar>-->
+<!--        </div>-->
+<!--    </div>-->
+
+    <p-table [value]="users" dataKey="id" sortField="appointment_date" sortMode="single"  responsiveLayout="stack">
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="min-width:120px">{{ 'Name' | translate }}</th>
+                <th style="min-width:80px">{{ 'Avatar' | translate }}</th>
+                <th style="min-width:150px">{{ 'Email' | translate }}</th>
+                <th style="min-width:120px">{{ 'Role' | translate }}</th>
+                <th style="min-width:120px">{{ 'Status' | translate }}</th>
+                <th style="min-width:20px"></th>
+            </tr>
+        </ng-template>
+        <!--        <ng-template pTemplate="groupfooter" let-appointment>-->
+        <!--            <tr class="p-rowgroup-footer">-->
+        <!--                <td style="min-width: 80%">-->
+        <!--                    <div style="text-align: right; width: 100%">Total Customers</div>-->
+        <!--                </td>-->
+        <!--                <td style="width: 20%">{{calculateCustomerTotal(customer.representative.name)}}</td>-->
+        <!--            </tr>-->
+        <!--        </ng-template>-->
+        <ng-template pTemplate="body" let-user let-rowIndex="rowIndex">
+            <tr>
+                <td style="min-width:200px">
+                    <span class="p-column-title">{{ 'Name' | translate }}</span>
+                    {{ user.name }}
+                </td>
+                <td style="min-width:80px">
+                    <span class="p-column-title">{{ 'Avatar' | translate }}</span>
+                    <p-avatar [image]="getInitial(user)" shape="circle" [style]="{'background-color': '#266cda', 'color': '#fff', 'margin-left': '5px'}"></p-avatar>
+                </td>
+                <td style="min-width:120px">
+                    <span class="p-column-title">{{ 'Email' | translate }}</span>
+                    {{ user.email }}
+                </td>
+                <td style="min-width:120px">
+                    <span class="p-column-title">{{ 'Role' | translate }}</span>
+                    {{ user.role.name | translate }}
+                </td>
+                <td style="min-width:120px">
+                    <span class="p-column-title">{{ 'Status' | translate }}</span>
+                    <span [class]="'user-badge status-' + user.status">{{ user.status | translate }}</span>
+                </td>
+                <td style="min-width:20px">
+                    <button pButton type="button" *ngIf="canBlock() && user.status == 'active'" pTooltip="{{ 'Blacklist' | translate }}" tooltipPosition="bottom" class="p-button-text p-button-danger" icon="pi pi-ban" (click)="blacklist(user)"></button>
+                    <button pButton type="button" *ngIf="canBlock() && user.status == 'banned'" pTooltip="{{ 'Whitelist' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-check-circle" (click)="whitelist(user)"></button>
+<!--                    <button pButton type="button" *ngIf="!isPaid(appointment)" pTooltip="{{ 'Pay Now' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-credit-card" (click)="makePayment(appointment)"></button>-->
+                </td>
+            </tr>
+        </ng-template>
+        <!--        <ng-template pTemplate="rowexpansion" let-appointment>-->
+        <!--            <tr>-->
+        <!--                <td colspan="8">hihi</td>-->
+        <!--            </tr>-->
+        <!--        </ng-template>-->
+
+    </p-table>
+</div>
