@@ -157,7 +157,6 @@ import { AppointmentListComponent } from './components/appointment-list/appointm
 import { RescheduleComponent } from './components/reschedule/reschedule.component';
 import { UserListComponent } from './components/user-list/user-list.component';
 import { TrainerStudentListComponent } from './components/trainer-student-list/trainer-student-list.component';
-import { TrainerStudentFormComponent } from './components/trainer-student-form/trainer-student-form.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/lang/', '.json');
@@ -311,6 +310,7 @@ export function createTranslateLoader(http: HttpClient) {
         AppointmentListComponent,
         RescheduleComponent,
         UserListComponent,
+        TrainerStudentListComponent,
     ],
     providers: [
         {provide: LocationStrategy, useClass: HashLocationStrategy},

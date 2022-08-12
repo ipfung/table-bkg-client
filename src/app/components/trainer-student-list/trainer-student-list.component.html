@@ -7,8 +7,9 @@
                 <th style="min-width:120px" pSortableColumn="name">{{ 'Trainer' | translate }} <p-sortIcon field="name"></p-sortIcon></th>
                 <th style="min-width:130px" pSortableColumn="role">{{ 'Role' | translate }} <p-sortIcon field="role"></p-sortIcon></th>
                 <th style="min-width:80px">{{ 'Avatar' | translate }}</th>
+                <th style="min-width:130px" pSortableColumn="counter">{{ 'Student Count' | translate }} <p-sortIcon field="counter"></p-sortIcon></th>
                 <th style="min-width:150px" pSortableColumn="email">{{ 'Email' | translate }} <p-sortIcon field="email"></p-sortIcon></th>
-                <th style="min-width:90px" pSortableColumn="status">{{ 'Reviews' | translate }} <p-sortIcon field="status"></p-sortIcon></th>
+                <th style="min-width:90px" pSortableColumn="rating">{{ 'Reviews' | translate }} <p-sortIcon field="rating"></p-sortIcon></th>
                 <th style="min-width:80px" pSortableColumn="status">{{ 'Status' | translate }} <p-sortIcon field="status"></p-sortIcon></th>
                 <th style="width: 1rem"></th>
             </tr>
@@ -24,6 +25,9 @@
                 </td>
                 <td>
                     <p-avatar [image]="getAvatar(user)" shape="circle" [style]="{'background-color': '#266cda', 'color': '#fff', 'margin-left': '5px'}"></p-avatar>
+                </td>
+                <td>
+                    {{ user.teammates.length }}
                 </td>
                 <td>
                     {{ user.email }}
@@ -78,3 +82,37 @@
         </ng-template>
     </p-table>
 </div>
+
+<p-dialog [(visible)]="formDialog" [style]="{width:'50em', height: '100vh'}" header="{{ formHeader | translate }}" position="right" [modal]="true" class="p-fluid">
+    <ng-template pTemplate="content">
+        <img [src]="getAvatar(trainer)" [alt]="trainer.name" width="100" class="mt-0 mx-auto mb-2 block" *ngIf="trainer.avatar">
+        <div class="text-center mb-5">
+            <h3>{{ trainer.name }}</h3>
+        </div>
+
+        <div class="field">
+            <p-pickList [responsive]="true" [showSourceControls]="false" [showTargetControls]="false" [source]="trainer.teammates" [target]="availableStudents"  sourceHeader="{{ 'My Student' | translate }}" targetHeader="{{ 'Available Student' | translate }}" filterBy="name">
+                <ng-template let-student pTemplate="item">
+                    <div class="student-item">
+                        <div class="image-container">
+                            <img [src]="getAvatar(student)" [alt]="student.name" class="student-image" />
+                        </div>
+                        <div class="student-list-detail">
+                            <h5 class="mb-2">{{student.name}}</h5>
+                            <h6 class="-mt-2">{{student.email}}</h6>
+                        </div>
+                        <div class="student-list-action">
+                            <span [class]="'user-badge status-' + student.status.toLowerCase()">{{student.status}}</span>
+                        </div>
+                    </div>
+                </ng-template>
+            </p-pickList>
+        </div>
+
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="save()"></button>
+    </ng-template>
+</p-dialog>

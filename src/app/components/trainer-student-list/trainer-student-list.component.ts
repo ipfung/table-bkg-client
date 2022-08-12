@@ -11,6 +11,14 @@ import {environment} from "../../../environments/environment";
 export class TrainerStudentListComponent implements OnInit {
     trainers = [];
     loading = true;
+
+    // form variables.
+    formDialog = false;
+    submitted = false;
+    trainer: any;
+    availableStudents = [];
+    formHeader = "Edit Student List";
+
     constructor(private api: ApiService, private router: Router) {
     }
 
@@ -26,12 +34,34 @@ export class TrainerStudentListComponent implements OnInit {
     }
 
     edit(trainer) {
-        // this.router.navigate(['/reschedule', trainer.id]);
-        this.router.navigate(['/trainer-student-form', trainer.id]);
+        // this.router.navigate(['/trainer-student-form', trainer.id]);
+        this.trainer = {...trainer};
+        this.formDialog = true;
+        this.api.get('api/availability-students/' + trainer.id).subscribe( res => {
+            console.log('/availability-students list=', res);
+            this.availableStudents = res.data;
+        });
     }
 
     canAmend(trainer) {
         // FIXME only manager could edit.
         return true;
+    }
+
+    hideDialog() {
+        this.formDialog = false;
+    }
+
+    save() {
+        this.api.post('api/trainer-students', {
+            "user_id": this.trainer.id,
+            "teammates": this.trainer.teammates.map((obj) => obj.id),
+            "counter": this.trainer.teammates.length
+        }).subscribe( res => {
+           console.log('save res=', res);
+           if (res.success == true) {
+               this.hideDialog();
+           }
+        });
     }
 }

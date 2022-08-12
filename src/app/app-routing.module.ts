@@ -39,7 +39,6 @@ import {AppointmentListComponent} from "./components/appointment-list/appointmen
 import {RescheduleComponent} from "./components/reschedule/reschedule.component";
 import {UserListComponent} from "./components/user-list/user-list.component";
 import {TrainerStudentListComponent} from "./components/trainer-student-list/trainer-student-list.component";
-import {TrainerStudentFormComponent} from "./components/trainer-student-form/trainer-student-form.component";
 @NgModule({
     imports: [
         RouterModule.forRoot([
@@ -55,7 +54,6 @@ import {TrainerStudentFormComponent} from "./components/trainer-student-form/tra
                         {path: 'confirmation', component: PaymentConfirmationComponent, canActivate: [ AuthGuardService, AppointmentStepsGuardService ]}
                     ]},
                     {path: 'trainer-student-list', component: TrainerStudentListComponent, canActivate: [ AuthGuardService ]},
-                    {path: 'trainer-student-form/:id', component: TrainerStudentFormComponent, canActivate: [ AuthGuardService ]},
                     // {path: 'uikit/formlayout', component: FormLayoutComponent},
                     // {path: 'uikit/input', component: InputComponent},
                     // {path: 'uikit/floatlabel', component: FloatLabelComponent},
