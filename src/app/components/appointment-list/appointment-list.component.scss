@@ -22,3 +22,9 @@
         color: #23547b;
     }
 }
+:host ::ng-deep .row-spinner {
+    .p-progress-spinner {
+        width: 25px;
+        height: 25px;
+    }
+}

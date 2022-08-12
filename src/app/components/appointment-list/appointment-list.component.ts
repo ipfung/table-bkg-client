@@ -78,6 +78,7 @@ export class AppointmentListComponent implements OnInit {
                 this.confirmationService.confirm({
                     message: res['Check in now?'],
                     accept: () => {
+                        booking.loading = true;
                         this.appointmentService.punchIn(booking.id).subscribe(res => {
                             // console.log('checkin=', res);
                             if (res.success == true) {
@@ -90,6 +91,7 @@ export class AppointmentListComponent implements OnInit {
                                 });
                             }
                         });
+                        booking.loading = false;
                     }
                 });
             });
@@ -102,7 +104,7 @@ export class AppointmentListComponent implements OnInit {
      * @param appointment
      */
     isValidStatus(appointment) {
-        return (appointment.status == 'approved' || appointment.status == 'pending');
+        return appointment.loading !== true && (appointment.status == 'approved' || appointment.status == 'pending');
     }
 
     /**
@@ -131,6 +133,7 @@ export class AppointmentListComponent implements OnInit {
                 this.confirmationService.confirm({
                     message: res['Are you sure to cancel booking?'],
                     accept: () => {
+                        booking.loading = true;
                         this.appointmentService.cancel(booking.id).subscribe(res => {
                             // console.log('checkin=', res);
                             if (res.success == true) {
@@ -142,6 +145,7 @@ export class AppointmentListComponent implements OnInit {
                                     detail: res.error
                                 });
                             }
+                            booking.loading = false;
                         });
                     }
                 });

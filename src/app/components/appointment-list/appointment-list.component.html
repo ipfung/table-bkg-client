@@ -46,7 +46,7 @@
 <!--            </tr>-->
 <!--        </ng-template>-->
         <ng-template pTemplate="body" let-appointment let-rowIndex="rowIndex" let-expanded="expanded">
-            <tr>
+            <tr >
                 <td style="min-width:200px">
                     <span class="p-column-title">{{ 'Date & Time' | translate }}</span>
                     <span class="booking-badge bg-purple-50 text-purple-400">{{ appointmentService.formatDateTime(appointment.start_time) }} - {{ appointmentService.formatDateTime(appointment.end_time) }}</span>
@@ -70,6 +70,7 @@
                 <td style="min-width:120px">
                     <span class="p-column-title">{{ 'Status' | translate }}</span>
                     <span [class]="'booking-badge status-' + appointment.status">{{ appointment.status | translate }}</span>
+                    <p-progressSpinner *ngIf="appointment.loading === true" class="row-spinner ml-2"></p-progressSpinner>
                 </td>
                 <td style="min-width:120px">
                     <span class="p-column-title">{{ 'Punch In' | translate }}</span>
