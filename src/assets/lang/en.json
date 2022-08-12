@@ -47,5 +47,13 @@
     "User": "User",
     "Avatar": "Avatar",
     "Role": "Role",
+    "Trainer Student": "Trainer' Student",
+    "Trainer": "Trainer",
+    "Student": "Student",
+    "manager role": "Manager",
+    "internal_coach role": "Internal Trainer",
+    "external_coach role": "External Trainer",
+    "member role": "Member",
+    "user role": "User",
     "Error": "Error"
 }

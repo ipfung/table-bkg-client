@@ -1,0 +1,18 @@
+.role-badge {
+    border-radius: 2px;
+    padding: 0.25em 0.5rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .3px;
+    color: #ffffff;
+    &.role-manager {
+        background: var(--orange-500);
+    }
+    &.role-internal_coach {
+        background: var(--cyan-500);
+    }
+    &.role-external_coach {
+        background: var(--purple-500);
+    }
+}

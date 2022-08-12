@@ -49,5 +49,13 @@
     "User": "用户",
     "Avatar": "頭像",
     "Role": "角色",
+    "Trainer Student": "教練與學員",
+    "Trainer": "教練",
+    "Student": "學員",
+    "manager role": "經理",
+    "internal_coach role": "中心教練",
+    "external_coach role": "友好教練",
+    "member role": "中心學生",
+    "user role": "普通用户",
     "Error": "錯誤"
 }

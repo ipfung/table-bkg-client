@@ -9,3 +9,25 @@
 @import "assets/sass/layout/_variables";
 @import "assets/sass/layout/_layout";
 @import "assets/sass/overrides/_overrides";
+
+
+.user-badge {
+    border-radius: 2px;
+    padding: 0.25em 0.5rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .3px;
+    &.status-banned {
+        background: #FFCDD2;
+        color: #c63737;
+    }
+    &.status-suspended {
+        background: #FEEDAF;
+        color: #8a5340;
+    }
+    &.status-active {
+        background: #C8E6C9;
+        color: #256029;
+    }
+}

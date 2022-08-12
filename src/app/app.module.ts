@@ -156,6 +156,8 @@ import {AuthInterceptor} from "./interceptors/auth-interceptor";
 import { AppointmentListComponent } from './components/appointment-list/appointment-list.component';
 import { RescheduleComponent } from './components/reschedule/reschedule.component';
 import { UserListComponent } from './components/user-list/user-list.component';
+import { TrainerStudentListComponent } from './components/trainer-student-list/trainer-student-list.component';
+import { TrainerStudentFormComponent } from './components/trainer-student-form/trainer-student-form.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/lang/', '.json');
