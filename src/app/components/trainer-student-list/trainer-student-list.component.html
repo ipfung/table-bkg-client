@@ -8,6 +8,7 @@
                 <th style="min-width:130px" pSortableColumn="role">{{ 'Role' | translate }} <p-sortIcon field="role"></p-sortIcon></th>
                 <th style="min-width:80px">{{ 'Avatar' | translate }}</th>
                 <th style="min-width:150px" pSortableColumn="email">{{ 'Email' | translate }} <p-sortIcon field="email"></p-sortIcon></th>
+                <th style="min-width:90px" pSortableColumn="status">{{ 'Reviews' | translate }} <p-sortIcon field="status"></p-sortIcon></th>
                 <th style="min-width:80px" pSortableColumn="status">{{ 'Status' | translate }} <p-sortIcon field="status"></p-sortIcon></th>
                 <th style="width: 1rem"></th>
             </tr>
@@ -26,6 +27,9 @@
                 </td>
                 <td>
                     {{ user.email }}
+                </td>
+                <td>
+                    <p-rating [ngModel]="user.rating" [readonly]="true" [cancel]="false"></p-rating>
                 </td>
                 <td>
                     <span [class]="'user-badge status-' + user.status">{{ user.status | translate }}</span>
