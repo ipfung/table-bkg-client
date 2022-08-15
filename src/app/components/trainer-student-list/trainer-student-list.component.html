@@ -24,7 +24,7 @@
                     <span [class]="'role-badge role-' + user.role.name">{{ user.role.name + " role" | translate }}</span>
                 </td>
                 <td>
-                    <p-avatar [image]="getAvatar(user)" shape="circle" [style]="{'background-color': '#266cda', 'color': '#fff', 'margin-left': '5px'}"></p-avatar>
+                    <p-avatar [image]="lemonade.getAvatar(user)" shape="circle" [style]="{'background-color': '#266cda', 'color': '#fff', 'margin-left': '5px'}"></p-avatar>
                 </td>
                 <td>
                     {{ user.teammates.length }}
@@ -60,7 +60,7 @@
                                 <tr>
                                     <td>{{teammate.name}}</td>
                                     <td>
-                                        <p-avatar [image]="getAvatar(teammate)" shape="circle"></p-avatar>
+                                        <p-avatar [image]="lemonade.getAvatar(teammate)" shape="circle"></p-avatar>
                                     </td>
                                     <td>
                                         {{ teammate.email }}
@@ -85,7 +85,7 @@
 
 <p-dialog [(visible)]="formDialog" [style]="{width:'50em', height: '100vh'}" header="{{ formHeader | translate }}" position="right" [modal]="true" class="p-fluid">
     <ng-template pTemplate="content">
-        <img [src]="getAvatar(trainer)" [alt]="trainer.name" width="100" class="mt-0 mx-auto mb-2 block" *ngIf="trainer.avatar">
+        <img [src]="lemonade.getAvatar(trainer)" [alt]="trainer.name" width="100" class="mt-0 mx-auto mb-2 block" *ngIf="trainer.avatar">
         <div class="text-center mb-5">
             <h3>{{ trainer.name }}</h3>
         </div>
@@ -95,7 +95,7 @@
                 <ng-template let-student pTemplate="item">
                     <div class="student-item">
                         <div class="image-container">
-                            <img [src]="getAvatar(student)" [alt]="student.name" class="student-image" />
+                            <img [src]="lemonade.getAvatar(student)" [alt]="student.name" class="student-image" />
                         </div>
                         <div class="student-list-detail">
                             <h5 class="mb-2">{{student.name}}</h5>

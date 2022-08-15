@@ -7,6 +7,7 @@ import {ApiService} from "./api.service";
 import {TranslateService} from "@ngx-translate/core";
 import { enUS, zhHK } from 'date-fns/locale'
 import {addDays} from "date-fns";
+import {Lemonade} from "./lemonade.service";
 
 @Injectable()
 export class AppointmentService {
@@ -101,22 +102,20 @@ export class AppointmentService {
 
     paymentComplete$ = this.paymentComplete.asObservable();
 
-    constructor(public api: ApiService, private translateService: TranslateService) {
+    constructor(public api: ApiService, private translateService: TranslateService, private lemonade: Lemonade) {
         this.lang = this.translateService.getDefaultLang() === 'zh' ? zhHK : enUS;
         // init, copy from default data.
-        this.appointmentInformation = this.apply({}, this.defaultAppointment);
+        this.appointmentInformation = this.lemonade.apply({}, this.defaultAppointment);
     }
 
     formatPostDate(d) {
-        if (d)
-            return format(d, 'yyyy-MM-dd');
-        return '';
+        return this.lemonade.formatPostDate(d);
     }
 
     getBookings(date1, date2) {
         return this.api.get('api/booking', {
-            from_date: this.formatPostDate(date1),
-            to_date: this.formatPostDate(date2)
+            from_date: this.lemonade.formatPostDate(date1),
+            to_date: this.lemonade.formatPostDate(date2)
         });
     }
 
@@ -144,7 +143,7 @@ export class AppointmentService {
         sessionStorage.removeItem(AppointmentService.APPOINTMENT_EXPIRY_TIME);
         sessionStorage.removeItem(AppointmentService.APPOINTMENT_SESSION);
         // cleanup, copy from default data.
-        this.appointmentInformation = this.apply({}, this.defaultAppointment);
+        this.appointmentInformation = this.lemonade.apply({}, this.defaultAppointment);
     }
 
     isAppointmentValid() {
@@ -170,36 +169,6 @@ export class AppointmentService {
         this.appointmentInformation = appointmentInformation;
     }
 
-    isDefined(v){
-        return typeof v !== 'undefined';
-    }
-
-    /**
-     * this acts like Ext.apply().
-     * TODO move to util file if it exists.
-     * @param o
-     * @param c
-     */
-    apply(o, c) {
-        if (o && c && typeof c == 'object') {
-            for (var p in c) {
-                o[p] = c[p];
-            }
-        }
-        return o;
-    }
-
-    applyIf(o, c){
-        if(o){
-            for(var p in c){
-                if(!this.isDefined(o[p])){
-                    o[p] = c[p];
-                }
-            }
-        }
-        return o;
-    }
-
     getRescheduleTimeslots() {
         return this.api.get('api/appointment', {
             bookId: this.reschedule.bookId
@@ -214,7 +183,7 @@ export class AppointmentService {
 
     complete() {
         const paymentInfo = this.appointmentInformation.paymentInformation;
-        const data = this.apply({
+        const data = this.lemonade.apply({
             paymentMethod: paymentInfo.method,
             price: paymentInfo.price
         }, this.appointmentInformation.timeInformation);
@@ -223,7 +192,7 @@ export class AppointmentService {
             console.log('complete res=', res);
             if (res.success === true) {
                 this.clearUserSelection();
-                this.paymentComplete.next(this.apply({
+                this.paymentComplete.next(this.lemonade.apply({
                     success: true
                 }, this.appointmentInformation));
             } else {
@@ -233,12 +202,12 @@ export class AppointmentService {
     }
 
     saveReschedule() {
-        this.api.post('api/reschedule/' + this.reschedule.bookId, this.applyIf( {
-            date: this.formatPostDate(this.reschedule.date)
+        this.api.post('api/reschedule/' + this.reschedule.bookId, this.lemonade.applyIf( {
+            date: this.lemonade.formatPostDate(this.reschedule.date)
         }, this.reschedule)).subscribe( res => {
             console.log('reschedule res=', res);
             if (res.success === true) {
-                this.paymentComplete.next(this.apply({
+                this.paymentComplete.next(this.lemonade.apply({
                     success: true,
                     room: res.room
                 }, this.reschedule));

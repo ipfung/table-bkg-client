@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ApiService} from "../../service/api.service";
 import {Router} from "@angular/router";
 import {environment} from "../../../environments/environment";
+import {Lemonade} from "../../service/lemonade.service";
 
 @Component({
     selector: 'app-trainer-student-list',
@@ -19,7 +20,7 @@ export class TrainerStudentListComponent implements OnInit {
     availableStudents = [];
     formHeader = "Edit Student List";
 
-    constructor(private api: ApiService, private router: Router) {
+    constructor(private api: ApiService, private router: Router, public lemonade: Lemonade) {
     }
 
     ngOnInit(): void {
@@ -27,10 +28,6 @@ export class TrainerStudentListComponent implements OnInit {
             this.trainers = res.data;
             this.loading = false;
         });
-    }
-
-    getAvatar(user) {
-        return environment.url + 'storage/' + user.avatar;
     }
 
     edit(trainer) {
