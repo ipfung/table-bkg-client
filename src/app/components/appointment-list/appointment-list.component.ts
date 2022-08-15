@@ -12,7 +12,7 @@ import {TranslateService} from "@ngx-translate/core";
     styleUrls: ['./appointment-list.component.scss']
 })
 export class AppointmentListComponent implements OnInit {
-    loading: boolean;
+    loading = true;
 
     pageHeader = 'My Booking';
 

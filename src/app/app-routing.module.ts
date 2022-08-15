@@ -45,7 +45,7 @@ import {TrainerStudentListComponent} from "./components/trainer-student-list/tra
             {
                 path: '', component: AppMainComponent,
                 children: [
-                    {path: 'user-list', component: UserListComponent, canActivate: [ AuthGuardService ]},
+                    {path: 'partner-list', component: UserListComponent, canActivate: [ AuthGuardService ]},
                     {path: 'appointment', component: AppointmentStepsComponent, children:[
                         {path:'', redirectTo: 'time-range', pathMatch: 'full'},
                         {path: 'time-range', component: BookingTimeRangeComponent, canActivate: [ AuthGuardService ]},

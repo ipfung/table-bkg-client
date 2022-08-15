@@ -1,7 +1,5 @@
 <h4>{{ this.pageHeader | translate }}</h4>
 <div class="card">
-    <p-progressSpinner *ngIf="loading" class="page-loader"></p-progressSpinner>
-
     <!-- Search fields -->
     <div class="p-fluid grid">
         <div class="field col-12 md:col-6">
@@ -9,7 +7,7 @@
         </div>
     </div>
 
-    <p-table [value]="bookings" dataKey="id" sortField="appointment_date" sortMode="single" [scrollable]="true" rowGroupMode="subheader" groupRowsBy="appointment_date" responsiveLayout="scroll">
+    <p-table [value]="bookings" [loading]="loading" dataKey="id" sortField="appointment_date" sortMode="single" [scrollable]="true" rowGroupMode="subheader" groupRowsBy="appointment_date" responsiveLayout="scroll">
         <ng-template pTemplate="header">
             <tr>
                 <th style="min-width:200px">{{ 'Date & Time' | translate }}</th>
