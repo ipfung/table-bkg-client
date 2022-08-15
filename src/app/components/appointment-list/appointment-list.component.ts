@@ -14,6 +14,9 @@ import {TranslateService} from "@ngx-translate/core";
 export class AppointmentListComponent implements OnInit {
     loading: boolean;
 
+    pageHeader = 'My Booking';
+
+    showCustomer = false;
     bookings: any;
 
     customers: any[];
@@ -34,7 +37,9 @@ export class AppointmentListComponent implements OnInit {
         if (this.rangeDates.length == 2 && this.rangeDates[1]) {
             this.loading = true;
             this.appointmentService.getBookings(this.rangeDates[0], this.rangeDates[1]).subscribe(res => {
-                this.bookings = res;
+                this.bookings = res.data;
+                this.showCustomer = res.showCustomer;
+                this.pageHeader = this.showCustomer ? 'Appointment' : 'My Booking';
                 this.loading = false;
             });
         }

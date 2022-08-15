@@ -1,6 +1,6 @@
-<h4>{{ 'My Booking' | translate }}</h4>
+<h4>{{ this.pageHeader | translate }}</h4>
 <div class="card">
-    <p-progressSpinner *ngIf="loading" class="align-self-center justify-content-center align-items-center align-content-center"></p-progressSpinner>
+    <p-progressSpinner *ngIf="loading" class="page-loader"></p-progressSpinner>
 
     <!-- Search fields -->
     <div class="p-fluid grid">
@@ -13,6 +13,7 @@
         <ng-template pTemplate="header">
             <tr>
                 <th style="min-width:200px">{{ 'Date & Time' | translate }}</th>
+                <th *ngIf="showCustomer" style="min-width:200px">{{ 'Customer' | translate }}</th>
                 <th style="min-width:120px">{{ 'Table' | translate }}</th>
                 <th style="min-width:120px">{{ 'Duration' | translate }}</th>
                 <th style="min-width:120px">{{ 'Payment' | translate }}</th>
@@ -50,6 +51,10 @@
                 <td style="min-width:200px">
                     <span class="p-column-title">{{ 'Date & Time' | translate }}</span>
                     <span class="booking-badge bg-purple-50 text-purple-400">{{ appointmentService.formatDateTime(appointment.start_time) }} - {{ appointmentService.formatDateTime(appointment.end_time) }}</span>
+                </td>
+                <td *ngIf="showCustomer" style="min-width:200px">
+                    <span class="p-column-title">{{ 'Customer' | translate }}</span>
+                    {{ appointment.customer_name }}
                 </td>
                 <td style="min-width:120px">
                     <span class="p-column-title">{{ 'Table' | translate }}</span>
