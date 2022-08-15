@@ -69,5 +69,17 @@
     "user role": "User",
     "Payment Date": "Payment Date",
     "Settings": "Settings",
+    "Working Hours": "Working Hours",
+    "Edit Working Hours": "Edit Working Hours",
+    "Create Working Hours": "Create Working Hours",
+    "Monday": "Monday",
+    "Tuesday": "Tuesday",
+    "Wednesday": "Wednesday",
+    "Thursday": "Thursday",
+    "Friday": "Friday",
+    "Saturday": "Saturday",
+    "Sunday": "Sunday",
+    "Save": "Save",
+    "Cancel": "Cancel",
     "Error": "Error"
 }

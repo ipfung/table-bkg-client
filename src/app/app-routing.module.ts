@@ -41,6 +41,7 @@ import {UserListComponent} from "./components/user-list/user-list.component";
 import {TrainerStudentListComponent} from "./components/trainer-student-list/trainer-student-list.component";
 import {FinanceStatusComponent} from "./components/finance-status/finance-status.component";
 import {RoomListComponent} from "./components/room-list/room-list.component";
+import {TimeslotListComponent} from "./components/timeslot-list/timeslot-list.component";
 @NgModule({
     imports: [
         RouterModule.forRoot([
