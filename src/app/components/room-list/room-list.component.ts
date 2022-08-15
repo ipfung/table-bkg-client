@@ -28,10 +28,10 @@ export class RoomListComponent implements OnInit {
         this.loadData();
         this.statuses = [
             {
-                name: 'Active',
+                name: 'active',
                 code: 1001
             }, {
-                name: 'Suspend',
+                name: 'suspended',
                 code: 1002
             }
         ];
