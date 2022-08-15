@@ -18,8 +18,11 @@ export class AppTopBarComponent implements OnInit {
     constructor(public appMain: AppMainComponent, private authService: AuthService, private translateService: TranslateService) { }
 
     ngOnInit() {
-        this.translateService.get(['Edit Profile', 'Sign Out']).subscribe(res => {
+        this.translateService.get(['Edit Profile', 'Sign Out', 'Hi User']).subscribe(res => {
             this.userProFileItems = [{
+                label: res['Hi User'] + ' ' + this.authService.userName,
+                styleClass: 'menu-user-name p-disabled text-right'
+            }, {
                 label: res['Edit Profile'],
                 icon: 'pi pi-user-edit',
                 // routerLink: '/user-profile',
