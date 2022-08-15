@@ -32,6 +32,31 @@
     }
 }
 
+.role-badge {
+    border-radius: 2px;
+    padding: 0.25em 0.5rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .3px;
+    color: #ffffff;
+    &.role-manager {
+        background: var(--orange-500);
+    }
+    &.role-user {
+        background: var(--gray-500);
+    }
+    &.role-member {
+        background: var(--green-500);
+    }
+    &.role-internal_coach {
+        background: var(--cyan-500);
+    }
+    &.role-external_coach {
+        background: var(--purple-500);
+    }
+}
+
 .menu-user-name {
     font-weight: bold;
 }

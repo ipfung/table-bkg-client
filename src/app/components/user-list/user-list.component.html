@@ -42,7 +42,8 @@
                 </td>
                 <td style="min-width:120px">
                     <span class="p-column-title">{{ 'Role' | translate }}</span>
-                    {{ user.role.name + " role" | translate }}
+                    <span [class]="'role-badge role-' + user.role.name">{{ user.role.name + " role" | translate }}</span>
+
                 </td>
                 <td style="min-width:120px">
                     <span class="p-column-title">{{ 'Status' | translate }}</span>

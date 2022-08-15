@@ -17,6 +17,8 @@
     "Appointment": "預約",
     "Customer": "顧客",
     "Partner": "伙伴",
+    "active": "有效",
+    "banned": "禁止",
     "Appointment Summary": "預約摘要",
     "Change Payment Method": "更改付款方式",
     "Total": "總額",

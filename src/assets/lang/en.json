@@ -16,6 +16,8 @@
     "Appointment": "Appointment",
     "Customer": "Customer",
     "Partner": "Partner",
+    "active": "active",
+    "banned": "banned",
     "Appointment Summary": "Appointment Summary",
     "Change Payment Method": "Change Payment Method",
     "Total": "Total",
