@@ -11,6 +11,7 @@
     "Selected": "已選",
     "Change Duration": "更改時間長度",
     "Change Date & Time": "更改日期及時間",
+    "Room": "枱",
     "Table": "枱",
     "Payment Method": "付款方式",
     "Select payment method": "選擇付款方式",
@@ -35,6 +36,10 @@
     "pending": "待定",
     "rejected": "已拒絕",
     "canceled": "已取消",
+    "Payment Status": "付款情況",
+    "pending payment": "未付款",
+    "paid payment": "已付款",
+    "partially payment": "只付了一部份",
     "Punch In": "簽到",
     "Reschedule": "改期",
     "Check in now?": "現在簽到？",
@@ -63,6 +68,8 @@
     "internal_coach role": "中心教練",
     "external_coach role": "友好教練",
     "member role": "中心學生",
-    "user role": "普通用户",
+    "user role": "街客",
+    "Payment Date": "付款日期",
+    "Settings": "設定",
     "Error": "錯誤"
 }

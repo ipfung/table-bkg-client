@@ -101,4 +101,17 @@ export class Lemonade {
         return format(new Date(d.getFullYear(), d.getMonth(), d.getDate(), hours, minutes), "h:mm aa", {locale: this.lang});
     }
 
+    /**
+     * get the 'name' attribute from an array by 'code'.
+     * @param list the array
+     * @param code the code to be search.
+     */
+    comboRenderer(list, code) {
+        if (list.length > 0) {
+            let data = list.find(el => el.code == code);
+            return data.name;
+        }
+        return '';
+    }
+
 }

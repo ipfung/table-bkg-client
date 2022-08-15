@@ -1,0 +1,65 @@
+<div class="flex justify-content-between">
+    <div class="flex align-items-center justify-content-center p-2 border-round mr-1 text-4xl font-bold">
+        {{ 'Table' | translate }}
+    </div>
+    <div class="flex align-items-center justify-content-center p-2 border-round mr-1">
+        <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
+    </div>
+</div>
+<div class="card">
+
+    <p-table [value]="rooms" [loading]="loading" dataKey="id" sortField="name" sortMode="single"  responsiveLayout="stack">
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="min-width:120px">{{ 'Name' | translate }}</th>
+                <th style="min-width:150px">{{ 'Location' | translate }}</th>
+                <th style="min-width:120px">{{ 'Status' | translate }}</th>
+                <th style="min-width:20px"></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-room let-rowIndex="rowIndex">
+            <tr>
+                <td style="min-width:120px">
+                    <span class="p-column-title">{{ 'Name' | translate }}</span>
+                    {{ room.name }}
+                </td>
+                <td style="min-width:150px">
+                    <span class="p-column-title">{{ 'Location' | translate }}</span>
+                    {{ room.location.name }}
+                </td>
+                <td style="min-width:120px">
+                    <span class="p-column-title">{{ 'Status' | translate }}</span>
+                    <span [class]="'user-badge status-' + lemonade.comboRenderer(statuses, room.status).toLowerCase()">{{ lemonade.comboRenderer(statuses, room.status) | translate }}</span>
+                </td>
+                <td style="min-width:20px">
+                    <button pButton type="button" [disabled]="!canAmend(room)" pTooltip="{{ 'Edit' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-pencil" (click)="edit(room)"></button>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-dialog [(visible)]="formDialog" [style]="{width:'50em', height: '100vh'}" header="{{ formHeader | translate }}" position="right" [modal]="true" class="p-fluid">
+    <ng-template pTemplate="content">
+        <div class="field">
+            <label for="name">Name</label>
+            <input type="text" pInputText id="name" [(ngModel)]="room.name" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !room.name}"/>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !room.name">Name is required.</small>
+        </div>
+        <div class="field">
+            <label for="location">Location</label>
+            <p-dropdown id="location" [options]="locations" [(ngModel)]="room.location_id" optionLabel="name" optionValue="id"></p-dropdown>
+        </div>
+
+        <div class="field">
+            <label for="status">Status</label>
+            <p-dropdown id="status" [options]="statuses" optionLabel="name" optionValue="code" [(ngModel)]="room.status" placeholder="Select a Status"></p-dropdown>
+        </div>
+
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="save()"></button>
+    </ng-template>
+</p-dialog>
