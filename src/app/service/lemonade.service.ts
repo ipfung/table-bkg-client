@@ -23,27 +23,18 @@ export class Lemonade {
         return '';
     }
 
+    getAvatar(user) {
+        // or ref: https://via.placeholder.com/300.png/09f/fff
+        // return obj.name
+        //     .toUpperCase()
+        //     .split(' ')
+        //     .map(word => word[0])
+        //     .join('');
+        return environment.url + 'storage/' + user.avatar;
+    }
+
     isDefined(v){
         return typeof v !== 'undefined';
-    }
-
-    /**
-     * this acts like Ext.apply().
-     * TODO move to util file if it exists.
-     * @param o
-     * @param c
-     */
-    apply(o, c) {
-        if (o && c && typeof c == 'object') {
-            for (var p in c) {
-                o[p] = c[p];
-            }
-        }
-        return o;
-    }
-
-    getAvatar(user) {
-        return environment.url + 'storage/' + user.avatar;
     }
 
     applyIf(o, c){

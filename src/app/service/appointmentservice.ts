@@ -105,7 +105,7 @@ export class AppointmentService {
     constructor(public api: ApiService, private translateService: TranslateService, private lemonade: Lemonade) {
         this.lang = this.translateService.getDefaultLang() === 'zh' ? zhHK : enUS;
         // init, copy from default data.
-        this.appointmentInformation = this.lemonade.apply({}, this.defaultAppointment);
+        this.appointmentInformation = { ...this.defaultAppointment };
     }
 
     formatPostDate(d) {
@@ -143,7 +143,7 @@ export class AppointmentService {
         sessionStorage.removeItem(AppointmentService.APPOINTMENT_EXPIRY_TIME);
         sessionStorage.removeItem(AppointmentService.APPOINTMENT_SESSION);
         // cleanup, copy from default data.
-        this.appointmentInformation = this.lemonade.apply({}, this.defaultAppointment);
+        this.appointmentInformation = { ...this.defaultAppointment };
     }
 
     isAppointmentValid() {
@@ -183,18 +183,18 @@ export class AppointmentService {
 
     complete() {
         const paymentInfo = this.appointmentInformation.paymentInformation;
-        const data = this.lemonade.apply({
+        const data = {...{
             paymentMethod: paymentInfo.method,
             price: paymentInfo.price
-        }, this.appointmentInformation.timeInformation);
+        }, ...this.appointmentInformation.timeInformation};
         // submit to server.
         this.api.post('api/appointment', data).subscribe( res => {
             console.log('complete res=', res);
             if (res.success === true) {
                 this.clearUserSelection();
-                this.paymentComplete.next(this.lemonade.apply({
+                this.paymentComplete.next({...{
                     success: true
-                }, this.appointmentInformation));
+                }, ...this.appointmentInformation});
             } else {
                 this.paymentComplete.next(res);
             }
@@ -207,10 +207,10 @@ export class AppointmentService {
         }, this.reschedule)).subscribe( res => {
             console.log('reschedule res=', res);
             if (res.success === true) {
-                this.paymentComplete.next(this.lemonade.apply({
+                this.paymentComplete.next({...{
                     success: true,
                     room: res.room
-                }, this.reschedule));
+                }, ...this.reschedule});
             } else {
                 this.paymentComplete.next(res);
             }
