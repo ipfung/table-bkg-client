@@ -3,13 +3,13 @@
     <!-- Search fields -->
     <div class="p-fluid grid">
         <div class="field col-12 md:col-4">
-            <p-calendar [(ngModel)]="rangeDates" selectionMode="range" placeholder="{{ 'Payment Date' | translate }}" [readonlyInput]="true" inputId="range"></p-calendar>
+            <p-calendar [(ngModel)]="rangeDates" selectionMode="range" placeholder="{{ 'Payment Date' | translate }}" [readonlyInput]="true" inputId="range" (onSelect)="loadData($event)"></p-calendar>
         </div>
         <div class="field col-12 md:col-4">
             <p-dropdown [options]="customers" [(ngModel)]="searchCustomer" placeholder="{{ 'Customer' | translate }}" optionLabel="name" [showClear]="true"></p-dropdown>
         </div>
         <div class="field col-12 md:col-4">
-            <p-dropdown [options]="paymentStatusList" [(ngModel)]="searchPaymentStatus" placeholder="{{ 'Payment Status' | translate }}" optionLabel="name" [showClear]="true">
+            <p-dropdown [options]="paymentStatusList" [(ngModel)]="searchPaymentStatus" placeholder="{{ 'Payment Status' | translate }}" optionLabel="name" optionValue="code" [showClear]="true" (onChange)="loadData($event)">
                 <ng-template let-pay pTemplate="item">
                     <div class="payment-item">
                         <div [style]="{color: pay.color, 'font-weight': 'bold'}">{{pay.name}}</div>
@@ -23,7 +23,7 @@
         <ng-template pTemplate="header">
             <tr>
                 <th style="min-width:200px">{{ 'Order Date' | translate }}</th>
-                <th style="min-width:120px">{{ 'Customer' | translate }}</th>
+                <th *ngIf="showCustomer" style="min-width:120px">{{ 'Customer' | translate }}</th>
                 <th style="min-width:120px">{{ 'Table' | translate }}</th>
                 <th style="min-width:120px">{{ 'Service' | translate }}</th>
                 <th style="min-width:200px">{{ 'Payment Status' | translate }}</th>
@@ -43,7 +43,7 @@
                     <span class="p-column-title">{{ 'Order Date' | translate }}</span>
                     {{ lemonade.formatDate(payment.order_date) }}
                 </td>
-                <td style="min-width:120px">
+                <td *ngIf="showCustomer" style="min-width:120px">
                     <span class="p-column-title">{{ 'Customer' | translate }}</span>
                     <div>
                         {{ payment.customer.name }}<br />
@@ -130,7 +130,7 @@
     </ng-template>
 
     <ng-template pTemplate="footer">
-        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
-        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="save()"></button>
+        <button pButton pRipple label="{{ 'Cancel' | translate }}" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="{{ 'Save' | translate }}" icon="pi pi-check" class="p-button-text" (click)="save()"></button>
     </ng-template>
 </p-dialog>

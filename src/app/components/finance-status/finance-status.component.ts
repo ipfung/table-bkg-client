@@ -14,6 +14,7 @@ export class FinanceStatusComponent implements OnInit {
     loading = true;
 
     bookings: any;
+    showCustomer = false;
 
     // search fields
     rangeDates: Date[];
@@ -32,8 +33,9 @@ export class FinanceStatusComponent implements OnInit {
     ngOnInit(): void {
         this.rangeDates = [subDays(new Date(), 7), addDays(new Date(), 7)];
         // this.loadData();
-        this.translateService.get(['pending payment', 'paid payment', 'partially payment']).subscribe( res => {
+        this.translateService.get(['All', 'pending payment', 'paid payment', 'partially payment']).subscribe( res => {
             this.paymentStatusList = [
+                {name: res['All'], code: '', color: ''},
                 {name: res['pending payment'], code: 'pending', color: '#c63737'},
                 {name: res['paid payment'], code: 'paid', color: '#8a5340'},
                 {name: res['partially payment'], code: 'partially', color: '#256029'},
@@ -49,9 +51,11 @@ console.log('finance loaddata event===', event);
                 size: event.rows,
                 // passing from_date 'Unsupported operand types' error.
                 from_date: this.lemonade.formatPostDate(this.rangeDates[0]),
-                to_date: this.lemonade.formatPostDate(this.rangeDates[1])
+                to_date: this.lemonade.formatPostDate(this.rangeDates[1]),
+                payment_status: this.searchPaymentStatus
             }).subscribe(res => {
                 this.bookings = res.data;
+                this.showCustomer = res.showCustomer;
                 this.loading = false;
             });
         }
