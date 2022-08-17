@@ -66,20 +66,32 @@ console.log('finance loaddata event===', event);
         this.formDialog = true;
     }
 
+    paymentReminder(payment) {
+        // need confirm send?
+        this.api.update('api/payment-reminder/' + payment.id, {
+        }).subscribe( res => {
+            console.log('paymentReminder res=', res);
+            if (res.success == true) {
+                payment.reminder = 1;
+            }
+        });
+    }
+
     hideDialog() {
         this.formDialog = false;
     }
 
     save() {
-        this.api.update('api/payment', {
-            "id": this.payment.id,
-            "amount": this.payment.amount,
-            "status": this.payment.status
-        }).subscribe( res => {
-            console.log('save res=', res);
-            if (res.success == true) {
-                this.hideDialog();
-            }
-        });
+        alert("Not ready.");
+        // this.api.update('api/payment', {
+        //     "id": this.payment.id,
+        //     "amount": this.payment.amount,
+        //     "status": this.payment.status
+        // }).subscribe( res => {
+        //     console.log('save res=', res);
+        //     if (res.success == true) {
+        //         this.hideDialog();
+        //     }
+        // });
     }
 }
