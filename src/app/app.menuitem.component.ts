@@ -16,7 +16,7 @@ import { AppMainComponent } from './app.main.component';
 			   *ngIf="(!item.routerLink || item.items) && item.visible !== false"
 			   [attr.target]="item.target" [attr.tabindex]="0" [attr.aria-label]="item.label" role="menuitem" pRipple>
 				<i [ngClass]="item.icon" class="layout-menuitem-icon"></i>
-				<span>{{item.label}}</span>
+				<span>{{item.label | translate}}</span>
 				<span class="menuitem-badge" *ngIf="item.badge">{{item.badge}}</span>
 				<i class="pi pi-fw {{active ? 'pi-angle-up' : 'pi-angle-down'}} ml-auto" *ngIf="item.items"></i>
 			</a>
@@ -24,7 +24,7 @@ import { AppMainComponent } from './app.main.component';
 			   [routerLink]="item.routerLink" routerLinkActive="active-menuitem-routerlink router-link-exact-active"
 			   [routerLinkActiveOptions]="{exact: !item.preventExact}" [attr.target]="item.target" [attr.tabindex]="0" [attr.aria-label]="item.label" role="menuitem" pRipple>
 				<i [ngClass]="item.icon" class="layout-menuitem-icon"></i>
-				<span>{{item.label}}</span>
+				<span>{{item.label | translate}}</span>
 				<span class="p-tag p-badge ml-auto" *ngIf="item.badge">{{item.badge}}</span>
 				<i class="pi pi-fw {{active ? 'pi-angle-up' : 'pi-angle-down'}} ml-auto" *ngIf="item.items"></i>
 			</a>
