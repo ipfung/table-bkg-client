@@ -7,7 +7,7 @@
         {{ 'Choose your date & time' | translate }}
     </ng-template>
     <ng-template pTemplate="content">
-        <p-tabView *ngIf="timeSlots" [scrollable]="multipleYear">
+        <p-tabView class="appointment-picker" *ngIf="timeSlots" [scrollable]="multipleYear">
             <p-tabPanel [header]="appointmentService.formatDate(item.date, true)" *ngFor="let item of timeSlots; let i = index" [selected]="i == 0">
                 <p-button *ngFor="let timeslot of item.freeslots" [styleClass]="getBtnCls(timeslot, item.date)" (click)="selectTime(timeslot, item.date)">
                     <ng-template pTemplate="content">

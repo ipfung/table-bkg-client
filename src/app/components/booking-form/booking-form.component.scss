@@ -1,3 +1,10 @@
+:host ::ng-deep .appointment-picker {
+    .p-tabview-panels {
+        // narrow left-right padding from default value.
+        padding: 1.25rem 0 !important;
+    }
+}
+
 :host ::ng-deep .myWid70 {
     table td {
         padding: 0.1rem; // use as per your requirement. ref: https://stackoverflow.com/questions/54821153/how-to-change-the-primeng-calendar-height
