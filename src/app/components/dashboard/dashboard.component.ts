@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { MenuItem } from 'primeng/api';
-import { Product } from '../../api/product';
 import { ProductService } from '../../service/productservice';
 import { Subscription } from 'rxjs';
 import { ConfigService } from '../../service/app.config.service';
 import { AppConfig } from '../../api/appconfig';
- 
+import {ApiService} from "../../service/api.service";
+import {TranslateService} from "@ngx-translate/core";
+import {Lemonade} from "../../service/lemonade.service";
+
 @Component({
     templateUrl: './dashboard.component.html',
 })
@@ -13,7 +15,19 @@ export class DashboardComponent implements OnInit {
 
     items: MenuItem[];
 
-    products: Product[];
+    appointments: [];
+
+    data = {
+        totalBooking: 0,
+        totalFutureBooking: 0,
+        totalSales: 0,
+        totalUnpaid: 0,
+        showCustomerCount: false,
+        percentLoad: 0,
+        showUnknown: false,
+        showUpcomingAppointments: false,
+        showNotifications: false
+    };
 
     chartData: any;
 
@@ -23,7 +37,10 @@ export class DashboardComponent implements OnInit {
 
     config: AppConfig;
 
-    constructor(private productService: ProductService, public configService: ConfigService) {}
+    notifications = [];
+    noOfNotifications = 5;
+
+    constructor(private productService: ProductService, public configService: ConfigService, private api: ApiService, private lemonade: Lemonade, private translateService: TranslateService) {}
 
     ngOnInit() {
         this.config = this.configService.config;
@@ -31,34 +48,51 @@ export class DashboardComponent implements OnInit {
             this.config = config;
             this.updateChartOptions();
         });
-        this.productService.getProductsSmall().then(data => this.products = data);
-          
+
         this.items = [
             {label: 'Add New', icon: 'pi pi-fw pi-plus'},
             {label: 'Remove', icon: 'pi pi-fw pi-minus'}
         ];
 
-        this.chartData = {
-            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-            datasets: [
-                {
-                    label: 'First Dataset',
-                    data: [65, 59, 80, 81, 56, 55, 40],
-                    fill: false,
-                    backgroundColor: '#2f4860',
-                    borderColor: '#2f4860',
-                    tension: .4
-                },
-                {
-                    label: 'Second Dataset',
-                    data: [28, 48, 40, 19, 86, 27, 90],
-                    fill: false,
-                    backgroundColor: '#00bb7e',
-                    borderColor: '#00bb7e',
-                    tension: .4
-                }
-            ]
-        };
+        //lemonade.
+        this.api.get('api/notifications', {
+            limit: this.noOfNotifications
+        }).subscribe( res => {
+            this.notifications = res.data;
+        });
+        this.api.get('api/dashboard').subscribe( res => {
+            console.log('dashboard===', res);
+            this.data = res;
+
+            if (res.showUpcomingAppointments) {
+                this.appointments = res.appointments;
+            }
+            if (res.showSalesChart) {
+                this.translateService.get(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun', 'This Week', 'Last Week']).subscribe( str => {
+                    this.chartData = {
+                        labels: [str['Mon'], str['Tue'], str['Wed'], str['Thu'], str['Fri'], str['Sat'], str['Sun']],
+                        datasets: [
+                            {
+                                label: str['Last Week'],
+                                data: res.lastWeekSales,
+                                fill: false,
+                                backgroundColor: '#2f4860',
+                                borderColor: '#2f4860',
+                                tension: .4
+                            },
+                            {
+                                label: str['This Week'],
+                                data: res.currentWeekSales,
+                                fill: false,
+                                backgroundColor: '#00bb7e',
+                                borderColor: '#00bb7e',
+                                tension: .4
+                            }
+                        ]
+                    };
+                });
+            }
+        });
     }
 
     updateChartOptions() {

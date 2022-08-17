@@ -48,6 +48,7 @@ import {TimeslotListComponent} from "./components/timeslot-list/timeslot-list.co
             {
                 path: '', component: AppMainComponent,
                 children: [
+                    {path: '', component: DashboardComponent, canActivate: [ AuthGuardService ]},
                     {path: 'partner-list', component: UserListComponent, canActivate: [ AuthGuardService ]},
                     {path: 'appointment', component: AppointmentStepsComponent, children:[
                         {path:'', redirectTo: 'time-range', pathMatch: 'full'},
@@ -59,6 +60,7 @@ import {TimeslotListComponent} from "./components/timeslot-list/timeslot-list.co
                     {path: 'trainer-student-list', component: TrainerStudentListComponent, canActivate: [ AuthGuardService ]},
                     {path: 'finance', component: FinanceStatusComponent, canActivate: [ AuthGuardService ]},
                     {path: 'settings/table-list', component: RoomListComponent, canActivate: [ AuthGuardService ]},
+                    {path: 'settings/working-hours-list', component: TimeslotListComponent, canActivate: [ AuthGuardService ]},
                     // {path: 'uikit/formlayout', component: FormLayoutComponent},
                     // {path: 'uikit/input', component: InputComponent},
                     // {path: 'uikit/floatlabel', component: FloatLabelComponent},
