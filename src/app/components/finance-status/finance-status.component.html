@@ -5,7 +5,7 @@
         <div class="field col-12 md:col-4">
             <p-calendar [(ngModel)]="rangeDates" selectionMode="range" placeholder="{{ 'Payment Date' | translate }}" [readonlyInput]="true" inputId="range" (onSelect)="loadData($event)"></p-calendar>
         </div>
-        <div class="field col-12 md:col-4">
+        <div *ngIf="showCustomer" class="field col-12 md:col-4">
             <p-dropdown [options]="customers" [(ngModel)]="searchCustomer" placeholder="{{ 'Customer' | translate }}" optionLabel="name" [showClear]="true"></p-dropdown>
         </div>
         <div class="field col-12 md:col-4">
