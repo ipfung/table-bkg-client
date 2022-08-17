@@ -4,6 +4,7 @@ import {AppointmentService} from "../../service/appointmentservice";
 import {addDays, intervalToDuration, isWithinInterval, subHours} from "date-fns";
 import {ConfirmationService, MessageService} from "primeng/api";
 import {TranslateService} from "@ngx-translate/core";
+import {Lemonade} from "../../service/lemonade.service";
 
 @Component({
     selector: 'app-appointment-list',
@@ -24,7 +25,7 @@ export class AppointmentListComponent implements OnInit {
     // search fields
     rangeDates: Date[];
 
-    constructor(public appointmentService: AppointmentService, private router: Router, private confirmationService: ConfirmationService, private messageService: MessageService, private translateService: TranslateService) {
+    constructor(public appointmentService: AppointmentService, private router: Router, private confirmationService: ConfirmationService, private messageService: MessageService, private translateService: TranslateService, private lemonade: Lemonade) {
     }
 
     ngOnInit(): void {
@@ -55,11 +56,7 @@ export class AppointmentListComponent implements OnInit {
     }
 
     duration(appointment) {
-        const duration = intervalToDuration({
-            start: new Date(appointment.start_time),
-            end: new Date(appointment.end_time)
-        });
-        return duration.hours + 'h ' + (duration.minutes > 0 ? duration.minutes + 'min' : '');
+        return this.lemonade.duration(appointment.start_time, appointment.end_time);
     }
 
     isPaid(appointment) {
