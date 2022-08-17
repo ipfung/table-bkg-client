@@ -1,20 +1,23 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
 import format from "date-fns/format";
-import {AuthService} from "./auth.service";
-import {ActivatedRouteSnapshot, CanActivate, Router} from '@angular/router';
-import {ApiService} from "./api.service";
 import {TranslateService} from "@ngx-translate/core";
 import { enUS, zhHK } from 'date-fns/locale'
-import {addDays} from "date-fns";
+import {addDays, intervalToDuration} from "date-fns";
 import {environment} from "../../environments/environment";
 
 @Injectable()
 export class Lemonade {
     lang: any;
+    timeFormat = 'h:mm aa';
 
     constructor(private translateService: TranslateService) {
-        this.lang = this.translateService.getDefaultLang() === 'zh' ? zhHK : enUS;
+        if (this.translateService.getDefaultLang() === 'zh') {
+            this.lang = zhHK;
+            this.timeFormat = 'aa h:mm';
+        } else {
+            this.lang = enUS;
+            this.timeFormat = 'h:mm aa';
+        }
     }
 
     formatPostDate(d) {
@@ -69,7 +72,7 @@ export class Lemonade {
 
     formatDateTime(datetime: string) {
         if (datetime)
-            return format(new Date(datetime), 'h:mm aa', {locale: this.lang});
+            return format(new Date(datetime), this.timeFormat, {locale: this.lang});
         return '';
     }
 
@@ -86,10 +89,25 @@ export class Lemonade {
         t = t - (minutes * 60);
         if (date) {
             const d = addDays(new Date(date), days);
-            return format(new Date(d.getFullYear(), d.getMonth(), d.getDate(), hours, minutes), "EEE d/M - h:mm aa", {locale: this.lang});
+            return this.formatFullDateTime(new Date(d.getFullYear(), d.getMonth(), d.getDate(), hours, minutes));
         }
         const d = new Date();   // give it a fake date for below formatting.
-        return format(new Date(d.getFullYear(), d.getMonth(), d.getDate(), hours, minutes), "h:mm aa", {locale: this.lang});
+        return format(new Date(d.getFullYear(), d.getMonth(), d.getDate(), hours, minutes), this.timeFormat, {locale: this.lang});
+    }
+
+    formatFullDateTime(d, convertMe?: boolean) {
+        if (convertMe) {
+            d = new Date(d);
+        }
+        return format(d, "EEE d/M " + this.timeFormat, {locale: this.lang});
+    }
+
+    duration(start_time, end_time) {
+        const duration = intervalToDuration({
+            start: new Date(start_time),
+            end: new Date(end_time)
+        });
+        return duration.hours + 'h ' + (duration.minutes > 0 ? duration.minutes + 'min' : '');
     }
 
     /**

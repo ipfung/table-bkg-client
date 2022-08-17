@@ -222,19 +222,11 @@ export class AppointmentService {
     }
 
     formatDate(date, showWeekNo?: boolean) {
-        if (date) {
-            if (showWeekNo) {
-                return format(new Date(date), "EEE d/M", {locale: this.lang});
-            }
-            return format(new Date(date), "d/M", {locale: this.lang});
-        }
-        return '';
+        return this.lemonade.formatDate(date, showWeekNo);
     }
 
     formatDateTime(datetime: string) {
-        if (datetime)
-            return format(new Date(datetime), 'h:mm aa', {locale: this.lang});
-        return '';
+        return this.lemonade.formatDateTime(datetime);
     }
 
     /**
@@ -242,18 +234,7 @@ export class AppointmentService {
      * @param t
      */
     formatTime(t: number, date?) {
-        const days = parseInt(String(t / 86400), 10);
-        t = t - (days * 86400);
-        const hours = parseInt(String(t / 3600), 10);
-        t = t - (hours * 3600);
-        const minutes = parseInt(String(t / 60), 10);
-        t = t - (minutes * 60);
-        if (date) {
-            const d = addDays(new Date(date), days);
-            return format(new Date(d.getFullYear(), d.getMonth(), d.getDate(), hours, minutes), "EEE d/M - h:mm aa", {locale: this.lang});
-        }
-        const d = new Date();   // give it a fake date for below formatting.
-        return format(new Date(d.getFullYear(), d.getMonth(), d.getDate(), hours, minutes), "h:mm aa", {locale: this.lang});
+        return this.lemonade.formatTime(t, date);
     }
 
     getBookedDateTime(date, timeEpoch, sessionInterval, noOfSession) {
