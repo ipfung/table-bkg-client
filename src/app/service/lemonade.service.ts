@@ -26,13 +26,16 @@ export class Lemonade {
         return '';
     }
 
-    getAvatar(user) {
+    getInitial(name) {
         // or ref: https://via.placeholder.com/300.png/09f/fff
-        // return obj.name
-        //     .toUpperCase()
-        //     .split(' ')
-        //     .map(word => word[0])
-        //     .join('');
+        return name
+            .toUpperCase()
+            .split(' ')
+            .map(word => word[0])
+            .join('');
+    }
+
+    getAvatar(user) {
         return environment.url + 'storage/' + user.avatar;
     }
 

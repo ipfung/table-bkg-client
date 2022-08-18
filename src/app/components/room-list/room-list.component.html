@@ -2,7 +2,7 @@
     <div class="flex align-items-center justify-content-center p-2 border-round mr-1 text-2xl font-bold">
         {{ 'Table' | translate }}
     </div>
-    <div class="flex align-items-center justify-content-center p-2 border-round mr-1">
+    <div class="flex align-items-center justify-content-center py-2 border-round">
         <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
     </div>
 </div>
@@ -22,6 +22,7 @@
                 <td style="min-width:200px">
                     <span class="p-column-title">{{ 'Name' | translate }}</span>
                     <div>
+                        <p-avatar [label]="lemonade.getInitial(room.name)" shape="circle" [style]="{'background-color': room.color, 'color': '#fff'}"></p-avatar>
                         {{ room.name }}
                         <span class="vertical-align-super text-xs user-badge status-{{ room.appointment_id > 0 ? 'banned' : 'active' }}"><i class="pi pi-circle text-xs pt-2 {{ room.appointment_id > 0 ? 'text-pink-500' : 'text-green-500' }}"></i> {{ room.appointment_id > 0 ? 'Occupied' : 'Free' }}</span>
                     </div>

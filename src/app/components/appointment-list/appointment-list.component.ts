@@ -46,15 +46,6 @@ export class AppointmentListComponent implements OnInit {
         }
     }
 
-    getInitial(name) {
-        // or ref: https://via.placeholder.com/300.png/09f/fff
-        return name
-            .toUpperCase()
-            .split(' ')
-            .map(word => word[0])
-            .join('');
-    }
-
     duration(appointment) {
         return this.lemonade.duration(appointment.start_time, appointment.end_time);
     }
