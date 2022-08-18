@@ -1,4 +1,5 @@
 export const environment = {
-  production: true,
-    url: 'https://victory-voyager.lemonade.hk/'
+    production: true,
+    version: 'p',
+    url: 'https://apt-admin.lemonade.hk/'
 };
