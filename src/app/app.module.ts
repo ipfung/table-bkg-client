@@ -315,6 +315,7 @@ export function createTranslateLoader(http: HttpClient) {
         BookingTimeRangeComponent,
         AppointmentListComponent,
         RescheduleComponent,
+        UserProfileComponent,
         UserListComponent,
         NotificationsListComponent,
         TrainerStudentListComponent,
