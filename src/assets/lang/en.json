@@ -1,5 +1,6 @@
 {
     "Hi User": "Hi, ",
+    "Logout": "Logout",
     "New Booking": "New Booking",
     "Duration": "Duration",
     "hour Hours": "{{hour}} Hour{{s}}",

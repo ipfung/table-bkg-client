@@ -25,10 +25,13 @@
 <!--            <i class="pi pi-cog"></i>-->
 <!--            <span>Settings</span>-->
 <!--        </a>-->
-        <a (click)="usermenu.toggle($event)" class="p-link layout-topbar-button">
-            <i class="pi pi-user"></i>
-            <span>{{ 'Profile' | translate }}</span>
+        <a href="#/user-profile" class="p-link layout-topbar-button">
+            <i class="pi pi-user-edit"></i>
+            <span>{{ authService.userName }}, {{ 'Profile' | translate }}</span>
+        </a>
+        <a (click)="logout()" class="p-link layout-topbar-button">
+            <i class="pi pi-sign-out"></i>
+            <span>{{ 'Logout' | translate }}</span>
         </a>
     </div>
-    <p-menu #usermenu [popup]="true" [model]="userProFileItems"></p-menu>
 </div>
