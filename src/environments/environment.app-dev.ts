@@ -4,10 +4,10 @@
 
 export const environment = {
     production: false,
-    version: 'dev',
-    theme: 'lara-dark-purple',
-    dark: true,
-    url: 'http://localhost:8001/'
+    version: 'app-beta',
+    theme: 'mdc-light-indigo',
+    dark: false,
+    url: 'http://192.168.0.23:8001/'
 };
 
 /*

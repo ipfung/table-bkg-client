@@ -3,11 +3,11 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-    production: false,
-    version: 'dev',
-    theme: 'lara-dark-purple',
+    production: true,
+    version: 'app-p',
+    theme: 'mdc-dark-indigo',
     dark: true,
-    url: 'http://localhost:8001/'
+    url: 'https://apt-admin.lemonade.hk/'
 };
 
 /*

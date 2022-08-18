@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { AppConfig } from '../api/appconfig';
+import {environment} from "../../environments/environment";
 
 @Injectable()
 export class ConfigService {
 
     config: AppConfig = {
-        theme: 'lara-light-indigo',
-        dark: false,
+        theme: environment.theme,
+        dark: environment.dark,
         inputStyle: 'outlined',
         ripple: true
     };
