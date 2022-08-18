@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ApiService} from "../../service/api.service";
 import {Router} from "@angular/router";
-import {environment} from "../../../environments/environment";
 import {Lemonade} from "../../service/lemonade.service";
 
 @Component({
@@ -12,8 +11,10 @@ import {Lemonade} from "../../service/lemonade.service";
 export class TrainerStudentListComponent implements OnInit {
     trainers = [];
     loading = true;
+    totalRecords = 0;
 
     // form variables.
+    editable = false;
     formDialog = false;
     submitted = false;
     trainer: any;
@@ -24,8 +25,12 @@ export class TrainerStudentListComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.api.get('api/trainer-students').subscribe( res => {
+        this.api.get('api/trainer-students', {
+            status: 'active'
+        }).subscribe( res => {
             this.trainers = res.data;
+            this.totalRecords = res.total;
+            this.editable = res.editable;
             this.loading = false;
         });
     }
@@ -41,8 +46,7 @@ export class TrainerStudentListComponent implements OnInit {
     }
 
     canAmend(trainer) {
-        // FIXME only manager could edit.
-        return true;
+        return this.editable;
     }
 
     hideDialog() {

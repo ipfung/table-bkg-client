@@ -1,4 +1,11 @@
-<h4>{{ 'Partner' | translate }}</h4>
+<div class="flex justify-content-between">
+    <div class="flex align-items-center justify-content-center p-2 border-round mr-1 text-2xl font-bold">
+        {{ 'Partner' | translate }}
+    </div>
+    <div class="flex align-items-center justify-content-center py-2 border-round">
+        <button *ngIf="editable" pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
+    </div>
+</div>
 <div class="card">
 <!--    &lt;!&ndash; Search fields &ndash;&gt;-->
 <!--    <div class="p-fluid grid">-->
@@ -52,6 +59,7 @@
                 <td style="min-width:20px">
                     <span class="p-column-title">{{ 'Actions' | translate }}</span>
                     <div>
+                        <button pButton type="button" [disabled]="!canAmend(user)" pTooltip="{{ 'Edit' | translate }}" tooltipPosition="bottom" class="p-0 p-button-text" icon="pi pi-pencil" (click)="edit(user)"></button>
                         <button pButton type="button" *ngIf="canBlock(user) && user.status == 'active'" pTooltip="{{ 'Blacklist' | translate }}" tooltipPosition="bottom" class="p-0 p-button-text p-button-danger" icon="pi pi-ban" (click)="blacklist(user, true)"></button>
                         <button pButton type="button" *ngIf="canBlock(user) && user.status == 'banned'" pTooltip="{{ 'Whitelist' | translate }}" tooltipPosition="bottom" class="p-0 p-button-text" icon="pi pi-check-circle" (click)="blacklist(user, false)"></button>
 <!--                    <button pButton type="button" *ngIf="!isPaid(appointment)" pTooltip="{{ 'Pay Now' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-credit-card" (click)="makePayment(appointment)"></button>-->
@@ -67,3 +75,55 @@
 
     </p-table>
 </div>
+
+<p-dialog [(visible)]="formDialog" [style]="{width:'50em', height: '100vh'}" header="{{ formHeader | translate }}" position="right" [modal]="true" class="p-fluid">
+    <ng-template pTemplate="content">
+        <div class="field">
+            <label for="name">{{ 'Name' | translate }}</label>
+            <input type="text" pInputText id="name" [(ngModel)]="partner.name" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !partner.name}"/>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !partner.name">Name is required.</small>
+        </div>
+
+        <div class="field">
+            <label for="email">{{ 'Email' | translate }}</label>
+            <input type="text" autocomplete="off" pInputText id="email" [(ngModel)]="partner.email" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !partner.email}"/>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !partner.email">Email is required.</small>
+        </div>
+
+        <div class="field">
+            <label for="pwd">{{ 'Password' | translate }}</label>
+            <input type="password" autocomplete="off" pPassword id="pwd" [required]="isNew" autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !partner.password}"/>
+            <small class="ng-dirty ng-invalid" *ngIf="isNew && submitted && !partner.password">Password is required.</small>
+        </div>
+
+        <div class="field">
+            <label for="role">{{ 'Role' | translate }}</label>
+            <p-dropdown id="role" [options]="roles" [(ngModel)]="partner.role_id" optionValue="id">
+                <ng-template pTemplate="selectedItem">
+                    {{ roleRenderer(partner.role_id) + " role" | translate }}
+                </ng-template>
+                <ng-template let-item pTemplate="item">
+                    {{ item.name + " role" | translate }}
+                </ng-template>
+            </p-dropdown>
+        </div>
+
+        <div class="field">
+            <label for="status">{{ 'Status' | translate }}</label>
+            <p-dropdown id="status" [options]="statuses" optionValue="code" [(ngModel)]="partner.status" placeholder="Select a Status">
+                <ng-template pTemplate="selectedItem">
+                    {{ lemonade.comboRenderer(statuses, partner.status) | translate }}
+                </ng-template>
+                <ng-template let-item pTemplate="item">
+                    {{ item.name | translate }}
+                </ng-template>
+            </p-dropdown>
+        </div>
+
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="{{ 'Cancel' | translate }}" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="{{ 'Save' | translate }}" icon="pi pi-check" class="p-button-text" (click)="save()"></button>
+    </ng-template>
+</p-dialog>
