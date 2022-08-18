@@ -68,7 +68,7 @@
                     </span>
                 </td>
                 <td style="min-width:20px">
-                    <button pButton type="button" pTooltip="{{ 'Details' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-pencil" (click)="edit(payment)"></button>
+                    <button pButton type="button" pTooltip="{{ 'Payment Info' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-pencil" (click)="edit(payment)"></button>
                     <button *ngIf="showCustomer" [disabled]="payment.reminder" pButton type="button" pTooltip="{{ 'Payment Reminder' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-envelope" (click)="paymentReminder(payment)"></button>
                 </td>
             </tr>
@@ -92,14 +92,14 @@
             <div class="col-6">{{ 'Order No.' | translate }}</div>
             <div class="col-6 font-bold">{{ payment.order_number }}</div>
 
-            <div class="col-6">{{ 'Type' | translate }}</div>
+            <div class="col-6">{{ 'Order Type' | translate }}</div>
             <div class="col-6 font-bold">{{ payment.order_type }}</div>
 
-            <div class="col-6">{{ 'Order Status' | translate }}</div>
+            <div class="col-6">{{ 'Status' | translate }}</div>
             <div class="col-6 font-bold">{{ payment.status }}</div>
         </div>
 
-        <p-divider><b>{{ 'Payment Record' | translate}}</b></p-divider>
+        <p-divider><b>{{ 'Payment' | translate}}</b></p-divider>
         <div class="grid text-right bg-gray-200">
             <div class="col-6">{{ 'Price' | translate }}</div>
             <div class="col-6 font-bold">{{ payment.order_total | currency:'HK$' }}</div>
