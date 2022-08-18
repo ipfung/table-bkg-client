@@ -1,0 +1,10 @@
+<h4>{{ 'Notifications' | translate }}</h4>
+<div *ngIf="notifications.length > 0; else notrecord">
+    <p-card [style]="{'margin-bottom': '2em'}" header="{{ msg.title }}" subheader="{{ lemonade.formatDate(msg.created_at, true) }}" *ngFor="let msg of notifications">
+        {{ msg.body }}
+    </p-card>
+</div>
+
+<ng-template #notrecord>
+    {{ 'No Notifications' | translate }}
+</ng-template >

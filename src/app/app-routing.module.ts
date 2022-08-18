@@ -40,6 +40,7 @@ import {RescheduleComponent} from "./components/reschedule/reschedule.component"
 import {UserListComponent} from "./components/user-list/user-list.component";
 import {TrainerStudentListComponent} from "./components/trainer-student-list/trainer-student-list.component";
 import {FinanceStatusComponent} from "./components/finance-status/finance-status.component";
+import {NotificationsListComponent} from "./components/notifications-list/notifications-list.component";
 import {RoomListComponent} from "./components/room-list/room-list.component";
 import {TimeslotListComponent} from "./components/timeslot-list/timeslot-list.component";
 @NgModule({
@@ -59,6 +60,7 @@ import {TimeslotListComponent} from "./components/timeslot-list/timeslot-list.co
                     ]},
                     {path: 'trainer-student-list', component: TrainerStudentListComponent, canActivate: [ AuthGuardService ]},
                     {path: 'finance', component: FinanceStatusComponent, canActivate: [ AuthGuardService ]},
+                    {path: 'notifications', component: NotificationsListComponent, canActivate: [ AuthGuardService ]},
                     {path: 'settings/table-list', component: RoomListComponent, canActivate: [ AuthGuardService ]},
                     {path: 'settings/working-hours-list', component: TimeslotListComponent, canActivate: [ AuthGuardService ]},
                     // {path: 'uikit/formlayout', component: FormLayoutComponent},

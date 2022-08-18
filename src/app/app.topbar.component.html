@@ -1,12 +1,12 @@
 <div class="layout-topbar">
-    <a class="layout-topbar-logo" routerLink="">
+    <a class="layout-topbar-logo" routerLink="/">
         <img src="assets/layout/images/{{appMain.config.dark ? 'logo-white' : 'logo-dark'}}.svg" alt="logo">
         <span>Lemonade</span>
     </a>
 
-<!--    <a class="p-link layout-menu-button layout-topbar-button" href="#" (click)="appMain.toggleMenu($event)">-->
-<!--        <i class="pi pi-bars"></i>-->
-<!--    </a>-->
+    <a class="p-link layout-menu-button layout-topbar-button" href="#" (click)="appMain.toggleMenu($event)">
+        <i class="pi pi-bars"></i>
+    </a>
 
     <a class="p-link layout-topbar-menu-button layout-topbar-button" href="#" (click)="appMain.toggleTopMenu($event)">
         <i class="pi pi-ellipsis-v"></i>
@@ -17,9 +17,9 @@
             <i class="pi pi-calendar"></i>
             <span>{{ 'New Booking' | translate }}</span>
         </a>
-        <a href="#/appointment-list" class="p-link layout-topbar-button">
-            <i class="pi pi-list"></i>
-            <span>{{ 'My Booking' | translate }}</span>
+        <a href="#/notifications" class="p-link layout-topbar-button">
+            <i class="pi pi-bell"></i>
+            <span>{{ 'Notifications' | translate }}</span>
         </a>
 <!--        <a href="#" class="p-link layout-topbar-button">-->
 <!--            <i class="pi pi-cog"></i>-->
