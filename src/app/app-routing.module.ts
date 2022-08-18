@@ -37,6 +37,7 @@ import {AuthGuardService} from "./service/auth.service";
 import {AppointmentStepsGuardService} from "./service/appointmentservice";
 import {AppointmentListComponent} from "./components/appointment-list/appointment-list.component";
 import {RescheduleComponent} from "./components/reschedule/reschedule.component";
+import {UserProfileComponent} from "./components/user-profile/user-profile.component";
 import {UserListComponent} from "./components/user-list/user-list.component";
 import {TrainerStudentListComponent} from "./components/trainer-student-list/trainer-student-list.component";
 import {FinanceStatusComponent} from "./components/finance-status/finance-status.component";
@@ -50,6 +51,7 @@ import {TimeslotListComponent} from "./components/timeslot-list/timeslot-list.co
                 path: '', component: AppMainComponent,
                 children: [
                     {path: '', component: DashboardComponent, canActivate: [ AuthGuardService ]},
+                    {path: 'user-profile', component: UserProfileComponent, canActivate: [ AuthGuardService ]},
                     {path: 'partner-list', component: UserListComponent, canActivate: [ AuthGuardService ]},
                     {path: 'appointment', component: AppointmentStepsComponent, children:[
                         {path:'', redirectTo: 'time-range', pathMatch: 'full'},

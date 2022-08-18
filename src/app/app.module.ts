@@ -156,6 +156,7 @@ import {Lemonade} from "./service/lemonade.service";
 import {AuthInterceptor} from "./interceptors/auth-interceptor";
 import { AppointmentListComponent } from './components/appointment-list/appointment-list.component';
 import { RescheduleComponent } from './components/reschedule/reschedule.component';
+import { UserProfileComponent } from './components/user-profile/user-profile.component';
 import { UserListComponent } from './components/user-list/user-list.component';
 import { NotificationsListComponent } from './components/notifications-list/notifications-list.component';
 import { TrainerStudentListComponent } from './components/trainer-student-list/trainer-student-list.component';
