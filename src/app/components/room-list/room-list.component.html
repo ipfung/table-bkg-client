@@ -35,7 +35,10 @@
                     {{ room.location.name }}
                 </td>
                 <td style="min-width:20px">
-                    <button pButton type="button" [disabled]="!canAmend(room)" pTooltip="{{ 'Edit' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-pencil" (click)="edit(room)"></button>
+                    <span class="p-column-title">{{ 'Actions' | translate }}</span>
+                    <div>
+                        <button pButton type="button" [disabled]="!canAmend(room)" pTooltip="{{ 'Edit' | translate }}" tooltipPosition="bottom" class="p-0 p-button-text" icon="pi pi-pencil" (click)="edit(room)"></button>
+                    </div>
                 </td>
             </tr>
         </ng-template>

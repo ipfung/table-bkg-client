@@ -50,9 +50,12 @@
                     <span [class]="'user-badge status-' + user.status">{{ user.status | translate }}</span>
                 </td>
                 <td style="min-width:20px">
-                    <button pButton type="button" *ngIf="canBlock(user) && user.status == 'active'" pTooltip="{{ 'Blacklist' | translate }}" tooltipPosition="bottom" class="p-button-text p-button-danger" icon="pi pi-ban" (click)="blacklist(user, true)"></button>
-                    <button pButton type="button" *ngIf="canBlock(user) && user.status == 'banned'" pTooltip="{{ 'Whitelist' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-check-circle" (click)="blacklist(user, false)"></button>
+                    <span class="p-column-title">{{ 'Actions' | translate }}</span>
+                    <div>
+                        <button pButton type="button" *ngIf="canBlock(user) && user.status == 'active'" pTooltip="{{ 'Blacklist' | translate }}" tooltipPosition="bottom" class="p-0 p-button-text p-button-danger" icon="pi pi-ban" (click)="blacklist(user, true)"></button>
+                        <button pButton type="button" *ngIf="canBlock(user) && user.status == 'banned'" pTooltip="{{ 'Whitelist' | translate }}" tooltipPosition="bottom" class="p-0 p-button-text" icon="pi pi-check-circle" (click)="blacklist(user, false)"></button>
 <!--                    <button pButton type="button" *ngIf="!isPaid(appointment)" pTooltip="{{ 'Pay Now' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-credit-card" (click)="makePayment(appointment)"></button>-->
+                    </div>
                 </td>
             </tr>
         </ng-template>

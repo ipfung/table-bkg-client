@@ -19,7 +19,7 @@
         </div>
     </div>
 
-    <p-table [value]="bookings" [lazy]="true" (onLazyLoad)="loadData($event)" [paginator]="true" [rows]="10" [loading]="loading" dataKey="id" sortField="order_date" sortMode="single" [scrollable]="true" responsiveLayout="stack">
+    <p-table [value]="bookings" [lazy]="true" (onLazyLoad)="loadData($event)" [paginator]="true" [rows]="10" [loading]="loading" dataKey="id" sortField="order_date" sortMode="single" responsiveLayout="stack">
         <ng-template pTemplate="header">
             <tr>
                 <th style="min-width:200px">{{ 'Order Date' | translate }}</th>
@@ -68,8 +68,11 @@
                     </span>
                 </td>
                 <td style="min-width:20px">
-                    <button pButton type="button" pTooltip="{{ 'Payment Info' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-pencil" (click)="edit(payment)"></button>
-                    <button *ngIf="showCustomer" [disabled]="payment.reminder" pButton type="button" pTooltip="{{ 'Payment Reminder' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-envelope" (click)="paymentReminder(payment)"></button>
+                    <span class="p-column-title">{{ 'Actions' | translate }}</span>
+                    <div>
+                        <button pButton type="button" pTooltip="{{ 'Payment Info' | translate }}" tooltipPosition="bottom" class="p-0 p-button-text" icon="pi pi-pencil" (click)="edit(payment)"></button>
+                        <button *ngIf="showCustomer" [disabled]="payment.reminder" pButton type="button" pTooltip="{{ 'Payment Reminder' | translate }}" tooltipPosition="bottom" class="p-0 p-button-text" icon="pi pi-envelope" (click)="paymentReminder(payment)"></button>
+                    </div>
                 </td>
             </tr>
         </ng-template>
@@ -129,8 +132,8 @@
             <div class="col-6 text-xl font-semibold">{{ payment.total_amount | currency:'HK$' }}</div>
         </div>
         <div class="grid mt-2">
-            <div class="col-8"></div>
-            <div class="col-4"><button *ngIf="showCustomer" [disabled]="payment.reminder" pButton type="button" label="{{ 'Payment Reminder' | translate }}" icon="pi pi-envelope" (click)="paymentReminder(payment)"></button></div>
+            <div class="col-4 md:col-8"></div>
+            <div class="col-8 md:col-4"><button *ngIf="showCustomer" [disabled]="payment.reminder" pButton type="button" label="{{ 'Payment Reminder' | translate }}" icon="pi pi-envelope" (click)="paymentReminder(payment)"></button></div>
         </div>
     </ng-template>
 
