@@ -9,6 +9,7 @@ export class AuthService {
     static readonly USER_NAME = 'lemonade-username';
     static readonly LOGIN_ID = 'lemonade-login';
     static readonly EMAIL = 'lemonade-email';
+    static readonly AVATAR = 'lemonade-avatar';
 
     private myRole: string;
 
@@ -30,6 +31,7 @@ export class AuthService {
                 this.loggedIn = true;
                 localStorage.setItem(AuthService.USER_NAME, res.name);
                 localStorage.setItem(AuthService.EMAIL, login);
+                localStorage.setItem(AuthService.AVATAR, res.avatar);
                 localStorage.setItem(AuthService.LOGIN_ID, login);   // should move inside remem.
                 if (remem) {
                     localStorage.setItem(AuthService.TOKEN, res.token);
@@ -48,6 +50,7 @@ export class AuthService {
         sessionStorage.removeItem(AuthService.TOKEN);
         localStorage.removeItem(AuthService.TOKEN);
         localStorage.removeItem(AuthService.USER_NAME);
+        localStorage.removeItem(AuthService.AVATAR);
         this.router.navigate(['/login']);
     }
 
