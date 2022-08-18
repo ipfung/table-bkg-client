@@ -163,10 +163,22 @@ import { TrainerStudentListComponent } from './components/trainer-student-list/t
 import { FinanceStatusComponent } from './components/finance-status/finance-status.component';
 import { RoomListComponent } from './components/room-list/room-list.component';
 import { TimeslotListComponent } from './components/timeslot-list/timeslot-list.component';
+import { AppointmentCalendarComponent } from './components/appointment-calendar/appointment-calendar.component';
+import {FullCalendarModule} from "@fullcalendar/angular";
+import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import interactionPlugin from '@fullcalendar/interaction';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/lang/', '.json');
 }
+
+FullCalendarModule.registerPlugins([
+    dayGridPlugin,
+    timeGridPlugin,
+    interactionPlugin
+]);
+
 
 @NgModule({
     imports: [
@@ -265,6 +277,7 @@ export function createTranslateLoader(http: HttpClient) {
         VirtualScrollerModule,
         AppCodeModule,
         StyleClassModule,
+        FullCalendarModule,
     ],
     declarations: [
         AppComponent,
@@ -322,6 +335,7 @@ export function createTranslateLoader(http: HttpClient) {
         FinanceStatusComponent,
         RoomListComponent,
         TimeslotListComponent,
+        AppointmentCalendarComponent,
     ],
     providers: [
         {provide: LocationStrategy, useClass: HashLocationStrategy},

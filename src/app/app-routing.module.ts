@@ -44,6 +44,7 @@ import {FinanceStatusComponent} from "./components/finance-status/finance-status
 import {NotificationsListComponent} from "./components/notifications-list/notifications-list.component";
 import {RoomListComponent} from "./components/room-list/room-list.component";
 import {TimeslotListComponent} from "./components/timeslot-list/timeslot-list.component";
+import {AppointmentCalendarComponent} from "./components/appointment-calendar/appointment-calendar.component";
 @NgModule({
     imports: [
         RouterModule.forRoot([
@@ -53,6 +54,7 @@ import {TimeslotListComponent} from "./components/timeslot-list/timeslot-list.co
                     {path: '', component: DashboardComponent, canActivate: [ AuthGuardService ]},
                     {path: 'user-profile', component: UserProfileComponent, canActivate: [ AuthGuardService ]},
                     {path: 'partner-list', component: UserListComponent, canActivate: [ AuthGuardService ]},
+                    {path: 'calendar', component: AppointmentCalendarComponent, canActivate: [ AuthGuardService ]},
                     {path: 'appointment', component: AppointmentStepsComponent, children:[
                         {path:'', redirectTo: 'time-range', pathMatch: 'full'},
                         {path: 'time-range', component: BookingTimeRangeComponent, canActivate: [ AuthGuardService ]},
