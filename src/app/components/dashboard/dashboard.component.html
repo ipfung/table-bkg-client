@@ -61,7 +61,7 @@
         </div>
 
         <div class="col-12 xl:col-6">
-            <div class="card" *ngIf="data.showUpcomingAppointments">
+            <div class="card">
                 <h5>{{ 'Upcoming Appointments' | translate }}</h5>
                 <p-table [value]="appointments" [paginator]="true" [rows]="5" responsiveLayout="scroll">
                     <ng-template pTemplate="header">

@@ -98,6 +98,12 @@ export class DashboardComponent implements OnInit {
         });
     }
 
+    ngOnDestroy(): void {
+        if(this.subscription){
+            this.subscription.unsubscribe();
+        }
+    }
+
     updateChartOptions() {
         if (this.config.dark)
             this.applyDarkTheme();
