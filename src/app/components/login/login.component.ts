@@ -90,13 +90,12 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     onLoginClick() {
         this.submitted = true;
-        console.log('pass=', this.login, this.password);
-        if (this.login) {
+        if (!this.login || this.login.trim() == '') {
+            this.username.nativeElement.click();
+            return;
+        } else if (!this.password || this.password.trim() == '') {
             this.pwd.nativeElement.click();
             this.pwdField.nativeElement.focus();
-            return;
-        } else if (this.password) {
-            this.username.nativeElement.click();
             return;
         }
 
