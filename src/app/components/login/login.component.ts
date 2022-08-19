@@ -1,9 +1,10 @@
-import {Component, OnInit, OnDestroy} from '@angular/core';
+import {Component, OnInit, OnDestroy, ViewChild, ElementRef} from '@angular/core';
 import {ConfigService} from '../../service/app.config.service';
 import {AppConfig} from '../../api/appconfig';
 import {Subscription} from 'rxjs';
 import {AuthService} from "../../service/auth.service";
 import {ApiService} from "../../service/api.service";
+import {environment} from "../../../environments/environment";
 
 @Component({
     selector: 'app-login',
@@ -28,14 +29,25 @@ import {ApiService} from "../../service/api.service";
     `]
 })
 export class LoginComponent implements OnInit, OnDestroy {
+    @ViewChild('username', { static: false }) username: ElementRef;
+
+    @ViewChild('pwd', { static: false }) pwd: ElementRef;
+
+    @ViewChild('pwdField', { static: false }) pwdField: ElementRef;
 
     valCheck: string[] = ['remember'];
 
     logo: string;
 
-    login: string;
+    login = '';
 
-    password: string;
+    password = '';
+
+    remember = false;
+
+    isApp = false;
+
+    submitted = false;
 
     config: AppConfig;
 
@@ -48,9 +60,22 @@ export class LoginComponent implements OnInit, OnDestroy {
         this.config = this.configService.config;
         this.logo = this.api.url + 'images/' + this.config.dark ? 'logo-white' : 'logo' + '.png';
         this.login = this.authService.loginId;
+        this.isApp = environment.isApp;
         this.subscription = this.configService.configUpdate$.subscribe(config => {
             this.config = config;
         });
+    }
+
+    ngAfterViewInit() {
+        if (this.login) {
+            setTimeout(() => {
+                this.pwd.nativeElement.click();
+            }, 500);
+        } else {
+            setTimeout(() => {
+                this.username.nativeElement.click();
+            }, 50);
+        }
     }
 
     ngOnDestroy(): void {
@@ -59,13 +84,23 @@ export class LoginComponent implements OnInit, OnDestroy {
         }
     }
 
-    onLoginClick(args) {
-        // if (!args.validationGroup.validate().isValid) {
-        //     return;
-        // }
-        console.log('test 123');
-        this.authService.logIn(this.login, this.password, false);
+    onEnter() {
+        this.onLoginClick();
+    }
 
-        // args.validationGroup.reset();
+    onLoginClick() {
+        this.submitted = true;
+        console.log('pass=', this.login, this.password);
+        if (this.login) {
+            this.pwd.nativeElement.click();
+            this.pwdField.nativeElement.focus();
+            return;
+        } else if (this.password) {
+            this.username.nativeElement.click();
+            return;
+        }
+
+        this.authService.logIn(this.login, this.password, this.isApp ? true : this.remember);
+
     }
 }

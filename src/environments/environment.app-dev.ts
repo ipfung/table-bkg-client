@@ -7,6 +7,7 @@ export const environment = {
     version: 'app-beta',
     theme: 'mdc-light-indigo',
     dark: false,
+    isApp: true,
     url: 'http://192.168.0.23:8001/'
 };
 

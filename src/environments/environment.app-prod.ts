@@ -7,6 +7,7 @@ export const environment = {
     version: 'app-p',
     theme: 'mdc-dark-indigo',
     dark: true,
+    isApp: true,
     url: 'https://apt-admin.lemonade.hk/'
 };
 

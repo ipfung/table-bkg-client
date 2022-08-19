@@ -5,8 +5,11 @@
 export const environment = {
     production: false,
     version: 'dev',
-    theme: 'lara-dark-purple',
-    dark: true,
+    theme: 'saga-orange',
+    dark: false,
+    // theme: 'lara-dark-purple',
+    // dark: true,
+    isApp: false,
     url: 'http://localhost:8001/'
 };
 

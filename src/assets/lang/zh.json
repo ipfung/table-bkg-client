@@ -1,6 +1,11 @@
 {
+    "Appointment System": "預約系統",
     "Hi User": "你好，",
     "Logout": "登出",
+    "Login ID": "登錄",
+    "Password": "密碼",
+    "Remember me": "記住我",
+    "Sign In": "登入",
     "New Booking": "新預約",
     "Duration": "時間段",
     "Choose your time length": "選擇打球的時間長度",
@@ -118,5 +123,6 @@
     "Order Date": "訂單日期",
     "Order No.": "訂單號",
     "Order Type": "訂單類型",
+    "Field is required": "{{field}}是必填的",
     "Error": "錯誤"
 }

@@ -1,6 +1,11 @@
 {
+    "Appointment System": "Appointment System",
     "Hi User": "Hi, ",
     "Logout": "Logout",
+    "Login ID": "Login ID",
+    "Password": "Password",
+    "Remember me": "Remember me",
+    "Sign In": "Sign In",
     "New Booking": "New Booking",
     "Duration": "Duration",
     "hour Hours": "{{hour}} Hour{{s}}",
@@ -116,5 +121,6 @@
     "Order Date": "Order Date",
     "Order No.": "Order No.",
     "Order Type": "Order Type",
+    "Field is required": "{{field}} is required",
     "Error": "Error"
 }
