@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { MenuItem } from 'primeng/api';
-import { ProductService } from '../../service/productservice';
 import { Subscription } from 'rxjs';
 import { ConfigService } from '../../service/app.config.service';
 import { AppConfig } from '../../api/appconfig';
 import {ApiService} from "../../service/api.service";
 import {TranslateService} from "@ngx-translate/core";
 import {Lemonade} from "../../service/lemonade.service";
+import {DashboardService} from "../../service/dashboard.service";
 
 @Component({
     templateUrl: './dashboard.component.html',
@@ -18,11 +18,12 @@ export class DashboardComponent implements OnInit {
     appointments: [];
 
     data = {
+        showBookingCount: false,
         totalBooking: 0,
         totalFutureBooking: 0,
+        showCustomerCount: false,
         totalSales: 0,
         totalUnpaid: 0,
-        showCustomerCount: false,
         percentLoad: 0,
         showUnknown: false,
         showUpcomingAppointments: false,
@@ -40,7 +41,7 @@ export class DashboardComponent implements OnInit {
     notifications = [];
     noOfNotifications = 5;
 
-    constructor(private productService: ProductService, public configService: ConfigService, private api: ApiService, private lemonade: Lemonade, private translateService: TranslateService) {}
+    constructor(public configService: ConfigService, private api: ApiService, private lemonade: Lemonade, private dashboardService: DashboardService, private translateService: TranslateService) {}
 
     ngOnInit() {
         this.config = this.configService.config;
@@ -64,6 +65,7 @@ export class DashboardComponent implements OnInit {
             console.log('dashboard===', res);
             this.data = res;
 
+            this.dashboardService.updateNotificationsCount(res.noOfNewNotifications);
             if (res.showUpcomingAppointments) {
                 this.appointments = res.appointments;
             }

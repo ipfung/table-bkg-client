@@ -60,6 +60,11 @@
             font-size: 1rem;
             display: none;
         }
+        .pi:not(.badge-count-0) {
+            span {
+                display: block;
+            }
+        }
     }
 
     .layout-menu-button {
@@ -142,6 +147,11 @@
                 span {
                     font-weight: medium;
                     display: block;
+                }
+                .pi.badge-count-0 {
+                    span {
+                        display: none;
+                    }
                 }
             }
         }

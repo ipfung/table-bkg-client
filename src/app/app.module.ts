@@ -168,6 +168,7 @@ import {FullCalendarModule} from "@fullcalendar/angular";
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import {DashboardService} from "./service/dashboard.service";
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/lang/', '.json');
@@ -339,7 +340,7 @@ FullCalendarModule.registerPlugins([
     ],
     providers: [
         {provide: LocationStrategy, useClass: HashLocationStrategy},
-        ApiService, AuthService, AppointmentService, Lemonade, {
+        ApiService, AuthService, AppointmentService, Lemonade, DashboardService, {
             provide: HTTP_INTERCEPTORS,
             useClass: AuthInterceptor,
             multi: true
