@@ -7,6 +7,9 @@ import {ApiService} from "./service/api.service";
     template: `
         <div class="layout-menu-container">
             <ul class="layout-menu" role="menu" (keydown)="onKeydown($event)">
+
+                <p-button class="p-button-raised p-button-rounded" label="{{ 'New Booking' | translate }}" routerLink="/appointment"></p-button>
+
                 <li app-menu class="layout-menuitem-category" *ngFor="let item of model; let i = index;" [item]="item" [index]="i" [root]="true" role="none">
                     <div class="layout-menuitem-root-text" [attr.aria-label]="item.label">{{item.label}}</div>
                     <ul role="menu">
