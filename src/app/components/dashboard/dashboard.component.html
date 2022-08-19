@@ -72,6 +72,13 @@
 <!--                            <th>{{ 'View' | translate }}</th>-->
                         </tr>
                     </ng-template>
+                    <ng-template pTemplate="emptymessage" let-booking>
+                        <tr>
+                            <td colspan="8">
+                                <span class="font-bold ml-2" [innerHTML]="'No booking found.' | translate"></span>
+                            </td>
+                        </tr>
+                    </ng-template>
                     <ng-template pTemplate="body" let-appointment>
                         <tr>
                             <td style="width: 40%; min-width: 9rem;">{{ lemonade.formatFullDateTime(appointment.start_time, true) }}</td>
@@ -170,7 +177,7 @@
         </div>
 
         <div class="col-12 xl:col-6">
-            <div class="card">
+            <div class="card" *ngIf="data.showSalesChart">
                 <h5>{{ 'Weekly Sales' | translate }}</h5>
                 <p-chart type="line" [data]="chartData" [options]="chartOptions"></p-chart>
             </div>

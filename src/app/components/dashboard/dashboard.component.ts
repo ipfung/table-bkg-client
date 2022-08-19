@@ -24,6 +24,7 @@ export class DashboardComponent implements OnInit {
         showCustomerCount: false,
         totalSales: 0,
         totalUnpaid: 0,
+        showSalesChart: false,
         percentLoad: 0,
         showUnknown: false,
         showUpcomingAppointments: false,
