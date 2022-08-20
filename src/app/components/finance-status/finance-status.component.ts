@@ -67,12 +67,15 @@ console.log('finance loaddata event===', event);
     }
 
     paymentReminder(payment) {
+        payment.reminder = 9;
         // need confirm send?
         this.api.update('api/payment-reminder/' + payment.id, {
         }).subscribe( res => {
             console.log('paymentReminder res=', res);
             if (res.success == true) {
                 payment.reminder = 1;
+            } else {
+                delete payment.reminder;   // failed
             }
         });
     }
