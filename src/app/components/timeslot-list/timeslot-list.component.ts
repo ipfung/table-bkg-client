@@ -54,7 +54,6 @@ export class TimeslotListComponent implements OnInit {
         // load locations.
         this.api.get('api/locations').subscribe( res => {
             this.locations = res.data;
-            this.editable = res.editable;
         });
     }
 
@@ -72,6 +71,7 @@ export class TimeslotListComponent implements OnInit {
                 week.data = timeslotData;
             }
             this.loading = false;
+            this.editable = res.editable;
         });
     }
 

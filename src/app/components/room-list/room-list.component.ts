@@ -39,7 +39,6 @@ export class RoomListComponent implements OnInit {
         // load locations.
         this.api.get('api/locations').subscribe( res => {
             this.locations = res.data;
-            this.editable = res.editable;
         });
     }
 
@@ -48,6 +47,7 @@ export class RoomListComponent implements OnInit {
         this.api.get('api/rooms').subscribe( res => {
             this.rooms = res.data;
             this.loading = false;
+            this.editable = res.editable;
         });
     }
 
