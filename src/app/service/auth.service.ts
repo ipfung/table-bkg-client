@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, CanActivate, Router} from '@angular/router';
 import {ApiService} from './api.service';
+import {PushService} from "./push.service";
 
 @Injectable()
 export class AuthService {
@@ -10,10 +11,11 @@ export class AuthService {
     static readonly LOGIN_ID = 'lemonade-login';
     static readonly EMAIL = 'lemonade-email';
     static readonly AVATAR = 'lemonade-avatar';
+    static readonly PID = 'lemonade-pid';
 
     private myRole: string;
 
-    constructor(private router: Router, private api: ApiService) {
+    constructor(private router: Router, private api: ApiService, private push: PushService) {
         if (this.token) {
             this.loggedIn = true;
         }
@@ -39,7 +41,12 @@ export class AuthService {
                     // use session storage which will be destroyed once logout/browser close.
                     sessionStorage.setItem(AuthService.TOKEN, res.token);
                 }
-                this.router.navigate(['/appointment']);
+                const pid = localStorage.getItem(AuthService.PID);
+// console.log('pid===', pid);
+                if (pid == undefined || pid == null) {   // register once, otherwise it will call multiple times(depends on number of login.)
+                    this.push.init();
+                }
+                this.router.navigate(['/']);
             });
         });
     }
@@ -51,6 +58,7 @@ export class AuthService {
         localStorage.removeItem(AuthService.TOKEN);
         localStorage.removeItem(AuthService.USER_NAME);
         localStorage.removeItem(AuthService.AVATAR);
+        this.push.logout();
         this.router.navigate(['/login']);
     }
 

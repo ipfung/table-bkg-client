@@ -10,6 +10,10 @@
 @import "assets/sass/layout/_layout";
 @import "assets/sass/overrides/_overrides";
 
+body{
+    padding-top: constant(safe-area-inset-top);
+    padding-top: env(safe-area-inset-top);
+}
 
 .user-badge {
     border-radius: 2px;

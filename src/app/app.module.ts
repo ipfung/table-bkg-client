@@ -133,11 +133,9 @@ import { LandingComponent } from './components/landing/landing.component';
 
 import { CountryService } from './service/countryservice';
 import { CustomerService } from './service/customerservice';
-import { EventService } from './service/eventservice';
 import { IconService } from './service/iconservice';
 import { NodeService } from './service/nodeservice';
 import { PhotoService } from './service/photoservice';
-import { ProductService } from './service/productservice';
 import { MenuService } from './service/app.menu.service';
 import { ConfigService } from './service/app.config.service';
 import { LoginComponent } from './components/login/login.component';
@@ -168,6 +166,7 @@ import {FullCalendarModule} from "@fullcalendar/angular";
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import {PushService} from "./service/push.service";
 import {DashboardService} from "./service/dashboard.service";
 
 export function createTranslateLoader(http: HttpClient) {
@@ -345,8 +344,8 @@ FullCalendarModule.registerPlugins([
             useClass: AuthInterceptor,
             multi: true
         },
-        CountryService, CustomerService, EventService, IconService, NodeService,
-        PhotoService, ProductService, MenuService, ConfigService
+        PushService, CountryService, CustomerService, IconService, NodeService,
+        PhotoService, MenuService, ConfigService
     ],
     bootstrap: [AppComponent]
 })

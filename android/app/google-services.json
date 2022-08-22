@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "60999825352",
+    "project_id": "lemonade-bkg",
+    "storage_bucket": "lemonade-bkg.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:60999825352:android:311935db20e72216b872fd",
+        "android_client_info": {
+          "package_name": "com.jws.lemonade.appointment"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "60999825352-hetfap53jgfui6l9csm596penmaej7n2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-gfbNtqPFk7ZMkwqlZJ5GGUh4GMH-mgU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "60999825352-hetfap53jgfui6l9csm596penmaej7n2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
