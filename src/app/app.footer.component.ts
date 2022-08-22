@@ -9,6 +9,6 @@ import {environment} from "../environments/environment";
 export class AppFooterComponent{
     version: any;
     constructor(public appMain: AppMainComponent) {
-        this.version = 'v0.6' + environment.version;
+        this.version = 'v0.61' + environment.version;
     }
 }

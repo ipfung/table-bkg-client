@@ -25,6 +25,7 @@
         "@capacitor/core": "^4.0.1",
         "@capacitor/device": "^4.0.1",
         "@capacitor/ios": "^4.0.1",
+        "@capacitor/preferences": "^4.0.1",
         "@capacitor/push-notifications": "^4.0.1",
         "@capacitor/status-bar": "^4.0.1",
         "@capgo/capacitor-updater": "^3.3.18",

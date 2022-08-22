@@ -8,16 +8,22 @@ import {Lemonade} from "../../service/lemonade.service";
     styleUrls: ['./user-profile.component.scss']
 })
 export class UserProfileComponent implements OnInit {
+    avatar: string;
+    email: string;
+    userName: string;
 
     constructor(public authService: AuthService, public lemonade: Lemonade) {
     }
 
-    ngOnInit(): void {
+    async ngOnInit() {
+        this.avatar = await this.authService.avatar();
+        this.email = await this.authService.email();
+        this.userName = await this.authService.userName();
     }
 
     getAvatar() {
         return this.lemonade.getAvatar({
-            avatar: localStorage.getItem(AuthService.AVATAR)
+            avatar: this.avatar
         });
     }
 }

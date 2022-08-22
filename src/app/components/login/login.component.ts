@@ -56,10 +56,10 @@ export class LoginComponent implements OnInit, OnDestroy {
     constructor(public configService: ConfigService, public authService: AuthService, public api: ApiService) {
     }
 
-    ngOnInit(): void {
+    async ngOnInit() {
         this.config = this.configService.config;
         this.logo = this.api.url + 'images/' + this.config.dark ? 'logo-white' : 'logo' + '.png';
-        this.login = this.authService.loginId;
+        this.login = await this.authService.loginId();
         this.isApp = environment.isApp;
         this.subscription = this.configService.configUpdate$.subscribe(config => {
             this.config = config;

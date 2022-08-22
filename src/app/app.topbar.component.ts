@@ -11,6 +11,7 @@ import {DashboardService} from "./service/dashboard.service";
     templateUrl: './app.topbar.component.html'
 })
 export class AppTopBarComponent implements OnInit {
+    userName: string;
 
     items: MenuItem[];
 
@@ -20,7 +21,8 @@ export class AppTopBarComponent implements OnInit {
 
     constructor(public appMain: AppMainComponent, public authService: AuthService, private translateService: TranslateService, private dashboardService: DashboardService) { }
 
-    ngOnInit() {
+    async ngOnInit() {
+        this.userName = await this.authService.userName();
         this.subscription = this.dashboardService.notifications$.subscribe(counter => {
             this.notificationsBadge = counter;
         });

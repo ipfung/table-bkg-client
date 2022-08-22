@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, CanActivate, Router} from '@angular/router';
 import {ApiService} from './api.service';
 import {PushService} from "./push.service";
+import { get, set, remove } from './storage.service';
 
 @Injectable()
 export class AuthService {
@@ -13,12 +14,26 @@ export class AuthService {
     static readonly AVATAR = 'lemonade-avatar';
     static readonly PID = 'lemonade-pid';
 
-    private myRole: string;
-
     constructor(private router: Router, private api: ApiService, private push: PushService) {
         if (this.token) {
             this.loggedIn = true;
         }
+    }
+
+    async userName() {
+        return get(AuthService.USER_NAME);
+    }
+
+    async email() {
+        return get(AuthService.EMAIL);
+    }
+
+    async loginId() {
+        return get(AuthService.LOGIN_ID);
+    }
+
+    async avatar() {
+        return get(AuthService.AVATAR);
     }
 
     logIn(login: string, passord: string, remem: boolean): void {
@@ -31,10 +46,7 @@ export class AuthService {
             }).subscribe(res => {
                 console.log('login res-', res);
                 this.loggedIn = true;
-                localStorage.setItem(AuthService.USER_NAME, res.name);
-                localStorage.setItem(AuthService.EMAIL, login);
-                localStorage.setItem(AuthService.AVATAR, res.avatar);
-                localStorage.setItem(AuthService.LOGIN_ID, login);   // should move inside remem.
+                this.setData({...res, ...{login: login, remember: remem}});
                 if (remem) {
                     localStorage.setItem(AuthService.TOKEN, res.token);
                 } else {
@@ -51,31 +63,25 @@ export class AuthService {
         });
     }
 
-    logOut(): void {
+    async setData(res) {
+        set(AuthService.USER_NAME, res.name);
+        set(AuthService.LOGIN_ID, res.login);
+        set(AuthService.EMAIL, res.login);
+        set(AuthService.AVATAR, res.avatar);
+    }
+
+    async logOut() {
         this.loggedIn = false;
-        this.myRole = undefined;
         sessionStorage.removeItem(AuthService.TOKEN);
         localStorage.removeItem(AuthService.TOKEN);
-        localStorage.removeItem(AuthService.USER_NAME);
-        localStorage.removeItem(AuthService.AVATAR);
+        remove(AuthService.USER_NAME);
+        remove(AuthService.AVATAR);
         this.push.logout();
         this.router.navigate(['/login']);
     }
 
     get isLoggedIn(): boolean {
         return this.loggedIn;
-    }
-
-    get userName(): string {
-        return localStorage.getItem(AuthService.USER_NAME);
-    }
-
-    get email(): string {
-        return localStorage.getItem(AuthService.EMAIL);
-    }
-
-    get loginId(): string {
-        return localStorage.getItem(AuthService.LOGIN_ID);
     }
 
     get token(): string {
