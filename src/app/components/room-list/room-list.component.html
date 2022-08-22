@@ -3,7 +3,7 @@
         {{ 'Table' | translate }}
     </div>
     <div class="flex align-items-center justify-content-center py-2 border-round">
-        <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
+        <button *ngIf="editable" pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
     </div>
 </div>
 <div class="card">
@@ -38,7 +38,7 @@
                 <td style="min-width:20px">
                     <span class="p-column-title">{{ 'Actions' | translate }}</span>
                     <div>
-                        <button pButton type="button" [disabled]="!canAmend(room)" pTooltip="{{ 'Edit' | translate }}" tooltipPosition="bottom" class="p-0 p-button-text" icon="pi pi-pencil" (click)="edit(room)"></button>
+                        <button *ngIf="editable" pButton type="button" [disabled]="!canAmend(room)" pTooltip="{{ 'Edit' | translate }}" tooltipPosition="bottom" class="p-0 p-button-text" icon="pi pi-pencil" (click)="edit(room)"></button>
                     </div>
                 </td>
             </tr>

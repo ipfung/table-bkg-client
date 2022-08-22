@@ -12,6 +12,7 @@ export class RoomListComponent implements OnInit {
     loading = true;
 
     rooms = [];
+    editable = false;
 
     // form variables.
     formDialog = false;
@@ -38,6 +39,7 @@ export class RoomListComponent implements OnInit {
         // load locations.
         this.api.get('api/locations').subscribe( res => {
             this.locations = res.data;
+            this.editable = res.editable;
         });
     }
 
@@ -67,7 +69,7 @@ export class RoomListComponent implements OnInit {
 
     canAmend(room) {
         // FIXME only manager could edit.
-        return true;
+        return this.editable;
     }
 
     hideDialog() {

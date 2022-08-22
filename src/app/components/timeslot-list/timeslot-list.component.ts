@@ -12,6 +12,7 @@ export class TimeslotListComponent implements OnInit {
     loading = true;
 
     timeslots = [];
+    editable = false;
 
     // form variables.
     formDialog = false;
@@ -53,6 +54,7 @@ export class TimeslotListComponent implements OnInit {
         // load locations.
         this.api.get('api/locations').subscribe( res => {
             this.locations = res.data;
+            this.editable = res.editable;
         });
     }
 

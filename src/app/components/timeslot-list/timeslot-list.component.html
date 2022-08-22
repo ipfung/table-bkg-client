@@ -1,34 +1,36 @@
 <h4>{{ 'Working Hours' | translate }}</h4>
 <div class="card">
-    <p-accordion [multiple]="true">
-        <p-accordionTab [selected]="true" [disabled]="true" *ngFor="let col of weeks" header="{{ col.name | translate }}">
-            <div *ngIf="col.data && col.data.length > 0; else norecord">
-                <div *ngFor="let data of col.data; let i = index">
-<!--                    <div class="grid" *ngIf="!isCreating(col.code); else tsform"></div>-->
-                    <div class="grid" *ngIf="!isEditing(data); else tsform">
-                        <div class="col">{{ data.from_time }} - {{ data.to_time }}</div>
-                        <div class="col text-right">
-                            <button pButton type="button" pTooltip="{{ 'Edit' | translate }}" tooltipPosition="bottom" class="p-button-text p-0" icon="pi pi-pencil" (click)="edit(data)"></button>
-                            <button *ngIf="i == 0" pButton type="button" pTooltip="{{ 'Create' | translate }}" tooltipPosition="bottom" class="p-button-text p-0" icon="pi pi-plus" (click)="openNew(col.code)"></button>
-                        </div>
+    <p-panel *ngFor="let col of weeks" header="{{ col.name | translate }}">
+        <ng-template pTemplate="icons">
+            <!-- a fake button to beautify the toolbar --><button pButton class="p-panel-header-icon p-link" icon="pi pi-" [disabled]="true"></button>
+            <button *ngIf="editable" pButton class="p-panel-header-icon p-link" icon="pi pi-plus" pTooltip="{{ 'Create' | translate }}" (click)="openNew(col.code)">
+            </button>
+        </ng-template>
+        <div class="grid mt-2" *ngIf="!isCreating(col.code); else tsform"></div>
+        <div *ngIf="col.data && col.data.length > 0; else norecord">
+            <div *ngFor="let data of col.data; let i = index">
+                <div class="grid" *ngIf="!isEditing(data); else tsform">
+                    <div class="col-9">{{ data.from_time }} - {{ data.to_time }}</div>
+                    <div class="col-3 text-right">
+                        <button *ngIf="editable" pButton type="button" pTooltip="{{ 'Edit' | translate }}" tooltipPosition="bottom" class="p-button-text p-0" icon="pi pi-pencil" (click)="edit(data)"></button>
                     </div>
                 </div>
             </div>
-        </p-accordionTab>
-    </p-accordion>
+        </div>
+    </p-panel>
 </div>
 
 <ng-template #norecord>
-    <p>{{ 'No record found' | translate }}</p>
+    <p *ngIf="!loading">{{ 'No record found' | translate }}</p>
 </ng-template>
 
 <ng-template #tsform>
     <h6>{{ formHeader | translate }}</h6>
     <div class="grid">
         <div class="col-8">
-            <p-calendar [(ngModel)]="timeslot.from_time" dataType="string" [timeOnly]="true" [showSeconds]="true" inputId="time"></p-calendar>
+            <p-calendar [(ngModel)]="timeslot.from_time" dataType="string" [timeOnly]="true" [showSeconds]="false" inputId="time"></p-calendar>
             -
-            <p-calendar [(ngModel)]="timeslot.to_time" dataType="string" [timeOnly]="true" [showSeconds]="true" inputId="time"></p-calendar>
+            <p-calendar [(ngModel)]="timeslot.to_time" dataType="string" [timeOnly]="true" [showSeconds]="false" inputId="time"></p-calendar>
         </div>
         <div class="col-4 text-right">
             <button pButton pRipple label="{{ 'Cancel' | translate }}" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
