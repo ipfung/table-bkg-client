@@ -61,7 +61,8 @@ export class BookingFormComponent implements OnInit {
     }
 
     nextPage() {
-        if (this.timeInformation.date && this.timeInformation.time && this.timeInformation.sessionInterval > 0) {
+        // don't check timeInformation.time because 0:00 will not pass it.
+        if (this.timeInformation.date && this.timeInformation.sessionInterval > 0) {
             let appointmentInfo = this.appointmentService.getAppointmentInformation();   // note!! can call getAppointmentInformation() in each function, otherwise will not store data.
             appointmentInfo.timeInformation = this.timeInformation;
             appointmentInfo.paymentInformation = this.paymentInformation;
