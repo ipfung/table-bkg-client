@@ -51,7 +51,7 @@
         <div class="field">
             <label for="name">{{ 'Name' | translate }}</label>
             <input type="text" pInputText id="name" [(ngModel)]="room.name" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !room.name}"/>
-            <small class="ng-dirty ng-invalid" *ngIf="submitted && !room.name">Name is required.</small>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !room.name">{{ 'Field is required' | translate: {field: 'Name' | translate} }}</small>
         </div>
         <div class="field">
             <label for="location">{{ 'Location' | translate }}</label>

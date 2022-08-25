@@ -78,6 +78,9 @@ export class RoomListComponent implements OnInit {
 
     save() {
         let call;
+        this.submitted = true;
+        if (this.room.name == undefined)
+            return;
         if (this.room.id > 0) {
             call = this.api.update('api/rooms/' + this.room.id, this.room)
         } else {
@@ -86,6 +89,7 @@ export class RoomListComponent implements OnInit {
         call.subscribe( res => {
             console.log('save room res=', res);
             if (res.success == true) {
+                this.submitted = false;
                 this.loadData();
                 this.hideDialog();
             }
