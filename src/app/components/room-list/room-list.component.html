@@ -11,7 +11,7 @@
     <p-table [value]="rooms" [loading]="loading" dataKey="id" sortField="name" sortMode="single"  responsiveLayout="stack">
         <ng-template pTemplate="header">
             <tr>
-                <th style="min-width:200px">{{ 'Name' | translate }}</th>
+                <th style="min-width:200px">{{ 'Room' | translate }}</th>
                 <th style="min-width:120px">{{ 'Status' | translate }}</th>
                 <th style="min-width:150px">{{ 'Location' | translate }}</th>
                 <th style="min-width:20px"></th>
@@ -20,7 +20,7 @@
         <ng-template pTemplate="body" let-room let-rowIndex="rowIndex">
             <tr>
                 <td style="min-width:200px">
-                    <span class="p-column-title">{{ 'Name' | translate }}</span>
+                    <span class="p-column-title">{{ 'Room' | translate }}</span>
                     <div>
                         <p-avatar [label]="lemonade.getInitial(room.name)" shape="circle" [style]="{'background-color': room.color, 'color': '#fff'}"></p-avatar>
                         {{ room.name }}
@@ -49,9 +49,9 @@
 <p-dialog [(visible)]="formDialog" [style]="{width:'50em', height: '100vh'}" header="{{ formHeader | translate }}" position="right" [modal]="true" class="p-fluid">
     <ng-template pTemplate="content">
         <div class="field">
-            <label for="name">{{ 'Name' | translate }}</label>
+            <label for="name">{{ 'Room' | translate }}</label>
             <input type="text" pInputText id="name" [(ngModel)]="room.name" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !room.name}"/>
-            <small class="ng-dirty ng-invalid" *ngIf="submitted && !room.name">{{ 'Field is required' | translate: {field: 'Name' | translate} }}</small>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !room.name">{{ 'Field is required' | translate: {field: 'Room' | translate} }}</small>
         </div>
         <div class="field">
             <label for="location">{{ 'Location' | translate }}</label>
