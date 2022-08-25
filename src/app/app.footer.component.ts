@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import { AppMainComponent } from './app.main.component';
 import {environment} from "../environments/environment";
+import {ConfigService} from "./service/app.config.service";
+import {AppConfig} from "./api/appconfig";
 
 @Component({
     selector: 'app-footer',
@@ -8,7 +9,10 @@ import {environment} from "../environments/environment";
 })
 export class AppFooterComponent{
     version: any;
-    constructor(public appMain: AppMainComponent) {
+    config: AppConfig;
+
+    constructor(public configService: ConfigService) {
+        this.config = this.configService.config;
         this.version = 'v0.61' + environment.version;
     }
 }
