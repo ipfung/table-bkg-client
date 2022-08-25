@@ -83,7 +83,10 @@
                         <tr>
                             <td style="width: 40%; min-width: 9rem;">{{ lemonade.formatFullDateTime(appointment.start_time, true) }}</td>
                             <td style="width: 35%; min-width: 8rem;">{{ lemonade.duration(appointment.start_time, appointment.end_time) }}</td>
-                            <td style="width: 25%; min-width: 8rem;"><span [class]="'booking-badge status-' + appointment.status">{{ appointment.status | translate }}</span></td>
+                            <td style="width: 25%; min-width: 8rem;">
+                                <span [class]="'booking-badge status-' + appointment.status">{{ appointment.status | translate }}</span>
+                                <i class="ml-2 pi pi-circle-fill" [style]="{color: appointment.role_color_name}"></i>
+                            </td>
 <!--                            <td style="width: 15%;">-->
 <!--                                <button pButton pRipple type="button" icon="pi pi-search" class="p-button p-component p-button-text p-button-icon-only"></button>-->
 <!--                            </td>-->

@@ -49,7 +49,7 @@
                 </td>
                 <td style="min-width:120px">
                     <span class="p-column-title">{{ 'Role' | translate }}</span>
-                    <span [class]="'role-badge role-' + user.role.name">{{ user.role.name + " role" | translate }}</span>
+                    <span [class]="'role-badge role-' + user.role.name" [style]="{background: findRoleColor(user.role.id)}">{{ user.role.name + " role" | translate }}</span>
 
                 </td>
                 <td style="min-width:120px">
@@ -100,9 +100,11 @@
             <label for="role">{{ 'Role' | translate }}</label>
             <p-dropdown id="role" [options]="roles" [(ngModel)]="partner.role_id" optionValue="id">
                 <ng-template pTemplate="selectedItem">
+                    <i class="pi pi-circle-fill" [style]="{color: findRoleColor(partner.role_id)}"></i>
                     {{ roleRenderer(partner.role_id) + " role" | translate }}
                 </ng-template>
                 <ng-template let-item pTemplate="item">
+                    <i class="pi pi-circle-fill" [style]="{color: item.color_name}"></i>
                     {{ item.name + " role" | translate }}
                 </ng-template>
             </p-dropdown>

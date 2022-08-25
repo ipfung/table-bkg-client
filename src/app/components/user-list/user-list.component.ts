@@ -56,6 +56,14 @@ export class UserListComponent implements OnInit {
         });
     }
 
+    findRoleColor(roleId) {
+        if (this.roles && this.roles.length > 0 && roleId > 0) {
+            let data = this.roles.find(el => el.id == roleId);
+            return data.color_name;
+        }
+        return 'grey';
+    }
+
     roleRenderer(roleId) {
         if (this.roles && this.roles.length > 0 && roleId > 0) {
             let data = this.roles.find(el => el.id == roleId);

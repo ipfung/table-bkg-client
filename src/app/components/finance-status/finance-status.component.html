@@ -51,6 +51,7 @@
                 <td *ngIf="showCustomer" style="min-width:120px">
                     <span class="p-column-title">{{ 'Customer' | translate }}</span>
                     <div>
+                        <i class="pi pi-circle-fill" [style]="{color: payment.customer.role.color_name}"></i>
                         {{ payment.customer.name }}<br />
                         <span class="text-sm text-gray-500">{{ payment.customer.email }}</span>
                     </div>
@@ -93,7 +94,7 @@
     <ng-template pTemplate="content">
         <p-divider><b>{{ 'Customer' | translate}}</b></p-divider>
 
-        <div class="font-bold text-primary">{{ payment.customer.name }}</div>
+        <div class="font-bold"><i class="pi pi-circle-fill" [style]="{color: payment.customer.role.color_name}"></i> {{ payment.customer.name }}</div>
         <h6 class="text-gray-500">{{ payment.customer.email }}</h6>
 <!--            <div class="col"><img [src]="lemonade.getAvatar(payment.customer)" [alt]="payment.customer.name" width="100" class="mt-0 mx-auto mb-2 block" *ngIf="payment.customer.avatar"></div>-->
 

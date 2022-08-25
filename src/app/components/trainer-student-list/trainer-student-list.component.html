@@ -21,7 +21,7 @@
                 </td>
                 <td>{{user.name}}</td>
                 <td>
-                    <span [class]="'role-badge role-' + user.role.name">{{ user.role.name + " role" | translate }}</span>
+                    <span [class]="'role-badge role-' + user.role.name" [style]="{background: user.role.color_name}">{{ user.role.name + " role" | translate }}</span>
                 </td>
                 <td>
                     <p-avatar [image]="lemonade.getAvatar(user)" shape="circle" [style]="{'background-color': '#266cda', 'color': '#fff', 'margin-left': '5px'}"></p-avatar>

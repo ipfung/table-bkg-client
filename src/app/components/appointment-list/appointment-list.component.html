@@ -51,6 +51,7 @@
                     <span class="booking-badge bg-purple-50 text-purple-400">{{ appointmentService.formatDateTime(appointment.start_time) }} - {{ appointmentService.formatDateTime(appointment.end_time) }}</span>
                 </td>
                 <td *ngIf="showCustomer" style="min-width:200px">
+                    <i class="pi pi-circle-fill mr-2" [style]="{color: appointment.role_color_name}"></i>
                     <span class="p-column-title">{{ 'Customer' | translate }}</span>
                     {{ appointment.customer_name }}
                 </td>
