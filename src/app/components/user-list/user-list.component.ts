@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {ApiService} from "../../service/api.service";
-import {environment} from "../../../environments/environment";
 import {AuthService} from "../../service/auth.service";
 import {Lemonade} from "../../service/lemonade.service";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
     selector: 'app-user-list',
@@ -10,10 +10,13 @@ import {Lemonade} from "../../service/lemonade.service";
     styleUrls: ['./user-list.component.scss']
 })
 export class UserListComponent implements OnInit {
+    loginId: string;
 
     loading = true;
 
+    paramRole: any;
     users = [];
+    newable = false;
     editable = false;
 
     // form variables.
@@ -25,10 +28,13 @@ export class UserListComponent implements OnInit {
     roles = [];
     formHeader = "Edit User";
 
-    constructor(private api: ApiService, public authService: AuthService, public lemonade: Lemonade) {
+    private subscription;
+
+    constructor(private route: ActivatedRoute, private api: ApiService, public authService: AuthService, public lemonade: Lemonade) {
     }
 
-    ngOnInit(): void {
+    async ngOnInit() {
+        this.loginId = await this.authService.loginId();
         this.statuses = [
             {
                 name: 'active',
@@ -41,6 +47,10 @@ export class UserListComponent implements OnInit {
                 code: 'banned'
             }
         ];
+
+        this.subscription = this.route.params.subscribe(params => {
+            this.paramRole = params['role'] || '';
+        });
         // load locations.
         this.api.get('api/roles').subscribe( res => {
             this.roles = res.data;
@@ -48,10 +58,18 @@ export class UserListComponent implements OnInit {
         this.loadData();
     }
 
+    ngOnDestroy() {
+console.log('ngOnDestroy=', this.subscription);
+        this.subscription.unsubscribe();
+    }
+
     loadData() {
-        this.api.get('api/users').subscribe( res => {
+        this.api.get('api/users', {
+            role: this.paramRole
+        }).subscribe( res => {
             this.users = res.data;
             this.editable = res.editable;
+            this.newable = (this.paramRole == 'User');
             this.loading = false;
         });
     }
@@ -78,7 +96,7 @@ export class UserListComponent implements OnInit {
      */
     canBlock(user) {
         // FIXME further check user leve.
-        return user.email !== this.authService.loginId;
+        return user.email !== this.loginId;
     }
 
     blacklist(user, isBlack) {
@@ -102,6 +120,7 @@ export class UserListComponent implements OnInit {
     edit(user) {
         this.formHeader = "Edit Partner";
         this.partner = {...user};
+        this.submitted = false;
         this.formDialog = true;
         this.isNew = false;
     }
@@ -112,9 +131,11 @@ export class UserListComponent implements OnInit {
 
     hideDialog() {
         this.formDialog = false;
+        this.submitted = false;
     }
 
     save() {
+        this.submitted = true;
         let call;
         if (this.partner.id > 0) {
             call = this.api.update('api/users/' + this.partner.id, this.partner)
@@ -123,9 +144,11 @@ export class UserListComponent implements OnInit {
         }
         call.subscribe( res => {
             console.log('save users res=', res);
-            if (res.success == true) {
+            if (res.success === true) {
                 this.loadData();
                 this.hideDialog();
+            } else {
+                // error.
             }
         });
     }

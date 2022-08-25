@@ -1,9 +1,9 @@
 <div class="flex justify-content-between">
     <div class="flex align-items-center justify-content-center p-2 border-round mr-1 text-2xl font-bold">
-        {{ 'Partner' | translate }}
+        {{ paramRole | translate }}
     </div>
     <div class="flex align-items-center justify-content-center py-2 border-round">
-        <button *ngIf="editable" pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
+        <button *ngIf="newable" pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
     </div>
 </div>
 <div class="card">
@@ -18,9 +18,9 @@
         <ng-template pTemplate="header">
             <tr>
                 <th style="min-width:120px">{{ 'Name' | translate }}</th>
+                <th style="min-width:120px">{{ 'Role' | translate }}</th>
                 <th style="min-width:80px">{{ 'Avatar' | translate }}</th>
                 <th style="min-width:150px">{{ 'Email' | translate }}</th>
-                <th style="min-width:120px">{{ 'Role' | translate }}</th>
                 <th style="min-width:120px">{{ 'Status' | translate }}</th>
                 <th style="min-width:20px"></th>
             </tr>
@@ -39,6 +39,11 @@
                     <span class="p-column-title">{{ 'Name' | translate }}</span>
                     {{ user.name }}
                 </td>
+                <td style="min-width:120px">
+                    <span class="p-column-title">{{ 'Role' | translate }}</span>
+                    <span [class]="'role-badge role-' + user.role.name" [style]="{background: findRoleColor(user.role.id)}">{{ user.role.name + " role" | translate }}</span>
+
+                </td>
                 <td style="min-width:80px">
                     <span class="p-column-title">{{ 'Avatar' | translate }}</span>
                     <p-avatar [image]="lemonade.getAvatar(user)" shape="circle" [style]="{'background-color': '#266cda', 'color': '#fff', 'margin-left': '5px'}"></p-avatar>
@@ -46,11 +51,6 @@
                 <td style="min-width:120px">
                     <span class="p-column-title">{{ 'Email' | translate }}</span>
                     {{ user.email }}
-                </td>
-                <td style="min-width:120px">
-                    <span class="p-column-title">{{ 'Role' | translate }}</span>
-                    <span [class]="'role-badge role-' + user.role.name" [style]="{background: findRoleColor(user.role.id)}">{{ user.role.name + " role" | translate }}</span>
-
                 </td>
                 <td style="min-width:120px">
                     <span class="p-column-title">{{ 'Status' | translate }}</span>
@@ -81,19 +81,19 @@
         <div class="field">
             <label for="name">{{ 'Name' | translate }}</label>
             <input type="text" pInputText id="name" [(ngModel)]="partner.name" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !partner.name}"/>
-            <small class="ng-dirty ng-invalid" *ngIf="submitted && !partner.name">Name is required.</small>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !partner.name">{{ 'Field is required' | translate: {field: 'Name' | translate} }}</small>
         </div>
 
         <div class="field">
             <label for="email">{{ 'Email' | translate }}</label>
-            <input type="text" autocomplete="off" pInputText id="email" [(ngModel)]="partner.email" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !partner.email}"/>
-            <small class="ng-dirty ng-invalid" *ngIf="submitted && !partner.email">Email is required.</small>
+            <input type="text" autocomplete="off" [disabled]="!isNew" pInputText id="email" [(ngModel)]="partner.email" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !partner.email}"/>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !partner.email">{{ 'Field is required' | translate: {field: 'Email' | translate} }}</small>
         </div>
 
         <div class="field">
             <label for="pwd">{{ 'Password' | translate }}</label>
-            <input type="password" autocomplete="off" pPassword id="pwd" [required]="isNew" autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !partner.password}"/>
-            <small class="ng-dirty ng-invalid" *ngIf="isNew && submitted && !partner.password">Password is required.</small>
+            <p-password id="pwd" [(ngModel)]="partner.password" [required]="isNew" placeholder="{{ 'Password' | translate }}" [toggleMask]="true" styleClass="w-full mb-3" [ngClass]="{'ng-invalid ng-dirty' : submitted && !partner.password}"></p-password>
+            <small class="ng-dirty ng-invalid" *ngIf="isNew && submitted && !partner.password">{{ 'Field is required' | translate: {field: 'Password' | translate} }}</small>
         </div>
 
         <div class="field">

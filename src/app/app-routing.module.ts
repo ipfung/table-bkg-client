@@ -53,7 +53,7 @@ import {AppointmentCalendarComponent} from "./components/appointment-calendar/ap
                 children: [
                     {path: '', component: DashboardComponent, canActivate: [ AuthGuardService ]},
                     {path: 'user-profile', component: UserProfileComponent, canActivate: [ AuthGuardService ]},
-                    {path: 'partner-list', component: UserListComponent, canActivate: [ AuthGuardService ]},
+                    {path: 'partner-list/:role', component: UserListComponent, canActivate: [ AuthGuardService ]},
                     {path: 'calendar', component: AppointmentCalendarComponent, canActivate: [ AuthGuardService ]},
                     {path: 'appointment', component: AppointmentStepsComponent, children:[
                         {path:'', redirectTo: 'time-range', pathMatch: 'full'},
