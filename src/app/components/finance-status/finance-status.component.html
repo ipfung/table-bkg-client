@@ -124,32 +124,60 @@
             <div class="col-6">{{ 'Paid' | translate }}</div>
             <div class="col-6 font-bold">
                 {{ payment.paid_amount | currency:'HK$' }}
-<!--                <p-table [value]="payment.payments" dataKey="id" sortField="payment_date_time" styleClass="p-datatable-sm" responsiveLayout="stack">-->
+<!--                <p-table [value]="payment.payments" dataKey="id" sortField="payment_date_time" styleClass="p-datatable-gridlines p-datatable-sm" responsiveLayout="stack">-->
 <!--                    <ng-template pTemplate="body" let-paid let-rowIndex="rowIndex">-->
 <!--                        <tr class="bg-gray-200" *ngIf="paid.status == 'paid'">-->
-<!--                            <td><span [class]="'payment-badge status-' + paid.status">{{ paid.status + ' payment' | translate }}</span></td>-->
+<!--                            <td>{{ rowIndex+1 }}.</td>-->
+<!--                            <td>{{ lemonade.formatDate(paid.payment_date_time) }}</td>-->
 <!--                            <td>{{ paid.gateway }}</td>-->
-<!--                            <td class="text-right font-bold">{{ paid.amount | currency:'HK$' }}</td>-->
+<!--                            <td class="text-right">{{ paid.amount | currency:'HK$' }}</td>-->
 <!--                        </tr>-->
 <!--                    </ng-template>-->
 <!--                </p-table>-->
-
             </div>
 
-            <div class="col-6">{{ 'Due' | translate }}</div>
-            <div class="col-6 font-bold {{ payment.due_amount > 0 ? 'text-pink-500' : ''}}">{{ payment.due_amount | currency:'HK$' }}</div>
+            <div *ngIf="payment.due_amount > 0" class="col-6">{{ 'Due' | translate }}</div>
+            <div *ngIf="payment.due_amount > 0" class="col-6 font-bold {{ payment.due_amount > 0 ? 'text-pink-500' : ''}}">{{ payment.due_amount | currency:'HK$' }}</div>
+
+            <div class="col-6">{{ 'Status' | translate }}</div>
+            <div class="col-6 font-bold">{{ payment.payment_status + ' payment' | translate }}</div>
 
             <div class="col-6 text-xl font-semibold">{{ 'Total' | translate }}</div>
             <div class="col-6 text-xl font-semibold">{{ payment.total_amount | currency:'HK$' }}</div>
         </div>
         <div class="grid mt-2">
             <div class="col-4 md:col-8"></div>
-            <div class="col-8 md:col-4"><button *ngIf="showCustomer" [disabled]="payment.reminder" pButton type="button" label="{{ 'Payment Reminder' | translate }}" icon="pi pi-envelope" (click)="paymentReminder(payment)"></button></div>
+            <div class="col-8 md:col-4"><button *ngIf="showCustomer && payment.payment_status !== 'paid'" [disabled]="payment.reminder" pButton type="button" label="{{ 'Payment Reminder' | translate }}" icon="pi pi-envelope" (click)="paymentReminder(payment)"></button></div>
         </div>
     </ng-template>
 
     <ng-template pTemplate="footer">
-        <button pButton pRipple label="{{ 'Cancel' | translate }}" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
-        <button pButton pRipple label="{{ 'Save' | translate }}" icon="pi pi-check" class="p-button-text" (click)="save()"></button>
+        <div *ngIf="editingPayment" class="mb-3">
+            <p-divider><b>{{ 'Enter new payment amount' | translate}}</b></p-divider>
+            <div class="grid mt-2 text-left">
+                <div class="col-6">
+                    {{ 'Amount' | translate }}
+                    <p-inputNumber [(ngModel)]="payment.payment_amount" [max]="payment.order_total" mode="currency" currency="HKD" [minFractionDigits]="2" [maxFractionDigits]="2"></p-inputNumber>
+                </div>
+                <div class="col-6">
+                    {{ 'Status' | translate }}
+                    <p-dropdown [options]="payment_statuses" optionValue="code" [(ngModel)]="payment.payment_status" placeholder="{{'Select a Status' | translate}}">
+                        <ng-template pTemplate="selectedItem">
+                            {{ payment.payment_status + ' payment' | translate }}
+                        </ng-template>
+                        <ng-template let-item pTemplate="item">
+                            {{ item.name + ' payment' | translate }}
+                        </ng-template>
+                    </p-dropdown>
+                </div>
+            </div>
+        </div>
+        <div class="grid grid-nogutter justify-content-between ng-star-inserted">
+            <p-toggleButton [(ngModel)]="editingPayment" onLabel="{{ 'Edit' | translate }}" onIcon="pi pi-pencil" offLabel="{{ 'Edit' | translate }}" offIcon="pi pi-pencil"></p-toggleButton>
+            <div>
+                <button pButton pRipple label="{{ 'Cancel' | translate }}" icon="pi pi-times" class="p-button-outlined" (click)="hideDialog()"></button>
+                <button pButton pRipple label="{{ 'Save' | translate }}" icon="pi pi-check" class="p-button-outlined" (click)="save()"></button>
+            </div>
+        </div>
     </ng-template>
 </p-dialog>

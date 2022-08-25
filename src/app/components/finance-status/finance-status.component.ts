@@ -26,6 +26,8 @@ export class FinanceStatusComponent implements OnInit {
     //form
     formDialog = false;
     payment: any;
+    editingPayment = false;
+    payment_statuses = [];
 
     constructor(private api: ApiService, private translateService: TranslateService, public lemonade: Lemonade) {
     }
@@ -41,6 +43,15 @@ export class FinanceStatusComponent implements OnInit {
                 {name: res['partially payment'], code: 'partially', color: '#256029'},
             ];
         });
+        this.payment_statuses = [
+            {
+                name: 'paid',
+                code: 'paid'
+            }, {
+                name: 'pending',
+                code: 'pending'
+            }
+        ];
     }
 
     loadData(event: LazyLoadEvent) {
@@ -62,7 +73,7 @@ console.log('finance loaddata event===', event);
     }
 
     edit(payment) {
-        this.payment = {...payment};
+        this.payment = {...payment, ...{payment_amount: payment.paid_amount}};
         this.formDialog = true;
     }
 
@@ -82,19 +93,19 @@ console.log('finance loaddata event===', event);
 
     hideDialog() {
         this.formDialog = false;
+        this.editingPayment = false;
     }
 
     save() {
-        alert("Not ready.");
-        // this.api.update('api/payment', {
-        //     "id": this.payment.id,
-        //     "amount": this.payment.amount,
-        //     "status": this.payment.status
-        // }).subscribe( res => {
-        //     console.log('save res=', res);
-        //     if (res.success == true) {
-        //         this.hideDialog();
-        //     }
-        // });
+        this.api.update('api/payment/' + this.payment.id, {
+            "amount": this.payment.payment_amount,
+            "status": this.payment.payment_status
+        }).subscribe( res => {
+            console.log('save res=', res);
+            if (res.success == true) {
+                this.hideDialog();
+                this.loadData(null);
+            }
+        });
     }
 }
