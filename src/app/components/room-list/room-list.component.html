@@ -49,13 +49,14 @@
 <p-dialog [(visible)]="formDialog" [style]="{width:'50em', height: '100vh'}" header="{{ formHeader | translate }}" position="right" [modal]="true" class="p-fluid">
     <ng-template pTemplate="content">
         <div class="field">
-            <label for="name">{{ 'Room' | translate }}</label>
+            <label for="name"><span class="required">*</span> {{ 'Room' | translate }}</label>
             <input type="text" pInputText id="name" [(ngModel)]="room.name" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !room.name}"/>
             <small class="ng-dirty ng-invalid" *ngIf="submitted && !room.name">{{ 'Field is required' | translate: {field: 'Room' | translate} }}</small>
         </div>
         <div class="field">
-            <label for="location">{{ 'Location' | translate }}</label>
-            <p-dropdown id="location" [options]="locations" [(ngModel)]="room.location_id" optionLabel="name" optionValue="id"></p-dropdown>
+            <label for="location"><span class="required">*</span> {{ 'Location' | translate }}</label>
+            <p-dropdown id="location" [options]="locations" [(ngModel)]="room.location_id" optionLabel="name" optionValue="id" [ngClass]="{'ng-invalid ng-dirty' : submitted && !room.location_id}"></p-dropdown>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !room.location_id">{{ 'Field is required' | translate: {field: 'Location' | translate} }}</small>
         </div>
 
         <div class="field">
