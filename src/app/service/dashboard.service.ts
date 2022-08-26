@@ -8,9 +8,20 @@ export class DashboardService {
 
     notifications$ = this.notifications.asObservable();
 
+    private counter;
+
     constructor() {}
 
     updateNotificationsCount(counter) {
+        this.counter = counter;
         this.notifications.next(counter);
+    }
+
+    receiveNotify(message) {
+        this.updateNotificationsCount(1 + this.counter);
+    }
+
+    markAsRead() {
+        this.updateNotificationsCount(this.counter - 1);
     }
 }

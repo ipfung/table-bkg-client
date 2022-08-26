@@ -188,19 +188,19 @@
             <div class="card">
                 <div class="flex align-items-center justify-content-between mb-4">
                     <h5>{{ 'Notifications' | translate }}</h5>
-                    <div>
-                        <button pButton type="button" icon="pi pi-ellipsis-v" class="p-button-rounded p-button-text p-button-plain" (click)="menu.toggle($event)"></button>
-                        <p-menu #menu [popup]="true" [model]="items"></p-menu>
-                    </div>
+<!--                    <div>-->
+<!--                        <button pButton type="button" icon="pi pi-ellipsis-v" class="p-button-rounded p-button-text p-button-plain" (click)="menu.toggle($event)"></button>-->
+<!--                        <p-menu #menu [popup]="true" [model]="items"></p-menu>-->
+<!--                    </div>-->
                 </div>
 
-                <span class="block text-600 font-medium mb-3" [translate]="'Last 5 notifications'" [translateParams]="{param: noOfNotifications }">{{ '' | translate }}</span>
+                <span class="block text-600 font-medium mb-3" [translate]="'Last 5 notifications'" [translateParams]="{param: noOfNotifications }"></span>
                 <ul class="p-0 mx-0 mt-0 mb-4 list-none">
                     <li class="flex align-items-center py-2 border-bottom-1 surface-border" *ngFor="let message of notifications">
                         <div class="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
                             <i class="pi pi-dollar text-xl text-blue-500"></i>
                         </div>
-                        <span class="text-900 line-height-3">{{ message.title }} - {{ message.body }}</span>
+                        <span class="text-900 line-height-3 {{ message.has_read == 0 ? 'font-bold' : '' }}">{{ message.title }} - {{ message.body }}</span>
                     </li>
                 </ul>
             </div>

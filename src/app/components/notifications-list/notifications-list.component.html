@@ -1,7 +1,13 @@
 <h4>{{ 'Notifications' | translate }}</h4>
 <div *ngIf="notifications.length > 0; else notrecord">
-    <p-card [style]="{'margin-bottom': '2em'}" header="{{ msg.title }}" subheader="{{ lemonade.formatDate(msg.created_at, true) }}" *ngFor="let msg of notifications">
-        {{ msg.body }}
+    <p-card [style]="{'margin-bottom': '2em'}" header="{{ msg.title }}" *ngFor="let msg of notifications">
+        <ng-template pTemplate="subtitle" *ngIf="showCustomer">
+            To <u>{{ msg.customer.name }}</u> on {{ lemonade.formatDate(msg.created_at, true) }} by {{ msg.sender.name }}.
+        </ng-template>
+            <div [class]="msg.has_read == 1 ? '' : 'font-bold'">{{ msg.body }}</div>
+        <ng-template pTemplate="footer" *ngIf="!showCustomer">
+            <button *ngIf="msg.has_read == 0" pButton pRipple icon="pi pi-envelope" class="p-button-outlined" label="{{ 'Mark as Read' | translate }}" (click)="markAsRead(msg)"></button>
+        </ng-template>
     </p-card>
 </div>
 
