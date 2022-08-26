@@ -26,7 +26,7 @@ export class UserListComponent implements OnInit {
     partner: any;
     statuses = [];
     roles = [];
-    formHeader = "Edit User";
+    formHeader = "Edit Form";
 
     private subscription;
 
@@ -108,7 +108,7 @@ console.log('ngOnDestroy=', this.subscription);
     }
 
     openNew() {
-        this.formHeader = "Create Partner";
+        this.formHeader = "Create Form";
         this.partner = {
             status: this.statuses[0].code
         };
@@ -118,7 +118,7 @@ console.log('ngOnDestroy=', this.subscription);
     }
 
     edit(user) {
-        this.formHeader = "Edit Partner";
+        this.formHeader = "Edit Form";
         this.partner = {...user};
         this.submitted = false;
         this.formDialog = true;

@@ -20,7 +20,7 @@ export class RoomListComponent implements OnInit {
     room: any;
     statuses = [];
     locations = [];
-    formHeader = "Edit Room";
+    formHeader = "Edit Form";
 
     constructor(private api: ApiService, public lemonade: Lemonade) {
     }
@@ -52,7 +52,7 @@ export class RoomListComponent implements OnInit {
     }
 
     openNew() {
-        this.formHeader = "Create Room";
+        this.formHeader = "Create Form";
         this.room = {
             location_id: 0,
             status: this.statuses[0].code
@@ -62,7 +62,7 @@ export class RoomListComponent implements OnInit {
     }
 
     edit(room) {
-        this.formHeader = "Edit Room";
+        this.formHeader = "Edit Form";
         this.room = {...room};
         this.formDialog = true;
     }

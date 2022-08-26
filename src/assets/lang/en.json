@@ -90,8 +90,6 @@
     "Payment Date": "Payment Date",
     "Settings": "Settings",
     "Working Hours": "Working Hours",
-    "Edit Working Hours": "Edit Working Hours",
-    "Create Working Hours": "Create Working Hours",
     "Calendar": "Calendar",
     "Monday": "Monday",
     "Tuesday": "Tuesday",
@@ -122,6 +120,8 @@
     "Order Date": "Order Date",
     "Order No.": "Order No.",
     "Order Type": "Order Type",
+    "Create Form": "New {{name}}",
+    "Edit Form": "Edit {{name}}",
     "Field is required": "{{field}} is required",
     "Error": "Error"
 }

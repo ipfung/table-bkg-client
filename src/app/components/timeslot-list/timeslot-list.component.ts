@@ -20,7 +20,7 @@ export class TimeslotListComponent implements OnInit {
     timeslot: any;
     weeks = [];
     locations = [];
-    formHeader = "Edit Timeslot";
+    formHeader = "Edit Form";
 
     constructor(private api: ApiService, public lemonade: Lemonade) {
     }
@@ -76,7 +76,7 @@ export class TimeslotListComponent implements OnInit {
     }
 
     openNew(weekDay) {
-        this.formHeader = "Create Working Hours";
+        this.formHeader = "Create Form";
         this.timeslot = {
             location_id: 1,
             day_idx: weekDay
@@ -86,7 +86,7 @@ export class TimeslotListComponent implements OnInit {
     }
 
     edit(timeslot) {
-        this.formHeader = "Edit Working Hours";
+        this.formHeader = "Edit Form";
         this.timeslot = {...timeslot};
         this.formDialog = true;
     }

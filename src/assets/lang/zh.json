@@ -17,7 +17,7 @@
     "Selected": "已選",
     "Change Duration": "更改時間長度",
     "Change Date & Time": "更改日期及時間",
-    "Room": "枱",
+    "Room": "波枱",
     "Table": "枱",
     "Finance": "財政",
     "Payment Method": "付款方式",
@@ -92,8 +92,6 @@
     "Payment Date": "付款日期",
     "Settings": "設定",
     "Working Hours": "辦公時間",
-    "Edit Working Hours": "更改辦公時間",
-    "Create Working Hours": "新增辦公時間",
     "Calendar": "日曆",
     "Monday": "星期一",
     "Tuesday": "星期二",
@@ -124,6 +122,8 @@
     "Order Date": "訂單日期",
     "Order No.": "訂單號",
     "Order Type": "訂單類型",
+    "Create Form": "新增{{name}}",
+    "Edit Form": "更改{{name}}",
     "Field is required": "{{field}}是必填的",
     "Error": "錯誤"
 }

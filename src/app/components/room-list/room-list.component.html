@@ -1,6 +1,6 @@
 <div class="flex justify-content-between">
     <div class="flex align-items-center justify-content-center p-2 border-round mr-1 text-2xl font-bold">
-        {{ 'Table' | translate }}
+        {{ 'Room' | translate }}
     </div>
     <div class="flex align-items-center justify-content-center py-2 border-round">
         <button *ngIf="editable" pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
@@ -12,8 +12,8 @@
         <ng-template pTemplate="header">
             <tr>
                 <th style="min-width:200px">{{ 'Room' | translate }}</th>
-                <th style="min-width:120px">{{ 'Status' | translate }}</th>
                 <th style="min-width:150px">{{ 'Location' | translate }}</th>
+                <th style="min-width:120px">{{ 'Status' | translate }}</th>
                 <th style="min-width:20px"></th>
             </tr>
         </ng-template>
@@ -27,13 +27,13 @@
                         <span class="vertical-align-super text-xs user-badge status-{{ room.appointment_id > 0 ? 'banned' : 'active' }}"><i class="pi pi-circle text-xs pt-2 {{ room.appointment_id > 0 ? 'text-pink-500' : 'text-green-500' }}"></i> {{ room.appointment_id > 0 ? 'Occupied' : 'Free' }}</span>
                     </div>
                 </td>
-                <td style="min-width:120px">
-                    <span class="p-column-title">{{ 'Status' | translate }}</span>
-                    <span [class]="'user-badge status-' + lemonade.comboRenderer(statuses, room.status).toLowerCase()">{{ lemonade.comboRenderer(statuses, room.status).toLowerCase() | translate }}</span>
-                </td>
                 <td style="min-width:150px">
                     <span class="p-column-title">{{ 'Location' | translate }}</span>
                     {{ room.location.name }}
+                </td>
+                <td style="min-width:120px">
+                    <span class="p-column-title">{{ 'Status' | translate }}</span>
+                    <span [class]="'user-badge status-' + lemonade.comboRenderer(statuses, room.status).toLowerCase()">{{ lemonade.comboRenderer(statuses, room.status).toLowerCase() | translate }}</span>
                 </td>
                 <td style="min-width:20px">
                     <span class="p-column-title">{{ 'Actions' | translate }}</span>
@@ -46,7 +46,7 @@
     </p-table>
 </div>
 
-<p-dialog [(visible)]="formDialog" [style]="{width:'50em', height: '100vh'}" header="{{ formHeader | translate }}" position="right" [modal]="true" class="p-fluid">
+<p-dialog [(visible)]="formDialog" [style]="{width:'50em', height: '100vh'}" header="{{ formHeader | translate:{name: 'Room' | translate} }}" position="right" [modal]="true" class="p-fluid">
     <ng-template pTemplate="content">
         <div class="field">
             <label for="name"><span class="required">*</span> {{ 'Room' | translate }}</label>
