@@ -2,9 +2,29 @@
 <div class="card">
     <!-- Search fields -->
     <div class="p-fluid grid">
-        <div class="field col-12 md:col-4">
-
+        <div class="col-12 md:col-6">
+            <p-autoComplete [(ngModel)]="trainer" [forceSelection]="true" [suggestions]="trainers" (completeMethod)="searchTrainers($event)" (onSelect)="loadData()" field="name" placeholder="{{ 'Search User' | translate }}"></p-autoComplete>
         </div>
+    </div>
+    <div class="p-fluid grid">
+        <div class="col" *ngFor="let role of roles">
+            <button pButton pRipple type="button"  [label]="role.name" icon="pi pi-circle-fill" (click)="loadRole(role.id)" [style]="{color: role.color_name}" [class]="selectedRoleId == role.id ? 'p-button-fill' : 'p-button-outlined'"></button>
+        </div>
+    </div>
+    <div class="grid p-3">
+        <div [class]="(selectedRoom.length == 0 ? 'p-highlight' : '') + ' all-room'">
+            <p-avatar [label]="lemonade.getInitial('All')" shape="circle" size="large" (click)="allRoom()"></p-avatar>
+        </div>
+        <p-selectButton [options]="rooms" [(ngModel)]="selectedRoom" [multiple]="true" (onOptionClick)="loadData()">
+            <ng-template let-item>
+                <p-avatar [label]="lemonade.getInitial(item.name)" shape="circle" size="large" [style]="{'background-color': item.color, 'color': '#fff'}"></p-avatar>
+            </ng-template>
+        </p-selectButton>
+        <!--        <div class="col" *ngFor="let room of rooms">-->
+<!--            <a>-->
+<!--                <p-avatar [label]="lemonade.getInitial(room.name)" shape="circle" [style]="{'background-color': room.color, 'color': '#fff'}" class="mr-2"></p-avatar>-->
+<!--            </a>-->
+<!--        </div>-->
     </div>
 
     <full-calendar [options]="options"></full-calendar>

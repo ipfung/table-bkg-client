@@ -17,16 +17,25 @@ export class AppointmentCalendarComponent implements OnInit {
     searchPaymentStatus = '';
     paymentStatusList = [];
     searchCustomer = 0;
-    customers = [];
+    roles: any[];
+    selectedRole = [];
+    selectedRoleId = 0;
+    rooms: any[];
+    selectedRoom = [];
+    trainer: any;
+    trainers: any[];
     options: any;
 
-    constructor(private api: ApiService, private lemonade: Lemonade) {
+    constructor(private api: ApiService, public lemonade: Lemonade) {
     }
 
     ngOnInit(): void {
-        this.api.get('api/appointments').subscribe( res => {
-            this.events = res.data;
-            this.options = {...this.options, ...{events: res.data}};
+        this.loadData();
+        this.api.get('api/roles').subscribe(res => {
+            this.roles = res.data;
+        });
+        this.api.get('api/rooms').subscribe(res => {
+            this.rooms = res.data;
         });
         this.options = {
             initialDate : this.lemonade.formatPostDate(new Date()),
@@ -53,4 +62,61 @@ export class AppointmentCalendarComponent implements OnInit {
         };
     }
 
+    searchTrainers(e) {
+        this.api.get('api/users', {
+            name: e.query
+        }).subscribe(res => {
+            this.trainers = res.data;
+        });
+    }
+
+    allRoom() {
+        this.selectedRoom = [];
+        this.loadData();
+    }
+
+    loadRole(id) {
+        console.log('hi selectedRole=', id);
+        this.selectedRoleId = id;
+        this.loadData();
+    }
+
+    loadData() {
+        let params = {};
+        console.log('hi selectedRoom=', this.selectedRoom);
+        if (this.selectedRole && this.selectedRole.length > 0) {
+            const roles = this.selectedRole.map(a => a.id);
+            params = {...params, ...{role_ids: roles}};
+        } else {
+            params = {...params, ...{role_id: this.selectedRoleId}};
+        }
+        if (this.selectedRoom && this.selectedRoom.length > 0) {
+            const rooms = this.selectedRoom.map(a => a.id);
+            params = {...params, ...{room_ids: rooms}};
+        }
+        if (this.trainer && this.trainer.id) {
+            params = {...params, ...{user_id: this.trainer.id}};
+        }
+        // const roles = this.selectedRole.map(a => a.foo);
+        this.api.get('api/appointments', params).subscribe( res => {
+            // this.events = res.data;   // FIXME apply different color to different role.
+            this.options = {...this.options, ...{
+                    eventSources: [{
+                        events: res.data, color: 'yellow'//, textColor: '#266cda'
+                    }, {
+                        events: [{
+                            "title": "Event 1",
+                            "start": "2022-09-05T09:00:00",
+                            "end": "2022-09-05T18:00:00"
+                        }, {
+                            "title": "Event 2",
+                            "start": "2022-09-08",
+                            "end": "2022-09-10"
+                        }],
+                        color: 'yellow', textColor: 'red'
+                    }]
+                }
+            };
+        });
+    }
 }

@@ -1,0 +1,52 @@
+.all-room {
+    border: 1px solid transparent;
+    padding: 0.5rem;
+    margin: 0.3rem;
+    cursor: pointer;
+    &.p-highlight {
+        box-shadow: none;
+        border-radius: 50%;
+        background: transparent;
+        border: 1px solid var(--primary-color);
+    }
+    &:hover, &:focus {
+        border-radius: 50%;
+        border: 1px solid var(--primary-color);
+    }
+}
+:host ::ng-deep .p-selectbutton .p-button {
+    background: transparent;
+    border: 1px solid transparent;
+    padding: 0.5rem;
+    margin: 0.3rem;
+    border-radius: 50%;
+    //color: #495057;
+    transition: var(--primary-color) 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
+    &:not(:last-child) {
+        border-right: 1px solid transparent;
+    }
+    &:first-of-type, &:last-of-type, &:not(:first-of-type):not(:last-of-type) {
+        border-radius: 50%;
+        &:hover, &:focus {
+            box-shadow: none;
+            border-radius: 50%;
+            background: transparent;
+            border: 1px solid var(--primary-color);
+            //-webkit-transition: border-color .4s ease-out;
+            //transition: border-color .4s ease-out;
+        }
+    }
+    //&:focus {
+    //    border-radius: 50%;
+    //    background: transparent;
+    //    border: 1px solid var(--primary-color);
+    //}
+    &.p-highlight {
+        box-shadow: none;
+        border-radius: 50%;
+        background: transparent;
+        border: 1px solid var(--primary-color);
+        //-webkit-transition: border-color .4s ease-out;
+        //transition: border-color .4s ease-out;
+    }
+}
