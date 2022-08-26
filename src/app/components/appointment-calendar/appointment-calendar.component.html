@@ -8,7 +8,7 @@
     </div>
     <div class="p-fluid grid">
         <div class="col" *ngFor="let role of roles">
-            <button pButton pRipple type="button"  [label]="role.name" icon="pi pi-circle-fill" (click)="loadRole(role.id)" [style]="{color: role.color_name}" [class]="selectedRoleId == role.id ? 'p-button-fill' : 'p-button-outlined'"></button>
+            <button pButton pRipple type="button"  [label]="role.name + ' role' | translate" icon="pi pi-circle-fill" (click)="loadRole(role.id)" [style]="{color: role.color_name}" [class]="selectedRoleId == role.id ? 'p-button-fill' : 'p-button-outlined'"></button>
         </div>
     </div>
     <div class="grid p-3">
