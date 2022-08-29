@@ -7,8 +7,11 @@
         </div>
     </div>
     <div class="p-fluid grid">
-        <div class="col" *ngFor="let role of roles">
-            <button pButton pRipple type="button"  [label]="role.name + ' role' | translate" icon="pi pi-circle-fill" (click)="loadRole(role.id)" [style]="{color: role.color_name}" [class]="selectedRoleId == role.id ? 'p-button-fill' : 'p-button-outlined'"></button>
+        <div class="col-12 md:col-2">
+            <button pButton pRipple type="button" [label]="'All role' | translate" icon="pi pi-circle-fill" (click)="loadRole(0)" [style]="{color: 'grey'}" [class]="selectedRoleId == 0 ? 'p-button-fill' : 'p-button-outlined'"></button>
+        </div>
+        <div class="col-12 md:col-2" *ngFor="let role of roles">
+            <button pButton pRipple type="button" [label]="role.name + ' role' | translate" icon="pi pi-circle-fill" (click)="loadRole(role.id)" [style]="{color: role.color_name}" [class]="selectedRoleId == role.id ? 'p-button-fill' : 'p-button-outlined'"></button>
         </div>
     </div>
     <div class="grid p-3">

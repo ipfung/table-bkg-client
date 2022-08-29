@@ -18,6 +18,13 @@ export class UserListComponent implements OnInit {
     users = [];
     newable = false;
     editable = false;
+    // search
+    roles: any[];
+    selectedRole = [];
+    selectedRoleId = 0;
+    userName: any;
+    userEmail: any;
+    userStatus: any;
 
     // form variables.
     formDialog = false;
@@ -25,7 +32,6 @@ export class UserListComponent implements OnInit {
     isNew = false;
     partner: any;
     statuses = [];
-    roles = [];
     formHeader = "Edit Form";
 
     private subscription;
@@ -51,7 +57,7 @@ export class UserListComponent implements OnInit {
         this.subscription = this.route.params.subscribe(params => {
             this.paramRole = params['role'] || '';
         });
-        // load locations.
+        // load roles.
         this.api.get('api/roles').subscribe( res => {
             this.roles = res.data;
         });
@@ -63,10 +69,33 @@ console.log('ngOnDestroy=', this.subscription);
         this.subscription.unsubscribe();
     }
 
+    loadRole(id) {
+        console.log('hi selectedRole=', id);
+        this.selectedRoleId = id;
+        this.loadData();
+    }
+
     loadData() {
-        this.api.get('api/users', {
-            role: this.paramRole
-        }).subscribe( res => {
+        let params = {
+            role: this.paramRole,
+        };
+        if (this.userName) {
+            params = {...params, ...{name: this.userName}};
+        }
+        if (this.userEmail) {
+            params = {...params, ...{email: this.userEmail}};
+        }
+        if (this.userStatus) {
+            params = {...params, ...{status: this.userStatus}};
+        }
+        console.log('hiuser selectedRole=', this.selectedRole);
+        if (this.selectedRole && this.selectedRole.length > 0) {
+            const roles = this.selectedRole.map(a => a.id);
+            params = {...params, ...{role_ids: roles}};
+        } else {
+            params = {...params, ...{role_id: this.selectedRoleId}};
+        }
+        this.api.get('api/users', params).subscribe( res => {
             this.users = res.data;
             this.editable = res.editable;
             this.newable = (this.paramRole == 'User');

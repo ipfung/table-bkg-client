@@ -7,12 +7,33 @@
     </div>
 </div>
 <div class="card">
-<!--    &lt;!&ndash; Search fields &ndash;&gt;-->
-<!--    <div class="p-fluid grid">-->
-<!--        <div class="field col-12 md:col-6">-->
-<!--            <p-calendar [(ngModel)]="rangeDates" selectionMode="range" [readonlyInput]="true" (onSelect)="loadData()" inputId="range"></p-calendar>-->
-<!--        </div>-->
-<!--    </div>-->
+    <!-- Search fields -->
+    <div class="p-fluid grid">
+        <div class="field col-12 md:col-4">
+            <input type="text" pInputText [(ngModel)]="userName" (change)="loadData()" placeholder="{{ 'Search Name' | translate }}">
+        </div>
+        <div class="field col-12 md:col-4">
+            <input type="text" pInputText [(ngModel)]="userEmail" (change)="loadData()" placeholder="{{ 'Search Email' | translate }}">
+        </div>
+        <div class="field col-12 md:col-4">
+            <p-dropdown [options]="statuses" optionValue="code" [(ngModel)]="userStatus" (onChange)="loadData()" (onClear)="loadData()" [showClear]="true" placeholder="{{ 'Search Status' | translate }}">
+                <ng-template pTemplate="selectedItem">
+                    {{ lemonade.comboRenderer(statuses, userStatus) | translate }}
+                </ng-template>
+                <ng-template let-item pTemplate="item">
+                    {{ item.name | translate }}
+                </ng-template>
+            </p-dropdown>
+        </div>
+    </div>
+    <div class="p-fluid grid">
+        <div class="col-12 md:col-2">
+            <button pButton pRipple type="button" [label]="'All role' | translate" icon="pi pi-circle-fill" (click)="loadRole(0)" [style]="{color: 'grey'}" [class]="selectedRoleId == 0 ? 'p-button-fill' : 'p-button-outlined'"></button>
+        </div>
+        <div class="col-12 md:col-2" *ngFor="let role of roles">
+            <button pButton pRipple type="button"  [label]="role.name + ' role' | translate" icon="pi pi-circle-fill" (click)="loadRole(role.id)" [style]="{color: role.color_name}" [class]="selectedRoleId == role.id ? 'p-button-fill' : 'p-button-outlined'"></button>
+        </div>
+    </div>
 
     <p-table [value]="users" [loading]="loading" dataKey="id" sortField="appointment_date" sortMode="single"  responsiveLayout="stack">
         <ng-template pTemplate="header">
