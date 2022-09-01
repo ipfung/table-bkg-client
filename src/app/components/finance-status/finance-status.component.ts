@@ -20,7 +20,7 @@ export class FinanceStatusComponent implements OnInit {
     rangeDates: Date[];
     searchPaymentStatus = '';
     paymentStatusList = [];
-    searchCustomer = 0;
+    searchCustomer: any;
     customers = [];
 
     //form
@@ -37,7 +37,6 @@ export class FinanceStatusComponent implements OnInit {
         // this.loadData();
         this.translateService.get(['All', 'pending payment', 'paid payment', 'partially payment']).subscribe( res => {
             this.paymentStatusList = [
-                {name: res['All'], code: '', color: ''},
                 {name: res['pending payment'], code: 'pending', color: '#c63737'},
                 {name: res['paid payment'], code: 'paid', color: '#8a5340'},
                 {name: res['partially payment'], code: 'partially', color: '#256029'},
@@ -54,17 +53,29 @@ export class FinanceStatusComponent implements OnInit {
         ];
     }
 
+    searchCustomers(e) {
+        this.api.get('api/users', {
+            name: e.query
+        }).subscribe(res => {
+            this.customers = res.data;
+        });
+    }
+
     loadData(event: LazyLoadEvent) {
+        let params = {
+            // page: (1+event.first),
+            // size: event.rows,
+            // passing from_date 'Unsupported operand types' error.
+            from_date: this.lemonade.formatPostDate(this.rangeDates[0]),
+            to_date: this.lemonade.formatPostDate(this.rangeDates[1]),
+            payment_status: this.searchPaymentStatus ? this.searchPaymentStatus : ''
+        };
+        if (this.showCustomer && this.searchCustomer && this.searchCustomer.id) {
+            params = {...params, ...{customer_id: this.searchCustomer.id}};
+        }
 console.log('finance loaddata event===', event);
         if (this.rangeDates.length == 2 && this.rangeDates[1]) {
-            this.api.get('api/finance', {
-                page: (1+event.first),
-                size: event.rows,
-                // passing from_date 'Unsupported operand types' error.
-                from_date: this.lemonade.formatPostDate(this.rangeDates[0]),
-                to_date: this.lemonade.formatPostDate(this.rangeDates[1]),
-                payment_status: this.searchPaymentStatus
-            }).subscribe(res => {
+            this.api.get('api/finance', params).subscribe(res => {
                 this.bookings = res.data;
                 this.showCustomer = res.showCustomer;
                 this.loading = false;

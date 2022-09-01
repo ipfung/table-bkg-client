@@ -3,13 +3,13 @@
     <!-- Search fields -->
     <div class="p-fluid grid">
         <div class="field col-12 md:col-4">
-            <p-calendar [(ngModel)]="rangeDates" selectionMode="range" placeholder="{{ 'Payment Date' | translate }}" [readonlyInput]="true" inputId="range" (onSelect)="loadData($event)"></p-calendar>
+            <p-calendar [(ngModel)]="rangeDates" selectionMode="range" placeholder="{{ 'Search F' | translate:{field: 'Payment Date' | translate } }}" [readonlyInput]="true" inputId="range" (onSelect)="loadData($event)"></p-calendar>
         </div>
         <div *ngIf="showCustomer" class="field col-12 md:col-4">
-            <p-dropdown [options]="customers" [(ngModel)]="searchCustomer" placeholder="{{ 'Customer' | translate }}" optionLabel="name" [showClear]="true"></p-dropdown>
+            <p-autoComplete [(ngModel)]="searchCustomer" [forceSelection]="true" [suggestions]="customers" (completeMethod)="searchCustomers($event)" (onSelect)="loadData($event)" field="name" placeholder="{{ 'Search F' | translate:{field: 'Customer' | translate} }}"></p-autoComplete>
         </div>
         <div class="field col-12 md:col-4">
-            <p-dropdown [options]="paymentStatusList" [(ngModel)]="searchPaymentStatus" placeholder="{{ 'Payment Status' | translate }}" optionLabel="name" optionValue="code" [showClear]="true" (onChange)="loadData($event)">
+            <p-dropdown [options]="paymentStatusList" [(ngModel)]="searchPaymentStatus" optionLabel="name" optionValue="code" [showClear]="true" (onChange)="loadData($event)" placeholder="{{ 'Search F' | translate:{field: 'Payment Status' | translate } }}">
                 <ng-template let-pay pTemplate="item">
                     <div class="payment-item">
                         <div [style]="{color: pay.color, 'font-weight': 'bold'}">{{pay.name}}</div>
