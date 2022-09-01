@@ -63,7 +63,6 @@ export class DashboardComponent implements OnInit {
             this.notifications = res.data;
         });
         this.api.get('api/dashboard').subscribe( res => {
-            console.log('dashboard===', res);
             this.data = res;
 
             this.dashboardService.updateNotificationsCount(res.noOfNewNotifications);

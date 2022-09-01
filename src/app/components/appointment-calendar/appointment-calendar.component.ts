@@ -16,7 +16,6 @@ export class AppointmentCalendarComponent implements OnInit {
     rangeDates: Date[];
     searchPaymentStatus = '';
     paymentStatusList = [];
-    searchCustomer = 0;
     roles: any[];
     selectedRole = [];
     selectedRoleId = 0;
