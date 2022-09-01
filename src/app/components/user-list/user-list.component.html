@@ -10,13 +10,13 @@
     <!-- Search fields -->
     <div class="p-fluid grid">
         <div class="field col-12 md:col-4">
-            <input type="text" pInputText [(ngModel)]="userName" (change)="loadData()" placeholder="{{ 'Search Name' | translate }}">
+            <input type="text" pInputText [(ngModel)]="userName" (change)="loadData()" placeholder="{{ 'Search F' | translate:{field: 'Name' | translate } }}">
         </div>
         <div class="field col-12 md:col-4">
-            <input type="text" pInputText [(ngModel)]="userEmail" (change)="loadData()" placeholder="{{ 'Search Email' | translate }}">
+            <input type="text" pInputText [(ngModel)]="userEmail" (change)="loadData()" placeholder="{{ 'Search F' | translate:{field: 'Email' | translate } }}">
         </div>
         <div class="field col-12 md:col-4">
-            <p-dropdown [options]="statuses" optionValue="code" [(ngModel)]="userStatus" (onChange)="loadData()" (onClear)="loadData()" [showClear]="true" placeholder="{{ 'Search Status' | translate }}">
+            <p-dropdown [options]="statuses" optionValue="code" [(ngModel)]="userStatus" (onChange)="loadData()" (onClear)="loadData()" [showClear]="true" placeholder="{{ 'Search F' | translate:{field: 'Status' | translate } }}">
                 <ng-template pTemplate="selectedItem">
                     {{ lemonade.comboRenderer(statuses, userStatus) | translate }}
                 </ng-template>
