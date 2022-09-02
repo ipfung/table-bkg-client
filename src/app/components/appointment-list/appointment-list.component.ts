@@ -116,6 +116,34 @@ export class AppointmentListComponent implements OnInit {
         this.router.navigate(['/reschedule', appointment.id]);
     }
 
+    isAbleApprove(appointment) {
+        return appointment.status == 'pending' && this.showCustomer == true;
+    }
+
+    approve(booking) {
+        this.translateService.get(['Approve booking?', 'Warning']).subscribe( res => {
+            this.confirmationService.confirm({
+                message: res['Approve booking?'],
+                accept: () => {
+                    booking.loading = true;
+                    this.appointmentService.approve(booking.id).subscribe(res => {
+                        // console.log('checkin=', res);
+                        if (res.success == true) {
+                            booking.status = res.status;
+                        } else {
+                            this.messageService.add({
+                                severity: 'error',
+                                summary: res['Error'],
+                                detail: res.error
+                            });
+                        }
+                        booking.loading = false;
+                    });
+                }
+            });
+        });
+    }
+
     /**
      * only unpaid appointment can be canceled.
      * @param booking

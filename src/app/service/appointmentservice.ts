@@ -131,6 +131,12 @@ export class AppointmentService {
         });
     }
 
+    approve(bookId) {
+        return this.api.update('api/booking-approve/' + bookId, {
+            t: Math.floor(new Date().getTime()/1000.0)
+        });
+    }
+
     updateUserSelection() {
         let dt = new Date();
         dt.setHours( dt.getHours() + AppointmentService.EXPIRY_TIME );

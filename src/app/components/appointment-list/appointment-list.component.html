@@ -66,7 +66,7 @@
                 </td>
                 <td style="min-width:120px">
                     <span class="p-column-title">{{ 'Payment' | translate }}</span>
-                    <div [pTooltip]="isPaid(appointment) ? 'Paid' : 'Not paid' | translate" tooltipPosition="bottom">
+                    <div [pTooltip]="isPaid(appointment) ? ('Paid' | translate) : ('unpaid' | translate)" tooltipPosition="bottom">
                         <i [class]="isPaid(appointment) ? 'pi pi-money-bill text-green-600' : 'pi pi-exclamation-circle text-pink-600'"></i>
                         <span [class]="isPaid(appointment) ? 'pl-1 text-green-600' : 'pl-1 text-pink-600'"> {{ appointment.price | currency:'HK$' }}</span>
                     </div>
@@ -83,8 +83,9 @@
 <!--                    / <span class="">{{ appointmentService.formatDateTime(appointment.checkout) }}</span>-->
                 </td>
                 <td style="min-width:20px">
-                    <button pButton type="button" [disabled]="!canAmend(appointment)" pTooltip="{{ 'Reschedule' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-pencil" (click)="reschedule(appointment)"></button>
+                    <button pButton type="button" [disabled]="!canAmend(appointment)" pTooltip="{{ 'Reschedule' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-replay" (click)="reschedule(appointment)"></button>
                     <button pButton type="button" [disabled]="isPaid(appointment) || !canAmend(appointment)" pTooltip="{{ 'Cancel Booking' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-times" (click)="cancel(appointment)"></button>
+                    <button pButton type="button" [disabled]="!isAbleApprove(appointment)" pTooltip="{{ 'Approve' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-check" (click)="approve(appointment)"></button>
                     <button pButton type="button" [disabled]="isPaid(appointment) || !isValidStatus(appointment)" pTooltip="{{ 'Pay Now' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-credit-card" (click)="makePayment(appointment)"></button>
                 </td>
             </tr>
