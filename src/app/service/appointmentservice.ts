@@ -17,7 +17,6 @@ export class AppointmentService {
 
     lang: any;
 
-    public readonly colors = ["1788FB","FBC22D","FA3C52","D696B8","689BCA","26CC2B","4BBEC6","FD7E35","E38587","774DFB","31CDF3","6AB76C","FD5FA1","A697C5"];
     // for display only and should be retrieved from server
     public readonly tableSessions = [
         {name: '1 Hour', code: 2, hour: 1},
@@ -72,9 +71,9 @@ export class AppointmentService {
             time: ''
         },
         personalInformation: {
-            firstname: localStorage.getItem(AuthService.USER_NAME),
+            firstname: '',
             lastname: '',
-            email: localStorage.getItem(AuthService.EMAIL)
+            email: ''
         },
         paymentInformation: {
             method: '',
@@ -197,10 +196,11 @@ export class AppointmentService {
         this.api.post('api/appointment', data).subscribe( res => {
             console.log('complete res=', res);
             if (res.success === true) {
-                this.clearUserSelection();
                 this.paymentComplete.next({...{
                     success: true
                 }, ...this.appointmentInformation});
+                // clear after payment complete.
+                this.clearUserSelection();
             } else {
                 this.paymentComplete.next(res);
             }

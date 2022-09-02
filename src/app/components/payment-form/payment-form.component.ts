@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
 import {AppointmentService} from "../../service/appointmentservice";
+import {AuthService} from "../../service/auth.service";
 
 @Component({
     selector: 'app-payment-form',
@@ -14,11 +15,15 @@ export class PaymentFormComponent implements OnInit {
 
     timeInformation: any;
 
-    constructor(public appointmentService: AppointmentService, private router: Router) {
+    constructor(public appointmentService: AppointmentService, private authService: AuthService, private router: Router) {
     }
 
-    ngOnInit(): void {
-        this.personalInformation = this.appointmentService.getAppointmentInformation().personalInformation;
+    async ngOnInit() {
+        this.personalInformation = {
+            firstname: await this.authService.userName(),
+            lastname: '',
+            email: await this.authService.email()
+        };
         this.paymentInformation = this.appointmentService.getAppointmentInformation().paymentInformation;
         this.timeInformation = this.appointmentService.getAppointmentInformation().timeInformation;
     }
@@ -44,7 +49,9 @@ export class PaymentFormComponent implements OnInit {
 
     nextPage() {
         if (this.paymentInformation.method) {
-            this.appointmentService.getAppointmentInformation().paymentInformation = this.paymentInformation;
+            let appointmentInfo = this.appointmentService.getAppointmentInformation();   // note!! can call getAppointmentInformation() in each function, otherwise will not store data.
+            appointmentInfo.personalInformation = this.personalInformation;
+            appointmentInfo.paymentInformation = this.paymentInformation;
             this.appointmentService.updateUserSelection();
             this.router.navigate(['appointment/confirmation']);
         }
