@@ -18,6 +18,7 @@ export class BookingFormComponent implements OnInit {
     // the maxBookDate depends on user level
     maxBookDate: Date;
 
+    loading = true;
     timeSlots: any[];   // ngIf the tabView is the trick to show. ref: https://stackblitz.com/edit/github-s9uwhf-yy9nq2?file=src%2Fapp%2Fapp.component.ts
 
     multipleYear: boolean;
@@ -35,7 +36,8 @@ export class BookingFormComponent implements OnInit {
             this.timeSlots = res['data'];
             this.timeInformation.sessionInterval = res['sessionInterval'];
             this.multipleYear = (this.today !== this.maxBookDate);
-        })
+            this.loading = false;
+        });
     }
 
     selectedPreviousDescription() {
