@@ -3,21 +3,31 @@ import {ActivatedRouteSnapshot, CanActivate, Router} from '@angular/router';
 import {ApiService} from './api.service';
 import {PushService} from "./push.service";
 import { get, set, remove } from './storage.service';
+import {Subject} from "rxjs";
 
 @Injectable()
 export class AuthService {
     private loggedIn = false;
     static readonly TOKEN = 'lemonade-token';
+    static readonly LOGIN_METHOD = 'lemonade-method';
     static readonly USER_NAME = 'lemonade-username';
     static readonly LOGIN_ID = 'lemonade-login';
     static readonly EMAIL = 'lemonade-email';
     static readonly AVATAR = 'lemonade-avatar';
     static readonly PID = 'lemonade-pid';
 
+    private loginComplete = new Subject<any>();
+
+    loginComplete$ = this.loginComplete.asObservable();
+
     constructor(private router: Router, private api: ApiService, private push: PushService) {
         if (this.token) {
             this.loggedIn = true;
         }
+    }
+
+    async method() {
+        return get(AuthService.LOGIN_METHOD);
     }
 
     async userName() {
@@ -36,18 +46,33 @@ export class AuthService {
         return get(AuthService.AVATAR);
     }
 
-    logIn(login: string, passord: string, remem: boolean): void {
-        console.log('login name-', login, passord);
+    mobileLogin(login: string, passord: string, remem: boolean): void {
+        console.log('mobileLogin name-', login, passord);
+        this.logIn({
+            loginMethod: 'phone',
+            mobile_no: login,
+            password: passord,
+            remember: remem
+        });
+    }
+
+    emailLogin(login: string, passord: string, remem: boolean): void {
+        console.log('emailLogin name-', login, passord);
+        this.logIn({
+            loginMethod: 'email',
+            email: login,
+            password: passord,
+            remember: remem
+        });
+    }
+
+    private logIn(obj): void {
         this.api.get('sanctum/csrf-cookie').subscribe(resp => {
-            this.api.post('api/login', {
-                email: login,
-                password: passord,
-                remember: remem
-            }).subscribe(res => {
+            this.api.post('api/login', obj).subscribe(res => {
                 console.log('login res-', res);
                 this.loggedIn = true;
-                this.setData({...res, ...{login: login, remember: remem}});
-                if (remem) {
+                this.setData({...res, ...{method: obj.loginMethod, login: obj.loginMethod == 'phone' ? obj.mobile_no : obj.email, remember: obj.remember}});
+                if (obj.remember) {
                     localStorage.setItem(AuthService.TOKEN, res.token);
                 } else {
                     // use session storage which will be destroyed once logout/browser close.
@@ -59,14 +84,24 @@ export class AuthService {
                     this.push.init();
                 }
                 this.router.navigate(['/']);
+            }, error => {
+                let msg = '';
+                console.log('login error-', error);
+                if (error.status == 401) {
+                    msg = error.error.message;
+                }
+                this.loginComplete.next({
+                    message: msg
+                })
             });
         });
     }
 
     async setData(res) {
+        set(AuthService.LOGIN_METHOD, res.method);
         set(AuthService.USER_NAME, res.name);
         set(AuthService.LOGIN_ID, res.login);
-        set(AuthService.EMAIL, res.login);
+        set(AuthService.EMAIL, res.email);
         set(AuthService.AVATAR, res.avatar);
     }
 

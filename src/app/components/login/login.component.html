@@ -10,8 +10,24 @@
                 </div>
 
                 <div class="w-full md:w-10 mx-auto">
-                    <label for="email1" #username class="block text-900 text-xl font-medium mb-2">{{ 'Login ID' | translate }}</label>
-                    <input id="email1" type="text" [(ngModel)]="login" required placeholder="{{ 'Email' | translate }}" pInputText class="w-full mb-3" style="padding:1rem;" [ngClass]="{'ng-invalid ng-dirty' : submitted && !login}" (keyup.enter)="onEnter()">
+                    <label class="block text-900 text-xl font-medium mb-2">{{ 'Method' | translate }}</label>
+                    <div class="field-radiobutton">
+                        <p-radioButton name="loginMethod" value="email" [(ngModel)]="loginMethod" inputId="method1"></p-radioButton>
+                        <label for="method1">{{ 'Email' | translate }}</label>
+                    </div>
+                    <div class="field-radiobutton">
+                        <p-radioButton name="loginMethod" value="phone" [(ngModel)]="loginMethod" inputId="method2"></p-radioButton>
+                        <label for="method2">{{ 'Mobile No.' | translate }}</label>
+                    </div>
+                    <div *ngIf="loginMethod == 'email'">
+                        <label for="email1" #username class="block text-900 text-xl font-medium mb-2">{{ 'Email' | translate }}</label>
+                        <input id="email1" type="text" [(ngModel)]="login" required placeholder="{{ 'Email' | translate }}" pInputText class="w-full mb-3" style="padding:1rem;" [ngClass]="{'ng-invalid ng-dirty' : submitted && !login}" (keyup.enter)="onEnter()">
+                    </div>
+
+                    <div *ngIf="loginMethod == 'phone'">
+                        <label for="phone1" #phone1 class="block text-900 text-xl font-medium mb-2">{{ 'Mobile No.' | translate }}</label>
+                        <input id="phone1" type="text" [(ngModel)]="login_mobile" required placeholder="{{ 'Mobile No.' | translate }}" pInputText class="w-full mb-3" style="padding:1rem;" [ngClass]="{'ng-invalid ng-dirty' : submitted && !login}" (keyup.enter)="onEnter()">
+                    </div>
 
                     <label for="password1" #pwd class="block text-900 font-medium text-xl mb-2">{{ 'Password' | translate }}</label>
                     <p-password id="password1" #pwdField [(ngModel)]="password" required placeholder="{{ 'Password' | translate }}" [toggleMask]="true" styleClass="w-full mb-3" [ngClass]="{'ng-invalid ng-dirty' : submitted && !password}" (keyup.enter)="onEnter()"></p-password>
@@ -22,6 +38,9 @@
                             <label for="rememberme1">{{ 'Remember me' | translate }}</label>
                         </div>
 <!--                        <a class="font-medium no-underline ml-2 text-right cursor-pointer" style="color: var(&#45;&#45;primary-color)">Forgot password?</a>-->
+                    </div>
+                    <div class="text-primary mb-3" *ngIf="errorMessage">
+                        {{ errorMessage | translate }}
                     </div>
                     <button pButton pRipple label="{{ 'Sign In' | translate }}" class="w-full p-3 text-xl" (click)="onLoginClick()"></button>
                 </div>

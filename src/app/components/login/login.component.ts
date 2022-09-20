@@ -31,6 +31,8 @@ import {environment} from "../../../environments/environment";
 export class LoginComponent implements OnInit, OnDestroy {
     @ViewChild('username', { static: false }) username: ElementRef;
 
+    @ViewChild('phone1', { static: false }) phone1: ElementRef;
+
     @ViewChild('pwd', { static: false }) pwd: ElementRef;
 
     @ViewChild('pwdField', { static: false }) pwdField: ElementRef;
@@ -39,7 +41,11 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     logo: string;
 
+    loginMethod: string = 'email';
+
     login = '';
+
+    login_mobile = '';
 
     password = '';
 
@@ -48,6 +54,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     isApp = false;
 
     submitted = false;
+
+    errorMessage: string;
 
     config: AppConfig;
 
@@ -59,10 +67,17 @@ export class LoginComponent implements OnInit, OnDestroy {
     async ngOnInit() {
         this.config = this.configService.config;
         this.logo = this.api.url + 'images/' + this.config.dark ? 'logo-white' : 'logo' + '.png';
-        this.login = await this.authService.loginId();
+        this.loginMethod = await this.authService.method();
+        if (!this.loginMethod)
+            this.loginMethod = 'email';
+        if (this.loginMethod == 'phone')
+            this.login_mobile = await this.authService.loginId();
+        else {
+            this.login = await this.authService.loginId();
+        }
         this.isApp = environment.isApp;
-        this.subscription = this.configService.configUpdate$.subscribe(config => {
-            this.config = config;
+        this.subscription = this.authService.loginComplete$.subscribe(obj => {
+            this.errorMessage = obj.message;
         });
     }
 
@@ -90,16 +105,24 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     onLoginClick() {
         this.submitted = true;
-        if (!this.login || this.login.trim() == '') {
-            this.username.nativeElement.click();
-            return;
-        } else if (!this.password || this.password.trim() == '') {
+        if (!this.password || this.password.trim() == '') {
             this.pwd.nativeElement.click();
             this.pwdField.nativeElement.focus();
             return;
         }
 
-        this.authService.logIn(this.login, this.password, this.isApp ? true : this.remember);
-
+        if (this.loginMethod == 'phone') {
+            if (!this.login_mobile || this.login_mobile.trim() == '') {
+                this.phone1.nativeElement.click();
+                return;
+            }
+            this.authService.mobileLogin(this.login_mobile, this.password, this.isApp ? true : this.remember);
+        } else {
+            if (!this.login || this.login.trim() == '') {
+                this.username.nativeElement.click();
+                return;
+            }
+            this.authService.emailLogin(this.login, this.password, this.isApp ? true : this.remember);
+        }
     }
 }
