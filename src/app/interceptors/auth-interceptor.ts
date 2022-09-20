@@ -14,9 +14,7 @@ export class AuthInterceptor implements HttpInterceptor {
   }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    console.log('AuthInterceptor=', request.url);
     const token = this.authService.token;
-    console.log('AuthInterceptor request.headers=', request.headers);
     /* refreshToken() calls simultaneously with the original calls. 20180321.
     let jti = jwt_decode(token);
     console.log("is token valid jti, ", jti);
@@ -71,6 +69,7 @@ console.log('hello auth response', event);
           if (err instanceof HttpErrorResponse) {
             console.log('hello auth error', err);
             if (err.status === 401) {
+                this.authService.logOut();
             } else if (err.status === 500) {
               // show login
 
