@@ -39,6 +39,8 @@
     "Confirmation": "Confirmation",
     "Pay Now": "Pay Now",
     "Name": "Name",
+    "Chinese Name": "Chinese Name",
+    "Mobile No.": "Mobile No.",
     "Email": "Email",
     "My Booking": "My Booking",
     "No booking found.": "No booking record, create a <a href='#/appointment'>booking</a> now.",

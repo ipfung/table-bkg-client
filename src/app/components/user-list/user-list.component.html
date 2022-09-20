@@ -39,10 +39,12 @@
         <ng-template pTemplate="header">
             <tr>
                 <th style="min-width:120px">{{ 'Name' | translate }}</th>
+                <th style="min-width:100px">{{ 'Chinese Name' | translate }}</th>
                 <th style="min-width:120px">{{ 'Role' | translate }}</th>
                 <th style="min-width:80px">{{ 'Avatar' | translate }}</th>
-                <th style="min-width:150px">{{ 'Email' | translate }}</th>
-                <th style="min-width:120px">{{ 'Status' | translate }}</th>
+                <th style="min-width:90px">{{ 'Mobile No.' | translate }}</th>
+                <th style="min-width:120px">{{ 'Email' | translate }}</th>
+                <th style="min-width:80px">{{ 'Status' | translate }}</th>
                 <th style="min-width:20px"></th>
             </tr>
         </ng-template>
@@ -56,9 +58,13 @@
         <!--        </ng-template>-->
         <ng-template pTemplate="body" let-user let-rowIndex="rowIndex">
             <tr>
-                <td style="min-width:200px">
+                <td style="min-width:120px">
                     <span class="p-column-title">{{ 'Name' | translate }}</span>
                     {{ user.name }}
+                </td>
+                <td style="min-width:100px">
+                    <span class="p-column-title">{{ 'Chinese Name' | translate }}</span>
+                    {{ user.second_name }}
                 </td>
                 <td style="min-width:120px">
                     <span class="p-column-title">{{ 'Role' | translate }}</span>
@@ -69,11 +75,15 @@
                     <span class="p-column-title">{{ 'Avatar' | translate }}</span>
                     <p-avatar [image]="lemonade.getAvatar(user)" shape="circle" [style]="{'background-color': '#266cda', 'color': '#fff', 'margin-left': '5px'}"></p-avatar>
                 </td>
+                <td style="min-width:90px">
+                    <span class="p-column-title">{{ 'Mobile No.' | translate }}</span>
+                    {{ user.mobile_no }}
+                </td>
                 <td style="min-width:120px">
                     <span class="p-column-title">{{ 'Email' | translate }}</span>
                     {{ user.email }}
                 </td>
-                <td style="min-width:120px">
+                <td style="min-width:80px">
                     <span class="p-column-title">{{ 'Status' | translate }}</span>
                     <span [class]="'user-badge status-' + user.status">{{ user.status | translate }}</span>
                 </td>
@@ -103,6 +113,18 @@
             <label for="name">{{ 'Name' | translate }}</label>
             <input type="text" pInputText id="name" [(ngModel)]="partner.name" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !partner.name}"/>
             <small class="ng-dirty ng-invalid" *ngIf="submitted && !partner.name">{{ 'Field is required' | translate: {field: 'Name' | translate} }}</small>
+        </div>
+
+        <div class="field">
+            <label for="second_name">{{ 'Chinese Name' | translate }}</label>
+            <input type="text" pInputText id="second_name" [(ngModel)]="partner.second_name" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !partner.second_name}"/>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !partner.second_name">{{ 'Field is required' | translate: {field: 'Chinese Name' | translate} }}</small>
+        </div>
+
+        <div class="field">
+            <label for="mobile_no">{{ 'Mobile No.' | translate }}</label>
+            <input type="text" autocomplete="off" pInputText id="mobile_no" [(ngModel)]="partner.mobile_no" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !partner.mobile_no}"/>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !partner.mobile_no">{{ 'Field is required' | translate: {field: 'Mobile No.' | translate} }}</small>
         </div>
 
         <div class="field">

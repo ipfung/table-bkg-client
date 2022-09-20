@@ -41,6 +41,8 @@
     "Confirmation": "確認",
     "Pay Now": "馬上付款",
     "Name": "姓名",
+    "Chinese Name": "中文姓名",
+    "Mobile No.": "手機號碼",
     "Email": "電子郵件",
     "My Booking": "我的預約",
     "No booking found.": "您沒有任何預約，馬上<a href='#/appointment'>預約</a>吧。",
