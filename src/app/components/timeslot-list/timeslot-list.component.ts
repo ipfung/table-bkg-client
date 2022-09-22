@@ -27,30 +27,7 @@ export class TimeslotListComponent implements OnInit {
 
     ngOnInit(): void {
         this.loadData();
-        this.weeks = [
-            {
-                name: 'Monday',
-                code: 1
-            }, {
-                name: 'Tuesday',
-                code: 2
-            }, {
-                name: 'Wednesday',
-                code: 3
-            }, {
-                name: 'Thursday',
-                code: 4
-            }, {
-                name: 'Friday',
-                code: 5
-            }, {
-                name: 'Saturday',
-                code: 6
-            }, {
-                name: 'Sunday',
-                code: 7
-            }
-        ];
+        this.weeks = this.lemonade.weeks;
         // load locations.
         this.api.get('api/locations').subscribe( res => {
             this.locations = res.data;

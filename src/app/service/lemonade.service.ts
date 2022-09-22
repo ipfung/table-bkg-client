@@ -9,6 +9,30 @@ import {environment} from "../../environments/environment";
 export class Lemonade {
     lang: any;
     timeFormat = 'h:mm aa';
+    readonly weeks = [
+        {
+            name: 'Monday',
+            code: 1
+        }, {
+            name: 'Tuesday',
+            code: 2
+        }, {
+            name: 'Wednesday',
+            code: 3
+        }, {
+            name: 'Thursday',
+            code: 4
+        }, {
+            name: 'Friday',
+            code: 5
+        }, {
+            name: 'Saturday',
+            code: 6
+        }, {
+            name: 'Sunday',
+            code: 7
+        }
+    ];
 
     constructor(private translateService: TranslateService) {
         if (this.translateService.getDefaultLang() === 'zh') {
