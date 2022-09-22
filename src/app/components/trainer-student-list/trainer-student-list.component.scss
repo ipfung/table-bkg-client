@@ -42,3 +42,20 @@
 //        }
 //    }
 //}
+
+//timeslot
+:host ::ng-deep .p-accordion-toggle-icon {
+    display: none;
+}
+
+
+:host ::ng-deep .p-panel {
+    margin-bottom: 10px;
+    .p-panel-header {
+        padding: 0.5rem 1rem;
+    }
+    .p-panel-icons-end {
+        order: 2;
+        margin-left: auto;
+    }
+}
