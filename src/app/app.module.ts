@@ -145,7 +145,7 @@ import { AccessComponent } from './components/access/access.component';
 import { BookingFormComponent } from './components/booking-form/booking-form.component';
 import { PaymentFormComponent } from './components/payment-form/payment-form.component';
 import { AppointmentStepsComponent } from './components/appointment-steps/appointment-steps.component';
-import { PaymentConfirmationComponent } from './components/payment-confirmation/payment-confirmation.component';
+import { BookingConfirmationComponent } from './components/booking-confirmation/booking-confirmation.component';
 import {AuthService} from "./service/auth.service";
 import { ApiService } from './service/api.service';
 import { BookingTimeRangeComponent } from './components/booking-time-range/booking-time-range.component';
@@ -324,7 +324,7 @@ FullCalendarModule.registerPlugins([
         BookingFormComponent,
         PaymentFormComponent,
         AppointmentStepsComponent,
-        PaymentConfirmationComponent,
+        BookingConfirmationComponent,
         BookingTimeRangeComponent,
         AppointmentListComponent,
         RescheduleComponent,
@@ -335,6 +335,7 @@ FullCalendarModule.registerPlugins([
         FinanceStatusComponent,
         RoomListComponent,
         TimeslotListComponent,
+        ServiceSelectionComponent,
         AppointmentCalendarComponent,
     ],
     providers: [

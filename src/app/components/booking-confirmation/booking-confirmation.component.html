@@ -14,6 +14,10 @@
             <label>{{ 'Email' | translate }}</label>
             <b>{{appointmentInformation.personalInformation.email ? appointmentInformation.personalInformation.email : '-'}}</b>
         </div>
+        <div class="field col-12" *ngIf="appointmentInformation.serviceSelection">
+            <label>{{ 'Service' | translate }}</label>
+            <b>{{ appointmentInformation.timeInformation.serviceName }}</b>
+        </div>
         <div class="field col-12">
             <label>{{ 'Duration' | translate }}</label>
             <b>{{ appointmentService.getSessionName(appointmentInformation.timeInformation.noOfSession) }}</b>
@@ -26,19 +30,21 @@
             <label>{{ 'Amount' | translate }}</label>
             <b>HK${{ appointmentInformation.paymentInformation.price }}</b>
         </div>
-        <div class="field col-12">
+        <div class="field col-12" *ngIf="appointmentInformation.paymentSelection">
             <label>{{ 'Payment Method' | translate }}</label>
             <b>{{ appointmentService.getPaymentMethodName(appointmentInformation.paymentInformation.method) }}</b>
         </div>
     </ng-template>
     <ng-template pTemplate="footer">
         <div class="grid grid-nogutter justify-content-between ng-star-inserted">
-            <p-button label="{{ 'Change Payment Method' | translate }}" (onClick)="prevPage()" icon="pi pi-angle-left"></p-button>
-            <p-button label="{{ 'Pay Now' | translate }}" (onClick)="complete()" icon="pi pi-angle-right" iconPos="right"></p-button>
+            <p-button *ngIf="!appointmentInformation.paymentSelection" label="{{ 'Change Date & Time' | translate }}" (onClick)="prevDateTimePage()" icon="pi pi-angle-left"></p-button>
+            <p-button *ngIf="appointmentInformation.paymentSelection" label="{{ 'Change Payment Method' | translate }}" (onClick)="prevPage()" icon="pi pi-angle-left"></p-button>
+            <p-button label="{{ getCompleteButtonText() | translate }}" (onClick)="complete()" icon="pi pi-angle-right" iconPos="right"></p-button>
         </div>
         <div class="grid grid-nogutter justify-content-between ng-star-inserted">
-            <div class="flex align-items-center justify-content-center p-2 border-round mr-1">{{ 'Selected' | translate }}: {{ selectedPreviousDescription() }}</div>
-            <div class="flex align-items-center justify-content-center p-2 border-round mr-1">{{ 'Selected' | translate }}: {{ selectedDescription() }}</div>
+            <div *ngIf="!appointmentInformation.paymentSelection" class="flex align-items-center justify-content-center p-2 border-round mr-1">{{ 'Selected' | translate }}: {{ selectedPreviousDateTimeDescription() }}</div>
+            <div *ngIf="appointmentInformation.paymentSelection" class="flex align-items-center justify-content-center p-2 border-round mr-1">{{ 'Selected' | translate }}: {{ selectedPreviousDescription() }}</div>
+            <div class="flex align-items-center justify-content-center p-2 border-round mr-1">{{ selectedDescription() | translate }}</div>
         </div>
     </ng-template>
 </p-card>

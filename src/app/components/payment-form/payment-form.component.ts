@@ -18,14 +18,10 @@ export class PaymentFormComponent implements OnInit {
     constructor(public appointmentService: AppointmentService, private authService: AuthService, private router: Router) {
     }
 
-    async ngOnInit() {
-        this.personalInformation = {
-            firstname: await this.authService.userName(),
-            lastname: '',
-            email: await this.authService.email()
-        };
-        this.paymentInformation = this.appointmentService.getAppointmentInformation().paymentInformation;
-        this.timeInformation = this.appointmentService.getAppointmentInformation().timeInformation;
+    ngOnInit() {
+        const appointmentInformation = this.appointmentService.getAppointmentInformation();
+        this.paymentInformation = appointmentInformation.paymentInformation;
+        this.timeInformation = appointmentInformation.timeInformation;
     }
 
     selectPayment(selectPaymentMethod) {
@@ -37,7 +33,9 @@ export class PaymentFormComponent implements OnInit {
     }
 
     selectedPreviousDescription() {
-        return this.appointmentService.getBookedDateTime(this.timeInformation.date, this.timeInformation.time, this.timeInformation.sessionInterval, this.timeInformation.noOfSession);
+        if (this.timeInformation && this.timeInformation.date)
+            return this.appointmentService.getBookedDateTime(this.timeInformation.date, this.timeInformation.time, this.timeInformation.sessionInterval, this.timeInformation.noOfSession);
+        return '-';
     }
 
     selectedDescription() {

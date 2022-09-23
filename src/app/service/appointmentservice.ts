@@ -1,12 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-import format from "date-fns/format";
-import {AuthService} from "./auth.service";
 import {ActivatedRouteSnapshot, CanActivate, Router} from '@angular/router';
 import {ApiService} from "./api.service";
 import {TranslateService} from "@ngx-translate/core";
 import { enUS, zhHK } from 'date-fns/locale'
-import {addDays} from "date-fns";
 import {Lemonade} from "./lemonade.service";
 
 @Injectable()
@@ -18,13 +15,13 @@ export class AppointmentService {
     lang: any;
 
     // for display only and should be retrieved from server
-    public readonly tableSessions = [
-        {name: '1 Hour', code: 2, hour: 1},
-        {name: '1.5 Hour', code: 3, hour: 1.5},
-        {name: '2 Hours', code: 4, hour: 2},
-        {name: '2.5 Hours', code: 5, hour: 2.5},
-        {name: '3 Hours', code: 6, hour: 3},
-    ];
+    // public readonly tableSessions = [
+    //     {name: '1 Hour', code: 2, hour: 1},
+    //     {name: '1.5 Hour', code: 3, hour: 1.5},
+    //     {name: '2 Hours', code: 4, hour: 2},
+    //     {name: '2.5 Hours', code: 5, hour: 2.5},
+    //     {name: '3 Hours', code: 6, hour: 3},
+    // ];
 
     public readonly paymentMethods = [{
         code: 'octopus',
@@ -61,6 +58,25 @@ export class AppointmentService {
         image: 'Stripe_(company)-Logo.wine.svg'
     }];
 
+    /**
+     * serviceSelection, set to true if client needs different 'duration' setup.
+     * true = show service-selection page as step 1.
+     * false = don't show service-selection page and show booking-time-range as step 1.
+     */
+    readonly serviceSelection = true;
+    /**
+     * paymentSelection, set to true if client needs payment gateway.
+     * true = show payment-form.
+     * false = don't show payment-form and show payment-confirmation directly.
+     */
+    readonly paymentSelection = false;
+
+    /**
+     * tableSessions, the sessions for user to select.
+     * it will be retrieved from server side based on Service's duration & min_duration.
+     */
+    tableSessions: any[];
+
     private readonly defaultAppointment = {
         timeInformation: {
             serviceId: 1,
@@ -86,7 +102,7 @@ export class AppointmentService {
         }
     };
 
-    private appointmentInformation;
+    private appointmentInformation: any;
 
     reschedule = {
         appointment: null,
@@ -103,7 +119,23 @@ export class AppointmentService {
 
     constructor(public api: ApiService, private translateService: TranslateService, private lemonade: Lemonade) {
         this.lang = this.translateService.getDefaultLang() === 'zh' ? zhHK : enUS;
-        // init, copy from default data.
+        // no need to select "Service", get sessions from server.
+        console.log('servicesssss this.appointmentInformation.serviceSelection=', this.serviceSelection);
+        if (!this.tableSessions) {
+            const ai = this.getAppointmentInformation();
+            this.getServices().subscribe(res => {
+                for (const srv of res.data) {
+                    console.log('servicesssss=', srv, ai.timeInformation.serviceId);
+                    if (ai.timeInformation.serviceId == srv.id) {
+                        this.tableSessions = srv.sessions;
+                        return;
+                    }
+                }
+            });
+        }
+    }
+
+    private prepareDefaultAppointment() {
         this.appointmentInformation = { ...this.defaultAppointment };
     }
 
@@ -148,7 +180,7 @@ export class AppointmentService {
         sessionStorage.removeItem(AppointmentService.APPOINTMENT_EXPIRY_TIME);
         sessionStorage.removeItem(AppointmentService.APPOINTMENT_SESSION);
         // cleanup, copy from default data.
-        this.appointmentInformation = { ...this.defaultAppointment };
+        this.prepareDefaultAppointment();
     }
 
     isAppointmentValid() {
@@ -163,26 +195,53 @@ export class AppointmentService {
     getAppointmentInformation() {
 // console.log('now======', now, expiry)
         if (this.isAppointmentValid()) {
-            // get from storage.
+            // get from storage. FIXME how to prevent localStorage being removed issue?
             this.appointmentInformation = JSON.parse(sessionStorage.getItem(AppointmentService.APPOINTMENT_SESSION));
-            return this.appointmentInformation;
         }
+        if (this.appointmentInformation == undefined)
+            this.prepareDefaultAppointment();
         return this.appointmentInformation;
-    }
-
-    setAppointmentInformation(appointmentInformation) {
-        this.appointmentInformation = appointmentInformation;
     }
 
     getRescheduleTimeslots() {
         return this.api.get('api/appointment', {
-            bookId: this.reschedule.bookId
+            bookId: this.reschedule.bookId,
+            service_id: this.appointmentInformation.timeInformation.serviceId
+        });
+    }
+
+    getRooms() {
+        return this.api.get('api/rooms', {
+            status: 1001
+        });
+    }
+
+    getActiveCustomers() {
+        return this.api.get('api/users', {
+            status: 'active'
+        });
+    }
+
+    getServices() {
+        return this.api.get('api/services', {
+            status: 1001
         });
     }
 
     getTimeslots() {
         return this.api.get('api/appointment', {
-            noOfSession: this.appointmentInformation.timeInformation.noOfSession
+            noOfSession: this.appointmentInformation.timeInformation.noOfSession,
+            service_id: this.appointmentInformation.timeInformation.serviceId
+        });
+    }
+
+    getTimeslotsByDate(date, noOfSession, customer_id, room_id) {
+        return this.api.get('api/appointment', {
+            the_date: this.lemonade.formatPostDate(date),
+            noOfSession: noOfSession,
+            customer_id: customer_id,
+            room_id: room_id,
+            service_id: this.appointmentInformation.timeInformation.serviceId
         });
     }
 
@@ -248,17 +307,27 @@ export class AppointmentService {
     }
 
     getSessionName(noOfSession) {
-// console.log("getsessionname=", this.tableSessions, noOfSession);
-        if (this.tableSessions.length > 0) {
+console.log("getsessionname=", this.tableSessions, noOfSession);
+        if (noOfSession && this.tableSessions && this.tableSessions.length > 0) {
             let timeLen = this.tableSessions.find(el => el.code == noOfSession);
             let name = timeLen.name;
-            this.translateService.get('hour Hours', {
-                hour: timeLen.hour,
-                s: timeLen.hour
-            }).subscribe( res => {
-                name = res;
-            });
-            return name;
+            if (timeLen.hour > 0) {
+                this.translateService.get('hour Hours', {
+                    hour: timeLen.hour,
+                    s: timeLen.hour > 1 ? 's' : ''
+                }).subscribe(res => {
+                    name = res;
+                });
+                return name;
+            } else {
+                this.translateService.get('N minutes', {
+                    minute: timeLen.minute,
+                    s: timeLen.minute > 1 ? 's' : ''
+                }).subscribe(res => {
+                    name = res;
+                });
+                return name;
+            }
         }
         return '';
     }
@@ -277,12 +346,15 @@ export class AppointmentStepsGuardService implements CanActivate {
     constructor(private router: Router, private appointmentService: AppointmentService) { }
 
     canActivate(route: ActivatedRouteSnapshot): boolean {
-        const isValid = this.appointmentService.isAppointmentValid();
-// console.log('AppointmentStepsGuardService isvalid=', isValid);
-        if (!isValid) {
-            this.router.navigate(['/appointment/time-range']);
+        if (!this.appointmentService.serviceSelection) {
+            const isValid = this.appointmentService.isAppointmentValid();
+console.log('AppointmentStepsGuardService isvalid=', isValid);
+            if (!isValid) {
+                this.router.navigate(['/appointment/time-range']);
+            }
+            return isValid;
         }
+        return true;
 
-        return isValid;
     }
 }

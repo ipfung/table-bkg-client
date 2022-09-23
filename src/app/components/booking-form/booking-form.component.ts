@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 
 import {Router} from "@angular/router";
 import {AppointmentService} from "../../service/appointmentservice";
+import {AuthService} from "../../service/auth.service";
 
 @Component({
     selector: 'app-booking-form',
@@ -11,6 +12,7 @@ import {AppointmentService} from "../../service/appointmentservice";
 export class BookingFormComponent implements OnInit {
     timeInformation: any;
 
+    paymentSelection: boolean;
     paymentInformation: any;
 
     today: Date;
@@ -23,12 +25,14 @@ export class BookingFormComponent implements OnInit {
 
     multipleYear: boolean;
 
-    constructor(public appointmentService: AppointmentService, private router: Router) {
+    constructor(public appointmentService: AppointmentService, private authService: AuthService, private router: Router) {
     }
 
     ngOnInit(): void {
-        this.timeInformation = this.appointmentService.getAppointmentInformation().timeInformation;
-        this.paymentInformation = this.appointmentService.getAppointmentInformation().paymentInformation;
+        const appointmentInformation = this.appointmentService.getAppointmentInformation();
+        this.timeInformation = appointmentInformation.timeInformation;
+        this.paymentInformation = appointmentInformation.paymentInformation;
+        this.paymentSelection = appointmentInformation.paymentSelection;
         // below should be retrieved from service.
         this.appointmentService.getTimeslots().subscribe(res => {
             this.today = res['minDate'];
@@ -45,7 +49,7 @@ export class BookingFormComponent implements OnInit {
     }
 
     selectedDescription() {
-        console.log('this.timeInformation.time=', this.timeInformation.time, this.timeInformation.noOfSession, this.timeInformation.sessionInterval, (this.timeInformation.noOfSession * this.timeInformation.sessionInterval), (this.timeInformation.time + (this.timeInformation.noOfSession * this.timeInformation.sessionInterval)));
+        // console.log('this.timeInformation.time=', this.timeInformation.time, this.timeInformation.noOfSession, this.timeInformation.sessionInterval, (this.timeInformation.noOfSession * this.timeInformation.sessionInterval), (this.timeInformation.time + (this.timeInformation.noOfSession * this.timeInformation.sessionInterval)));
         if (this.timeInformation.time) {
             return this.appointmentService.getBookedDateTime(this.timeInformation.date, this.timeInformation.time, this.timeInformation.sessionInterval, this.timeInformation.noOfSession);
         }
@@ -62,14 +66,23 @@ export class BookingFormComponent implements OnInit {
         return 'p-button-text timeslot-btn' + (this.timeInformation.date == date && this.timeInformation.time == obj.time ? ' bg-primary' : '');
     }
 
-    nextPage() {
+    async nextPage() {
         // don't check timeInformation.time because 0:00 will not pass it.
         if (this.timeInformation.date && this.timeInformation.sessionInterval > 0) {
             let appointmentInfo = this.appointmentService.getAppointmentInformation();   // note!! can call getAppointmentInformation() in each function, otherwise will not store data.
+            appointmentInfo.personalInformation = {
+                firstname: await this.authService.userName(),
+                lastname: '',
+                email: await this.authService.email()
+            };
             appointmentInfo.timeInformation = this.timeInformation;
             appointmentInfo.paymentInformation = this.paymentInformation;
             this.appointmentService.updateUserSelection();
-            this.router.navigate(['appointment/payment']);
+            if (this.paymentSelection)
+                this.router.navigate(['appointment/payment']);
+            else {
+                this.router.navigate(['appointment/confirmation']);
+            }
 
             return;
         }

@@ -9,15 +9,17 @@ import {AppointmentService} from "../../service/appointmentservice";
 })
 export class BookingTimeRangeComponent implements OnInit {
 
+    serviceSelection: boolean;
     timeInformation: any;
-
     submitted = false;
 
     constructor(public appointmentService: AppointmentService, private router: Router) {
     }
 
     ngOnInit(): void {
-        this.timeInformation = this.appointmentService.getAppointmentInformation().timeInformation;
+        const appointmentInfo = this.appointmentService.getAppointmentInformation();
+        this.serviceSelection = this.appointmentService.serviceSelection;
+        this.timeInformation = appointmentInfo.timeInformation;
     }
 
     /**
@@ -26,14 +28,21 @@ export class BookingTimeRangeComponent implements OnInit {
      * @param v Selected option value
      */
     storeUserPref(e) {
-        this.timeInformation.noOfSession = e.value;
         // clear selected date & time once noOfSession changed.
         this.timeInformation.date = '';
         this.timeInformation.time = '';
     }
 
+    selectedPreviousDescription() {
+        return this.timeInformation.serviceName;
+    }
+
     selectedDescription() {
         return this.appointmentService.getSessionName(this.timeInformation.noOfSession);
+    }
+
+    prevPage() {
+        this.router.navigate(['appointment/service-selection']);
     }
 
     nextPage() {

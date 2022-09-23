@@ -30,7 +30,7 @@ import { NotfoundComponent } from './components/notfound/notfound.component';
 import { AccessComponent } from './components/access/access.component';
 import {BookingFormComponent} from "./components/booking-form/booking-form.component";
 import {PaymentFormComponent} from "./components/payment-form/payment-form.component";
-import {PaymentConfirmationComponent} from "./components/payment-confirmation/payment-confirmation.component";
+import {BookingConfirmationComponent} from "./components/booking-confirmation/booking-confirmation.component";
 import {AppointmentStepsComponent} from "./components/appointment-steps/appointment-steps.component";
 import {BookingTimeRangeComponent} from "./components/booking-time-range/booking-time-range.component";
 import {AuthGuardService} from "./service/auth.service";
@@ -45,6 +45,7 @@ import {NotificationsListComponent} from "./components/notifications-list/notifi
 import {RoomListComponent} from "./components/room-list/room-list.component";
 import {TimeslotListComponent} from "./components/timeslot-list/timeslot-list.component";
 import {AppointmentCalendarComponent} from "./components/appointment-calendar/appointment-calendar.component";
+import {ServiceSelectionComponent} from "./components/service-selection/service-selection.component";
 @NgModule({
     imports: [
         RouterModule.forRoot([
@@ -56,11 +57,12 @@ import {AppointmentCalendarComponent} from "./components/appointment-calendar/ap
                     {path: 'partner-list/:role', component: UserListComponent, canActivate: [ AuthGuardService ]},
                     {path: 'calendar', component: AppointmentCalendarComponent, canActivate: [ AuthGuardService ]},
                     {path: 'appointment', component: AppointmentStepsComponent, children:[
-                        {path:'', redirectTo: 'time-range', pathMatch: 'full'},
+                        {path:'', redirectTo: 'service-selection', pathMatch: 'full'},
+                        {path: 'service-selection', component: ServiceSelectionComponent, canActivate: [ AuthGuardService, AppointmentStepsGuardService ]},
                         {path: 'time-range', component: BookingTimeRangeComponent, canActivate: [ AuthGuardService ]},
                         {path: 'datetime', component: BookingFormComponent, canActivate: [ AuthGuardService, AppointmentStepsGuardService ]},
                         {path: 'payment', component: PaymentFormComponent, canActivate: [ AuthGuardService, AppointmentStepsGuardService ]},
-                        {path: 'confirmation', component: PaymentConfirmationComponent, canActivate: [ AuthGuardService, AppointmentStepsGuardService ]}
+                        {path: 'confirmation', component: BookingConfirmationComponent, canActivate: [ AuthGuardService, AppointmentStepsGuardService ]}
                     ]},
                     {path: 'trainer-student-list', component: TrainerStudentListComponent, canActivate: [ AuthGuardService ]},
                     {path: 'finance', component: FinanceStatusComponent, canActivate: [ AuthGuardService ]},

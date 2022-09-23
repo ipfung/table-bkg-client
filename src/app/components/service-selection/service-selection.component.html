@@ -1,0 +1,27 @@
+
+<p-card>
+    <ng-template pTemplate="title">
+        {{ 'Service' | translate }}
+    </ng-template>
+    <ng-template pTemplate="subtitle">
+        {{ 'Choose service' | translate }}
+    </ng-template>
+    <ng-template pTemplate="content">
+        <div class="p-fluid formgrid grid">
+            <div class="field col-12 md:col-6">
+                <label for="time">{{ 'Service' | translate }}</label>
+                <p-dropdown id="time" [options]="services" [(ngModel)]="timeInformation.serviceId" optionValue="id" optionLabel="name">
+                </p-dropdown>
+            </div>
+        </div>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <div class="grid grid-nogutter justify-content-end">
+            <p-button label="{{ 'Date & Time' | translate }}" (onClick)="nextPage()" icon="pi pi-angle-right" iconPos="right"></p-button>
+        </div>
+        <div class="grid grid-nogutter justify-content-end">
+            <div class="flex align-items-center justify-content-center p-2 border-round mr-1">{{ 'Selected' | translate }}: {{ selectedDescription() }}</div>
+        </div>
+    </ng-template>
+</p-card>
+

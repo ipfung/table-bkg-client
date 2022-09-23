@@ -20,21 +20,34 @@ export class AppointmentStepsComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.translateService.get(['Duration', 'Date & Time', 'Payment', 'Confirmation']).subscribe( res => {
-            console.log('res.Confirmation=', res);
-            this.items = [{
+        const serviceSelection = this.appointmentService.serviceSelection;
+        const paymentSelection = this.appointmentService.paymentSelection;
+        this.translateService.get(['Service', 'Duration', 'Date & Time', 'Payment', 'Confirmation']).subscribe( res => {
+            console.log('res.Confirmation=', res, serviceSelection);
+            this.items = [];
+            if (serviceSelection) {
+                this.items.push({
+                    label: res['Service'],
+                    routerLink: 'service-selection'
+                });
+            }
+            this.items.push({
                 label: res.Duration,
                 routerLink: 'time-range'
             }, {
                 label: res['Date & Time'],
                 routerLink: 'datetime'
-            }, {
-                label: res['Payment'],
-                routerLink: 'payment'
-            }, {
+            })
+            if (paymentSelection) {
+                this.items.push({
+                    label: res['Payment'],
+                    routerLink: 'payment'
+                });
+            }
+            this.items.push({
                 label: res.Confirmation,
                 routerLink: 'confirmation'
-            }];
+            });
         });
 
         this.subscription = this.appointmentService.paymentComplete$.subscribe((data) => {
