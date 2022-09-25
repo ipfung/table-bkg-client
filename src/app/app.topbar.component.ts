@@ -5,6 +5,7 @@ import { MenuItem } from 'primeng/api';
 import {AuthService} from "./service/auth.service";
 import {TranslateService} from "@ngx-translate/core";
 import {DashboardService} from "./service/dashboard.service";
+import {Lemonade} from "./service/lemonade.service";
 
 @Component({
     selector: 'app-topbar',
@@ -19,12 +20,21 @@ export class AppTopBarComponent implements OnInit {
 
     notificationsBadge = 0;
 
-    constructor(public appMain: AppMainComponent, public authService: AuthService, private translateService: TranslateService, private dashboardService: DashboardService) { }
+    avatar: string;
+
+    constructor(public appMain: AppMainComponent, public authService: AuthService, private translateService: TranslateService, private dashboardService: DashboardService, public lemonade: Lemonade) { }
 
     async ngOnInit() {
+        this.avatar = await this.authService.avatar();
         this.userName = await this.authService.userName();
         this.subscription = this.dashboardService.notifications$.subscribe(counter => {
             this.notificationsBadge = counter;
+        });
+    }
+
+    getAvatar() {
+        return this.lemonade.getAvatar({
+            avatar: this.avatar
         });
     }
 

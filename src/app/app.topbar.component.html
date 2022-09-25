@@ -25,8 +25,8 @@
 <!--            <i class="pi pi-cog"></i>-->
 <!--            <span>Settings</span>-->
 <!--        </a>-->
-        <a href="#/user-profile" class="p-link layout-topbar-button">
-            <i class="pi pi-user"></i>
+        <a href="#/user-profile" class="layout-topbar-button">
+            <p-avatar [image]="getAvatar()" shape="circle"></p-avatar>
             <span>{{ userName }}, {{ 'Profile' | translate }}</span>
         </a>
         <a (click)="logout()" class="p-link layout-topbar-button">
