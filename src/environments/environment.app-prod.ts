@@ -8,7 +8,7 @@ export const environment = {
     theme: 'mdc-dark-indigo',
     dark: true,
     isApp: true,
-    url: 'https://apt-admin.lemonade.hk/'
+    url: 'https://apt-driving.junwebsolution.com/'
 };
 
 /*
