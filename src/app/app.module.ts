@@ -162,6 +162,7 @@ import { FinanceStatusComponent } from './components/finance-status/finance-stat
 import { RoomListComponent } from './components/room-list/room-list.component';
 import { TimeslotListComponent } from './components/timeslot-list/timeslot-list.component';
 import { AppointmentCalendarComponent } from './components/appointment-calendar/appointment-calendar.component';
+import { ServiceSelectionComponent } from './components/service-selection/service-selection.component';
 import {FullCalendarModule} from "@fullcalendar/angular";
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
