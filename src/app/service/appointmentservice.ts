@@ -352,6 +352,10 @@ console.log('AppointmentStepsGuardService isvalid=', isValid);
             if (!isValid) {
                 this.router.navigate(['/appointment/time-range']);
             }
+            const isServiceSelectionPage = route.routeConfig.path === 'service-selection';
+            if (isServiceSelectionPage) {
+                this.router.navigate(['/appointment/time-range']);
+            }
             return isValid;
         }
         return true;
