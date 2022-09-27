@@ -32,7 +32,7 @@ export class BookingFormComponent implements OnInit {
         const appointmentInformation = this.appointmentService.getAppointmentInformation();
         this.timeInformation = appointmentInformation.timeInformation;
         this.paymentInformation = appointmentInformation.paymentInformation;
-        this.paymentSelection = appointmentInformation.paymentSelection;
+        this.paymentSelection = this.appointmentService.paymentSelection;
         // below should be retrieved from service.
         this.appointmentService.getTimeslots().subscribe(res => {
             this.today = res['minDate'];

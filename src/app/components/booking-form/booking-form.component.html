@@ -25,7 +25,7 @@
     <ng-template pTemplate="footer">
         <div class="grid grid-nogutter justify-content-between ng-star-inserted">
             <p-button label="{{ 'Change Duration' | translate }}" (onClick)="prevPage()" icon="pi pi-angle-left"></p-button>
-            <p-button label="{{ paymentSelection ? 'Payment Method' : 'Confirmation' | translate }}" (onClick)="nextPage()" icon="pi pi-angle-right" iconPos="right"></p-button>
+            <p-button label="{{ (paymentSelection ? 'Payment Method' : 'Confirmation') | translate }}" (onClick)="nextPage()" icon="pi pi-angle-right" iconPos="right"></p-button>
         </div>
         <div class="grid grid-nogutter justify-content-between ng-star-inserted">
             <div class="flex align-items-center justify-content-center p-2 border-round mr-1">{{ 'Selected' | translate }}: {{ selectedPreviousDescription() }}</div>
