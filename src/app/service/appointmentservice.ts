@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import {Subject, Subscription} from 'rxjs';
 import {ActivatedRouteSnapshot, CanActivate, Router} from '@angular/router';
 import {ApiService} from "./api.service";
 import {TranslateService} from "@ngx-translate/core";
 import { enUS, zhHK } from 'date-fns/locale'
 import {Lemonade} from "./lemonade.service";
+import {AuthService} from "./auth.service";
 
 @Injectable()
 export class AppointmentService {
@@ -63,7 +64,7 @@ export class AppointmentService {
      * true = show service-selection page as step 1.
      * false = don't show service-selection page and show booking-time-range as step 1.
      */
-    readonly serviceSelection = true;
+    readonly serviceSelection = false;
     /**
      * paymentSelection, set to true if client needs payment gateway.
      * true = show payment-form.
@@ -113,26 +114,20 @@ export class AppointmentService {
         sessionInterval: 0,  // from server side
     };
 
+    subscription: Subscription;
+
     private paymentComplete = new Subject<any>();
 
     paymentComplete$ = this.paymentComplete.asObservable();
 
-    constructor(public api: ApiService, private translateService: TranslateService, private lemonade: Lemonade) {
+    constructor(public api: ApiService, private translateService: TranslateService, private lemonade: Lemonade, private authService: AuthService) {
         this.lang = this.translateService.getDefaultLang() === 'zh' ? zhHK : enUS;
-        // no need to select "Service", get sessions from server.
-        console.log('servicesssss this.appointmentInformation.serviceSelection=', this.serviceSelection);
-        if (!this.tableSessions) {
-            const ai = this.getAppointmentInformation();
-            this.getServices().subscribe(res => {
-                for (const srv of res.data) {
-                    console.log('servicesssss=', srv, ai.timeInformation.serviceId);
-                    if (ai.timeInformation.serviceId == srv.id) {
-                        this.tableSessions = srv.sessions;
-                        return;
-                    }
-                }
-            });
-        }
+        // cleanup when logout.
+        this.subscription = this.authService.logoutComplete$.subscribe(obj => {
+            if (obj.message == 'logout') {
+                this.clearUserSelection();
+            }
+        });
     }
 
     private prepareDefaultAppointment() {
@@ -179,8 +174,9 @@ export class AppointmentService {
     clearUserSelection() {
         sessionStorage.removeItem(AppointmentService.APPOINTMENT_EXPIRY_TIME);
         sessionStorage.removeItem(AppointmentService.APPOINTMENT_SESSION);
-        // cleanup, copy from default data.
-        this.prepareDefaultAppointment();
+        // clear data.
+        this.appointmentInformation = undefined;
+        this.tableSessions = null;
     }
 
     isAppointmentValid() {
@@ -193,13 +189,18 @@ export class AppointmentService {
     }
 
     getAppointmentInformation() {
-// console.log('now======', now, expiry)
         if (this.isAppointmentValid()) {
             // get from storage. FIXME how to prevent localStorage being removed issue?
             this.appointmentInformation = JSON.parse(sessionStorage.getItem(AppointmentService.APPOINTMENT_SESSION));
         }
         if (this.appointmentInformation == undefined)
             this.prepareDefaultAppointment();
+        if (!this.tableSessions) {
+            this.api.get('api/user-service').subscribe(resp => {
+                this.appointmentInformation.timeInformation.serviceId = resp.id;
+                this.tableSessions = resp.sessions;
+            });
+        }
         return this.appointmentInformation;
     }
 
@@ -348,7 +349,7 @@ export class AppointmentStepsGuardService implements CanActivate {
     canActivate(route: ActivatedRouteSnapshot): boolean {
         if (!this.appointmentService.serviceSelection) {
             const isValid = this.appointmentService.isAppointmentValid();
-console.log('AppointmentStepsGuardService isvalid=', isValid);
+// console.log('AppointmentStepsGuardService isvalid=', isValid, route.routeConfig.path);
             if (!isValid) {
                 this.router.navigate(['/appointment/time-range']);
             }

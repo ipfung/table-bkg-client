@@ -14,11 +14,13 @@ export class AuthService {
     static readonly LOGIN_ID = 'lemonade-login';
     static readonly EMAIL = 'lemonade-email';
     static readonly AVATAR = 'lemonade-avatar';
-    static readonly PID = 'lemonade-pid';
+    static readonly PID = 'lemonade-pid';   //push notification
 
     private loginComplete = new Subject<any>();
+    private logoutComplete = new Subject<any>();
 
     loginComplete$ = this.loginComplete.asObservable();
+    logoutComplete$ = this.logoutComplete.asObservable();
 
     constructor(private router: Router, private api: ApiService, private push: PushService) {
         if (this.token) {
@@ -112,6 +114,9 @@ export class AuthService {
         remove(AuthService.USER_NAME);
         remove(AuthService.AVATAR);
         this.push.logout();
+        this.logoutComplete.next({
+            message: 'logout'
+        })
         this.router.navigate(['/login']);
     }
 
