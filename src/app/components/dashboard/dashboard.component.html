@@ -82,7 +82,10 @@
                     <ng-template pTemplate="body" let-appointment>
                         <tr>
                             <td style="width: 40%; min-width: 9rem;">{{ lemonade.formatFullDateTime(appointment.start_time, true) }}</td>
-                            <td style="width: 35%; min-width: 8rem;">{{ lemonade.duration(appointment.start_time, appointment.end_time) }}</td>
+                            <td style="width: 35%; min-width: 8rem;">
+                                <p-avatar [label]="lemonade.getInitial(appointment.name)" shape="circle" [style]="{'background-color': appointment.color, 'color': '#fff'}"></p-avatar>
+                                {{ lemonade.duration(appointment.start_time, appointment.end_time) }}
+                            </td>
                             <td style="width: 25%; min-width: 8rem;">
                                 <span [class]="'booking-badge status-' + appointment.status">{{ appointment.status | translate }}</span>
                                 <i class="ml-2 pi pi-circle-fill" [style]="{color: appointment.role_color_name}"></i>
@@ -90,6 +93,28 @@
 <!--                            <td style="width: 15%;">-->
 <!--                                <button pButton pRipple type="button" icon="pi pi-search" class="p-button p-component p-button-text p-button-icon-only"></button>-->
 <!--                            </td>-->
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+            <div class="card">
+                <h5>{{ 'Dashboard Current Status' | translate:{room: 'Room' | translate } }}</h5>
+                <p-table [value]="rooms" responsiveLayout="scroll">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th pSortableColumn="room">{{ 'Room' | translate }} <p-sortIcon field="room"></p-sortIcon></th>
+                            <th pSortableColumn="status">{{ 'Status' | translate }} <p-sortIcon field="status"></p-sortIcon></th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-room>
+                        <tr>
+                            <td style="width: 40%; min-width: 9rem;">
+                                <p-avatar [label]="lemonade.getInitial(room.name)" shape="circle" [style]="{'background-color': room.color, 'color': '#fff'}"></p-avatar>
+                                {{ room.name }}
+                            </td>
+                            <td style="width: 25%; min-width: 8rem;">
+                                <span class="text-xs user-badge status-{{ room.appointment_id > 0 ? 'banned' : 'active' }}"><i class="pi pi-circle text-xs pt-2 {{ room.appointment_id > 0 ? 'text-pink-500' : 'text-green-500' }}"></i> {{ room.appointment_id > 0 ? 'Occupied' : 'Free' }}</span>
+                            </td>
                         </tr>
                     </ng-template>
                 </p-table>
