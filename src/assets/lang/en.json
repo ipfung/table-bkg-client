@@ -8,6 +8,8 @@
     "Sign In": "Sign In",
     "New Booking": "New Booking",
     "Dashboard Current Status": "Current Status of {{room}}",
+    "Idle": "Idle",
+    "Occupied": "Occupied",
     "Duration": "Duration",
     "hour Minutes": "{{hour}} Hour{{s}} {{minute}} Minute{{ms}}",
     "hour Hours": "{{hour}} Hour{{s}}",

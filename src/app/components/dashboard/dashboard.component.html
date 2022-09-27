@@ -113,7 +113,7 @@
                                 {{ room.name }}
                             </td>
                             <td style="width: 25%; min-width: 8rem;">
-                                <span class="text-xs user-badge status-{{ room.appointment_id > 0 ? 'banned' : 'active' }}"><i class="pi pi-circle text-xs pt-2 {{ room.appointment_id > 0 ? 'text-pink-500' : 'text-green-500' }}"></i> {{ room.appointment_id > 0 ? 'Occupied' : 'Free' }}</span>
+                                <span class="text-xs user-badge status-{{ room.appointment_id > 0 ? 'banned' : 'active' }}"><i class="pi pi-circle text-xs pt-2 {{ room.appointment_id > 0 ? 'text-pink-500' : 'text-green-500' }}"></i> {{ room.appointment_id > 0 ? 'Occupied' : 'Idle' }}</span>
                             </td>
                         </tr>
                     </ng-template>
