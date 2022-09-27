@@ -7,6 +7,7 @@
     "Remember me": "Remember me",
     "Sign In": "Sign In",
     "New Booking": "New Booking",
+    "Dashboard Current Status": "Current Status of {{room}}",
     "Duration": "Duration",
     "hour Minutes": "{{hour}} Hour{{s}} {{minute}} Minute{{ms}}",
     "hour Hours": "{{hour}} Hour{{s}}",
