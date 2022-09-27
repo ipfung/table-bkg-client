@@ -17,6 +17,8 @@ export class DashboardComponent implements OnInit {
 
     appointments: [];
 
+    rooms = [];
+
     data = {
         showBookingCount: false,
         totalBooking: 0,
@@ -94,6 +96,9 @@ export class DashboardComponent implements OnInit {
                     };
                 });
             }
+        });
+        this.api.get('api/rooms').subscribe( res => {
+            this.rooms = res.data;
         });
     }
 
