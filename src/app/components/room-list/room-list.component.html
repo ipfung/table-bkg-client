@@ -24,7 +24,7 @@
                     <div>
                         <p-avatar [label]="lemonade.getInitial(room.name)" shape="circle" [style]="{'background-color': room.color, 'color': '#fff'}"></p-avatar>
                         {{ room.name }}
-                        <span class="vertical-align-super text-xs user-badge status-{{ room.appointment_id > 0 ? 'banned' : 'active' }}"><i class="pi pi-circle text-xs pt-2 {{ room.appointment_id > 0 ? 'text-pink-500' : 'text-green-500' }}"></i> {{ room.appointment_id > 0 ? 'Occupied' : 'Idle' }}</span>
+                        <span class="vertical-align-super text-xs user-badge status-{{ room.appointment_id > 0 ? 'banned' : 'active' }}"><i class="pi pi-circle text-xs pt-2 {{ room.appointment_id > 0 ? 'text-pink-500' : 'text-green-500' }}"></i> {{ (room.appointment_id > 0 ? 'Occupied' : 'Idle') | translate }}</span>
                     </div>
                 </td>
                 <td style="min-width:150px">
