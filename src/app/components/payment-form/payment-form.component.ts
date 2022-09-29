@@ -9,8 +9,6 @@ import {AuthService} from "../../service/auth.service";
     styleUrls: ['./payment-form.component.scss']
 })
 export class PaymentFormComponent implements OnInit {
-    personalInformation: any;
-
     paymentInformation: any;
 
     timeInformation: any;
@@ -48,7 +46,6 @@ export class PaymentFormComponent implements OnInit {
     nextPage() {
         if (this.paymentInformation.method) {
             let appointmentInfo = this.appointmentService.getAppointmentInformation();   // note!! can call getAppointmentInformation() in each function, otherwise will not store data.
-            appointmentInfo.personalInformation = this.personalInformation;
             appointmentInfo.paymentInformation = this.paymentInformation;
             this.appointmentService.updateUserSelection();
             this.router.navigate(['appointment/confirmation']);
