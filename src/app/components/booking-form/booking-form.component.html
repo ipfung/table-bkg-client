@@ -10,15 +10,20 @@
         <p-progressSpinner *ngIf="loading === true" class="row-spinner"></p-progressSpinner>
         <p-tabView class="appointment-picker" *ngIf="timeSlots" [scrollable]="multipleYear">
             <p-tabPanel [header]="appointmentService.formatDate(item.date, true)" *ngFor="let item of timeSlots; let i = index" [selected]="i == 0">
-                <p-button *ngFor="let timeslot of item.freeslots" [styleClass]="getBtnCls(timeslot, item.date)" (click)="selectTime(timeslot, item.date)">
-                    <ng-template pTemplate="content">
-                        <span class="pi pi-angle-right p-button-icon p-button-icon-right ng-star-inserted"></span>
-                        <span class="p-button-label ng-star-inserted">
-                            {{ this.appointmentService.formatTime(timeslot.time, item.date) }}
-                        </span>
-                        <span class="text-right align-items-end align-content-end justify-content-end">{{ timeslot.price | currency:'HK$' }}</span>
-                    </ng-template>
-                </p-button>
+                <h3 class="text-primary text-center" *ngIf="item.dayoff">
+                    {{ 'Day off' | translate }}
+                </h3>
+                <div *ngIf="!item.dayoff">
+                    <p-button *ngFor="let timeslot of item.freeslots" [styleClass]="getBtnCls(timeslot, item.date)" (click)="selectTime(timeslot, item.date)">
+                        <ng-template pTemplate="content">
+                            <span class="pi pi-angle-right p-button-icon p-button-icon-right ng-star-inserted"></span>
+                            <span class="p-button-label ng-star-inserted">
+                                {{ this.appointmentService.formatTime(timeslot.time, item.date) }}
+                            </span>
+                            <span class="text-right align-items-end align-content-end justify-content-end">{{ timeslot.price | currency:'HK$' }}</span>
+                        </ng-template>
+                    </p-button>
+                </div>
             </p-tabPanel>
         </p-tabView>
     </ng-template>
