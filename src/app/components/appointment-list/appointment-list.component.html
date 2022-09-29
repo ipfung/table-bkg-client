@@ -74,6 +74,9 @@
                 <td style="min-width:120px">
                     <span class="p-column-title">{{ 'Status' | translate }}</span>
                     <span [class]="'booking-badge status-' + appointment.status">{{ appointment.status | translate }}</span>
+                    <button pButton type="button" *ngIf="!showCustomer" [disabled]="isPaid(appointment) || !canAmend(appointment)" pTooltip="{{ 'Cancel Booking' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-times" (click)="cancel(appointment)"></button>
+                    <button pButton type="button" *ngIf="showCustomer" [disabled]="!isAbleApprove(appointment)" pTooltip="{{ 'Reject' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-times" (click)="reject(appointment)"></button>
+                    <button pButton type="button" *ngIf="showCustomer" [disabled]="!isAbleApprove(appointment)" pTooltip="{{ 'Approve' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-check" (click)="approve(appointment)"></button>
                     <p-progressSpinner *ngIf="appointment.loading === true" class="row-spinner ml-2"></p-progressSpinner>
                 </td>
                 <td style="min-width:120px">
@@ -84,8 +87,6 @@
                 </td>
                 <td style="min-width:20px">
                     <button pButton type="button" [disabled]="!canAmend(appointment)" pTooltip="{{ 'Reschedule' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-replay" (click)="reschedule(appointment)"></button>
-                    <button pButton type="button" [disabled]="isPaid(appointment) || !canAmend(appointment)" pTooltip="{{ 'Cancel Booking' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-times" (click)="cancel(appointment)"></button>
-                    <button pButton type="button" [disabled]="!isAbleApprove(appointment)" pTooltip="{{ 'Approve' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-check" (click)="approve(appointment)"></button>
                     <button pButton type="button" [disabled]="isPaid(appointment) || !isValidStatus(appointment)" pTooltip="{{ 'Pay Now' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-credit-card" (click)="makePayment(appointment)"></button>
                 </td>
             </tr>
