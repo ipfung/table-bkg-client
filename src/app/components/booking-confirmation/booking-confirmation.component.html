@@ -14,9 +14,13 @@
             <label>{{ 'Email' | translate }}</label>
             <b>{{appointmentInformation.personalInformation.email ? appointmentInformation.personalInformation.email : '-'}}</b>
         </div>
-        <div class="field col-12" *ngIf="appointmentInformation.serviceSelection">
+        <div class="field col-12">
             <label>{{ 'Service' | translate }}</label>
-            <b>{{ appointmentInformation.timeInformation.serviceName }}</b>
+            <b>{{ appointmentService.selectedService.name }}</b>
+        </div>
+        <div class="field col-12" *ngIf="appointmentService.selectedService.trainer">
+            <label>{{ 'Trainer' | translate }}</label>
+            <b>{{ appointmentService.selectedService.trainer.name }}</b>
         </div>
         <div class="field col-12">
             <label>{{ 'Duration' | translate }}</label>
