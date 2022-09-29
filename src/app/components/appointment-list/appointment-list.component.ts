@@ -51,7 +51,7 @@ export class AppointmentListComponent implements OnInit {
     }
 
     isPaid(appointment) {
-        return appointment.payment_status === 'paid';
+        return appointment.payment_status === 'paid' && this.showCustomer == false;
     }
 
     makePayment(appointment) {
@@ -118,6 +118,31 @@ export class AppointmentListComponent implements OnInit {
 
     isAbleApprove(appointment) {
         return appointment.status == 'pending' && this.showCustomer == true;
+    }
+
+    reject(booking) {
+        this.translateService.get(['Reject booking?', 'Warning']).subscribe( res => {
+            this.confirmationService.confirm({
+                message: res['Reject booking?'],
+                accept: () => {
+                    booking.loading = true;
+                    this.appointmentService.reject(booking.id).subscribe(res => {
+                        // console.log('checkin=', res);
+                        if (res.success == true) {
+                            booking.status = res.status;
+                        } else {
+                            this.messageService.add({
+                                severity: 'error',
+                                summary: res['Error'],
+                                detail: res.error
+                            });
+                        }
+                        booking.loading = false;
+                    });
+                }
+            });
+        });
+
     }
 
     approve(booking) {
