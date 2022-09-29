@@ -73,6 +73,11 @@ export class AppointmentService {
     readonly paymentSelection = false;
 
     /**
+     * service object that contains service's name, price...etc
+     * it may also contain trainer object in it.
+     */
+    selectedService: any;
+    /**
      * tableSessions, the sessions for user to select.
      * it will be retrieved from server side based on Service's duration & min_duration.
      */
@@ -82,6 +87,7 @@ export class AppointmentService {
         timeInformation: {
             serviceId: 1,
             roomId: 1,
+            trainerId: 0,
             date: '',
             noOfSession: 2,  // min 2 session = 1 hour.
             sessionInterval: 0,  // from server side
@@ -197,7 +203,11 @@ export class AppointmentService {
             this.prepareDefaultAppointment();
         if (!this.tableSessions) {
             this.api.get('api/user-service').subscribe(resp => {
+                this.selectedService = resp;
                 this.appointmentInformation.timeInformation.serviceId = resp.id;
+                if (resp.trainer) {
+                    this.appointmentInformation.timeInformation.trainerId = resp.trainer.id;
+                }
                 this.tableSessions = resp.sessions;
             });
         }
@@ -230,10 +240,16 @@ export class AppointmentService {
     }
 
     getTimeslots() {
-        return this.api.get('api/appointment', {
+        let params = {
             noOfSession: this.appointmentInformation.timeInformation.noOfSession,
-            service_id: this.appointmentInformation.timeInformation.serviceId
-        });
+            service_id: this.appointmentInformation.timeInformation.serviceId,
+        };
+        if (this.appointmentInformation.timeInformation.trainerId > 0) {
+            params = {...params, ...{
+                trainer_id: this.appointmentInformation.timeInformation.trainerId
+            }};
+        }
+        return this.api.get('api/appointment', params);
     }
 
     getTimeslotsByDate(date, noOfSession, customer_id, room_id) {
