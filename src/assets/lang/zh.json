@@ -11,7 +11,7 @@
     "Idle": "閒置中",
     "Occupied": "使用中",
     "Duration": "時間段",
-    "Choose your time length": "選擇打球的時間長度",
+    "Choose your time length": "選擇預約的時間長度",
     "hour Minutes": "{{hour}} 小時 {{minute}}分鐘",
     "hour Hours": "{{hour}} 小時",
     "N minutes": "{{minute}} 分鐘",
