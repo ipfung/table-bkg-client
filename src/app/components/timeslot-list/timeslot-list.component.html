@@ -3,8 +3,8 @@
     <p-panel *ngFor="let col of weeks" header="{{ col.name | translate }}">
         <ng-template pTemplate="icons">
             <!-- a fake button to beautify the toolbar --><button pButton class="p-panel-header-icon p-link" icon="pi pi-" [disabled]="true"></button>
-            <button *ngIf="editable" pButton class="p-panel-header-icon p-link" icon="pi pi-plus" pTooltip="{{ 'Create' | translate }}" (click)="openNew(col.code)">
-            </button>
+            <button *ngIf="col.data && col.data.length > 0 && 1 == col.code" pButton class="p-panel-header-icon p-link" icon="pi pi-copy" pTooltip="{{ 'Apply to all days' | translate }}" (click)="copyTimeslot(col.code)"></button>
+            <button *ngIf="editable" pButton class="p-panel-header-icon p-link" icon="pi pi-plus" pTooltip="{{ 'Create' | translate }}" (click)="openNew(col.code)"></button>
         </ng-template>
         <div class="grid mt-2" *ngIf="!isCreating(col.code); else tsform"></div>
         <div *ngIf="col.data && col.data.length > 0; else norecord">
