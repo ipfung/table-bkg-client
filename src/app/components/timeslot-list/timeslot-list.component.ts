@@ -52,6 +52,14 @@ export class TimeslotListComponent implements OnInit {
         });
     }
 
+    copyTimeslot() {
+        // copy from Monday to all other days.
+        this.api.post('api/copy-timeslots', {}).subscribe(res => {
+            if (res.success == true)
+                this.loadData();
+        });
+    }
+
     openNew(weekDay) {
         this.formHeader = "Create Form";
         this.timeslot = {
