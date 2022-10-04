@@ -43,7 +43,7 @@
         <div class="grid grid-nogutter justify-content-between ng-star-inserted">
             <p-button *ngIf="!appointmentInformation.paymentSelection" label="{{ 'Change Date & Time' | translate }}" (onClick)="prevDateTimePage()" icon="pi pi-angle-left"></p-button>
             <p-button *ngIf="appointmentInformation.paymentSelection" label="{{ 'Change Payment Method' | translate }}" (onClick)="prevPage()" icon="pi pi-angle-left"></p-button>
-            <p-button label="{{ getCompleteButtonText() | translate }}" (onClick)="complete()" icon="pi pi-angle-right" iconPos="right"></p-button>
+            <p-button label="{{ getCompleteButtonText() | translate }}" (onClick)="complete()" [disabled]="submitting" icon="pi pi-angle-right" iconPos="right"></p-button>
         </div>
         <div class="grid grid-nogutter justify-content-between ng-star-inserted">
             <div *ngIf="!appointmentInformation.paymentSelection" class="flex align-items-center justify-content-center p-2 border-round mr-1">{{ 'Selected' | translate }}: {{ selectedPreviousDateTimeDescription() }}</div>
@@ -52,3 +52,12 @@
         </div>
     </ng-template>
 </p-card>
+<!-- a modal to avoid duplicate submission -->
+<p-dialog [(visible)]="submitting" [showHeader]="false" [resizable]="false" [modal]="true" [focusOnShow]="false" >
+    <div style="width: 300px;height: 350px;padding: 35%;">
+        <p-progressSpinner></p-progressSpinner>
+        <div>
+            {{ 'Submitting...' | translate }}
+        </div>
+    </div>
+</p-dialog>

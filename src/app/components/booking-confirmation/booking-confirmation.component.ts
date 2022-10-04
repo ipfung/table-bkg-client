@@ -10,6 +10,7 @@ import {Router} from "@angular/router";
 export class BookingConfirmationComponent implements OnInit {
     appointmentInformation: any;
     paymentSelection: boolean;
+    submitting: boolean;
 
     constructor(public appointmentService: AppointmentService, private router: Router) {
     }
@@ -36,6 +37,7 @@ export class BookingConfirmationComponent implements OnInit {
     }
 
     complete() {
+        this.submitting = true;
         this.appointmentService.complete();
     }
 
