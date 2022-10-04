@@ -13,14 +13,22 @@ export class TimeslotListComponent implements OnInit {
 
     timeslots = [];
     editable = false;
+    doLoading = true;
+    daysoffs = [];
 
-    // form variables.
+    // timeslot form variables.
     formDialog = false;
     submitted = false;
     timeslot: any;
     weeks = [];
     locations = [];
     formHeader = "Edit Form";
+    // daysoff variables.
+    daysoffFormHeader: string;
+    daysoff: any;
+    daysoffSubmitted: boolean;
+    daysoffFormDialog: boolean;
+    offDates: Date[];
 
     constructor(private api: ApiService, public lemonade: Lemonade) {
     }
@@ -32,6 +40,7 @@ export class TimeslotListComponent implements OnInit {
         this.api.get('api/locations').subscribe( res => {
             this.locations = res.data;
         });
+        this.loadDaysoffData();
     }
 
     loadData() {
@@ -108,4 +117,61 @@ export class TimeslotListComponent implements OnInit {
             }
         });
     }
+
+    loadDaysoffData() {
+        this.loading = true;
+        this.api.get('api/daysoff').subscribe( res => {
+            this.daysoffs = res.data;
+            this.doLoading = false;
+        });
+    }
+
+    openNewDaysoff() {
+        this.daysoffFormHeader = "Create Form";
+        this.daysoff = {
+            location_id: 1
+        };
+        this.offDates = [];
+        this.daysoffSubmitted = false;
+        this.daysoffFormDialog = true;
+    }
+
+    editDaysoff(daysoff) {
+        this.daysoffFormHeader = "Edit Form";
+        this.daysoff = {...daysoff};
+        this.offDates = [new Date(daysoff.start_date), new Date(daysoff.end_date)];
+        this.daysoffSubmitted = false;
+        this.daysoffFormDialog = true;
+    }
+
+    hideDaysoffDialog() {
+        this.daysoffFormDialog = false;
+    }
+
+    saveDaysoff() {
+        let call;
+        this.daysoffSubmitted = true;
+        if (this.daysoff.name == '') {
+            return;
+        }
+        if (this.offDates.length != 2) {
+            return;
+        }
+        this.daysoff.start_date = this.lemonade.formatPostDate(this.offDates[0]);
+        this.daysoff.end_date = this.lemonade.formatPostDate(this.offDates[1]);
+        if (this.daysoff.id > 0) {
+            call = this.api.update('api/daysoff/' + this.daysoff.id, this.daysoff);
+        } else {
+            call = this.api.post('api/daysoff', this.daysoff);
+        }
+        console.log('this.daysoff=', this.daysoff);
+        call.subscribe( res => {
+            console.log('save daysoff res=', res);
+            if (res.success == true) {
+                this.loadDaysoffData();
+                this.hideDaysoffDialog();
+            }
+        });
+    }
+
 }
