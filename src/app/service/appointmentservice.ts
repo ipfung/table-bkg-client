@@ -222,8 +222,7 @@ export class AppointmentService {
 
     getRescheduleTimeslots() {
         return this.api.get('api/appointment', {
-            bookId: this.reschedule.bookId,
-            service_id: this.appointmentInformation.timeInformation.serviceId
+            bookId: this.reschedule.bookId
         });
     }
 
