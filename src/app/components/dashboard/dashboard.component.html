@@ -97,7 +97,7 @@
                     </ng-template>
                 </p-table>
             </div>
-            <div class="card" *ngIf="data.showSalesChart">
+            <div class="card" *ngIf="data.isTrainerUser">
                 <h5>{{ 'Dashboard Current Status' | translate:{room: 'Room' | translate } }}</h5>
                 <p-table [value]="rooms" responsiveLayout="scroll">
                     <ng-template pTemplate="header">
