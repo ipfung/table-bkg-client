@@ -12,6 +12,7 @@
             <tr>
                 <th style="min-width:200px">{{ 'Date & Time' | translate }}</th>
                 <th *ngIf="showCustomer" style="min-width:200px">{{ 'Customer' | translate }}</th>
+                <th *ngIf="showTrainer" style="min-width:120px">{{ 'Trainer' | translate }}</th>
                 <th style="min-width:120px">{{ 'Table' | translate }}</th>
                 <th style="min-width:120px">{{ 'Duration' | translate }}</th>
                 <th style="min-width:120px">{{ 'Payment' | translate }}</th>
@@ -54,6 +55,10 @@
                     <i class="pi pi-circle-fill mr-2" [style]="{color: appointment.role_color_name}"></i>
                     <span class="p-column-title">{{ 'Customer' | translate }}</span>
                     {{ appointment.customer_name }}
+                </td>
+                <td *ngIf="showTrainer" style="min-width:120px">
+                    <span class="p-column-title">{{ 'Trainer' | translate }}</span>
+                    {{ appointment.user_name }}
                 </td>
                 <td style="min-width:120px">
                     <span class="p-column-title">{{ 'Table' | translate }}</span>
