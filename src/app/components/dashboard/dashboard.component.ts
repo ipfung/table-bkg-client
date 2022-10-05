@@ -30,7 +30,8 @@ export class DashboardComponent implements OnInit {
         percentLoad: 0,
         showUnknown: false,
         showUpcomingAppointments: false,
-        showNotifications: false
+        showNotifications: false,
+        isTrainerUser: false
     };
 
     chartData: any;
