@@ -57,6 +57,7 @@
     "No booking found.": "您沒有任何預約，馬上<a href='#/appointment'>預約</a>吧。",
     "Payment": "付款",
     "Status": "狀態",
+    "Submitting...": "提交中⋯⋯",
     "approved": "已批准",
     "pending": "待定",
     "rejected": "已拒絕",
@@ -81,6 +82,7 @@
     "Choose reschedule date & time": "選擇改期的日期及時間",
     "Reschedule Confirmation": "確認改期",
     "Actions": "動作",
+    "New": "新增",
     "Edit": "編輯",
     "Yes": "是",
     "No": "否",
@@ -142,6 +144,7 @@
     "Order Type": "訂單類型",
     "Create Form": "新增{{name}}",
     "Edit Form": "更改{{name}}",
+    "Date": "日期",
     "Field is required": "{{field}}是必填的",
     "Error": "錯誤"
 }
