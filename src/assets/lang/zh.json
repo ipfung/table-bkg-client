@@ -93,6 +93,7 @@
     "You must reschedule before 48 hours of appointment start time.": "對不起，您必須在預約前48小時前才能改期。",
     "You have been rescheduled several times.": "對不起，您已曾經改期{{param}}次，不能再更改了。",
     "Congratulations, booking rescheduled successfully.": "🎉 恭喜，已成功改期。",
+    "Found duplicate appointment.": "發現重複或重疊的預約。",
     "User": "用户",
     "Avatar": "頭像",
     "Role": "用户級別",
