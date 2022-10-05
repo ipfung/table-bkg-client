@@ -42,6 +42,7 @@ console.log('this.reschedule.bookId=', this.reschedule.bookId);
             this.reschedule.noOfSession = res.noOfSession;
             this.reschedule.sessionInterval = res.sessionInterval;
             this.timeSlots = res['data'];
+            this.appointmentService.tableSessions = res.tableSessions;
             this.dateTimeSlots = this.getTimeslotsByDate();
         });
         this.subscription = this.appointmentService.paymentComplete$.subscribe((data) => {
