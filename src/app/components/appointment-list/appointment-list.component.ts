@@ -18,6 +18,7 @@ export class AppointmentListComponent implements OnInit {
     pageHeader = 'My Booking';
 
     showCustomer = false;
+    showTrainer = false;
     bookings: any;
 
     customers: any[];
@@ -40,6 +41,7 @@ export class AppointmentListComponent implements OnInit {
             this.appointmentService.getBookings(this.rangeDates[0], this.rangeDates[1]).subscribe(res => {
                 this.bookings = res.data;
                 this.showCustomer = res.showCustomer;
+                this.showTrainer = res.showTrainer;
                 this.pageHeader = this.showCustomer ? 'Appointment' : 'My Booking';
                 this.loading = false;
             });
