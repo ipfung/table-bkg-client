@@ -60,13 +60,15 @@
             </div>
         </div>
 
-        <div class="col-12 xl:col-6">
+        <div class="col-12">
             <div class="card">
                 <h5>{{ 'Upcoming Appointments' | translate }}</h5>
                 <p-table [value]="appointments" [paginator]="true" [rows]="5" responsiveLayout="scroll">
                     <ng-template pTemplate="header">
                         <tr>
-                            <th pSortableColumn="time">{{ 'Time' | translate }} <p-sortIcon field="time"></p-sortIcon></th>
+                            <th pSortableColumn="time">{{ 'Date & Time' | translate }} <p-sortIcon field="time"></p-sortIcon></th>
+                            <th *ngIf="data.showCustomerCount" pSortableColumn="trainer">{{ 'Trainer' | translate }} <p-sortIcon field="trainer"></p-sortIcon></th>
+                            <th *ngIf="data.isTrainerUser" pSortableColumn="customer">{{ 'Customer' | translate }} <p-sortIcon field="customer"></p-sortIcon></th>
                             <th pSortableColumn="duration">{{ 'Duration' | translate }} <p-sortIcon field="duration"></p-sortIcon></th>
                             <th pSortableColumn="status">{{ 'Status' | translate }} <p-sortIcon field="status"></p-sortIcon></th>
 <!--                            <th>{{ 'View' | translate }}</th>-->
@@ -74,21 +76,29 @@
                     </ng-template>
                     <ng-template pTemplate="emptymessage" let-booking>
                         <tr>
-                            <td colspan="8">
+                            <td colspan="5">
                                 <span class="font-bold ml-2" [innerHTML]="'No booking found.' | translate"></span>
                             </td>
                         </tr>
                     </ng-template>
                     <ng-template pTemplate="body" let-appointment>
                         <tr>
-                            <td style="width: 40%; min-width: 9rem;">{{ lemonade.formatFullDateTime(appointment.start_time, true) }}</td>
-                            <td style="width: 35%; min-width: 8rem;">
+                            <td style="width: 30%; min-width: 9rem;">
+                                {{ lemonade.formatFullDateTime(appointment.start_time, true) }}
+                                <i class="ml-2 pi pi-circle-fill" [style]="{color: appointment.role_color_name}"></i>
+                            </td>
+                            <td *ngIf="data.showCustomerCount" style="width: 20%; min-width: 8rem;">
+                                {{ appointment.user_name }}
+                            </td>
+                            <td *ngIf="data.isTrainerUser" style="width: 20%; min-width: 8rem;">
+                                {{ appointment.customer_name }}
+                            </td>
+                            <td style="width: 15%; min-width: 8rem;">
                                 <p-avatar [label]="lemonade.getInitial(appointment.name)" shape="circle" [style]="{'background-color': appointment.color, 'color': '#fff'}"></p-avatar>
                                 {{ lemonade.duration(appointment.start_time, appointment.end_time) }}
                             </td>
-                            <td style="width: 25%; min-width: 8rem;">
+                            <td style="width: 15%; min-width: 8rem;">
                                 <span [class]="'booking-badge status-' + appointment.status">{{ appointment.status | translate }}</span>
-                                <i class="ml-2 pi pi-circle-fill" [style]="{color: appointment.role_color_name}"></i>
                             </td>
 <!--                            <td style="width: 15%;">-->
 <!--                                <button pButton pRipple type="button" icon="pi pi-search" class="p-button p-component p-button-text p-button-icon-only"></button>-->
@@ -97,6 +107,8 @@
                     </ng-template>
                 </p-table>
             </div>
+        </div>
+        <div class="col-12 xl:col-6">
             <div class="card" *ngIf="data.isTrainerUser">
                 <h5>{{ 'Dashboard Current Status' | translate:{room: 'Room' | translate } }}</h5>
                 <p-table [value]="rooms" responsiveLayout="scroll">
