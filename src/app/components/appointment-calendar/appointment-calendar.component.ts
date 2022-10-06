@@ -37,6 +37,7 @@ export class AppointmentCalendarComponent implements OnInit {
             this.rooms = res.data;
         });
         this.options = {
+            initialView: 'timeGridWeek',
             initialDate : this.lemonade.formatPostDate(new Date()),
             headerToolbar: {
                 left: 'prev,next today',
@@ -102,17 +103,17 @@ export class AppointmentCalendarComponent implements OnInit {
             this.options = {...this.options, ...{
                     eventSources: [{
                         events: res.data, color: 'yellow'//, textColor: '#266cda'
-                    }, {
-                        events: [{
-                            "title": "Event 1",
-                            "start": "2022-09-05T09:00:00",
-                            "end": "2022-09-05T18:00:00"
-                        }, {
-                            "title": "Event 2",
-                            "start": "2022-09-08",
-                            "end": "2022-09-10"
-                        }],
-                        color: 'yellow', textColor: 'red'
+                    // }, {
+                    //     events: [{
+                    //         "title": "Event 1",
+                    //         "start": "2022-09-05T09:00:00",
+                    //         "end": "2022-09-05T18:00:00"
+                    //     }, {
+                    //         "title": "Event 2",
+                    //         "start": "2022-09-08",
+                    //         "end": "2022-09-10"
+                    //     }],
+                    //     color: 'yellow', textColor: 'red'
                     }]
                 }
             };
