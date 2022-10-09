@@ -234,7 +234,15 @@ export class AppointmentService {
 
     getActiveCustomers() {
         return this.api.get('api/users', {
-            status: 'active'
+            status: 'active',
+            role: 'Student'
+        });
+    }
+
+    getActiveTrainers() {
+        return this.api.get('api/users', {
+            status: 'active',
+            role: 'Trainer'
         });
     }
 
@@ -269,22 +277,31 @@ export class AppointmentService {
 
     complete() {
         const paymentInfo = this.appointmentInformation.paymentInformation;
-        const data = {...{
-            paymentMethod: paymentInfo.method,
-            price: paymentInfo.price
-        }, ...this.appointmentInformation.timeInformation};
-        // submit to server.
-        this.api.post('api/appointment', data).subscribe( res => {
+        const data = {
+            ...{
+                paymentMethod: paymentInfo.method,
+                price: paymentInfo.price
+            }, ...this.appointmentInformation.timeInformation
+        };
+        const me = this;
+        this.submit(data, function(res) {
             console.log('complete res=', res);
             if (res.success === true) {
-                this.paymentComplete.next({...{
-                    success: true
-                }, ...this.appointmentInformation});
+                me.paymentComplete.next({...{
+                        success: true
+                    }, ...me.appointmentInformation});
                 // clear after payment complete.
-                this.clearUserSelection();
+                me.clearUserSelection();
             } else {
-                this.paymentComplete.next(res);
+                me.paymentComplete.next(res);
             }
+        });
+    }
+
+    submit(data, callback) {
+        // submit to server.
+        this.api.post('api/appointment', data).subscribe( res => {
+            callback(res);
         });
     }
 
@@ -328,10 +345,13 @@ export class AppointmentService {
         return this.formatTime(timeEpoch, date) + " - " + this.formatTime(parseInt(timeEpoch, 10) + (noOfSession * sessionInterval));
     }
 
-    getSessionName(noOfSession) {
-console.log("getsessionname=", this.tableSessions, noOfSession);
-        if (noOfSession && this.tableSessions && this.tableSessions.length > 0) {
-            let timeLen = this.tableSessions.find(el => el.code == noOfSession);
+    getSessionName(noOfSession, tableSessions?) {
+        if (tableSessions == undefined) {
+            tableSessions = this.tableSessions;
+        }
+console.log("getsessionname=", this.tableSessions, tableSessions, noOfSession);
+        if (noOfSession && tableSessions && tableSessions.length > 0) {
+            let timeLen = tableSessions.find(el => el.code == noOfSession);
             let name = timeLen.name;
             if (timeLen.hour > 0) {
                 this.translateService.get('hour Hours', {

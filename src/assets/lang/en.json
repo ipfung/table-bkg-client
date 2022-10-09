@@ -56,6 +56,8 @@
     "Payment": "Payment",
     "Status": "Status",
     "Submitting...": "Submitting...",
+    "approval": "Approval",
+    "approve": "Approve",
     "approved": "Approved",
     "pending": "Pending",
     "rejected": "Rejected",
@@ -144,6 +146,13 @@
     "Create Form": "New {{name}}",
     "Edit Form": "Edit {{name}}",
     "Date": "Date",
+    "Time": "Time",
     "Field is required": "{{field}} is required",
+    "Start Date": "Start Date",
+    "Start Time": "Start Time",
+    "End Time": "End Time",
+    "Remark": "Remark",
+    "Select a Customer": "Select a Customer",
+    "Notify Customer": "Notify Customer",
     "Error": "Error"
 }
