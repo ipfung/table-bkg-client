@@ -8,6 +8,17 @@ import {environment} from "../../environments/environment";
 @Injectable()
 export class Lemonade {
     lang: any;
+
+    readonly appointmentStatus = [
+        {
+            name: 'approve',   // without 'ed'
+            code: 'approved'
+        }, {
+            name: 'pending',
+            code: 'pending'
+        }
+    ];
+
     timeFormat = 'h:mm aa';
     readonly weeks = [
         {

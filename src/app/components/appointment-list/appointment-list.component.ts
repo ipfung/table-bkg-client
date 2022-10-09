@@ -15,16 +15,29 @@ import {Lemonade} from "../../service/lemonade.service";
 export class AppointmentListComponent implements OnInit {
     loading = true;
 
-    pageHeader = 'My Booking';
+    pageHeader = '';
 
     showCustomer = false;
     showTrainer = false;
     bookings: any;
-
-    customers: any[];
+    newable: boolean;
 
     // search fields
     rangeDates: Date[];
+
+    // appointment form
+    appointment: any;
+    services = [];
+    sessions = [];
+    rooms = [];
+    statuses = [];
+    customers: any[];
+    trainers: any[];
+    times: any[] = [];
+
+    submitted = false;
+    formDialog = false;
+    formHeader = 'Create Form';
 
     constructor(public appointmentService: AppointmentService, private router: Router, private confirmationService: ConfirmationService, private messageService: MessageService, private translateService: TranslateService, private lemonade: Lemonade) {
     }
@@ -43,6 +56,7 @@ export class AppointmentListComponent implements OnInit {
                 this.showCustomer = res.showCustomer;
                 this.showTrainer = res.showTrainer;
                 this.pageHeader = this.showCustomer ? 'Appointment' : 'My Booking';
+                this.newable = res.newable;
                 this.loading = false;
             });
         }
@@ -99,7 +113,7 @@ export class AppointmentListComponent implements OnInit {
      * @param appointment
      */
     isValidStatus(appointment) {
-        return appointment.loading !== true && (appointment.status == 'approved' || appointment.status == 'pending');
+        return appointment.loading !== true && (appointment.status == 'approved' || appointment.status == 'pending') && this.showCustomer == false;
     }
 
     /**
@@ -199,6 +213,106 @@ export class AppointmentListComponent implements OnInit {
                 });
             });
         }
+    }
+
+    openNew() {
+        this.formHeader = "Create Form";
+        this.prepareForForm();
+        // this is always a new appointment information.
+        this.appointment = this.appointmentService.getAppointmentInformation();
+        this.submitted = false;
+        this.formDialog = true;
+    }
+
+    prepareForForm() {
+        // for form, this wastes memory if user doesn't open the form.
+        this.appointmentService.getRooms().subscribe( res => {
+            this.rooms = res.data;
+        });
+        this.appointmentService.getActiveCustomers().subscribe( res => {
+            this.customers = res.data;
+        });
+        this.appointmentService.getActiveTrainers().subscribe( res => {
+            this.trainers = res.data;
+        });
+        this.appointmentService.getServices().subscribe(res => {
+            this.services = res.data;
+            this.appointment.timeInformation.serviceId = this.services[0].id;
+            this.appointment.timeInformation.noOfSession = this.services[0].sessions[0].code;
+            this.loadSessions(null);
+        });
+        this.statuses = this.lemonade.appointmentStatus;
+    }
+
+    loadSessions(e) {
+        if (this.services.length > 0) {
+            let service = this.services.find(el => el.id == this.appointment.timeInformation.serviceId);
+            this.sessions = service.sessions;
+        } else {
+            this.sessions = [];
+        }
+    }
+
+    loadTime(e) {
+        if (this.appointment.timeInformation.date && this.appointment.timeInformation.noOfSession && this.appointment.timeInformation.customerId > 0 && this.appointment.timeInformation.roomId > 0) {
+            this.appointmentService.getTimeslotsByDate(this.appointment.timeInformation.date, this.appointment.timeInformation.noOfSession, this.appointment.timeInformation.customerId, this.appointment.timeInformation.roomId).subscribe(res => {
+                console.log('times=sssss=', res.data[0].freeslots);
+                this.times = res.data[0].freeslots;
+                this.appointment.timeInformation.sessionInterval = res.sessionInterval;
+                this.appointment.timeInformation.time = undefined;   // reset
+                this.appointment.paymentInformation.price = undefined;
+            });
+        } else {
+            this.times = [];
+        }
+    }
+
+    setPriceByTime(e) {
+        if (this.times.length > 0) {
+            const theTime = this.times.find(el => el.time == this.appointment.timeInformation.time);
+            this.appointment.paymentInformation.price = theTime.price;
+        } else {
+            this.appointment.paymentInformation.price = 0;
+        }
+    }
+
+    hideDialog() {
+        this.formDialog = false;
+    }
+
+    save() {
+        this.submitted = true;
+
+        if (this.appointment.timeInformation.customerId <= 0)
+            return;
+        if (this.appointment.timeInformation.serviceId <= 0)
+            return;
+        if (this.appointment.timeInformation.roomId <= 0)
+            return;
+        if (this.appointment.timeInformation.noOfSession <= 0)
+            return;
+        if (this.appointment.timeInformation.date == undefined)
+            return;
+        else {
+            this.appointment.timeInformation.date = this.lemonade.formatPostDate(this.appointment.timeInformation.date);
+        }
+        if (this.appointment.timeInformation.time == undefined)
+            return;
+        this.appointment.paymentInformation.method = 'onsite';
+        const data = {
+            ...{
+                paymentMethod: 'onsite',
+                price: this.appointment.paymentInformation.price
+            }, ...this.appointment.timeInformation
+        };
+        const me = this;
+console.log('single appointment=', data);
+        this.appointmentService.submit(data, function(res) {
+            if (res.success == true) {
+                me.appointment = undefined;
+                me.formDialog = false;
+            }
+        });
     }
 
     calculateCustomerTotal(name) {

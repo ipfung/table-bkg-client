@@ -58,6 +58,8 @@
     "Payment": "付款",
     "Status": "狀態",
     "Submitting...": "提交中⋯⋯",
+    "approval": "批准",
+    "approve": "批准",
     "approved": "已批准",
     "pending": "待定",
     "rejected": "已拒絕",
@@ -146,6 +148,13 @@
     "Create Form": "新增{{name}}",
     "Edit Form": "更改{{name}}",
     "Date": "日期",
+    "Time": "時間",
     "Field is required": "{{field}}是必填的",
+    "Start Date": "開始日期",
+    "Start Time": "開始時間",
+    "End Time": "完結時間",
+    "Remark": "備註",
+    "Select a Customer": "選擇客戶",
+    "Notify Customer": "通知客戶",
     "Error": "錯誤"
 }
