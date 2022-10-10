@@ -151,6 +151,8 @@
     "Start Date": "Start Date",
     "Start Time": "Start Time",
     "End Time": "End Time",
+    "Unit Price": "Unit Price",
+    "Select field": "Select a {{field}}",
     "Remark": "Remark",
     "Select a Customer": "Select a Customer",
     "Notify Customer": "Notify Customer",

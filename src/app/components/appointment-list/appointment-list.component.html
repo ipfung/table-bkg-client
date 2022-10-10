@@ -118,7 +118,7 @@
     <ng-template pTemplate="content">
         <div class="field">
             <label for="name"><span class="required">*</span> {{ 'Customer' | translate }}</label>
-            <p-dropdown id="name" [options]="customers" [(ngModel)]="appointment.timeInformation.customerId" optionLabel="name" optionValue="id" (onClick)="loadTime($event)" placeholder="{{'Select a Customer' | translate}}" [ngClass]="{'ng-invalid ng-dirty' : submitted && appointment.timeInformation.customerId <= 0}">
+            <p-dropdown id="name" [options]="customers" [(ngModel)]="appointment.timeInformation.customerId" optionLabel="name" optionValue="id" (onClick)="loadTime($event)" placeholder="{{'Select field' | translate: {field: 'Customer' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : submitted && appointment.timeInformation.customerId <= 0}">
 <!--                <ng-template pTemplate="selectedItem">-->
 <!--                    <i class="pi pi-circle-fill" [style]="{color: (appointment.role_color_name)}"></i>-->
 <!--                    {{ appointment.user_id }}-->
@@ -133,7 +133,7 @@
 
         <div class="field" *ngIf="showTrainer">
             <label for="trainer">{{ 'Trainer' | translate }}</label>
-            <p-dropdown id="trainer" [options]="trainers" [(ngModel)]="appointment.timeInformation.trainerId" optionLabel="name" optionValue="id" (onClick)="loadTime($event)" placeholder="{{'Select a Trainer' | translate}}">
+            <p-dropdown id="trainer" [options]="trainers" [(ngModel)]="appointment.timeInformation.trainerId" optionLabel="name" optionValue="id" (onClick)="loadTime($event)" placeholder="{{'Select field' | translate: {field: 'Trainer' | translate} }}">
                 <!--                <ng-template pTemplate="selectedItem">-->
                 <!--                    <i class="pi pi-circle-fill" [style]="{color: (appointment.role_color_name)}"></i>-->
                 <!--                    {{ appointment.user_id }}-->
@@ -199,8 +199,8 @@
         </div>
 
         <div class="field">
-            <label>{{ 'Price' | translate }}</label>
-            <b>{{ appointment.paymentInformation.price | currency:'HK$'}}</b>
+            <label>{{ 'Unit Price' | translate }}</label>
+            <p><b>{{ appointment.paymentInformation.price | currency:'HK$' }}</b></p>
         </div>
 
         <div class="field">
@@ -209,7 +209,7 @@
 
         <div class="field">
             <label for="status">{{ 'approval' | translate }}?</label>
-            <p-dropdown id="status" [options]="statuses" optionValue="code" [(ngModel)]="appointment.timeInformation.status" placeholder="{{ 'Select a Status' | translate }}">
+            <p-dropdown id="status" [options]="statuses" optionValue="code" [(ngModel)]="appointment.timeInformation.status" placeholder="{{'Select field' | translate: {field: 'Status' | translate} }}">
                 <ng-template pTemplate="selectedItem">
                     {{ lemonade.comboRenderer(statuses, appointment.timeInformation.status) | translate }}
                 </ng-template>
