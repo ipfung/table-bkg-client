@@ -153,6 +153,8 @@
     "Start Date": "開始日期",
     "Start Time": "開始時間",
     "End Time": "完結時間",
+    "Unit Price": "單價",
+    "Select field": "選擇{{field}}",
     "Remark": "備註",
     "Select a Customer": "選擇客戶",
     "Notify Customer": "通知客戶",
