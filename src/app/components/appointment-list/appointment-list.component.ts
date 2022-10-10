@@ -309,6 +309,7 @@ export class AppointmentListComponent implements OnInit {
 console.log('single appointment=', data);
         this.appointmentService.submit(data, function(res) {
             if (res.success == true) {
+                me.loadData();
                 me.appointment = undefined;
                 me.formDialog = false;
             }
