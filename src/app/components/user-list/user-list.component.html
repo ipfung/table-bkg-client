@@ -1,9 +1,9 @@
 <div class="flex justify-content-between">
     <div class="flex align-items-center justify-content-center p-2 border-round mr-1 text-2xl font-bold">
-        {{ paramRole | translate }}
+        {{ 'Student' | translate }}
     </div>
     <div class="flex align-items-center justify-content-center py-2 border-round">
-        <button *ngIf="newable" pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
+        <button *ngIf="newable" pButton pRipple label="{{ 'New' | translate }}" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
     </div>
 </div>
 <div class="card">
@@ -35,7 +35,7 @@
         </div>
     </div>
 
-    <p-table [value]="users" [loading]="loading" dataKey="id" sortField="appointment_date" sortMode="single"  responsiveLayout="stack">
+    <p-table [value]="users" [loading]="loading" [paginator]="true" [rows]="5" dataKey="id" sortField="appointment_date" sortMode="single"  responsiveLayout="stack">
         <ng-template pTemplate="header">
             <tr>
                 <th style="min-width:120px">{{ 'Name' | translate }}</th>
@@ -155,7 +155,7 @@
 
         <div class="field">
             <label for="status">{{ 'Status' | translate }}</label>
-            <p-dropdown id="status" [options]="statuses" optionValue="code" [(ngModel)]="partner.status" placeholder="Select a Status">
+            <p-dropdown id="status" [options]="statuses" optionValue="code" [(ngModel)]="partner.status" placeholder="{{ 'Select a Status' | translate }}">
                 <ng-template pTemplate="selectedItem">
                     {{ lemonade.comboRenderer(statuses, partner.status) | translate }}
                 </ng-template>

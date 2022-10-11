@@ -41,24 +41,13 @@ export class UserListComponent implements OnInit {
 
     async ngOnInit() {
         this.loginId = await this.authService.loginId();
-        this.statuses = [
-            {
-                name: 'active',
-                code: 'active'
-            }, {
-                name: 'suspended',
-                code: 'suspended'
-            }, {
-                name: 'banned',
-                code: 'banned'
-            }
-        ];
+        this.statuses = this.lemonade.userStatus;
 
         this.subscription = this.route.params.subscribe(params => {
             this.paramRole = params['role'] || '';
         });
-        // load roles.
-        this.api.get('api/roles').subscribe( res => {
+        // load student roles only.
+        this.api.get('api/get-roles').subscribe( res => {
             this.roles = res.data;
         });
         this.loadData();
@@ -98,7 +87,7 @@ console.log('ngOnDestroy=', this.subscription);
         this.api.get('api/users', params).subscribe( res => {
             this.users = res.data;
             this.editable = res.editable;
-            this.newable = (this.paramRole == 'User');
+            this.newable = res.newable;
             this.loading = false;
         });
     }
@@ -163,8 +152,17 @@ console.log('ngOnDestroy=', this.subscription);
         this.submitted = false;
     }
 
+    isFormValid() {
+        let failed = (!this.partner.name || !this.partner.email || !this.partner.mobile_no || !this.partner.second_name);
+        if (this.isNew && !failed) {
+            failed = (!this.partner.password);
+        }
+        return !failed;
+    }
+
     save() {
         this.submitted = true;
+        if (!this.isFormValid()) return;
         let call;
         if (this.partner.id > 0) {
             call = this.api.update('api/users/' + this.partner.id, this.partner)

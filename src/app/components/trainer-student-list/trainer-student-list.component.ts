@@ -12,14 +12,21 @@ export class TrainerStudentListComponent implements OnInit {
     trainers = [];
     loading = true;
     totalRecords = 0;
+    newable = false;
+    roles: any[];
+
+    isNew = false;
+    //general form
+    statuses = [];
 
     // form variables.
+    supportMultiStudent: boolean;
     editable = false;
     formDialog = false;
     submitted = false;
     trainer: any;
     availableStudents = [];
-    formHeader = "Edit Student List";
+    formHeader = "Edit Form";
 
     // timeslot tab
     timeslots = [];
@@ -34,26 +41,67 @@ export class TrainerStudentListComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.api.get('api/trainer-students', {
-            status: 'active'
-        }).subscribe( res => {
+        this.loadData();
+        // load trainer roles only.
+        this.api.get('api/get-roles', {type: 'coach'}).subscribe( res => {
+            this.roles = res.data;
+        });
+        this.weeks = this.lemonade.weeks;
+        this.statuses = this.lemonade.userStatus;
+    }
+
+    loadData() {
+        this.api.get('api/trainers').subscribe( res => {
             this.trainers = res.data;
             this.totalRecords = res.total;
             this.editable = res.editable;
+            this.newable = res.newable;
+            this.supportMultiStudent = res.multi_student;
             this.loading = false;
         });
-        this.weeks = this.lemonade.weeks;
+    }
+
+    findRoleColor(roleId) {
+        if (this.roles && this.roles.length > 0 && roleId > 0) {
+            let data = this.roles.find(el => el.id == roleId);
+            return data.color_name;
+        }
+        return 'grey';
+    }
+
+    roleRenderer(roleId) {
+        if (this.roles && this.roles.length > 0 && roleId > 0) {
+            let data = this.roles.find(el => el.id == roleId);
+            return data.name;
+        }
+        return '';
+    }
+
+    openNew() {
+        this.formHeader = "Create Form";
+        this.trainer = {
+            status: this.statuses[0].code,
+            teammates: []
+        };
+        this.submitted = false;
+        this.formDialog = true;
+        this.api.get('api/availability-students/0').subscribe( res => {
+            this.availableStudents = res.data;
+        });
+        this.isNew = true;
     }
 
     edit(trainer) {
+        this.formHeader = "Edit Form";
         // this.router.navigate(['/trainer-student-form', trainer.id]);
         this.trainer = {...trainer};
         this.formDialog = true;
         this.api.get('api/availability-students/' + trainer.id).subscribe( res => {
-            console.log('/availability-students list=', res);
+            console.log('/availability-students edit list=', res);
             this.availableStudents = res.data;
         });
         this.loadTimeslotData(trainer);
+        this.isNew = false;
     }
 
     canAmend(trainer) {
@@ -64,15 +112,36 @@ export class TrainerStudentListComponent implements OnInit {
         this.formDialog = false;
     }
 
+
+    isFormValid() {
+        let failed = (!this.trainer.name || !this.trainer.email || !this.trainer.mobile_no || !this.trainer.second_name);
+        if (this.isNew && !failed) {
+            failed = (!this.trainer.password);
+        }
+        return !failed;
+    }
+
     save() {
-        this.api.post('api/trainer-students', {
-            "user_id": this.trainer.id,
-            "teammates": this.trainer.teammates.map((obj) => obj.id),
-            "counter": this.trainer.teammates.length
-        }).subscribe( res => {
-            console.log('save res=', res);
-            if (res.success == true) {
+        this.submitted = true;
+        if (!this.isFormValid()) return;
+        let call;
+        let params = {...this.trainer, ...{
+                "teammates": this.trainer.teammates.map((obj) => obj.id),
+                "counter": this.trainer.teammates.length
+            }
+        };
+        if (this.trainer.id > 0) {
+            call = this.api.update('api/trainers/' + this.trainer.id, params)
+        } else {
+            call = this.api.post('api/trainers', params);
+        }
+        call.subscribe( res => {
+            console.log('save users res=', res);
+            if (res.success === true) {
+                this.loadData();
                 this.hideDialog();
+            } else {
+                // error.
             }
         });
     }
@@ -113,6 +182,16 @@ export class TrainerStudentListComponent implements OnInit {
         };
         this.tsSubmitted = false;
         this.tsFormDialog = true;
+    }
+
+    copyTimeslot(trainer) {
+        // copy from Monday to all other days.
+        this.api.post('api/copy-trainer-timeslots', {
+            trainer_id: trainer.id
+        }).subscribe(res => {
+            if (res.success == true)
+                this.loadTimeslotData(trainer);
+        });
     }
 
     /**
