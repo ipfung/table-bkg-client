@@ -1,6 +1,13 @@
-<h4>{{ 'Trainer Student' | translate }}</h4>
+<div class="flex justify-content-between">
+    <div class="flex align-items-center justify-content-center p-2 border-round mr-1 text-2xl font-bold">
+        {{ 'Trainer' | translate }}
+    </div>
+    <div class="flex align-items-center justify-content-center py-2 border-round">
+        <button *ngIf="newable" pButton pRipple label="{{ 'New' | translate }}" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
+    </div>
+</div>
 <div class="card">
-    <p-table [value]="trainers" dataKey="name" responsiveLayout="scroll">
+    <p-table [value]="trainers" [paginator]="true" [rows]="25" [loading]="loading" [totalRecords]="totalRecords" dataKey="name" responsiveLayout="scroll">
         <ng-template pTemplate="header">
             <tr>
                 <th style="width: 3rem"></th>
@@ -39,7 +46,7 @@
                     <span [class]="'user-badge status-' + user.status">{{ user.status | translate }}</span>
                 </td>
                 <td>
-                    <button pButton type="button" [disabled]="!canAmend(user)" pTooltip="{{ 'Edit' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-pencil" (click)="edit(user)"></button>
+                    <button pButton type="button" *ngIf="editable" [disabled]="!canAmend(user)" pTooltip="{{ 'Edit' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-pencil" (click)="edit(user)"></button>
                 </td>
             </tr>
         </ng-template>
@@ -58,7 +65,7 @@
                             </ng-template>
                             <ng-template pTemplate="body" let-teammate>
                                 <tr>
-                                    <td>{{teammate.name}}</td>
+                                    <td>{{teammate.name}} / {{teammate.second_name}}</td>
                                     <td>
                                         <p-avatar [image]="lemonade.getAvatar(teammate)" shape="circle"></p-avatar>
                                     </td>
@@ -72,7 +79,7 @@
                             </ng-template>
                             <ng-template pTemplate="emptymessage">
                                 <tr>
-                                    <td colspan="6">There is no student for trainer.</td>
+                                    <td colspan="4">There is no student for trainer.</td>
                                 </tr>
                             </ng-template>
                         </p-table>
@@ -83,17 +90,74 @@
     </p-table>
 </div>
 
-<p-dialog [(visible)]="formDialog" [style]="{width:'50em', height: '100vh'}" header="{{ formHeader | translate }}" position="right" [modal]="true" class="p-fluid">
+<p-dialog [(visible)]="formDialog" [style]="{width:'50em', height: '100vh'}" header="{{ formHeader | translate:{name: 'Trainer' | translate} }}" position="right" [modal]="true" class="p-fluid">
     <ng-template pTemplate="content">
         <p-tabView>
-            <p-tabPanel header="Details">
+            <p-tabPanel header="{{ 'General Details' | translate }}">
+                <div class="field">
+                    <label for="name">{{ 'Name' | translate }}</label>
+                    <input type="text" pInputText id="name" [(ngModel)]="trainer.name" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !trainer.name}"/>
+                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !trainer.name">{{ 'Field is required' | translate: {field: 'Name' | translate} }}</small>
+                </div>
+
+                <div class="field">
+                    <label for="second_name">{{ 'Chinese Name' | translate }}</label>
+                    <input type="text" pInputText id="second_name" [(ngModel)]="trainer.second_name" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !trainer.second_name}"/>
+                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !trainer.second_name">{{ 'Field is required' | translate: {field: 'Chinese Name' | translate} }}</small>
+                </div>
+
+                <div class="field">
+                    <label for="mobile_no">{{ 'Mobile No.' | translate }}</label>
+                    <input type="text" autocomplete="off" pInputText id="mobile_no" [(ngModel)]="trainer.mobile_no" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !trainer.mobile_no}"/>
+                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !trainer.mobile_no">{{ 'Field is required' | translate: {field: 'Mobile No.' | translate} }}</small>
+                </div>
+
+                <div class="field">
+                    <label for="email">{{ 'Email' | translate }}</label>
+                    <input type="text" autocomplete="off" [disabled]="!isNew" pInputText id="email" [(ngModel)]="trainer.email" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !trainer.email}"/>
+                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !trainer.email">{{ 'Field is required' | translate: {field: 'Email' | translate} }}</small>
+                </div>
+
+                <div class="field">
+                    <label for="pwd">{{ 'Password' | translate }}</label>
+                    <p-password id="pwd" [(ngModel)]="trainer.password" [required]="isNew" placeholder="{{ 'Password' | translate }}" [toggleMask]="true" styleClass="w-full mb-3" [ngClass]="{'ng-invalid ng-dirty' : submitted && !trainer.password}"></p-password>
+                    <small class="ng-dirty ng-invalid" *ngIf="isNew && submitted && !trainer.password">{{ 'Field is required' | translate: {field: 'Password' | translate} }}</small>
+                </div>
+
+                <div class="field">
+                    <label for="role">{{ 'Role' | translate }}</label>
+                    <p-dropdown id="role" [options]="roles" [(ngModel)]="trainer.role_id" optionValue="id">
+                        <ng-template pTemplate="selectedItem">
+                            <i class="pi pi-circle-fill" [style]="{color: findRoleColor(trainer.role_id)}"></i>
+                            {{ roleRenderer(trainer.role_id) + " role" | translate }}
+                        </ng-template>
+                        <ng-template let-item pTemplate="item">
+                            <i class="pi pi-circle-fill" [style]="{color: item.color_name}"></i>
+                            {{ item.name + " role" | translate }}
+                        </ng-template>
+                    </p-dropdown>
+                </div>
+
+                <div class="field">
+                    <label for="status">{{ 'Status' | translate }}</label>
+                    <p-dropdown id="status" [options]="statuses" optionValue="code" [(ngModel)]="trainer.status" placeholder="Select a Status">
+                        <ng-template pTemplate="selectedItem">
+                            {{ lemonade.comboRenderer(statuses, trainer.status) | translate }}
+                        </ng-template>
+                        <ng-template let-item pTemplate="item">
+                            {{ item.name | translate }}
+                        </ng-template>
+                    </p-dropdown>
+                </div>
+            </p-tabPanel>
+            <p-tabPanel *ngIf="supportMultiStudent" [disabled]="trainer.id <= 0" header="{{ 'Student' | translate }}">
                 <img [src]="lemonade.getAvatar(trainer)" [alt]="trainer.name" width="100" class="mt-0 mx-auto mb-2 block" *ngIf="trainer.avatar">
                 <div class="text-center mb-5">
                     <h3>{{ trainer.name }}</h3>
                 </div>
 
                 <div class="field">
-                    <p-pickList [responsive]="true" [showSourceControls]="false" [showTargetControls]="false" [source]="trainer.teammates" [target]="availableStudents"  sourceHeader="{{ 'My Student' | translate }}" targetHeader="{{ 'Available Student' | translate }}" filterBy="name">
+                    <p-pickList [responsive]="true" [showSourceControls]="false" [showTargetControls]="false" [source]="trainer.teammates" [target]="availableStudents"  sourceHeader="{{ 'Saved Students' | translate }}" targetHeader="{{ 'Available Students' | translate }}" filterBy="name">
                         <ng-template let-student pTemplate="item">
                             <div class="student-item">
                                 <div class="image-container">
@@ -112,10 +176,12 @@
                 </div>
             </p-tabPanel>
 
-            <p-tabPanel header="Working hours">
+            <p-tabPanel [disabled]="!(trainer.id > 0)" header="{{ 'Working Hours' | translate }}">
+                <h6 class="text-primary">{{ "Save individually" | translate }}</h6>
                 <p-panel *ngFor="let col of weeks" header="{{ col.name | translate }}">
                     <ng-template pTemplate="icons">
                         <!-- a fake button to beautify the toolbar --><button pButton class="p-panel-header-icon p-link" icon="pi pi-" [disabled]="true"></button>
+                        <button *ngIf="col.data && col.data.length > 0 && 1 == col.code" pButton class="p-panel-header-icon p-link" icon="pi pi-copy" pTooltip="{{ 'Apply to all days' | translate }}" (click)="copyTimeslot(trainer)"></button>
                         <button *ngIf="tsEditable" pButton class="p-panel-header-icon p-link" icon="pi pi-plus" pTooltip="{{ 'Create' | translate }}" (click)="openNewTimeslot(col.code)">
                         </button>
                     </ng-template>
@@ -138,14 +204,21 @@
 
                 <ng-template #tsform>
                     <h6>{{ tsFormHeader | translate:{ name: 'Working Hours' | translate } }}</h6>
-                    <div class="grid">
-                        <div class="col-8">
+                    <div class="grid grid-nogutter flex mb-3">
+                        <div class="col-2">
                             <p-calendar [(ngModel)]="timeslot.from_time" dataType="string" [timeOnly]="true" [showSeconds]="false" inputId="time1"></p-calendar>
+                        </div>
+                        <div class="col-1 text-right flex align-items-center justify-content-center">
                             -
+                        </div>
+                        <div class="col-2">
                             <p-calendar [(ngModel)]="timeslot.to_time" dataType="string" [timeOnly]="true" [showSeconds]="false" inputId="time2"></p-calendar>
                         </div>
-                        <div class="col-4 text-right">
+                        <div class="col-2"></div>
+                        <div class="col-2 text-right">
                             <button pButton pRipple label="{{ 'Cancel' | translate }}" icon="pi pi-times" class="p-button-text" (click)="hideTimeslotDialog()"></button>
+                        </div>
+                        <div class="col-2 text-right">
                             <button pButton pRipple label="{{ 'Save' | translate }}" icon="pi pi-check" class="p-button-text" (click)="saveTimeslot()"></button>
                         </div>
                     </div>

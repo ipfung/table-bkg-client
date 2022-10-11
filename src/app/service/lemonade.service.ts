@@ -45,6 +45,19 @@ export class Lemonade {
         }
     ];
 
+    readonly userStatus = [
+        {
+            name: 'active',
+            code: 'active'
+        }, {
+            name: 'suspended',
+            code: 'suspended'
+        }, {
+            name: 'banned',
+            code: 'banned'
+        }
+    ];
+
     constructor(private translateService: TranslateService) {
         if (this.translateService.getDefaultLang() === 'zh') {
             this.lang = zhHK;
