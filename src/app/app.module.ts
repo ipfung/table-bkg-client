@@ -168,6 +168,7 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import {PushService} from "./service/push.service";
+import { SubmitModalComponent } from './components/submit-modal/submit-modal.component';
 import {DashboardService} from "./service/dashboard.service";
 
 export function createTranslateLoader(http: HttpClient) {
@@ -337,6 +338,7 @@ FullCalendarModule.registerPlugins([
         RoomListComponent,
         TimeslotListComponent,
         ServiceSelectionComponent,
+        SubmitModalComponent,
         AppointmentCalendarComponent,
     ],
     providers: [

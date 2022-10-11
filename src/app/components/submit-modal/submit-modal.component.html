@@ -1,0 +1,9 @@
+<!-- a modal to avoid duplicate submission -->
+<p-dialog [(visible)]="visible" [showHeader]="false" [resizable]="false" [modal]="true" [focusOnShow]="false" >
+    <div style="width: 300px;height: 350px;padding: 35%;">
+        <p-progressSpinner></p-progressSpinner>
+        <div>
+            {{ 'Submitting...' | translate }}
+        </div>
+    </div>
+</p-dialog>
