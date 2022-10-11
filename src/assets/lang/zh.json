@@ -120,6 +120,8 @@
     "Days Off": "休息日",
     "Name of Days Off": "休息日名稱",
     "Calendar": "日曆",
+    "Day of Week": "每週",
+    "No. of Appointments": "預約數目",
     "Monday": "星期一",
     "Tuesday": "星期二",
     "Wednesday": "星期三",
@@ -160,7 +162,12 @@
     "Unit Price": "單價",
     "Select field": "選擇{{field}}",
     "Remark": "備註",
-    "Select a Customer": "選擇客戶",
+    "Packages": "套餐/課程",
+    "Lesson Date & Time": "課程日期及時間",
+    "Get Appointments Date": "下載課程日期及時間",
+    "Week No.": "星期",
+    "Recurring Billing": "自動產生下期賬單",
+    "Total Amount": "總金額",
     "Notify Customer": "通知客戶",
     "Error": "錯誤"
 }

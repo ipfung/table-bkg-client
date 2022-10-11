@@ -118,6 +118,8 @@
     "Days Off": "Days Off",
     "Name of Days Off": "Name of Days Off",
     "Calendar": "Calendar",
+    "Day of Week": "Day of Week",
+    "No. of Appointments": "No. of Appointments",
     "Monday": "Monday",
     "Tuesday": "Tuesday",
     "Wednesday": "Wednesday",
@@ -158,7 +160,12 @@
     "Unit Price": "Unit Price",
     "Select field": "Select a {{field}}",
     "Remark": "Remark",
-    "Select a Customer": "Select a Customer",
+    "Packages": "Packages/Courses",
+    "Lesson Date & Time": "Lesson Date & Time",
+    "Get Appointments Date": "Get Appointments Date",
+    "Week No.": "Week No.",
+    "Recurring Billing": "Recurring Billing",
+    "Total Amount": "Total Amount",
     "Notify Customer": "Notify Customer",
     "Error": "Error"
 }
