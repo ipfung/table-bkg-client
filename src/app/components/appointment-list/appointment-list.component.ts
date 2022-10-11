@@ -31,15 +31,19 @@ export class AppointmentListComponent implements OnInit {
     sessions = [];
     rooms = [];
     statuses = [];
+    day_of_weeks = [];
     customers: any[];
     trainers: any[];
     times: any[] = [];
+    lessons: any[] = [];
 
     submitted = false;
     formDialog = false;
     formHeader = 'Create Form';
+    requiredTrainer = false;
+    submitting: boolean;
 
-    constructor(public appointmentService: AppointmentService, private router: Router, private confirmationService: ConfirmationService, private messageService: MessageService, private translateService: TranslateService, private lemonade: Lemonade) {
+    constructor(public appointmentService: AppointmentService, private router: Router, private confirmationService: ConfirmationService, public messageService: MessageService, private translateService: TranslateService, private lemonade: Lemonade) {
     }
 
     ngOnInit(): void {
@@ -57,6 +61,7 @@ export class AppointmentListComponent implements OnInit {
                 this.showTrainer = res.showTrainer;
                 this.pageHeader = this.showCustomer ? 'Appointment' : 'My Booking';
                 this.newable = res.newable;
+                this.requiredTrainer = res.requiredTrainer;
                 this.loading = false;
             });
         }
@@ -217,20 +222,26 @@ export class AppointmentListComponent implements OnInit {
 
     openNew() {
         this.formHeader = "Create Form";
-        this.prepareForForm();
-        // this is always a new appointment information.
-        this.appointment = this.appointmentService.getAppointmentInformation();
         this.submitted = false;
         this.formDialog = true;
+        if (!this.appointment) {
+            this.prepareForForm();
+            // make a new appointment information if it is empty.
+            this.appointment = this.appointmentService.defaultAppointment;
+            this.appointment.isPackage = false;
+            this.appointment.timeInformation.status = this.statuses[0].code;
+            this.appointment.packageInfo = {
+                quantity: 4,
+                repeatable: true,   // default to true.
+                recurring: [1]   // default to Monday.
+            };
+        }
     }
 
     prepareForForm() {
         // for form, this wastes memory if user doesn't open the form.
         this.appointmentService.getRooms().subscribe( res => {
             this.rooms = res.data;
-        });
-        this.appointmentService.getActiveCustomers().subscribe( res => {
-            this.customers = res.data;
         });
         this.appointmentService.getActiveTrainers().subscribe( res => {
             this.trainers = res.data;
@@ -242,6 +253,33 @@ export class AppointmentListComponent implements OnInit {
             this.loadSessions(null);
         });
         this.statuses = this.lemonade.appointmentStatus;
+        this.day_of_weeks = [{
+            id: 1,
+            name: 'Monday'
+        }, {
+            id: 2,
+            name: 'Tuesday'
+        }, {
+            id: 3,
+            name: 'Wednesday'
+        },{
+            id: 4,
+            name: 'Thursday'
+        },{
+            id: 5,
+            name: 'Friday'
+        },{
+            id: 6,
+            name: 'Saturday'
+        },{
+            id: 7,
+            name: 'Sunday'
+        }];
+    }
+
+    getWeekNo(id) {
+        let week = this.day_of_weeks.find(el => el.id == id);
+        return week.name;
     }
 
     loadSessions(e) {
@@ -254,13 +292,25 @@ export class AppointmentListComponent implements OnInit {
     }
 
     loadTime(e) {
+        if (this.appointment.formCustomer) {
+            this.appointment.timeInformation.customerId = this.appointment.formCustomer.id;
+        }
         if (this.appointment.timeInformation.date && this.appointment.timeInformation.noOfSession && this.appointment.timeInformation.customerId > 0 && this.appointment.timeInformation.roomId > 0) {
-            this.appointmentService.getTimeslotsByDate(this.appointment.timeInformation.date, this.appointment.timeInformation.noOfSession, this.appointment.timeInformation.customerId, this.appointment.timeInformation.roomId).subscribe(res => {
-                console.log('times=sssss=', res.data[0].freeslots);
-                this.times = res.data[0].freeslots;
-                this.appointment.timeInformation.sessionInterval = res.sessionInterval;
+            this.appointmentService.getTimeslotsByDate(this.appointment.timeInformation).subscribe(res => {
+                if (res.success == false) {
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Error',
+                        detail: res.error
+                    });
+                    this.times = [];
+                } else {
+                    this.times = res.data[0].freeslots;
+                    this.appointment.timeInformation.sessionInterval = res.sessionInterval;
+                }
                 this.appointment.timeInformation.time = undefined;   // reset
                 this.appointment.paymentInformation.price = undefined;
+                this.lessons = [];
             });
         } else {
             this.times = [];
@@ -271,13 +321,36 @@ export class AppointmentListComponent implements OnInit {
         if (this.times.length > 0) {
             const theTime = this.times.find(el => el.time == this.appointment.timeInformation.time);
             this.appointment.paymentInformation.price = theTime.price;
+            this.appointment.packageInfo.amount = theTime.price * this.appointment.packageInfo.quantity;
         } else {
             this.appointment.paymentInformation.price = 0;
+            this.appointment.packageInfo.amount = 0;
         }
     }
 
     hideDialog() {
         this.formDialog = false;
+    }
+
+    searchCustomers(e) {
+        this.appointmentService.getActiveCustomers(e.query).subscribe( res => {
+            this.customers = res.data;
+        });
+    }
+
+    loadLessonDates() {
+        if (!this.appointment.timeInformation.date) {
+            this.submitted = true;
+            return;
+        }
+        this.appointmentService.getPackageDates({
+            start_date: this.lemonade.formatPostDate(this.appointment.timeInformation.date),
+            dow: this.appointment.packageInfo.recurring,
+            quantity: this.appointment.packageInfo.quantity
+        }).subscribe(res => {
+            this.lessons = res;
+            this.appointment.packageInfo.amount = this.appointment.packageInfo.quantity * this.appointment.paymentInformation.price;
+        });
     }
 
     save() {
@@ -291,28 +364,62 @@ export class AppointmentListComponent implements OnInit {
             return;
         if (this.appointment.timeInformation.noOfSession <= 0)
             return;
-        if (this.appointment.timeInformation.date == undefined)
+        if (!this.appointment.timeInformation.date)
             return;
-        else {
-            this.appointment.timeInformation.date = this.lemonade.formatPostDate(this.appointment.timeInformation.date);
-        }
         if (this.appointment.timeInformation.time == undefined)
             return;
-        this.appointment.paymentInformation.method = 'onsite';
-        const data = {
-            ...{
+        let data = {
+            ...this.appointment.timeInformation, ...{
+                date: this.lemonade.formatPostDate(this.appointment.timeInformation.date),
                 paymentMethod: 'onsite',
                 price: this.appointment.paymentInformation.price
-            }, ...this.appointment.timeInformation
+            }
         };
+        if (this.appointment.isPackage === true) {
+            if (this.appointment.packageInfo.quantity <= 0)
+                return;
+            if (this.appointment.packageInfo.recurring.length == 0)
+                return;
+            if (this.lessons.length == 0) {
+                this.loadLessonDates();
+                return;
+            }
+            const lessonDates = this.lessons.map(function (obj) {
+                return obj.date;
+            });
+            data = {...data, ...{
+                    is_package: true,
+                    quantity: this.appointment.packageInfo.quantity,
+                    recurring_cycle: this.appointment.packageInfo.recurring_cycle,
+                    recurring: {cycle: 'weekly', repeat: this.appointment.packageInfo.recurring},
+                    lesson_dates: lessonDates,
+                    repeatable: this.appointment.packageInfo.repeatable,
+                    package_amount: this.appointment.packageInfo.amount
+                }
+            };
+        }
         const me = this;
-console.log('single appointment=', data);
+        this.submitting = true;   // show modal.
+
         this.appointmentService.submit(data, function(res) {
             if (res.success == true) {
+                me.messageService.add({
+                    severity: 'success',
+                    summary: 'Appointment booked',
+                    detail: 'Booking is completed.'
+                });
                 me.loadData();
-                me.appointment = undefined;
                 me.formDialog = false;
+                me.appointment = false;
+console.log('succeed done.');
+            } else {
+                me.messageService.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: res.error
+                });
             }
+            me.submitting = false;   // hide modal.
         });
     }
 

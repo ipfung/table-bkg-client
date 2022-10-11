@@ -83,7 +83,7 @@ export class AppointmentService {
      */
     tableSessions: any[];
 
-    private readonly defaultAppointment = {
+    readonly defaultAppointment = {
         timeInformation: {
             serviceId: 1,
             roomId: 1,
@@ -232,11 +232,17 @@ export class AppointmentService {
         });
     }
 
-    getActiveCustomers() {
-        return this.api.get('api/users', {
+    getActiveCustomers(query?) {
+        let params = {
             status: 'active',
             role: 'Student'
-        });
+        };
+        if (query && query != '') {
+            params = {...params, ...{
+                name: query
+            }};
+        }
+        return this.api.get('api/users', params);
     }
 
     getActiveTrainers() {
@@ -244,6 +250,10 @@ export class AppointmentService {
             status: 'active',
             role: 'Trainer'
         });
+    }
+
+    getPackageDates(params) {
+        return this.api.post('api/package-dates', params);
     }
 
     getServices() {
@@ -265,7 +275,7 @@ export class AppointmentService {
         return this.api.get('api/appointment', params);
     }
 
-    getTimeslotsByDate(date, noOfSession, customer_id, room_id) {
+    getTimeslotsByDate(appointment) {
         return this.api.get('api/appointment', {
             the_date: this.lemonade.formatPostDate(date),
             noOfSession: noOfSession,
