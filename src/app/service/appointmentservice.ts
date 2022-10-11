@@ -277,11 +277,12 @@ export class AppointmentService {
 
     getTimeslotsByDate(appointment) {
         return this.api.get('api/appointment', {
-            the_date: this.lemonade.formatPostDate(date),
-            noOfSession: noOfSession,
-            customer_id: customer_id,
-            room_id: room_id,
-            service_id: this.appointmentInformation.timeInformation.serviceId
+            the_date: this.lemonade.formatPostDate(appointment.date),
+            noOfSession: appointment.noOfSession,
+            customer_id: appointment.customerId,
+            room_id: appointment.roomId,
+            trainer_id: appointment.trainerId,
+            service_id: appointment.serviceId
         });
     }
 
@@ -359,7 +360,6 @@ export class AppointmentService {
         if (tableSessions == undefined) {
             tableSessions = this.tableSessions;
         }
-console.log("getsessionname=", this.tableSessions, tableSessions, noOfSession);
         if (noOfSession && tableSessions && tableSessions.length > 0) {
             let timeLen = tableSessions.find(el => el.code == noOfSession);
             let name = timeLen.name;
