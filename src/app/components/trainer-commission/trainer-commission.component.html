@@ -96,7 +96,7 @@
 
         <div class="field">
             <label for="trainer"><span class="required">*</span> {{ 'Trainer' | translate }}</label>
-            <p-dropdown id="trainer" [disabled]="order.id > 0" [options]="trainers" [(ngModel)]="order.trainer_id" optionLabel="name" optionValue="id" [showClear]="true" (onClick)="loadTime($event)" placeholder="{{'Select field' | translate: {field: 'Trainer' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : submitted && order.trainer_id <= 0}">
+            <p-dropdown id="trainer" [disabled]="order.id > 0" [options]="trainers" [(ngModel)]="order.trainer_id" optionLabel="name" optionValue="id" [showClear]="true" placeholder="{{'Select field' | translate: {field: 'Trainer' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : submitted && order.trainer_id <= 0}">
                 <ng-template pTemplate="selectedItem">
                     {{ lemonade.comboRenderer(trainers, order.trainer_id, 'id') }}
                 </ng-template>
