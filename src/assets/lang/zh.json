@@ -114,6 +114,12 @@
     "member role": "中心學生",
     "user role": "街客",
     "Payment Date": "付款日期",
+    "Trainer Commission": "教練佣金收入",
+    "Commission": "佣金",
+    "Customer Income": "從客人收取",
+    "Company Income": "公司收入",
+    "Income": "",
+    "Balance": "結餘",
     "Settings": "設定",
     "Working Hours": "辦公時間",
     "Working Hours & Days Off": "辦公時間 及 休息日",
@@ -169,5 +175,8 @@
     "Recurring Billing": "自動產生下期賬單",
     "Total Amount": "總金額",
     "Notify Customer": "通知客戶",
-    "Error": "錯誤"
+    "Are you sure to delete?": "你確定要刪除嗎？",
+    "Error": "錯誤",
+    "The record is deleted successfully.": "記錄刪除成功。",
+    "Succeed": "Succeed",
 }
