@@ -169,6 +169,7 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import {PushService} from "./service/push.service";
 import { SubmitModalComponent } from './components/submit-modal/submit-modal.component';
+import { TrainerCommissionComponent } from './components/trainer-commission/trainer-commission.component';
 import {DashboardService} from "./service/dashboard.service";
 
 export function createTranslateLoader(http: HttpClient) {
@@ -339,6 +340,7 @@ FullCalendarModule.registerPlugins([
         TimeslotListComponent,
         ServiceSelectionComponent,
         SubmitModalComponent,
+        TrainerCommissionComponent,
         AppointmentCalendarComponent,
     ],
     providers: [

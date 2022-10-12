@@ -1,0 +1,158 @@
+<div class="flex justify-content-between">
+    <div class="flex align-items-center justify-content-center p-2 border-round mr-1 text-2xl font-bold">
+        {{ 'Trainer Commission' | translate }}
+    </div>
+    <div class="flex align-items-center justify-content-center py-2 border-round">
+        <button *ngIf="newable" pButton pRipple label="{{ 'New' | translate }}" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
+    </div>
+</div>
+<div class="card">
+    <!-- Search fields -->
+    <div class="p-fluid grid">
+        <div class="field col-12 md:col-4">
+            <p-calendar [(ngModel)]="rangeDates" selectionMode="range" placeholder="{{ 'Search F' | translate:{field: 'Payment Date' | translate } }}" [readonlyInput]="true" inputId="range" (onSelect)="loadData()"></p-calendar>
+        </div>
+        <div class="field col-12 md:col-4">
+            <p-autoComplete [(ngModel)]="searchCustomer" [forceSelection]="true" [suggestions]="customers" (completeMethod)="searchCustomers($event)" (onSelect)="loadData()" field="name" placeholder="{{ 'Search F' | translate:{field: 'Customer' | translate} }}"></p-autoComplete>
+        </div>
+        <div class="field col-12 md:col-4">
+            <p-dropdown [autoDisplayFirst]="false" [options]="trainerList" [(ngModel)]="searchTrainer" optionLabel="name" optionValue="code" [showClear]="true" (onChange)="loadData()" placeholder="{{ 'Search F' | translate:{field: 'Trainer' | translate } }}">
+                <ng-template let-pay pTemplate="item">
+                    <div class="payment-item">
+                        <div [style]="{color: pay.color, 'font-weight': 'bold'}">{{pay.name}}</div>
+                    </div>
+                </ng-template>
+            </p-dropdown>
+        </div>
+    </div>
+
+    <p-table [value]="orders" [paginator]="true" [rows]="10" [loading]="loading" dataKey="id" sortField="order_date" sortMode="single" responsiveLayout="stack">
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="min-width:100px">{{ 'Order Date' | translate }}</th>
+                <th style="min-width:120px">{{ 'Trainer' | translate }}</th>
+                <th style="min-width:120px">{{ 'Customer' | translate }}</th>
+                <th style="min-width:80px">{{ 'Customer Income' | translate }}</th>
+                <th style="min-width:80px">{{ 'Commission' | translate }}</th>
+                <th style="min-width:80px">{{ 'Company Income' | translate }}</th>
+                <th style="min-width:20px"></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage" let-booking>
+            <tr>
+                <td colspan="7">
+                    <span class="font-bold ml-2" [innerHTML]="'No record found.' | translate"></span>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-order let-rowIndex="rowIndex" let-expanded="expanded">
+            <tr >
+                <td style="min-width:100px">
+                    <span class="p-column-title">{{ 'Order Date' | translate }}</span>
+                    {{ lemonade.formatDate(order.order_date) }}
+                </td>
+                <td style="min-width:100px">
+                    <span class="p-column-title">{{ 'Trainer' | translate }}</span>
+                    {{ order.trainer.name }}
+                </td>
+                <td style="min-width:120px">
+                    <span class="p-column-title">{{ 'Customer' | translate }}</span>
+                    <div>
+                        <i class="pi pi-circle-fill" [style]="{color: order.customer.role.color_name}"></i>
+                        {{ order.customer.name }}<br />
+                        <span class="text-sm text-gray-500">{{ order.customer.email }}</span>
+                    </div>
+                </td>
+                <td style="min-width:80px">
+                    <span class="p-column-title">{{ 'Customer Income' | translate }}</span>
+                    {{order.order_total | currency:'HK$'}}
+                </td>
+                <td style="min-width:80px">
+                    <span class="p-column-title">{{ 'Commisssion' | translate }}</span>
+                    {{order.commission | currency:'HK$'}}
+                </td>
+                <td style="min-width:80px">
+                    <span class="p-column-title">{{ 'Company Income' | translate }}</span>
+                    {{ (order.order_total - order.commission) | currency:'HK$'}}
+                </td>
+                <!--                <td style="min-width:120px">-->
+                <!--                    <span class="p-column-title">{{ 'Service' | translate }}</span>-->
+                <!--                    {{ order.service_name }}-->
+                <!--                </td>-->
+                <td style="min-width:20px">
+                    <span class="p-column-title">{{ 'Actions' | translate }}</span>
+                    <div>
+                        <button pButton type="button" pTooltip="{{ 'Payment Info' | translate }}" tooltipPosition="bottom" class="p-0 p-button-text" icon="pi pi-pencil" (click)="edit(order)"></button>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+    <p-toast></p-toast>
+</div>
+
+<p-dialog [(visible)]="formDialog" [style]="{width:'50em', height: '100vh'}" header="{{ formHeader | translate:{name: 'Trainer Commission' | translate} }}" position="right" [modal]="true" class="p-fluid">
+    <ng-template pTemplate="content">
+
+        <div class="field">
+            <label for="trainer"><span class="required">*</span> {{ 'Trainer' | translate }}</label>
+            <p-dropdown id="trainer" [disabled]="order.id > 0" [options]="trainers" [(ngModel)]="order.trainer_id" optionLabel="name" optionValue="id" [showClear]="true" (onClick)="loadTime($event)" placeholder="{{'Select field' | translate: {field: 'Trainer' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : submitted && order.trainer_id <= 0}">
+                <ng-template pTemplate="selectedItem">
+                    {{ lemonade.comboRenderer(trainers, order.trainer_id, 'id') }}
+                </ng-template>
+                <ng-template let-item pTemplate="item">
+                    <i class="pi pi-circle-fill" [style]="{color: item.role.color_name}"></i>
+                    {{ item.name }}
+                </ng-template>
+            </p-dropdown>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && order.trainer_id <= 0">{{ 'Field is required' | translate: {field: 'Trainer' | translate} }}</small>
+        </div>
+
+        <div class="field">
+            <label for="customer"><span class="required">*</span> {{ 'Customer' | translate }}</label>
+            <p-autoComplete id="customer" [(ngModel)]="order.customer" [forceSelection]="true" [suggestions]="customers" (completeMethod)="searchCustomers($event)" field="name" placeholder="{{'Select field' | translate: {field: 'Customer' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : submitted && !order.customer}">
+                <!--                <ng-template pTemplate="selectedItem">-->
+                <!--                    <i class="pi pi-circle-fill" [style]="{color: (order.role_color_name)}"></i>-->
+                <!--                    {{ order.user_id }}-->
+                <!--                </ng-template>-->
+                <ng-template let-item pTemplate="item">
+                    <i class="pi pi-circle-fill" [style]="{color: item.role.color_name}"></i>
+                    {{ item.name }}
+                </ng-template>
+            </p-autoComplete>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !order.customer">{{ 'Field is required' | translate: {field: 'Customer' | translate} }}</small>
+        </div>
+
+        <div class="field">
+            <label for="order_total"><span class="required">*</span> {{ 'Customer Income' | translate }}</label>
+            <p-inputNumber id="order_total" [(ngModel)]="order.order_total" mode="currency" currency="HKD" locale="zh-HK" [ngClass]="{'ng-invalid ng-dirty' : submitted && !order.order_total}"></p-inputNumber>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && order.order_total <= 0">{{ 'Field is required' | translate: {field: 'Income' | translate} }}</small>
+        </div>
+
+        <div class="field">
+            <label for="commission"><span class="required">*</span> {{ 'Commission' | translate }}</label>
+            <p-inputNumber id="commission" [(ngModel)]="order.commission" mode="currency" currency="HKD" locale="zh-HK" [ngClass]="{'ng-invalid ng-dirty' : submitted && !order.commission}"></p-inputNumber>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && order.commission <= 0">{{ 'Field is required' | translate: {field: 'Commission' | translate} }}</small>
+        </div>
+
+        <div class="field">
+            <label for="order_total"><span class="required">*</span> {{ 'Company Income' | translate }}</label>
+            <p><b>{{ (order.order_total - order.commission) | currency:'HK$' }}</b></p>
+        </div>
+
+        <p-confirmDialog header="{{ 'Confirmation' | translate }}" icon="pi pi-trash"></p-confirmDialog>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <div class="grid grid-nogutter justify-content-between ng-star-inserted">
+            <div>
+                <button *ngIf="order.id > 0" pButton type="button" pTooltip="{{ 'Copy' | translate }}" tooltipPosition="top" class="p-button-outlined p-2" icon="pi pi-copy" (click)="copy()"></button>
+                <button *ngIf="order.id > 0" pButton type="button" pTooltip="{{ 'Delete' | translate }}" tooltipPosition="top" class="p-button-outlined p-2" icon="pi pi-trash" (click)="delete()"></button>
+            </div>
+            <div>
+                <button pButton pRipple label="{{ 'Cancel' | translate }}" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+                <button pButton pRipple label="{{ 'Save' | translate }}" icon="pi pi-check" class="p-button-text" (click)="save()"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-dialog>

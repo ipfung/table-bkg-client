@@ -46,6 +46,7 @@ import {RoomListComponent} from "./components/room-list/room-list.component";
 import {TimeslotListComponent} from "./components/timeslot-list/timeslot-list.component";
 import {AppointmentCalendarComponent} from "./components/appointment-calendar/appointment-calendar.component";
 import {ServiceSelectionComponent} from "./components/service-selection/service-selection.component";
+import {TrainerCommissionComponent} from "./components/trainer-commission/trainer-commission.component";
 @NgModule({
     imports: [
         RouterModule.forRoot([
@@ -66,6 +67,7 @@ import {ServiceSelectionComponent} from "./components/service-selection/service-
                     ]},
                     {path: 'trainer-student-list', component: TrainerStudentListComponent, canActivate: [ AuthGuardService ]},
                     {path: 'finance', component: FinanceStatusComponent, canActivate: [ AuthGuardService ]},
+                    {path: 'trainer-commission', component: TrainerCommissionComponent, canActivate: [ AuthGuardService ]},
                     {path: 'notifications', component: NotificationsListComponent, canActivate: [ AuthGuardService ]},
                     {path: 'settings/table-list', component: RoomListComponent, canActivate: [ AuthGuardService ]},
                     {path: 'settings/working-hours-list', component: TimeslotListComponent, canActivate: [ AuthGuardService ]},

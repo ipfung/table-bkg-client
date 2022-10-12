@@ -112,6 +112,11 @@
     "member role": "Member",
     "user role": "User",
     "Payment Date": "Payment Date",
+    "Trainer Commission": "Trainer Commission",
+    "Commission": "Commission",
+    "Customer Income": "Income from Customer",
+    "Company Income": "Company Income",
+    "Balance": "Balance",
     "Settings": "Settings",
     "Working Hours": "Working Hours",
     "Working Hours & Days Off": "Working Hours & Days Off",
@@ -167,5 +172,8 @@
     "Recurring Billing": "Recurring Billing",
     "Total Amount": "Total Amount",
     "Notify Customer": "Notify Customer",
-    "Error": "Error"
+    "Are you sure to delete?": "Are you sure to delete?",
+    "Error": "Error",
+    "The record is deleted successfully.": "The record is deleted successfully.",
+    "Succeed": "Succeed"
 }

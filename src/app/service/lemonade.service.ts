@@ -166,9 +166,15 @@ export class Lemonade {
      * @param list the array
      * @param code the code to be search.
      */
-    comboRenderer(list, code) {
+    comboRenderer(list, code, fieldName?) {
         if (list.length > 0) {
-            let data = list.find(el => el.code == code);
+            let data;
+            if (fieldName) {
+                data = list.find(el => el[fieldName] == code);
+            } else {
+                // use code.
+                data = list.find(el => el.code == code);
+            }
             return data.name;
         }
         return '';
