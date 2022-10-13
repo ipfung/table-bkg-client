@@ -31,6 +31,8 @@ export class UserListComponent implements OnInit {
     submitted = false;
     isNew = false;
     partner: any;
+    trainers = [];
+    services = [];
     statuses = [];
     formHeader = "Edit Form";
 
@@ -42,6 +44,19 @@ export class UserListComponent implements OnInit {
     async ngOnInit() {
         this.loginId = await this.authService.loginId();
         this.statuses = this.lemonade.userStatus;
+
+        this.api.get('api/services', {
+            status: 1001
+        }).subscribe( res => {
+            this.services = res.data;
+        });
+
+        this.api.get('api/trainers', {
+            status: 'active',
+            role: 'Trainer'
+        }).subscribe( res => {
+            this.trainers = res.data;
+        });
 
         this.subscription = this.route.params.subscribe(params => {
             this.paramRole = params['role'] || '';
@@ -112,7 +127,7 @@ console.log('ngOnDestroy=', this.subscription);
      * check user level and never let user ban himself/herself.
      * @param user
      */
-    canBlock(user) {
+    canBlock(user): boolean {
         // FIXME further check user leve.
         return user.email !== this.loginId;
     }
@@ -128,7 +143,10 @@ console.log('ngOnDestroy=', this.subscription);
     openNew() {
         this.formHeader = "Create Form";
         this.partner = {
-            status: this.statuses[0].code
+            status: this.statuses[0].code,
+            settings: {
+                trainer: ''
+            }
         };
         this.submitted = false;
         this.formDialog = true;
