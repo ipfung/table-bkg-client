@@ -156,6 +156,10 @@ console.log('ngOnDestroy=', this.subscription);
     edit(user) {
         this.formHeader = "Edit Form";
         this.partner = {...user};
+        if (Array.isArray(user.settings)) {   // this fixes if settings = [] in DB.
+            if (user.settings.length == 0)
+                this.partner.settings = {};
+        }
         this.submitted = false;
         this.formDialog = true;
         this.isNew = false;
