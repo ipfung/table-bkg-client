@@ -123,11 +123,6 @@ console.log('ngOnDestroy=', this.subscription);
         return '';
     }
 
-    showService(partner): boolean {
-        const roleName = this.roleRenderer(partner.role_id)
-        return (roleName == 'user' || roleName == 'member');
-    }
-
     /**
      * check user level and never let user ban himself/herself.
      * @param user
@@ -150,6 +145,7 @@ console.log('ngOnDestroy=', this.subscription);
         this.partner = {
             status: this.statuses[0].code,
             settings: {
+                trainer: ''
             }
         };
         this.submitted = false;

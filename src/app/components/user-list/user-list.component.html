@@ -41,9 +41,10 @@
                 <th style="min-width:120px">{{ 'Name' | translate }}</th>
                 <th style="min-width:100px">{{ 'Chinese Name' | translate }}</th>
                 <th style="min-width:120px">{{ 'Role' | translate }}</th>
-                <th style="min-width:80px">{{ 'Avatar' | translate }}</th>
+                <th style="min-width:40px">{{ 'Avatar' | translate }}</th>
                 <th style="min-width:90px">{{ 'Mobile No.' | translate }}</th>
                 <th style="min-width:120px">{{ 'Email' | translate }}</th>
+                <th style="min-width:80px">{{ 'Trainer' | translate }}</th>
                 <th style="min-width:80px">{{ 'Status' | translate }}</th>
                 <th style="min-width:20px"></th>
             </tr>
@@ -71,7 +72,7 @@
                     <span [class]="'role-badge role-' + user.role.name" [style]="{background: findRoleColor(user.role.id)}">{{ user.role.name + " role" | translate }}</span>
 
                 </td>
-                <td style="min-width:80px">
+                <td style="min-width:40px">
                     <span class="p-column-title">{{ 'Avatar' | translate }}</span>
                     <p-avatar [image]="lemonade.getAvatar(user)" shape="circle" [style]="{'background-color': '#266cda', 'color': '#fff', 'margin-left': '5px'}"></p-avatar>
                 </td>
@@ -82,6 +83,10 @@
                 <td style="min-width:120px">
                     <span class="p-column-title">{{ 'Email' | translate }}</span>
                     {{ user.email }}
+                </td>
+                <td style="min-width:120px">
+                    <span class="p-column-title">{{ 'Trainer' | translate }}</span>
+                    {{ user.settings && user.settings.trainer > 0 ? lemonade.comboRenderer(trainers, user.settings.trainer, 'id') : '' }}
                 </td>
                 <td style="min-width:80px">
                     <span class="p-column-title">{{ 'Status' | translate }}</span>
@@ -110,25 +115,25 @@
 <p-dialog [(visible)]="formDialog" [style]="{width:'50em', height: '100vh'}" header="{{ formHeader | translate:{name: 'User' | translate} }}" position="right" [modal]="true" class="p-fluid">
     <ng-template pTemplate="content">
         <div class="field">
-            <label for="name">{{ 'Name' | translate }}</label>
+            <label for="name"><span class="required">*</span> {{ 'Name' | translate }}</label>
             <input type="text" pInputText id="name" [(ngModel)]="partner.name" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !partner.name}"/>
             <small class="ng-dirty ng-invalid" *ngIf="submitted && !partner.name">{{ 'Field is required' | translate: {field: 'Name' | translate} }}</small>
         </div>
 
         <div class="field">
-            <label for="second_name">{{ 'Chinese Name' | translate }}</label>
+            <label for="second_name"><span class="required">*</span> {{ 'Chinese Name' | translate }}</label>
             <input type="text" pInputText id="second_name" [(ngModel)]="partner.second_name" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !partner.second_name}"/>
             <small class="ng-dirty ng-invalid" *ngIf="submitted && !partner.second_name">{{ 'Field is required' | translate: {field: 'Chinese Name' | translate} }}</small>
         </div>
 
         <div class="field">
-            <label for="mobile_no">{{ 'Mobile No.' | translate }}</label>
+            <label for="mobile_no"><span class="required">*</span> {{ 'Mobile No.' | translate }}</label>
             <input type="text" autocomplete="off" pInputText id="mobile_no" [(ngModel)]="partner.mobile_no" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !partner.mobile_no}"/>
             <small class="ng-dirty ng-invalid" *ngIf="submitted && !partner.mobile_no">{{ 'Field is required' | translate: {field: 'Mobile No.' | translate} }}</small>
         </div>
 
         <div class="field">
-            <label for="email">{{ 'Email' | translate }}</label>
+            <label for="email"><span class="required">*</span> {{ 'Email' | translate }}</label>
             <input type="text" autocomplete="off" [disabled]="!isNew" pInputText id="email" [(ngModel)]="partner.email" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !partner.email}"/>
             <small class="ng-dirty ng-invalid" *ngIf="submitted && !partner.email">{{ 'Field is required' | translate: {field: 'Email' | translate} }}</small>
         </div>
@@ -140,7 +145,7 @@
         </div>
 
         <div class="field">
-            <label for="role">{{ 'Role' | translate }}</label>
+            <label for="role"><span class="required">*</span> {{ 'Role' | translate }}</label>
             <p-dropdown id="role" [options]="roles" [(ngModel)]="partner.role_id" optionValue="id">
                 <ng-template pTemplate="selectedItem">
                     <i class="pi pi-circle-fill" [style]="{color: findRoleColor(partner.role_id)}"></i>
@@ -163,6 +168,37 @@
             <label for="trainer">{{ 'Trainer' | translate }}</label>
             <p-dropdown id="trainer" [options]="trainers" [(ngModel)]="partner.settings.trainer" optionValue="id" optionLabel="name">
             </p-dropdown>
+        </div>
+
+        <div class="field">
+            <label for="service"><span class="required">*</span> {{ 'Default Service' | translate }}</label>
+            <p-dropdown id="service" [options]="services" [(ngModel)]="partner.service_id" optionValue="id" optionLabel="name">
+            </p-dropdown>
+        </div>
+
+        <div class="field">
+            <label for="trainer">{{ 'Trainer' | translate }}</label>
+            <p-dropdown id="trainer" [options]="trainers" [(ngModel)]="partner.settings.trainer" optionLabel="name" optionValue="id" [showClear]="true" placeholder="{{'Select field' | translate: {field: 'Trainer' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : submitted && partner.settings.trainer <= 0}">
+                <ng-template pTemplate="selectedItem">
+                    {{ lemonade.comboRenderer(trainers, partner.settings.trainer, 'id') }}
+                </ng-template>
+                <ng-template let-item pTemplate="item">
+                    <i class="pi pi-circle-fill" [style]="{color: item.role.color_name}"></i>
+                    {{ item.name }}
+                </ng-template>
+            </p-dropdown>
+        </div>
+
+        <div class="grid">
+            <div class="field col-12 md:col-6">
+                <label for="trainer_charge">{{ 'Trainer Charge' | translate }}</label>
+                <p-inputNumber id="trainer_charge" [(ngModel)]="partner.settings.trainer_charge" mode="currency" currency="HKD" locale="zh-HK" [ngClass]="{'ng-invalid ng-dirty' : submitted && !partner.settings.trainer_charge}"></p-inputNumber>
+            </div>
+
+            <div class="field col-12 md:col-6">
+                <label for="trainer_commission">{{ 'Commission' | translate }}</label>
+                <p-inputNumber id="trainer_commission" [(ngModel)]="partner.settings.trainer_commission" mode="currency" currency="HKD" locale="zh-HK" [ngClass]="{'ng-invalid ng-dirty' : submitted && !partner.settings.trainer_commission}"></p-inputNumber>
+            </div>
         </div>
 
         <div class="field">
