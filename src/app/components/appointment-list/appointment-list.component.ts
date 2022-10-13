@@ -42,6 +42,7 @@ export class AppointmentListComponent implements OnInit {
     formHeader = 'Create Form';
     requiredTrainer = false;
     submitting: boolean;
+    selectedCustomerId = 0;
 
     constructor(public appointmentService: AppointmentService, private router: Router, private confirmationService: ConfirmationService, public messageService: MessageService, private translateService: TranslateService, private lemonade: Lemonade) {
     }
@@ -243,9 +244,11 @@ export class AppointmentListComponent implements OnInit {
         this.appointmentService.getRooms().subscribe( res => {
             this.rooms = res.data;
         });
-        this.appointmentService.getActiveTrainers().subscribe( res => {
-            this.trainers = res.data;
-        });
+        if (this.showTrainer) {
+            this.appointmentService.getActiveTrainers().subscribe(res => {
+                this.trainers = res.data;
+            });
+        }
         this.appointmentService.getServices().subscribe(res => {
             this.services = res.data;
             this.appointment.timeInformation.serviceId = this.services[0].id;
@@ -292,8 +295,30 @@ export class AppointmentListComponent implements OnInit {
     }
 
     loadTime(e) {
-        if (this.appointment.formCustomer) {
-            this.appointment.timeInformation.customerId = this.appointment.formCustomer.id;
+        const customer = this.appointment.customer;
+        if (customer && this.selectedCustomerId != customer.id) {
+            if (customer.settings && customer.settings.trainer) {
+                const settings = customer.settings;
+                this.translateService.get(['Is it a trainer course?', 'Error']).subscribe( res => {
+                    this.confirmationService.confirm({
+                        message: res['Is it a trainer course?'],
+                        accept: () => {
+                            this.appointment.timeInformation.trainerId = settings.trainer;
+                            this.appointment.paymentInformation = {
+                                price: settings.trainer_charge,
+                                commission: settings.trainer_commission
+                            };
+                        }
+                    });
+                });
+            } else {
+                this.appointment.paymentInformation = {
+                    price: 0,
+                    commission: 0
+                };
+            }
+            this.appointment.timeInformation.customerId = customer.id;
+            this.selectedCustomerId = customer.id;
         }
         if (this.appointment.timeInformation.date && this.appointment.timeInformation.noOfSession && this.appointment.timeInformation.customerId > 0 && this.appointment.timeInformation.roomId > 0) {
             this.appointmentService.getTimeslotsByDate(this.appointment.timeInformation).subscribe(res => {
@@ -309,7 +334,8 @@ export class AppointmentListComponent implements OnInit {
                     this.appointment.timeInformation.sessionInterval = res.sessionInterval;
                 }
                 this.appointment.timeInformation.time = undefined;   // reset
-                this.appointment.paymentInformation.price = undefined;
+                if (this.appointment.paymentInformation.commission <= 0)
+                    this.appointment.paymentInformation.price = undefined;
                 this.lessons = [];
             });
         } else {
@@ -318,13 +344,15 @@ export class AppointmentListComponent implements OnInit {
     }
 
     setPriceByTime(e) {
-        if (this.times.length > 0) {
-            const theTime = this.times.find(el => el.time == this.appointment.timeInformation.time);
-            this.appointment.paymentInformation.price = theTime.price;
-            this.appointment.packageInfo.amount = theTime.price * this.appointment.packageInfo.quantity;
-        } else {
-            this.appointment.paymentInformation.price = 0;
-            this.appointment.packageInfo.amount = 0;
+        if (this.appointment.paymentInformation.commission <= 0) {
+            if (this.times.length > 0) {
+                const theTime = this.times.find(el => el.time == this.appointment.timeInformation.time);
+                this.appointment.paymentInformation.price = theTime.price;
+                this.appointment.packageInfo.amount = theTime.price * this.appointment.packageInfo.quantity;
+            } else {
+                this.appointment.paymentInformation.price = 0;
+                this.appointment.packageInfo.amount = 0;
+            }
         }
     }
 
@@ -372,7 +400,8 @@ export class AppointmentListComponent implements OnInit {
             ...this.appointment.timeInformation, ...{
                 date: this.lemonade.formatPostDate(this.appointment.timeInformation.date),
                 paymentMethod: 'onsite',
-                price: this.appointment.paymentInformation.price
+                price: this.appointment.paymentInformation.price,
+                commission: this.appointment.paymentInformation.commission||0,
             }
         };
         if (this.appointment.isPackage === true) {
