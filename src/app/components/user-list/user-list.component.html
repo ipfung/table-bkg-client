@@ -171,7 +171,23 @@
         </div>
 
         <div class="field">
-            <label for="service"><span class="required">*</span> {{ 'Default Service' | translate }}</label>
+            <label for="status">{{ 'Status' | translate }}</label>
+            <p-dropdown id="status" [options]="statuses" optionValue="code" [(ngModel)]="partner.status" placeholder="{{ 'Select a Status' | translate }}">
+                <ng-template pTemplate="selectedItem">
+                    {{ lemonade.comboRenderer(statuses, partner.status) | translate }}
+                </ng-template>
+                <ng-template let-item pTemplate="item">
+                    {{ item.name | translate }}
+                </ng-template>
+            </p-dropdown>
+        </div>
+
+        <p-divider align="center">
+            <span class="p-tag">{{ 'Default Values' | translate }}</span>
+        </p-divider>
+
+        <div class="field">
+            <label for="service"><span class="required">*</span> {{ 'Service' | translate }}</label>
             <p-dropdown id="service" [options]="services" [(ngModel)]="partner.service_id" optionValue="id" optionLabel="name">
             </p-dropdown>
         </div>
@@ -199,18 +215,6 @@
                 <label for="trainer_commission">{{ 'Commission' | translate }}</label>
                 <p-inputNumber id="trainer_commission" [(ngModel)]="partner.settings.trainer_commission" mode="currency" currency="HKD" locale="zh-HK" [ngClass]="{'ng-invalid ng-dirty' : submitted && !partner.settings.trainer_commission}"></p-inputNumber>
             </div>
-        </div>
-
-        <div class="field">
-            <label for="status">{{ 'Status' | translate }}</label>
-            <p-dropdown id="status" [options]="statuses" optionValue="code" [(ngModel)]="partner.status" placeholder="{{ 'Select a Status' | translate }}">
-                <ng-template pTemplate="selectedItem">
-                    {{ lemonade.comboRenderer(statuses, partner.status) | translate }}
-                </ng-template>
-                <ng-template let-item pTemplate="item">
-                    {{ item.name | translate }}
-                </ng-template>
-            </p-dropdown>
         </div>
 
     </ng-template>
