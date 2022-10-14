@@ -378,36 +378,41 @@ export class AppointmentListComponent implements OnInit {
         }).subscribe(res => {
             this.lessons = res;
             this.appointment.packageInfo.amount = this.appointment.packageInfo.quantity * this.appointment.paymentInformation.price;
+            if (this.appointment.paymentInformation.commission > 0) {
+                this.appointment.packageInfo.commission = this.appointment.packageInfo.quantity * this.appointment.paymentInformation.commission;
+            }
         });
     }
 
     save() {
         this.submitted = true;
+        const timeInfo = this.appointment.timeInformation;
 
-        if (this.appointment.timeInformation.customerId <= 0)
+        if (timeInfo.customerId <= 0)
             return;
-        if (this.appointment.timeInformation.serviceId <= 0)
+        if (timeInfo.serviceId <= 0)
             return;
-        if (this.appointment.timeInformation.roomId <= 0)
+        if (timeInfo.roomId <= 0)
             return;
-        if (this.appointment.timeInformation.noOfSession <= 0)
+        if (timeInfo.noOfSession <= 0)
             return;
-        if (!this.appointment.timeInformation.date)
+        if (!timeInfo.date)
             return;
-        if (this.appointment.timeInformation.time == undefined)
+        if (timeInfo.time == undefined)
             return;
         let data = {
-            ...this.appointment.timeInformation, ...{
-                date: this.lemonade.formatPostDate(this.appointment.timeInformation.date),
+            ...timeInfo, ...{
+                date: this.lemonade.formatPostDate(timeInfo.date),
                 paymentMethod: 'onsite',
                 price: this.appointment.paymentInformation.price,
                 commission: this.appointment.paymentInformation.commission||0,
             }
         };
         if (this.appointment.isPackage === true) {
-            if (this.appointment.packageInfo.quantity <= 0)
+            const packageInfo = this.appointment.packageInfo;
+            if (packageInfo.quantity <= 0)
                 return;
-            if (this.appointment.packageInfo.recurring.length == 0)
+            if (packageInfo.recurring.length == 0)
                 return;
             if (this.lessons.length == 0) {
                 this.loadLessonDates();
@@ -418,17 +423,17 @@ export class AppointmentListComponent implements OnInit {
             });
             data = {...data, ...{
                     is_package: true,
-                    quantity: this.appointment.packageInfo.quantity,
-                    recurring_cycle: this.appointment.packageInfo.recurring_cycle,
-                    recurring: {cycle: 'weekly', repeat: this.appointment.packageInfo.recurring},
+                    recurring_cycle: packageInfo.recurring_cycle,
+                    recurring: {cycle: 'weekly', quantity: packageInfo.quantity, repeat: packageInfo.recurring},
                     lesson_dates: lessonDates,
-                    repeatable: this.appointment.packageInfo.repeatable,
-                    package_amount: this.appointment.packageInfo.amount
+                    repeatable: packageInfo.repeatable,
+                    package_amount: packageInfo.amount,
+                    package_commission: packageInfo.commission
                 }
             };
         }
         const me = this;
-        this.submitting = true;   // show modal.
+        this.submitting = true;   // show submitting modal after validation.
 
         this.appointmentService.submit(data, function(res) {
             if (res.success == true) {
@@ -440,7 +445,6 @@ export class AppointmentListComponent implements OnInit {
                 me.loadData();
                 me.formDialog = false;
                 me.appointment = false;
-console.log('succeed done.');
             } else {
                 me.messageService.add({
                     severity: 'error',

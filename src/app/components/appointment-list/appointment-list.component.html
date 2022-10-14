@@ -117,8 +117,6 @@
 
 <p-dialog [(visible)]="formDialog" [style]="{width:'50em', height: '100vh'}" header="{{ formHeader | translate:{name: 'Appointment' | translate } }}" position="right" [modal]="true" class="p-fluid">
     <ng-template pTemplate="content">
-        <p-tabView>
-            <p-tabPanel header="{{ 'Appointments' | translate }}">
                 <div class="field">
                     <label for="customer"><span class="required">*</span> {{ 'Customer' | translate }}</label>
                     <p-autoComplete id="customer" [(ngModel)]="appointment.customer" [forceSelection]="true" [suggestions]="customers" (completeMethod)="searchCustomers($event)" (onSelect)="loadTime($event)" field="name" placeholder="{{'Select field' | translate: {field: 'Customer' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : submitted && !appointment.customer}">
@@ -238,8 +236,10 @@
                     <label for="remark">{{ 'Remark' | translate }}</label>
                     <textarea id="remark" pInputTextarea [rows]="5" [(ngModel)]="appointment.timeInformation.internal_remark"></textarea>
                 </div>
-            </p-tabPanel>
-            <p-tabPanel header="{{ 'Packages' | translate }}">
+
+        <p-divider align="center">
+            <span class="p-tag">{{ 'Packages Information' | translate }}</span>
+        </p-divider>
 
                 <div class="field">
                     <label>{{ 'Packages' | translate }}?</label>
@@ -305,8 +305,11 @@
                     <p-inputNumber [(ngModel)]="appointment.packageInfo.amount" mode="currency" currency="HKD" locale="zh-HK" [ngClass]="{'ng-invalid ng-dirty' : submitted && !appointment.packageInfo.amount}"></p-inputNumber>
                     <small class="ng-dirty ng-invalid" *ngIf="submitted && !appointment.packageInfo.amount">{{ 'Field is required' | translate: {field: 'Total Amount' | translate} }}</small>
                 </div>
-            </p-tabPanel>
-        </p-tabView>
+
+        <div class="field" *ngIf="appointment.isPackage && appointment.paymentInformation.commission > 0">
+            <label>{{ 'Total Trainer Commission' | translate }}</label>
+            <p-inputNumber [(ngModel)]="appointment.packageInfo.commission" mode="currency" currency="HKD" locale="zh-HK"></p-inputNumber>
+        </div>
 
     </ng-template>
 
