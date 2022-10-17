@@ -10,9 +10,9 @@
         <div class="p-fluid formgrid grid">
             <div class="field col-12">
                 <label for="time">{{ 'Service' | translate }}</label>
-                <b>{{ appointmentService.selectedService.name }}</b>
+                <b>{{ appointmentService.selectedService ? appointmentService.selectedService.name : '' }}</b>
             </div>
-            <div class="field col-12" *ngIf="appointmentService.selectedService.trainer">
+            <div class="field col-12" *ngIf="appointmentService.selectedService && appointmentService.selectedService.trainer">
                 <label for="time">{{ 'Trainer' | translate }}</label>
                 <b>{{ appointmentService.selectedService.trainer.name }}</b>
             </div>
