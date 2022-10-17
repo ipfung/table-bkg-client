@@ -170,6 +170,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 import {PushService} from "./service/push.service";
 import { SubmitModalComponent } from './components/submit-modal/submit-modal.component';
 import { TrainerCommissionComponent } from './components/trainer-commission/trainer-commission.component';
+import { PackageListComponent } from './components/package-list/package-list.component';
 import {DashboardService} from "./service/dashboard.service";
 
 export function createTranslateLoader(http: HttpClient) {
@@ -341,6 +342,7 @@ FullCalendarModule.registerPlugins([
         ServiceSelectionComponent,
         SubmitModalComponent,
         TrainerCommissionComponent,
+        PackageListComponent,
         AppointmentCalendarComponent,
     ],
     providers: [

@@ -47,6 +47,7 @@ import {TimeslotListComponent} from "./components/timeslot-list/timeslot-list.co
 import {AppointmentCalendarComponent} from "./components/appointment-calendar/appointment-calendar.component";
 import {ServiceSelectionComponent} from "./components/service-selection/service-selection.component";
 import {TrainerCommissionComponent} from "./components/trainer-commission/trainer-commission.component";
+import {PackageListComponent} from "./components/package-list/package-list.component";
 @NgModule({
     imports: [
         RouterModule.forRoot([
@@ -70,6 +71,7 @@ import {TrainerCommissionComponent} from "./components/trainer-commission/traine
                     {path: 'trainer-commission', component: TrainerCommissionComponent, canActivate: [ AuthGuardService ]},
                     {path: 'notifications', component: NotificationsListComponent, canActivate: [ AuthGuardService ]},
                     {path: 'settings/table-list', component: RoomListComponent, canActivate: [ AuthGuardService ]},
+                    {path: 'settings/package-list', component: PackageListComponent, canActivate: [ AuthGuardService ]},
                     {path: 'settings/working-hours-list', component: TimeslotListComponent, canActivate: [ AuthGuardService ]},
                     // {path: 'uikit/formlayout', component: FormLayoutComponent},
                     // {path: 'uikit/input', component: InputComponent},
