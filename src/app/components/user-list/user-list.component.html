@@ -158,18 +158,6 @@
             </p-dropdown>
         </div>
 
-        <div class="field" *ngIf="showService(partner)">
-            <label for="service">{{ 'Default Service' | translate }}</label>
-            <p-dropdown id="service" [options]="services" [(ngModel)]="partner.service_id" optionValue="id" optionLabel="name">
-            </p-dropdown>
-        </div>
-
-        <div class="field" *ngIf="showService(partner)">
-            <label for="trainer">{{ 'Trainer' | translate }}</label>
-            <p-dropdown id="trainer" [options]="trainers" [(ngModel)]="partner.settings.trainer" optionValue="id" optionLabel="name">
-            </p-dropdown>
-        </div>
-
         <div class="field">
             <label for="status">{{ 'Status' | translate }}</label>
             <p-dropdown id="status" [options]="statuses" optionValue="code" [(ngModel)]="partner.status" placeholder="{{ 'Select a Status' | translate }}">
