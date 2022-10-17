@@ -13,6 +13,6 @@ export class AppFooterComponent{
 
     constructor(public configService: ConfigService) {
         this.config = this.configService.config;
-        this.version = 'v0.95' + environment.version;
+        this.version = 'v0.98' + environment.version;
     }
 }
