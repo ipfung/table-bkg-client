@@ -36,6 +36,8 @@ export class AppointmentListComponent implements OnInit {
     trainers: any[];
     times: any[] = [];
     lessons: any[] = [];
+    packages: any[];
+    packageInfo: any;
 
     submitted = false;
     formDialog = false;
@@ -249,6 +251,9 @@ export class AppointmentListComponent implements OnInit {
                 this.trainers = res.data;
             });
         }
+        this.appointmentService.getActivePackages().subscribe(res => {
+            this.packages = res.data;
+        });
         this.appointmentService.getServices().subscribe(res => {
             this.services = res.data;
             this.appointment.timeInformation.serviceId = this.services[0].id;
@@ -292,6 +297,39 @@ export class AppointmentListComponent implements OnInit {
         } else {
             this.sessions = [];
         }
+    }
+
+    loadPackage() {
+        if (this.packageInfo) {
+            this.appointment.timeInformation = {
+                serviceId: this.packageInfo.service_id,
+                trainerId: this.packageInfo.trainer_id,
+                roomId: this.packageInfo.room_id,
+                noOfSession: this.packageInfo.no_of_session,
+                date: new Date(this.packageInfo.start_date),
+                time: this.packageInfo.start_time
+            };
+            this.loadPackageTime();
+            this.appointment.packageInfo = this.packageInfo;
+            this.appointment.packageInfo.recurring = JSON.parse(this.packageInfo.recurring).repeat;
+            this.loadLessonDates();
+            this.appointment.isPackage = true;
+            this.appointment.timeInformation.package_id = this.packageInfo.id;
+        } else {
+            this.appointment.timeInformation.package_id = 0;
+        }
+    }
+
+    clearPackage() {
+        this.appointment.timeInformation.package_id = 0;
+        this.packageInfo = null;
+    }
+
+    loadPackageTime() {
+        this.appointmentService.getPackageTimeslot(this.appointment.timeInformation.serviceId, this.appointment.timeInformation.noOfSession, this.appointment.timeInformation.date).subscribe( res => {
+            this.times = res.data;
+            this.appointment.timeInformation.sessionInterval = res.sessionInterval;
+        });
     }
 
     loadTime(e) {
@@ -348,10 +386,10 @@ export class AppointmentListComponent implements OnInit {
             if (this.times.length > 0) {
                 const theTime = this.times.find(el => el.time == this.appointment.timeInformation.time);
                 this.appointment.paymentInformation.price = theTime.price;
-                this.appointment.packageInfo.amount = theTime.price * this.appointment.packageInfo.quantity;
+                this.appointment.packageInfo.price = theTime.price * this.appointment.packageInfo.quantity;
             } else {
                 this.appointment.paymentInformation.price = 0;
-                this.appointment.packageInfo.amount = 0;
+                this.appointment.packageInfo.price = 0;
             }
         }
     }
@@ -377,7 +415,7 @@ export class AppointmentListComponent implements OnInit {
             quantity: this.appointment.packageInfo.quantity
         }).subscribe(res => {
             this.lessons = res;
-            this.appointment.packageInfo.amount = this.appointment.packageInfo.quantity * this.appointment.paymentInformation.price;
+            this.appointment.packageInfo.price = this.appointment.packageInfo.quantity * this.appointment.paymentInformation.price;
             if (this.appointment.paymentInformation.commission > 0) {
                 this.appointment.packageInfo.commission = this.appointment.packageInfo.quantity * this.appointment.paymentInformation.commission;
             }
@@ -423,11 +461,10 @@ export class AppointmentListComponent implements OnInit {
             });
             data = {...data, ...{
                     is_package: true,
-                    recurring_cycle: packageInfo.recurring_cycle,
                     recurring: {cycle: 'weekly', quantity: packageInfo.quantity, repeat: packageInfo.recurring},
                     lesson_dates: lessonDates,
                     repeatable: packageInfo.repeatable,
-                    package_amount: packageInfo.amount,
+                    package_amount: packageInfo.price,
                     package_commission: packageInfo.commission
                 }
             };
