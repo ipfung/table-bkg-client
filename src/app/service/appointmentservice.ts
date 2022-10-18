@@ -232,6 +232,14 @@ export class AppointmentService {
         });
     }
 
+    getPackageTimeslot(service_id, noOfSession, date) {
+        return this.api.get('api/package-timeslots', {
+            service_id: service_id,
+            noOfSession: noOfSession,
+            date: this.lemonade.formatPostDate(date)
+        });
+    }
+
     getActiveCustomers(query?) {
         let params = {
             status: 'active',
@@ -243,6 +251,12 @@ export class AppointmentService {
             }};
         }
         return this.api.get('api/users', params);
+    }
+
+    getActivePackages() {
+        return this.api.get('api/packages', {
+            status: 1001
+        });
     }
 
     getActiveTrainers() {
