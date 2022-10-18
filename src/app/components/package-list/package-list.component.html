@@ -13,7 +13,7 @@
             <tr>
                 <th style="min-width:200px">{{ 'Package Name' | translate }}</th>
                 <th style="min-width:150px">{{ 'Service' | translate }}</th>
-                <th style="min-width:150px">{{ 'Room' | translate }}</th>
+                <th style="min-width:150px">{{ 'Schedules' | translate }}</th>
                 <th style="min-width:150px">{{ 'Price' | translate }} / {{ 'No. of Appointments' | translate }}</th>
                 <th style="min-width:50px">{{ 'Status' | translate }}</th>
                 <th style="min-width:20px"></th>
@@ -24,7 +24,7 @@
                 <td style="min-width:200px">
                     <span class="p-column-title">{{ 'Package Name' | translate }}</span>
                     <div>
-                        <span class="booking-badge bg-purple-50 text-purple-400">{{ pkg.name }}</span><br />
+                        <span class="booking-badge bg-blue-50 text-blue-400">{{ pkg.name }}</span><br />
                         <span class="text-xs">{{ pkg.description }}</span>
                     </div>
                 </td>
@@ -33,11 +33,14 @@
                     {{ pkg.service.name }}
                 </td>
                 <td style="min-width:150px">
-                    <span class="p-column-title">{{ 'Room' | translate }}</span>
+                    <span class="p-column-title">{{ 'Schedules' | translate }}</span>
                     <div>
-                        {{ pkg.room ? pkg.room.name : '' }}
-                        <br/>
-                        <span *ngIf="pkg.start_date || pkg.end_date">{{ pkg.start_date }} to {{ pkg.end_date }}</span>
+                        <span *ngIf="pkg.start_date" class="booking-badge bg-purple-50 text-purple-400">{{ lemonade.formatTime(pkg.start_time, pkg.start_date) }}</span>
+                        <span class="text-xs" *ngIf="pkg.end_date"><br/>{{ 'End Date' | translate }}: {{ pkg.end_date }}</span>
+                        <span *ngIf="pkg.room">
+                            <p-avatar [label]="lemonade.getInitial(pkg.room.name)" shape="circle" [style]="{'background-color': pkg.room.color, 'color': '#fff'}"></p-avatar>
+                            {{ pkg.room.name }}
+                        </span>
                     </div>
                 </td>
                 <td style="min-width:150px">
@@ -82,7 +85,8 @@
             <label for="location"> {{ 'Room' | translate }}</label>
             <p-dropdown id="location" [options]="rooms" [(ngModel)]="pkg.room_id" optionLabel="name" optionValue="id" [showClear]="true" placeholder="{{'Select field' | translate: {field: 'Room' | translate} }}">
                 <ng-template let-item pTemplate="item">
-                    {{ item.name }}
+                    <p-avatar [label]="lemonade.getInitial(item.name)" shape="circle" [style]="{'background-color': item.color, 'color': '#fff'}"></p-avatar>
+                    {{ item.name | translate }}
                 </ng-template>
             </p-dropdown>
         </div>
@@ -117,7 +121,8 @@
                 <ng-template let-time pTemplate="item">
                     <div *ngIf="time.hour > 0 && time.minute != 30 && time.minute != 0" [translate]="'hour Minutes'" [translateParams]="{hour: time.hour, s: time.hour > 1 ? 's' : '', minute: time.minute, ms: time.minute > 1 ? 's' : ''}"></div>
                     <div *ngIf="time.hour > 0 && (time.minute == 30 || time.minute == 0)" [translate]="'hour Hours'" [translateParams]="{hour: time.hour, s: time.hour > 1 ? 's' : ''}"></div>
-                    <div *ngIf="time.hour == 0" [translate]="'N minutes'" [translateParams]="{minute: time.minute, s: time.minute > 1 ? 's' : ''}"></div>                </ng-template>
+                    <div *ngIf="time.hour == 0" [translate]="'N minutes'" [translateParams]="{minute: time.minute, s: time.minute > 1 ? 's' : ''}"></div>
+                </ng-template>
             </p-dropdown>
             <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.no_of_session">{{ 'Field is required' | translate: {field: 'Duration' | translate} }}</small>
         </div>
@@ -136,28 +141,32 @@
         <div class="grid">
             <div class="field col-12 md:col-6">
                 <label for="date">{{ 'Start Date' | translate }}</label>
-                <p-calendar id="date" [(ngModel)]="pkg.start_date" placeholder="{{'Select field' | translate: {field: 'Start Date' | translate} }}"></p-calendar>
+                <p-calendar id="date" [(ngModel)]="pkg.start_date" (onSelect)="loadTime()" placeholder="{{'Select field' | translate: {field: 'Start Date' | translate} }}"></p-calendar>
             </div>
 
             <div class="field col-12 md:col-6">
-                <label for="time">{{ 'Time' | translate }}</label>
-                <p-dropdown id="time" [disabled]="times.length == 0" [options]="times" [(ngModel)]="pkg.time" optionValue="time" placeholder="{{'Select field' | translate: {field: 'Time' | translate} }}">
+                <label for="time">{{ 'Start Time' | translate }}</label>
+                <p-dropdown id="time" [disabled]="times.length == 0" [options]="times" [(ngModel)]="pkg.start_time" optionValue="time" placeholder="{{'Select field' | translate: {field: 'Time' | translate} }}">
                     <ng-template pTemplate="selectedItem">
-                        {{ pkg.time ? this.appointmentService.formatTime(pkg.time) : '' }}
+                        {{ pkg.start_time ? this.appointmentService.formatTime(pkg.start_time) : '' }}
                     </ng-template>
                     <ng-template let-item pTemplate="item">
-                        <div class="flex align-items-center justify-content-between">
-                            <div>{{ this.appointmentService.formatTime(item.time) }}</div>
-                            <div>{{ item.price | currency:'HK$' }}</div>
-                        </div>
+                        {{ this.appointmentService.formatTime(item.time) }}
                     </ng-template>
                 </p-dropdown>
             </div>
         </div>
 
-        <div class="field">
-            <label for="end_date">{{ 'End Date' | translate }}</label>
-            <p-calendar id="end_date" [(ngModel)]="pkg.end_date" ></p-calendar>
+        <div class="grid">
+            <div class="field col-12 md:col-6">
+                <label for="end_date">{{ 'End Date' | translate }}</label>
+                <p-calendar id="end_date" [(ngModel)]="pkg.end_date" [minDate]="pkg.start_date"></p-calendar>
+            </div>
+
+            <div class="field col-12 md:col-6">
+                <label for="time">{{ 'End Time' | translate }}</label>
+                <div *ngIf="pkg.start_time && sessionInterval">{{ this.lemonade.formatTime(pkg.start_time + (pkg.no_of_session * sessionInterval)) }}</div>
+            </div>
         </div>
 
         <div class="field">

@@ -129,7 +129,7 @@ export class Lemonade {
 
     /**
      * copy from https://www.epochconverter.com/programming/#javascript
-     * @param t
+     * @param t epoch time
      */
     formatTime(t: number, date?) {
         const days = parseInt(String(t / 86400), 10);

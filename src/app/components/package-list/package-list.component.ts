@@ -28,6 +28,7 @@ export class PackageListComponent implements OnInit {
     statuses = [];
     locations = [];
     formHeader = "Edit Form";
+    sessionInterval: any;
 
     constructor(private api: ApiService, public appointmentService: AppointmentService, public lemonade: Lemonade) {
     }
@@ -37,10 +38,10 @@ export class PackageListComponent implements OnInit {
         this.statuses = [
             {
                 name: 'active',
-                code: 1001
+                code: '1001'
             }, {
                 name: 'suspended',
-                code: 1002
+                code: '1002'
             }
         ];
         this.day_of_weeks = [{
@@ -65,7 +66,7 @@ export class PackageListComponent implements OnInit {
             id: 7,
             name: 'Sunday'
         }];
-        // load services.
+        // load data for form.
         this.api.get('api/services', {
             status: 1001
         }).subscribe( res => {
@@ -85,6 +86,7 @@ export class PackageListComponent implements OnInit {
         }).subscribe( res => {
             this.trainers = res.data;
         });
+
     }
 
     loadData() {
@@ -93,6 +95,13 @@ export class PackageListComponent implements OnInit {
             this.packages = res.data;
             this.loading = false;
             this.editable = res.editable;
+        });
+    }
+
+    loadTime() {
+        this.appointmentService.getPackageTimeslot(this.pkg.service_id, this.pkg.no_of_session, this.pkg.start_date).subscribe( res => {
+            this.times = res.data;
+            this.sessionInterval = res.sessionInterval;
         });
     }
 
@@ -119,8 +128,12 @@ export class PackageListComponent implements OnInit {
     edit(pkg) {
         this.formHeader = "Edit Form";
         this.pkg = {...pkg, ...{
-            recurring: JSON.parse(pkg.recurring)
-        }};
+                recurring: JSON.parse(pkg.recurring),
+                start_date: pkg.start_date ? new Date(pkg.start_date) : undefined,
+                end_date: pkg.end_date ? new Date(pkg.end_date) : undefined
+            }
+        };
+        this.loadTime();
         this.formDialog = true;
     }
 
@@ -147,10 +160,22 @@ export class PackageListComponent implements OnInit {
         if (this.pkg.recurring.repeat == undefined || this.pkg.recurring.repeat.length == 0)
             return;
 
-        const data = {...this.pkg, ...{
+        let data = {...this.pkg, ...{
                 recurring: {cycle: 'weekly', quantity: this.pkg.quantity, repeat: this.pkg.recurring.repeat}
             }
         };
+        if (this.pkg.start_date) {
+            data = {...data, ...{
+                    start_date: this.lemonade.formatPostDate(this.pkg.start_date)
+                }
+            }
+        }
+        if (this.pkg.end_date) {
+            data = {...data, ...{
+                    end_date: this.lemonade.formatPostDate(this.pkg.end_date)
+                }
+            }
+        }
         if (this.pkg.id > 0) {
             call = this.api.update('api/packages/' + this.pkg.id, data)
         } else {
