@@ -306,17 +306,18 @@ export class AppointmentListComponent implements OnInit {
                 trainerId: this.packageInfo.trainer_id,
                 roomId: this.packageInfo.room_id,
                 noOfSession: this.packageInfo.no_of_session,
-                date: new Date(this.packageInfo.start_date),
-                time: this.packageInfo.start_time
+                date: this.packageInfo.start_date ? new Date(this.packageInfo.start_date) : null,
+                time: this.packageInfo.start_time ? this.packageInfo.start_time : null,
+                status: this.statuses[0].code
             };
             this.loadPackageTime();
-            this.appointment.packageInfo = this.packageInfo;
+            this.appointment.packageInfo = {...this.packageInfo};
             this.appointment.packageInfo.recurring = JSON.parse(this.packageInfo.recurring).repeat;
-            this.loadLessonDates();
+            if (this.packageInfo.start_date) {
+                this.loadLessonDates();
+            }
             this.appointment.isPackage = true;
             this.appointment.timeInformation.package_id = this.packageInfo.id;
-        } else {
-            this.appointment.timeInformation.package_id = 0;
         }
     }
 
@@ -415,9 +416,11 @@ export class AppointmentListComponent implements OnInit {
             quantity: this.appointment.packageInfo.quantity
         }).subscribe(res => {
             this.lessons = res;
-            this.appointment.packageInfo.price = this.appointment.packageInfo.quantity * this.appointment.paymentInformation.price;
-            if (this.appointment.paymentInformation.commission > 0) {
-                this.appointment.packageInfo.commission = this.appointment.packageInfo.quantity * this.appointment.paymentInformation.commission;
+            if (!this.packageInfo) {
+                this.appointment.packageInfo.price = this.appointment.packageInfo.quantity * this.appointment.paymentInformation.price;
+                if (this.appointment.paymentInformation.commission > 0) {
+                    this.appointment.packageInfo.commission = this.appointment.packageInfo.quantity * this.appointment.paymentInformation.commission;
+                }
             }
         });
     }
