@@ -180,6 +180,7 @@
     "Packages Information": "套餐/課程資料",
     "Packages": "套餐/課程",
     "Lesson Date & Time": "課程日期及時間",
+    "Skipped holidays": "繞過{{days}}天假期",
     "Get Appointments Date": "下載課程日期及時間",
     "Week No.": "星期",
     "Recurring Billing": "自動產生下期賬單",

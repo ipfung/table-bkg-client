@@ -36,6 +36,7 @@ export class AppointmentListComponent implements OnInit {
     trainers: any[];
     times: any[] = [];
     lessons: any[] = [];
+    holidays: any[];
     packages: any[];
     packageInfo: any;
 
@@ -302,6 +303,7 @@ export class AppointmentListComponent implements OnInit {
     loadPackage() {
         if (this.packageInfo && this.appointment.timeInformation.package_id != this.packageInfo.id) {
             this.lessons = [];
+            this.holidays = undefined;
             this.appointment.timeInformation = {
                 serviceId: this.packageInfo.service_id,
                 trainerId: this.packageInfo.trainer_id,
@@ -367,6 +369,7 @@ export class AppointmentListComponent implements OnInit {
         if (this.appointment.timeInformation.date && this.appointment.timeInformation.noOfSession && this.appointment.timeInformation.customerId > 0 && this.appointment.timeInformation.roomId > 0) {
             this.appointmentService.getTimeslotsByDate(this.appointment.timeInformation).subscribe(res => {
                 this.lessons = [];
+                this.holidays = undefined;
                 if (res.success == false) {
                     this.messageService.add({
                         severity: 'error',
@@ -420,7 +423,8 @@ export class AppointmentListComponent implements OnInit {
             dow: this.appointment.packageInfo.recurring,
             quantity: this.appointment.packageInfo.quantity
         }).subscribe(res => {
-            this.lessons = res;
+            this.lessons = res.data;
+            this.holidays = res.holidays;
             if (!this.packageInfo) {
                 this.appointment.packageInfo.price = this.appointment.packageInfo.quantity * this.appointment.paymentInformation.price;
                 if (this.appointment.paymentInformation.commission > 0) {
