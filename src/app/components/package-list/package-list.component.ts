@@ -127,8 +127,16 @@ export class PackageListComponent implements OnInit {
 
     edit(pkg) {
         this.formHeader = "Edit Form";
+        // fix pkg.recurring.repeat if it's crashed.
+        const recurring = JSON.parse(pkg.recurring);
+        if (recurring.cycle == 'weekly') {
+            // only allow 1-7(monday to sunday)
+            const filteredArray = recurring.repeat.filter(e => ([1,2,3,4,5,6,7].includes(e)));
+            recurring.repeat = filteredArray;
+        }
+
         this.pkg = {...pkg, ...{
-                recurring: JSON.parse(pkg.recurring),
+                recurring: recurring,
                 start_date: pkg.start_date ? new Date(pkg.start_date) : undefined,
                 end_date: pkg.end_date ? new Date(pkg.end_date) : undefined
             }
@@ -161,7 +169,7 @@ export class PackageListComponent implements OnInit {
             return;
 
         let data = {...this.pkg, ...{
-                recurring: {cycle: 'weekly', quantity: this.pkg.quantity, repeat: this.pkg.recurring.repeat}
+                recurring: {cycle: 'weekly', quantity: this.pkg.quantity, repeat: this.pkg.recurring.repeat.sort()}
             }
         };
         if (this.pkg.start_date) {
