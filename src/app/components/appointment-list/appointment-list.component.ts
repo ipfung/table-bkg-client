@@ -300,7 +300,8 @@ export class AppointmentListComponent implements OnInit {
     }
 
     loadPackage() {
-        if (this.packageInfo) {
+        if (this.packageInfo && this.appointment.timeInformation.package_id != this.packageInfo.id) {
+            this.lessons = [];
             this.appointment.timeInformation = {
                 serviceId: this.packageInfo.service_id,
                 trainerId: this.packageInfo.trainer_id,
@@ -310,14 +311,14 @@ export class AppointmentListComponent implements OnInit {
                 time: this.packageInfo.start_time ? this.packageInfo.start_time : null,
                 status: this.statuses[0].code
             };
-            this.loadPackageTime();
             this.appointment.packageInfo = {...this.packageInfo};
             this.appointment.packageInfo.recurring = JSON.parse(this.packageInfo.recurring).repeat;
+            this.appointment.isPackage = true;
+            this.appointment.timeInformation.package_id = this.packageInfo.id;
+            this.loadPackageTime();
             if (this.packageInfo.start_date) {
                 this.loadLessonDates();
             }
-            this.appointment.isPackage = true;
-            this.appointment.timeInformation.package_id = this.packageInfo.id;
         }
     }
 
@@ -334,6 +335,10 @@ export class AppointmentListComponent implements OnInit {
     }
 
     loadTime(e) {
+        if (this.packageInfo) {
+            this.loadPackageTime();
+            return;
+        }
         const customer = this.appointment.customer;
         if (customer && this.selectedCustomerId != customer.id) {
             if (customer.settings && customer.settings.trainer) {
@@ -361,6 +366,7 @@ export class AppointmentListComponent implements OnInit {
         }
         if (this.appointment.timeInformation.date && this.appointment.timeInformation.noOfSession && this.appointment.timeInformation.customerId > 0 && this.appointment.timeInformation.roomId > 0) {
             this.appointmentService.getTimeslotsByDate(this.appointment.timeInformation).subscribe(res => {
+                this.lessons = [];
                 if (res.success == false) {
                     this.messageService.add({
                         severity: 'error',
@@ -375,7 +381,6 @@ export class AppointmentListComponent implements OnInit {
                 this.appointment.timeInformation.time = undefined;   // reset
                 if (this.appointment.paymentInformation.commission <= 0)
                     this.appointment.paymentInformation.price = undefined;
-                this.lessons = [];
             });
         } else {
             this.times = [];
