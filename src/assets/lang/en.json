@@ -177,6 +177,7 @@
     "Packages Information": "Packages Details",
     "Packages": "Packages/Courses",
     "Lesson Date & Time": "Lesson Date & Time",
+    "Skipped holidays": "Bypassed {{days}} holidays",
     "Get Appointments Date": "Get Appointments Date",
     "Week No.": "Week No.",
     "Recurring Billing": "Recurring Billing",
