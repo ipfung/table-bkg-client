@@ -208,7 +208,7 @@
                     <ng-template let-item pTemplate="item">
                         <div class="flex align-items-center justify-content-between">
                             <div>{{ this.appointmentService.formatTime(item.time) }}</div>
-                            <div>{{ item.price | currency:'HK$' }}</div>
+                            <div *ngIf="!packageInfo">{{ item.price | currency:'HK$' }}</div>
                         </div>
                     </ng-template>
                 </p-dropdown>
@@ -274,7 +274,7 @@
                     <div class="p-inputgroup">
                         <p-inputNumber id="lesson_number" [(ngModel)]="appointment.packageInfo.quantity" [disabled]="packageInfo" mode="decimal" [showButtons]="true" inputId="minmax-buttons" [min]="2" [max]="12"></p-inputNumber>
                         <div class="p-1"></div>
-                        <button pButton pRipple [disabled]="packageInfo" (click)="loadLessonDates()">{{ 'Get Appointments Date' | translate }}</button>
+                        <button pButton pRipple [disabled]="packageInfo && packageInfo.start_date" (click)="loadLessonDates()">{{ 'Get Appointments Date' | translate }}</button>
                     </div>
                     <small class="ng-dirty ng-invalid" *ngIf="submitted && !appointment.packageInfo.quantity">{{ 'Field is required' | translate: {field: 'No. of Appointments' | translate} }}</small>
                 </div>
