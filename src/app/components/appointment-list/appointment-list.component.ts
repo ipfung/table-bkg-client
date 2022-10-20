@@ -305,13 +305,15 @@ export class AppointmentListComponent implements OnInit {
             this.lessons = [];
             this.holidays = undefined;
             this.appointment.timeInformation = {
-                serviceId: this.packageInfo.service_id,
-                trainerId: this.packageInfo.trainer_id,
-                roomId: this.packageInfo.room_id,
-                noOfSession: this.packageInfo.no_of_session,
-                date: this.packageInfo.start_date ? new Date(this.packageInfo.start_date) : null,
-                time: this.packageInfo.start_time ? this.packageInfo.start_time : null,
-                status: this.statuses[0].code
+                ...this.appointment.timeInformation, ...{
+                    serviceId: this.packageInfo.service_id,
+                    trainerId: this.packageInfo.trainer_id,
+                    roomId: this.packageInfo.room_id,
+                    noOfSession: this.packageInfo.no_of_session,
+                    date: this.packageInfo.start_date ? new Date(this.packageInfo.start_date) : null,
+                    time: this.packageInfo.start_time ? this.packageInfo.start_time : null,
+                    status: this.statuses[0].code
+                }
             };
             this.appointment.packageInfo = {...this.packageInfo};
             this.appointment.packageInfo.recurring = JSON.parse(this.packageInfo.recurring).repeat;
@@ -337,10 +339,6 @@ export class AppointmentListComponent implements OnInit {
     }
 
     loadTime(e) {
-        if (this.packageInfo) {
-            this.loadPackageTime();
-            return;
-        }
         const customer = this.appointment.customer;
         if (customer && this.selectedCustomerId != customer.id) {
             if (customer.settings && customer.settings.trainer) {
@@ -365,6 +363,10 @@ export class AppointmentListComponent implements OnInit {
             }
             this.appointment.timeInformation.customerId = customer.id;
             this.selectedCustomerId = customer.id;
+        }
+        if (this.packageInfo) {
+            this.loadPackageTime();
+            return;
         }
         if (this.appointment.timeInformation.date && this.appointment.timeInformation.noOfSession && this.appointment.timeInformation.customerId > 0 && this.appointment.timeInformation.roomId > 0) {
             this.appointmentService.getTimeslotsByDate(this.appointment.timeInformation).subscribe(res => {
@@ -438,7 +440,7 @@ export class AppointmentListComponent implements OnInit {
         this.submitted = true;
         const timeInfo = this.appointment.timeInformation;
 
-        if (timeInfo.customerId <= 0)
+        if (!timeInfo.customerId || timeInfo.customerId <= 0)
             return;
         if (timeInfo.serviceId <= 0)
             return;
@@ -493,7 +495,11 @@ export class AppointmentListComponent implements OnInit {
                 });
                 me.loadData();
                 me.formDialog = false;
-                me.appointment = false;
+                // clean up
+                me.appointment = undefined;
+                me.holidays = undefined;
+                me.lessons = undefined;
+                me.packageInfo = undefined;
             } else {
                 me.messageService.add({
                     severity: 'error',
