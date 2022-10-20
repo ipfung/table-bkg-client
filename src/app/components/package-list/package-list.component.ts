@@ -44,28 +44,8 @@ export class PackageListComponent implements OnInit {
                 code: '1002'
             }
         ];
-        this.day_of_weeks = [{
-            id: 1,
-            name: 'Monday'
-        }, {
-            id: 2,
-            name: 'Tuesday'
-        }, {
-            id: 3,
-            name: 'Wednesday'
-        },{
-            id: 4,
-            name: 'Thursday'
-        },{
-            id: 5,
-            name: 'Friday'
-        },{
-            id: 6,
-            name: 'Saturday'
-        },{
-            id: 7,
-            name: 'Sunday'
-        }];
+        this.day_of_weeks = this.lemonade.weeks;
+
         // load data for form.
         this.api.get('api/services', {
             status: 1001
@@ -96,24 +76,6 @@ export class PackageListComponent implements OnInit {
             this.loading = false;
             this.editable = res.editable;
         });
-    }
-
-    /**
-     * it could be 'weekly', 'monthly'
-     * @param recurringStr
-     */
-    getRecurringCycle(recurringStr) {
-        const recurring = JSON.parse(recurringStr);
-        return recurring.cycle;
-    }
-
-    displayRecurring(recurringStr) {
-        const recurring = JSON.parse(recurringStr);
-        if ('weekly' == recurring.cycle) {
-            const WEEK_NAMES = ['', "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-            return recurring.repeat.map(e => WEEK_NAMES[e]);
-        }
-        return recurring.repeat;
     }
 
     loadTime() {

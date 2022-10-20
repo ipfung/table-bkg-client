@@ -42,7 +42,7 @@
                     <span class="p-column-title">{{ 'Schedules' | translate }}</span>
                     <div>
                         <span class="booking-badge bg-purple-50 text-purple-400">
-                            {{ getRecurringCycle(pkg.recurring) | translate }}: {{ displayRecurring(pkg.recurring) }}
+                            {{ lemonade.getRecurringCycle(pkg.recurring) | translate }}: {{ lemonade.displayRecurring(pkg.recurring) }}
                         </span>
                         <div *ngIf="pkg.start_date" class="text-xs">{{ lemonade.formatTime(pkg.start_time, pkg.start_date) }}<span *ngIf="pkg.end_date"> {{ "to" | translate }} {{ pkg.end_date }}</span></div>
                     </div>
@@ -109,7 +109,7 @@
         </div>
         <div class="field">
             <label for="dow"><span class="required">*</span> {{ 'Day of Week' | translate }}</label>
-            <p-selectButton id="dow" [options]="day_of_weeks" [(ngModel)]="pkg.recurring.repeat" optionLabel="name" optionValue="id" [multiple]="true" [ngClass]="{'ng-invalid ng-dirty' : submitted && pkg.recurring.repeat.length == 0}">
+            <p-selectButton id="dow" [options]="day_of_weeks" [(ngModel)]="pkg.recurring.repeat" optionLabel="name" optionValue="code" [multiple]="true" [ngClass]="{'ng-invalid ng-dirty' : submitted && pkg.recurring.repeat.length == 0}">
                 <ng-template let-item>
                     <span class="w-full text-center">{{ item.name | translate }}</span>
                 </ng-template>
