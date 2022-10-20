@@ -41,10 +41,10 @@
                 <td style="min-width:150px">
                     <span class="p-column-title">{{ 'Schedules' | translate }}</span>
                     <div>
-                        <span class="booking-badge bg-purple-50 text-purple-400">
+                        <span class="booking-badge bg-pink-50 text-pink-400">
                             {{ lemonade.getRecurringCycle(pkg.recurring) | translate }}: {{ lemonade.displayRecurring(pkg.recurring) }}
                         </span>
-                        <div *ngIf="pkg.start_date" class="text-xs">{{ lemonade.formatTime(pkg.start_time, pkg.start_date) }}<span *ngIf="pkg.end_date"> {{ "to" | translate }} {{ pkg.end_date }}</span></div>
+                        <span class="text-xs" *ngIf="pkg.start_date"><br/> {{ lemonade.formatDate(pkg.start_date) }}</span><span class="text-xs" *ngIf="pkg.end_date"> {{ 'to' | translate }} {{ lemonade.formatDate(pkg.end_date) }}</span><span class="text-xs booking-badge bg-purple-50 text-purple-400" *ngIf="pkg.start_time"> {{ lemonade.formatTime(pkg.start_time) }} - {{ lemonade.formatTime(pkg.end_time) }}</span>
                     </div>
                 </td>
                 <td style="min-width:150px">
@@ -89,8 +89,8 @@
             <label for="location"> {{ 'Room' | translate }}</label>
             <p-dropdown id="location" [options]="rooms" [(ngModel)]="pkg.room_id" optionLabel="name" optionValue="id" [showClear]="true" placeholder="{{'Select field' | translate: {field: 'Room' | translate} }}">
                 <ng-template let-item pTemplate="item">
-                    <p-avatar [label]="lemonade.getInitial(item.name)" shape="circle" [style]="{'background-color': item.color, 'color': '#fff'}"></p-avatar>
-                    {{ item.name | translate }}
+                    <p-avatar [label]="lemonade.getInitial(pkg.name)" shape="circle" [style]="{'background-color': pkg.color, 'color': '#fff'}"></p-avatar>
+                    {{ pkg.name | translate }}
                 </ng-template>
             </p-dropdown>
         </div>
@@ -102,8 +102,8 @@
                 <!--                    {{ appointment.user_id }}-->
                 <!--                </ng-template>-->
                 <ng-template let-item pTemplate="item">
-                    <i class="pi pi-circle-fill" [style]="{color: item.role.color_name}"></i>
-                    {{ item.name }}
+                    <i class="pi pi-circle-fill" [style]="{color: pkg.role.color_name}"></i>
+                    {{ pkg.name }}
                 </ng-template>
             </p-dropdown>
         </div>
@@ -111,7 +111,7 @@
             <label for="dow"><span class="required">*</span> {{ 'Day of Week' | translate }}</label>
             <p-selectButton id="dow" [options]="day_of_weeks" [(ngModel)]="pkg.recurring.repeat" optionLabel="name" optionValue="code" [multiple]="true" [ngClass]="{'ng-invalid ng-dirty' : submitted && pkg.recurring.repeat.length == 0}">
                 <ng-template let-item>
-                    <span class="w-full text-center">{{ item.name | translate }}</span>
+                    <span class="w-full text-center">{{ pkg.name | translate }}</span>
                 </ng-template>
             </p-selectButton>
             <small class="ng-dirty ng-invalid" *ngIf="submitted && pkg.recurring.repeat.length == 0">{{ 'Field is required' | translate: {field: 'Day of Week' | translate} }}</small>
@@ -155,7 +155,7 @@
                         {{ pkg.start_time ? this.appointmentService.formatTime(pkg.start_time) : '' }}
                     </ng-template>
                     <ng-template let-item pTemplate="item">
-                        {{ this.appointmentService.formatTime(item.time) }}
+                        {{ this.appointmentService.formatTime(pkg.time) }}
                     </ng-template>
                 </p-dropdown>
             </div>
@@ -180,7 +180,7 @@
                     {{ lemonade.comboRenderer(statuses, pkg.status) | translate }}
                 </ng-template>
                 <ng-template let-item pTemplate="item">
-                    {{ item.name | translate }}
+                    {{ pkg.name | translate }}
                 </ng-template>
             </p-dropdown>
         </div>

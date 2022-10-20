@@ -298,8 +298,8 @@ export class AppointmentListComponent implements OnInit {
             this.appointment.packageInfo.recurring = JSON.parse(this.packageInfo.recurring).repeat;
             this.appointment.isPackage = true;
             this.appointment.timeInformation.package_id = this.packageInfo.id;
-            this.loadPackageTime();
             if (this.packageInfo.start_date) {
+                this.loadPackageTime();
                 this.loadLessonDates();
             }
         }
@@ -311,7 +311,8 @@ export class AppointmentListComponent implements OnInit {
     }
 
     loadPackageTime() {
-        this.appointmentService.getPackageTimeslot(this.appointment.timeInformation.serviceId, this.appointment.timeInformation.noOfSession, this.appointment.timeInformation.date).subscribe( res => {
+        // always to package info to load data, especially the packageInfo.start_date because timeInformation.date could be changed manually.
+        this.appointmentService.getPackageTimeslot(this.packageInfo.service_id, this.packageInfo.no_of_session, new Date(this.packageInfo.start_date)).subscribe( res => {
             this.times = res.data;
             this.appointment.timeInformation.sessionInterval = res.sessionInterval;
         });
@@ -319,7 +320,7 @@ export class AppointmentListComponent implements OnInit {
 
     loadTime(e) {
         const customer = this.appointment.customer;
-        if (customer && this.selectedCustomerId != customer.id) {
+        if (customer && this.selectedCustomerId != customer.id && !this.packageInfo) {
             if (customer.settings && customer.settings.trainer) {
                 const settings = customer.settings;
                 this.translateService.get(['Is it a trainer course?', 'Error']).subscribe( res => {
@@ -343,7 +344,7 @@ export class AppointmentListComponent implements OnInit {
             this.appointment.timeInformation.customerId = customer.id;
             this.selectedCustomerId = customer.id;
         }
-        if (this.packageInfo) {
+        if (this.packageInfo && this.packageInfo.start_time) {
             this.loadPackageTime();
             return;
         }

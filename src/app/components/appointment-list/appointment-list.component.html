@@ -39,7 +39,7 @@
                 <td colspan="8">
                     <i class="pi pi-calendar"></i>
 <!--                    <img [alt]="customer.representative.name" src="assets/showcase/images/demo/avatar/{{customer.representative.image}}" width="32" style="vertical-align: middle" />-->
-                    <span class="font-bold ml-2">{{booking.appointment_date}}</span>
+                    <span class="font-bold ml-2">{{ lemonade.formatDate(booking.appointment_date, true) }}</span>
                 </td>
             </tr>
         </ng-template>
@@ -119,6 +119,22 @@
 <p-dialog [(visible)]="formDialog" [style]="{width:'50em', height: '100vh'}" header="{{ formHeader | translate:{name: 'Appointment' | translate } }}" position="right" [modal]="true" class="p-fluid">
     <ng-template pTemplate="content">
         <div class="field">
+            <label for="pkg">{{ 'Packages' | translate }}</label>
+            <p-dropdown id="pkg" [options]="packages" [(ngModel)]="packageInfo" [showClear]="true" (onClick)="loadPackage()" (onClear)="clearPackage()" placeholder="{{'Select field' | translate: {field: 'Package' | translate} }}">
+                <ng-template pTemplate="selectedItem">
+                    {{ packageInfo.name }} <span class="text-xs booking-badge bg-pink-50 text-pink-400">{{ lemonade.getRecurringCycle(packageInfo.recurring) | translate }}: {{ lemonade.displayRecurring(packageInfo.recurring) }}</span>
+                    <span class="text-xs" *ngIf="packageInfo.start_date"> {{ lemonade.formatDate(packageInfo.start_date) }}</span><span class="text-xs" *ngIf="packageInfo.end_date"> {{ 'to' | translate }} {{ lemonade.formatDate(packageInfo.end_date) }}</span><span class="text-xs booking-badge bg-purple-50 text-purple-400" *ngIf="packageInfo.start_time"> {{ lemonade.formatTime(packageInfo.start_time) }} - {{ lemonade.formatTime(packageInfo.end_time) }}</span>
+                    <span class="text-xs text-pink-500"> {{ packageInfo.price | currency: 'HK$'}}</span>
+                </ng-template>
+                <ng-template let-item pTemplate="item">
+                    {{ item.name | translate }} - <span class="text-xs">{{ item.description }}</span> <span class="text-xs booking-badge bg-pink-50 text-pink-400">{{ lemonade.getRecurringCycle(item.recurring) | translate }}: {{ lemonade.displayRecurring(item.recurring) }}</span>
+                    <span class="text-xs" *ngIf="item.start_date"> {{ lemonade.formatDate(item.start_date) }}</span><span class="text-xs" *ngIf="item.end_date"> {{ 'to' | translate }} {{ lemonade.formatDate(item.end_date) }}</span><span class="text-xs booking-badge bg-purple-50 text-purple-400" *ngIf="item.start_time"> {{ lemonade.formatTime(item.start_time) }} - {{ lemonade.formatTime(item.end_time) }}</span>
+                    <span class="text-xs text-pink-500"> {{ item.price | currency: 'HK$'}}</span>
+                </ng-template>
+            </p-dropdown>
+        </div>
+
+        <div class="field">
             <label for="customer"><span class="required">*</span> {{ 'Customer' | translate }}</label>
             <p-autoComplete id="customer" [(ngModel)]="appointment.customer" [forceSelection]="true" [suggestions]="customers" (completeMethod)="searchCustomers($event)" (onSelect)="loadTime($event)" field="name" placeholder="{{'Select field' | translate: {field: 'Customer' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : submitted && !appointment.customer}">
                 <!--                <ng-template pTemplate="selectedItem">-->
@@ -131,18 +147,6 @@
                 </ng-template>
             </p-autoComplete>
             <small class="ng-dirty ng-invalid" *ngIf="submitted && !appointment.customer">{{ 'Field is required' | translate: {field: 'Customer' | translate} }}</small>
-        </div>
-
-        <div class="field">
-            <label for="pkg">{{ 'Packages' | translate }}</label>
-            <p-dropdown id="pkg" [options]="packages" [(ngModel)]="packageInfo" [showClear]="true" (onClick)="loadPackage()" (onClear)="clearPackage()" placeholder="{{'Select field' | translate: {field: 'Package' | translate} }}">
-                <ng-template pTemplate="selectedItem">
-                    {{ packageInfo.name }} - <span class="text-xs">{{ packageInfo.description }}</span>
-                </ng-template>
-                <ng-template let-item pTemplate="item">
-                    {{ item.name | translate }} - <span class="text-xs">{{ item.description }}</span>
-                </ng-template>
-            </p-dropdown>
         </div>
 
         <div class="field" *ngIf="showTrainer">
@@ -196,7 +200,8 @@
         <div class="grid">
             <div class="field col-12 md:col-6">
                 <label for="date"><span class="required">*</span> {{ 'Date' | translate }}</label>
-                <p-calendar id="date" [disabled]="packageInfo && packageInfo.start_date" [(ngModel)]="appointment.timeInformation.date" (onSelect)="loadTime($event)" required [ngClass]="{'ng-invalid ng-dirty' : submitted && !appointment.timeInformation.date}"></p-calendar>
+                <small class="text-xs" *ngIf="packageInfo && packageInfo.start_date"> <sup>#</sup>{{ 'Date can be changed' | translate }}</small>
+                <p-calendar id="date" [(ngModel)]="appointment.timeInformation.date" (onSelect)="loadTime($event)" required [ngClass]="{'ng-invalid ng-dirty' : submitted && !appointment.timeInformation.date}"></p-calendar>
                 <small class="ng-dirty ng-invalid" *ngIf="submitted && !appointment.timeInformation.date">{{ 'Field is required' | translate: {field: 'Date' | translate} }}</small>
             </div>
 
@@ -256,13 +261,13 @@
 
         <div class="field">
             <label>{{ 'Packages' | translate }}?</label>
-            <p-toggleButton onLabel="{{ 'Yes' | translate }}" offLabel="{{ 'No' | translate }}"
+            <p-toggleButton [disabled]="packageInfo" onLabel="{{ 'Yes' | translate }}" offLabel="{{ 'No' | translate }}"
                             onIcon="pi pi-check" offIcon="pi pi-times" [(ngModel)]="appointment.isPackage"></p-toggleButton>
         </div>
 
         <div class="field" *ngIf="appointment.isPackage">
             <label for="dow"><span class="required">*</span> {{ 'Day of Week' | translate }}</label>
-            <p-selectButton id="dow" [options]="day_of_weeks" [(ngModel)]="appointment.packageInfo.recurring" [disabled]="packageInfo" optionLabel="name" optionValue="id" [multiple]="true">
+            <p-selectButton id="dow" [options]="day_of_weeks" [(ngModel)]="appointment.packageInfo.recurring" [disabled]="packageInfo" optionLabel="name" optionValue="code" [multiple]="true">
                 <ng-template let-item>
                     <span class="w-full text-center">{{ item.name | translate }}</span>
                 </ng-template>
@@ -275,7 +280,7 @@
             <div class="p-inputgroup">
                 <p-inputNumber id="lesson_number" [(ngModel)]="appointment.packageInfo.quantity" [disabled]="packageInfo" mode="decimal" [showButtons]="true" inputId="minmax-buttons" [min]="2" [max]="12"></p-inputNumber>
                 <div class="p-1"></div>
-                <button pButton pRipple [disabled]="packageInfo && packageInfo.start_date" (click)="loadLessonDates()">{{ 'Get Appointments Date' | translate }}</button>
+                <button pButton pRipple [disabled]="packageInfo && packageInfo.start_date && packageInfo.start_date == lemonade.formatPostDate(appointment.timeInformation.date)" (click)="loadLessonDates()">{{ 'Get Appointments Date' | translate }}</button>
             </div>
             <small class="ng-dirty ng-invalid" *ngIf="submitted && !appointment.packageInfo.quantity">{{ 'Field is required' | translate: {field: 'No. of Appointments' | translate} }}</small>
         </div>
