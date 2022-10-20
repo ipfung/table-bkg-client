@@ -18,10 +18,9 @@
         <ng-template pTemplate="header">
             <tr>
                 <th style="min-width:200px">{{ 'Date & Time' | translate }}</th>
-                <th *ngIf="showCustomer" style="min-width:200px">{{ 'Customer' | translate }}</th>
-                <th *ngIf="showTrainer" style="min-width:120px">{{ 'Trainer' | translate }}</th>
-                <th style="min-width:120px">{{ 'Table' | translate }}</th>
-                <th style="min-width:120px">{{ 'Duration' | translate }}</th>
+                <th *ngIf="showCustomer" style="min-width:150px">{{ 'Customer' | translate }}</th>
+                <th *ngIf="showTrainer" style="min-width:150px">{{ 'Trainer' | translate }}</th>
+                <th style="min-width:200px">{{ 'Table' | translate }} / {{ 'Duration' | translate }}</th>
                 <th style="min-width:120px">{{ 'Payment' | translate }}</th>
                 <th style="min-width:120px">{{ 'Status' | translate }}</th>
                 <th style="min-width:120px">{{ 'Punch In' | translate }}</th>
@@ -58,23 +57,25 @@
                     <span class="p-column-title">{{ 'Date & Time' | translate }}</span>
                     <span class="booking-badge bg-purple-50 text-purple-400">{{ appointmentService.formatDateTime(appointment.start_time) }} - {{ appointmentService.formatDateTime(appointment.end_time) }}</span>
                 </td>
-                <td *ngIf="showCustomer" style="min-width:200px">
+                <td *ngIf="showCustomer" style="min-width:150px">
                     <i class="pi pi-circle-fill mr-2" [style]="{color: appointment.role_color_name}"></i>
                     <span class="p-column-title">{{ 'Customer' | translate }}</span>
                     {{ appointment.customer_name }}
                 </td>
-                <td *ngIf="showTrainer" style="min-width:120px">
+                <td *ngIf="showTrainer" style="min-width:150px">
                     <span class="p-column-title">{{ 'Trainer' | translate }}</span>
-                    {{ appointment.user_name }}
+                    <div>
+                        {{ appointment.user_name }}
+                        <div class="booking-badge bg-blue-50 text-blue-400" *ngIf="appointment.package_name">{{ appointment.package_name }}</div>
+                    </div>
                 </td>
-                <td style="min-width:120px">
-                    <span class="p-column-title">{{ 'Table' | translate }}</span>
-                    <p-avatar [label]="lemonade.getInitial(appointment.name)" shape="circle" [style]="{'background-color': appointment.color, 'color': '#fff'}"></p-avatar>
-                    <span class="pl-2"> {{appointment.name}}</span>
-                </td>
-                <td style="min-width:120px">
-                    <span class="p-column-title">{{ 'Duration' | translate }}</span>
-                    {{ duration(appointment) }}
+                <td style="min-width:200px">
+                    <span class="p-column-title">{{ 'Table' | translate }} / {{ 'Duration' | translate }}</span>
+                    <div>
+                        <p-avatar [label]="lemonade.getInitial(appointment.name)" shape="circle" [style]="{'background-color': appointment.color, 'color': '#fff'}"></p-avatar>
+                        <span class="pl-2"> {{appointment.name}}</span>
+                        <span class="booking-badge bg-green-50 text-green-400 pl-2">{{ duration(appointment) }}</span>
+                    </div>
                 </td>
                 <td style="min-width:120px">
                     <span class="p-column-title">{{ 'Payment' | translate }}</span>
