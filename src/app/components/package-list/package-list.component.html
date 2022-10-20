@@ -12,7 +12,7 @@
         <ng-template pTemplate="header">
             <tr>
                 <th style="min-width:200px">{{ 'Package Name' | translate }}</th>
-                <th style="min-width:150px">{{ 'Service' | translate }}</th>
+                <th style="min-width:150px">{{ 'Room' | translate }} / {{ 'Service' | translate }}</th>
                 <th style="min-width:150px">{{ 'Schedules' | translate }}</th>
                 <th style="min-width:150px">{{ 'Price' | translate }} / {{ 'No. of Appointments' | translate }}</th>
                 <th style="min-width:50px">{{ 'Status' | translate }}</th>
@@ -29,18 +29,22 @@
                     </div>
                 </td>
                 <td style="min-width:150px">
-                    <span class="p-column-title">{{ 'Service' | translate }}</span>
-                    {{ pkg.service.name }}
+                    <span class="p-column-title">{{ 'Room' | translate }} / {{ 'Service' | translate }}</span>
+                    <div>
+                        <div *ngIf="pkg.room">
+                            <p-avatar size="small" [label]="lemonade.getInitial(pkg.room.name)" shape="circle" [style]="{'background-color': pkg.room.color, 'color': '#fff'}"></p-avatar>
+                            {{ pkg.room.name }}
+                        </div>
+                        <span class="text-xs">{{ pkg.service.name }}</span>
+                    </div>
                 </td>
                 <td style="min-width:150px">
                     <span class="p-column-title">{{ 'Schedules' | translate }}</span>
                     <div>
-                        <span *ngIf="pkg.start_date" class="booking-badge bg-purple-50 text-purple-400">{{ lemonade.formatTime(pkg.start_time, pkg.start_date) }}</span>
-                        <span class="text-xs" *ngIf="pkg.end_date"><br/>{{ 'End Date' | translate }}: {{ pkg.end_date }}</span>
-                        <span *ngIf="pkg.room">
-                            <p-avatar [label]="lemonade.getInitial(pkg.room.name)" shape="circle" [style]="{'background-color': pkg.room.color, 'color': '#fff'}"></p-avatar>
-                            {{ pkg.room.name }}
+                        <span class="booking-badge bg-purple-50 text-purple-400">
+                            {{ getRecurringCycle(pkg.recurring) | translate }}: {{ displayRecurring(pkg.recurring) }}
                         </span>
+                        <div *ngIf="pkg.start_date" class="text-xs">{{ lemonade.formatTime(pkg.start_time, pkg.start_date) }}<span *ngIf="pkg.end_date"> {{ "to" | translate }} {{ pkg.end_date }}</span></div>
                     </div>
                 </td>
                 <td style="min-width:150px">
