@@ -98,6 +98,24 @@ export class PackageListComponent implements OnInit {
         });
     }
 
+    /**
+     * it could be 'weekly', 'monthly'
+     * @param recurringStr
+     */
+    getRecurringCycle(recurringStr) {
+        const recurring = JSON.parse(recurringStr);
+        return recurring.cycle;
+    }
+
+    displayRecurring(recurringStr) {
+        const recurring = JSON.parse(recurringStr);
+        if ('weekly' == recurring.cycle) {
+            const WEEK_NAMES = ['', "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+            return recurring.repeat.map(e => WEEK_NAMES[e]);
+        }
+        return recurring.repeat;
+    }
+
     loadTime() {
         this.appointmentService.getPackageTimeslot(this.pkg.service_id, this.pkg.no_of_session, this.pkg.start_date).subscribe( res => {
             this.times = res.data;

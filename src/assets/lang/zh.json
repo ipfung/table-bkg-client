@@ -147,6 +147,8 @@
     "Fri": "五",
     "Sat": "六",
     "Sun": "日",
+    "weekly": "每週",
+    "monthly": "每月",
     "Service": "服務",
     "Default Values": "默認值",
     "Default Service": "預設服務",
