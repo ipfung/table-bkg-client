@@ -228,18 +228,19 @@ export class AppointmentListComponent implements OnInit {
         this.formHeader = "Create Form";
         this.submitted = false;
         this.formDialog = true;
-        if (!this.appointment) {
-            this.prepareForForm();
-            // make a new appointment information if it is empty.
-            this.appointment = this.appointmentService.defaultAppointment;
-            this.appointment.isPackage = false;
-            this.appointment.timeInformation.status = this.statuses[0].code;
-            this.appointment.packageInfo = {
-                quantity: 4,
-                repeatable: true,   // default to true.
-                recurring: [1]   // default to Monday.
-            };
-        }
+        this.prepareForForm();
+        // make a new appointment information if it is empty.
+        this.packageInfo = null;
+        this.selectedCustomerId = 0;
+        this.appointment = {...this.appointmentService.defaultAppointment};
+        this.appointment.isPackage = false;
+        this.appointment.timeInformation.status = this.statuses[0].code;
+        this.appointment.timeInformation.notify_parties = true;
+        this.appointment.packageInfo = {
+            quantity: 4,
+            repeatable: true,   // default to true.
+            recurring: [1]   // default to Monday.
+        };
     }
 
     prepareForForm() {
@@ -320,8 +321,8 @@ export class AppointmentListComponent implements OnInit {
 
     loadTime(e) {
         const customer = this.appointment.customer;
-        if (customer && this.selectedCustomerId != customer.id && !this.packageInfo) {
-            if (customer.settings && customer.settings.trainer) {
+        if (customer && this.selectedCustomerId !== customer.id) {
+            if (customer.settings && customer.settings.trainer && !this.packageInfo) {
                 const settings = customer.settings;
                 this.translateService.get(['Is it a trainer course?', 'Error']).subscribe( res => {
                     this.confirmationService.confirm({
@@ -476,9 +477,10 @@ export class AppointmentListComponent implements OnInit {
                 me.loadData();
                 me.formDialog = false;
                 // clean up
-                me.appointment = undefined;
+                me.appointment = null;
                 me.holidays = undefined;
                 me.lessons = undefined;
+                me.selectedCustomerId = 0;
                 me.packageInfo = undefined;
             } else {
                 me.messageService.add({
