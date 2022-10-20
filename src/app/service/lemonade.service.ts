@@ -180,4 +180,22 @@ export class Lemonade {
         return '';
     }
 
+    /**
+     * it could be 'weekly', 'monthly'
+     * @param recurringStr
+     */
+    getRecurringCycle(recurringStr) {
+        const recurring = JSON.parse(recurringStr);
+        return recurring.cycle;
+    }
+
+    displayRecurring(recurringStr) {
+        const recurring = JSON.parse(recurringStr);
+        if ('weekly' == recurring.cycle) {
+            const WEEK_NAMES = ['', "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+            return recurring.repeat.map(e => WEEK_NAMES[e]);
+        }
+        return recurring.repeat;
+    }
+
 }
