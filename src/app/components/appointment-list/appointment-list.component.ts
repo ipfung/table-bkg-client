@@ -364,9 +364,12 @@ export class AppointmentListComponent implements OnInit {
                     this.times = res.data[0].freeslots;
                     this.appointment.timeInformation.sessionInterval = res.sessionInterval;
                 }
-                this.appointment.timeInformation.time = undefined;   // reset
-                if (this.appointment.paymentInformation.commission <= 0)
-                    this.appointment.paymentInformation.price = undefined;
+                if (!this.packageInfo) {
+                    // reset for non-package.
+                    this.appointment.timeInformation.time = undefined;
+                    if (this.appointment.paymentInformation.commission <= 0)
+                        this.appointment.paymentInformation.price = 0;
+                }
             });
         } else {
             this.times = [];
