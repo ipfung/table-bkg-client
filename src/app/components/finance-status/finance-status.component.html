@@ -59,9 +59,12 @@
                 <td style="min-width:80px">
                     <span class="p-column-title">{{ 'Table' | translate }}</span>
                     <div>
-                        <div *ngFor="let detail of payment.details">
+                        <div *ngFor="let detail of payment.details; let i = index">
 <!--                            <p-avatar [label]="lemonade.getInitial(detail.name)" shape="circle" [style]="{'background-color': detail.color, 'color': '#fff'}"></p-avatar>-->
-                            <span class="pl-2"> {{detail.name}}</span>
+                            <span class="pl-2 booking-badge bg-purple-50 text-purple-400" *ngIf="i == 0">
+                                {{ displayOrderDetail(detail) }}
+                            </span>
+                            <span class="text-xs" *ngIf="i == 0"><br/>{{ 'No. of Appointments' | translate }}: {{ payment.details.length }}</span>
                         </div>
                     </div>
                 </td>
@@ -94,9 +97,13 @@
     <ng-template pTemplate="content">
         <p-divider><b>{{ 'Customer' | translate}}</b></p-divider>
 
-        <div class="font-bold"><i class="pi pi-circle-fill" [style]="{color: payment.customer.role.color_name}"></i> {{ payment.customer.name }}</div>
-        <h6 class="text-gray-500">{{ payment.customer.email }}</h6>
-<!--            <div class="col"><img [src]="lemonade.getAvatar(payment.customer)" [alt]="payment.customer.name" width="100" class="mt-0 mx-auto mb-2 block" *ngIf="payment.customer.avatar"></div>-->
+        <div class="grid">
+        <div class="col font-bold"><i class="pi pi-circle-fill" [style]="{color: payment.customer.role.color_name}"></i> {{ payment.customer.name }}</div>
+            <div class="col text-right">
+                <h6 class="text-gray-500">{{ payment.customer.email }}</h6>
+                <img [src]="lemonade.getAvatar(payment.customer)" [alt]="payment.customer.name" width="40" *ngIf="payment.customer.avatar">
+            </div>
+        </div>
 
         <p-divider><b>{{ 'Order Details' | translate}}</b></p-divider>
         <div class="grid">
@@ -106,12 +113,32 @@
             <div class="col-6">{{ 'Order No.' | translate }}</div>
             <div class="col-6 font-bold">{{ payment.order_number }}</div>
 
-            <div class="col-6">{{ 'Order Type' | translate }}</div>
-            <div class="col-6 font-bold">{{ payment.order_type }}</div>
-
             <div class="col-6">{{ 'Status' | translate }}</div>
-            <div class="col-6 font-bold">{{ payment.status }}</div>
+            <div class="col-6 font-bold">{{ payment.order_status | translate }}</div>
         </div>
+
+        <p-divider><b>{{ 'Date' | translate }} & {{ 'Price' | translate }}</b></p-divider>
+        <p-table [value]="payment.details">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="min-width:200px">{{ 'Lesson Date & Time' | translate }}</th>
+                    <th class="text-right" style="min-width:200px">{{ 'Unit Price' | translate }}</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-lesson let-rowIndex="rowIndex">
+                <tr>
+                    <td>
+                        <div>{{ rowIndex+1 }}.<span class="booking-badge bg-purple-50 text-purple-400">{{ displayOrderDetail(lesson) }}</span></div>
+                    </td>
+                    <td class="text-right">
+                        <span class="font-bold" *ngIf="lesson.discounted_price > 0">{{ lesson.discounted_price | currency:'HK$' }}</span>
+                        <span class="text-xs font-italic" *ngIf="lesson.order_type == 'package'"> {{ 'Packages' | translate }}</span>
+                        <span class="text-xs font-italic" *ngIf="lesson.order_type == 'booking'"> {{ 'Appointment' | translate }}</span>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+
 
         <p-divider><b>{{ 'Payment' | translate}}</b></p-divider>
         <div class="grid text-right bg-gray-200">
