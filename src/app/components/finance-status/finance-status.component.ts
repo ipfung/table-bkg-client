@@ -83,6 +83,11 @@ console.log('finance loaddata event===', event);
         }
     }
 
+    displayOrderDetail(detail) {
+        const description = JSON.parse(detail.order_description);
+        return this.lemonade.formatDate(description.start_time, true) + ' ' +this.lemonade.formatDateTime(description.start_time) + ' - ' + this.lemonade.formatDateTime(description.end_time);
+    }
+
     edit(payment) {
         this.payment = {...payment, ...{payment_amount: payment.paid_amount}};
         this.formDialog = true;
