@@ -333,6 +333,8 @@ export class AppointmentListComponent implements OnInit {
                                 price: settings.trainer_charge,
                                 commission: settings.trainer_commission
                             };
+                            if (settings.room)
+                                this.appointment.timeInformation.roomId = settings.room;
                         }
                     });
                 });
