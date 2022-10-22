@@ -24,6 +24,9 @@ export class AppointmentListComponent implements OnInit {
 
     // search fields
     rangeDates: Date[];
+    users: any[];
+    userObj: any;
+    aptStatus: any = '';
 
     // appointment form
     appointment: any;
@@ -44,6 +47,8 @@ export class AppointmentListComponent implements OnInit {
     formDialog = false;
     formHeader = 'Create Form';
     requiredTrainer = false;
+    supportPackages = false;
+    supportFinance = false;
     submitting: boolean;
     selectedCustomerId = 0;
 
@@ -53,22 +58,42 @@ export class AppointmentListComponent implements OnInit {
     ngOnInit(): void {
         this.rangeDates = [new Date(), addDays(new Date(), 14)];
         this.loadData();
+        this.statuses = this.lemonade.appointmentStatus;
     }
 
     loadData() {
 //console.log('date range2===', this.rangeDates);
         if (this.rangeDates.length == 2 && this.rangeDates[1]) {
             this.loading = true;
-            this.appointmentService.getBookings(this.rangeDates[0], this.rangeDates[1]).subscribe(res => {
+            let params = {
+                from_date: this.lemonade.formatPostDate(this.rangeDates[0]),
+                to_date: this.lemonade.formatPostDate(this.rangeDates[1])
+            }
+            if (this.userObj) {
+                params = {...params, ...{ownerId: this.userObj.id}};
+            }
+            if (this.aptStatus) {
+                params = {...params, ...{status: this.aptStatus}};
+            }
+
+            this.appointmentService.getBookings(params).subscribe(res => {
                 this.bookings = res.data;
                 this.showCustomer = res.showCustomer;
                 this.showTrainer = res.showTrainer;
                 this.pageHeader = this.showCustomer ? 'Appointment' : 'My Booking';
                 this.newable = res.newable;
                 this.requiredTrainer = res.requiredTrainer;
+                this.supportPackages = res.supportPackages;
+                this.supportFinance = res.supportFinance;
                 this.loading = false;
             });
         }
+    }
+
+    searchUsers(e) {
+        this.appointmentService.getUsers(e.query).subscribe( res => {
+            this.users = res.data;
+        });
     }
 
     duration(appointment) {
@@ -122,7 +147,7 @@ export class AppointmentListComponent implements OnInit {
      * @param appointment
      */
     isValidStatus(appointment) {
-        return appointment.loading !== true && (appointment.status == 'approved' || appointment.status == 'pending') && this.showCustomer == false;
+        return appointment.loading !== true && (appointment.status == 'approved' || appointment.status == 'pending');
     }
 
     /**
@@ -262,7 +287,6 @@ export class AppointmentListComponent implements OnInit {
             this.appointment.timeInformation.noOfSession = this.services[0].sessions[0].code;
             this.loadSessions(null);
         });
-        this.statuses = this.lemonade.appointmentStatus;
         this.day_of_weeks = this.lemonade.weeks;
     }
 
