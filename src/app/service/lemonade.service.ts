@@ -158,7 +158,7 @@ export class Lemonade {
             start: new Date(start_time),
             end: new Date(end_time)
         });
-        return duration.hours + 'h ' + (duration.minutes > 0 ? duration.minutes + 'min' : '');
+        return (duration.hours > 0 ? duration.hours + 'h ' : '') + (duration.minutes > 0 ? duration.minutes + 'min' : '');
     }
 
     /**

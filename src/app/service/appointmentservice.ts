@@ -144,11 +144,8 @@ export class AppointmentService {
         return this.lemonade.formatPostDate(d);
     }
 
-    getBookings(date1, date2) {
-        return this.api.get('api/booking', {
-            from_date: this.lemonade.formatPostDate(date1),
-            to_date: this.lemonade.formatPostDate(date2)
-        });
+    getBookings(params) {
+        return this.api.get('api/booking', params);
     }
 
     punchIn(bookId) {
@@ -252,6 +249,21 @@ export class AppointmentService {
             params = {...params, ...{
                 name: query
             }};
+        }
+        return this.api.get('api/users', params);
+    }
+
+    /**
+     * able to search user based on logged user permission, including active/suspend users.
+     * @param query
+     */
+    getUsers(query?) {
+        let params = {
+        };
+        if (query && query != '') {
+            params = {...params, ...{
+                    name: query
+                }};
         }
         return this.api.get('api/users', params);
     }
