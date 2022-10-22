@@ -31,10 +31,14 @@ export class UserListComponent implements OnInit {
     submitted = false;
     isNew = false;
     partner: any;
+    rooms = [];
     trainers = [];
     services = [];
     statuses = [];
     formHeader = "Edit Form";
+    // env settings
+    requiredTrainer: boolean;
+    requiredRoom: boolean;
 
     private subscription;
 
@@ -56,6 +60,12 @@ export class UserListComponent implements OnInit {
             role: 'Trainer'
         }).subscribe( res => {
             this.trainers = res.data;
+        });
+
+        this.api.get('api/rooms', {
+            status: 1001
+        }).subscribe( res => {
+            this.rooms = res.data;
         });
 
         this.subscription = this.route.params.subscribe(params => {
@@ -103,6 +113,8 @@ console.log('ngOnDestroy=', this.subscription);
             this.users = res.data;
             this.editable = res.editable;
             this.newable = res.newable;
+            this.requiredTrainer = res.requiredTrainer;
+            this.requiredRoom = res.requiredRoom;
             this.loading = false;
         });
     }
@@ -145,7 +157,6 @@ console.log('ngOnDestroy=', this.subscription);
         this.partner = {
             status: this.statuses[0].code,
             settings: {
-                trainer: ''
             }
         };
         this.submitted = false;
@@ -176,6 +187,12 @@ console.log('ngOnDestroy=', this.subscription);
 
     isFormValid() {
         let failed = (!this.partner.name || !this.partner.email || !this.partner.mobile_no || !this.partner.second_name);
+        if (this.requiredRoom && !this.partner.settings.room) {
+            failed = true;
+        }
+        if (this.requiredTrainer && !this.partner.settings.trainer) {
+            failed = true;
+        }
         if (this.isNew && !failed) {
             failed = (!this.partner.password);
         }

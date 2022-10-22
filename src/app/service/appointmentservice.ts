@@ -86,7 +86,7 @@ export class AppointmentService {
     readonly defaultAppointment = {
         timeInformation: {
             serviceId: 1,
-            roomId: 1,
+            roomId: 0,
             trainerId: 0,
             date: '',
             noOfSession: 2,  // min 2 session = 1 hour.
@@ -213,6 +213,9 @@ export class AppointmentService {
                 this.appointmentInformation.timeInformation.serviceId = resp.id;
                 if (resp.trainer) {
                     this.appointmentInformation.timeInformation.trainerId = resp.trainer.id;
+                }
+                if (resp.room) {
+                    this.appointmentInformation.timeInformation.roomId = resp.room.id;
                 }
                 this.tableSessions = resp.sessions;
             });

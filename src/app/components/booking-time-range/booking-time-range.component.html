@@ -16,6 +16,10 @@
                 <label for="time">{{ 'Trainer' | translate }}</label>
                 <b>{{ appointmentService.selectedService.trainer.name }}</b>
             </div>
+            <div class="field col-12" *ngIf="appointmentService.selectedService && appointmentService.selectedService.room">
+                <label for="time">{{ 'Room' | translate }}</label>
+                <b>{{ appointmentService.selectedService.room.name }}</b>
+            </div>
             <div class="field col-12 md:col-6">
                 <label for="time">{{ 'Time Length' | translate }}</label>
                 <p-dropdown id="time" [options]="appointmentService.tableSessions" [(ngModel)]="timeInformation.noOfSession" (onChange)="storeUserPref($event)" optionValue="code">
