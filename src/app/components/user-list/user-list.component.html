@@ -10,13 +10,13 @@
     <!-- Search fields -->
     <div class="p-fluid grid">
         <div class="field col-12 md:col-4">
-            <input type="text" pInputText [(ngModel)]="userName" (change)="loadData()" placeholder="{{ 'Search F' | translate:{field: 'Name' | translate } }}">
+            <input type="text" pInputText [(ngModel)]="userName" (change)="loadData(null)" placeholder="{{ 'Search F' | translate:{field: 'Name' | translate } }}">
         </div>
         <div class="field col-12 md:col-4">
-            <input type="text" pInputText [(ngModel)]="userEmail" (change)="loadData()" placeholder="{{ 'Search F' | translate:{field: 'Email' | translate } }}">
+            <input type="text" pInputText [(ngModel)]="userEmail" (change)="loadData(null)" placeholder="{{ 'Search F' | translate:{field: 'Email' | translate } }}">
         </div>
         <div class="field col-12 md:col-4">
-            <p-dropdown [options]="statuses" optionValue="code" [(ngModel)]="userStatus" (onChange)="loadData()" (onClear)="loadData()" [showClear]="true" placeholder="{{ 'Search F' | translate:{field: 'Status' | translate } }}">
+            <p-dropdown [options]="statuses" optionValue="code" [(ngModel)]="userStatus" (onChange)="loadData(null)" (onClear)="loadData(null)" [showClear]="true" placeholder="{{ 'Search F' | translate:{field: 'Status' | translate } }}">
                 <ng-template pTemplate="selectedItem">
                     {{ lemonade.comboRenderer(statuses, userStatus) | translate }}
                 </ng-template>
@@ -35,7 +35,7 @@
         </div>
     </div>
 
-    <p-table [value]="users" [loading]="loading" [paginator]="true" [rows]="5" dataKey="id" sortField="appointment_date" sortMode="single"  responsiveLayout="stack">
+    <p-table [value]="users" [lazy]="true" (onLazyLoad)="loadData($event)" [paginator]="true" [rows]="rows" [loading]="loading" [totalRecords]="totalRecords" dataKey="id" sortField="appointment_date" sortMode="single"  responsiveLayout="stack">
         <ng-template pTemplate="header">
             <tr>
                 <th style="min-width:120px">{{ 'Name' | translate }}</th>

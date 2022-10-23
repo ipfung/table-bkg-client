@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {ApiService} from "../../service/api.service";
 import {Lemonade} from "../../service/lemonade.service";
 import {AppointmentService} from "../../service/appointmentservice";
+import {LazyLoadEvent} from "primeng/api";
 
 @Component({
   selector: 'app-package-list',
@@ -11,6 +12,9 @@ import {AppointmentService} from "../../service/appointmentservice";
 export class PackageListComponent implements OnInit {
 
     loading = true;
+    //paginator
+    rows = 0;
+    totalRecords = 0;
 
     packages = [];
     editable = false;
@@ -34,7 +38,6 @@ export class PackageListComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.loadData();
         this.statuses = [
             {
                 name: 'active',
@@ -69,12 +72,18 @@ export class PackageListComponent implements OnInit {
 
     }
 
-    loadData() {
+    loadData(event: LazyLoadEvent) {
         this.loading = true;
-        this.api.get('api/packages').subscribe( res => {
+        let page = event ? (event.first/event.rows) : 0;
+        let params = {
+            page: (1 + page),
+        };
+        this.api.get('api/packages', params).subscribe( res => {
             this.packages = res.data;
             this.loading = false;
             this.editable = res.editable;
+            this.rows = res.per_page;
+            this.totalRecords = res.total;
         });
     }
 
@@ -173,7 +182,7 @@ export class PackageListComponent implements OnInit {
             console.log('save package res=', res);
             if (res.success == true) {
                 this.submitted = false;
-                this.loadData();
+                this.loadData(null);
                 this.hideDialog();
             }
         });

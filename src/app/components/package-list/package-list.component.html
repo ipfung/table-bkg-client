@@ -8,7 +8,7 @@
 </div>
 <div class="card">
 
-    <p-table [value]="packages" [loading]="loading" dataKey="id" sortField="name" sortMode="single"  responsiveLayout="stack">
+    <p-table [value]="packages" [lazy]="true" (onLazyLoad)="loadData($event)" [paginator]="true" [rows]="rows" [loading]="loading" [totalRecords]="totalRecords" dataKey="id" sortField="name" sortMode="single"  responsiveLayout="stack">
         <ng-template pTemplate="header">
             <tr>
                 <th style="min-width:200px">{{ 'Package Name' | translate }}</th>

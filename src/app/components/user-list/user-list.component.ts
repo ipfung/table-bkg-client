@@ -3,6 +3,7 @@ import {ApiService} from "../../service/api.service";
 import {AuthService} from "../../service/auth.service";
 import {Lemonade} from "../../service/lemonade.service";
 import {ActivatedRoute} from "@angular/router";
+import {LazyLoadEvent} from "primeng/api";
 
 @Component({
     selector: 'app-user-list',
@@ -13,6 +14,9 @@ export class UserListComponent implements OnInit {
     loginId: string;
 
     loading = true;
+    //paginator
+    rows = 0;
+    totalRecords = 0;
 
     paramRole: any;
     users = [];
@@ -75,7 +79,6 @@ export class UserListComponent implements OnInit {
         this.api.get('api/get-roles').subscribe( res => {
             this.roles = res.data;
         });
-        this.loadData();
     }
 
     ngOnDestroy() {
@@ -86,11 +89,14 @@ console.log('ngOnDestroy=', this.subscription);
     loadRole(id) {
         console.log('hi selectedRole=', id);
         this.selectedRoleId = id;
-        this.loadData();
+        this.loadData(null);
     }
 
-    loadData() {
+    loadData(event: LazyLoadEvent) {
+        this.loading = true;
+        let page = event ? (event.first/event.rows) : 0;
         let params = {
+            page: (1+page),
             role: this.paramRole,
         };
         if (this.userName) {
@@ -116,6 +122,8 @@ console.log('ngOnDestroy=', this.subscription);
             this.requiredTrainer = res.requiredTrainer;
             this.requiredRoom = res.requiredRoom;
             this.loading = false;
+            this.rows = res.per_page;
+            this.totalRecords = res.total;
         });
     }
 
@@ -211,7 +219,7 @@ console.log('ngOnDestroy=', this.subscription);
         call.subscribe( res => {
             console.log('save users res=', res);
             if (res.success === true) {
-                this.loadData();
+                this.loadData(null);
                 this.hideDialog();
             } else {
                 // error.
