@@ -12,6 +12,9 @@ import {TranslateService} from "@ngx-translate/core";
 })
 export class FinanceStatusComponent implements OnInit {
     loading = true;
+    //paginator
+    rows = 0;
+    totalRecords = 0;
 
     bookings: any;
     showCustomer = false;
@@ -63,7 +66,7 @@ export class FinanceStatusComponent implements OnInit {
 
     loadData(event: LazyLoadEvent) {
         let params = {
-            // page: (1+event.first),
+            page: (1+(event.first/event.rows)),
             // size: event.rows,
             // passing from_date 'Unsupported operand types' error.
             from_date: this.lemonade.formatPostDate(this.rangeDates[0]),
@@ -79,6 +82,8 @@ console.log('finance loaddata event===', event);
                 this.bookings = res.data;
                 this.showCustomer = res.showCustomer;
                 this.loading = false;
+                this.rows = res.per_page;
+                this.totalRecords = res.total;
             });
         }
     }
