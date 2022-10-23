@@ -19,7 +19,7 @@
         </div>
     </div>
 
-    <p-table [value]="bookings" [lazy]="true" (onLazyLoad)="loadData($event)" [paginator]="true" [rows]="10" [loading]="loading" dataKey="id" sortField="order_date" sortMode="single" responsiveLayout="stack">
+    <p-table [value]="bookings" [lazy]="true" (onLazyLoad)="loadData($event)" [paginator]="true" [rows]="rows" [loading]="loading" [totalRecords]="totalRecords" dataKey="id" sortField="order_date" sortMode="single" responsiveLayout="stack">
         <ng-template pTemplate="header">
             <tr>
                 <th style="min-width:100px">{{ 'Order Date' | translate }}</th>
