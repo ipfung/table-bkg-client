@@ -65,9 +65,11 @@ export class FinanceStatusComponent implements OnInit {
     }
 
     loadData(event: LazyLoadEvent) {
+        this.loading = true;
+        let page = event ? (event.first/event.rows) : 0;
         let params = {
-            page: (1+(event.first/event.rows)),
-            // size: event.rows,
+            page: (1+page),
+            // size: event.rows,   // if we want to let user define no. of record per page. but server size neds to capture 'size' params too.
             // passing from_date 'Unsupported operand types' error.
             from_date: this.lemonade.formatPostDate(this.rangeDates[0]),
             to_date: this.lemonade.formatPostDate(this.rangeDates[1]),
@@ -76,7 +78,7 @@ export class FinanceStatusComponent implements OnInit {
         if (this.showCustomer && this.searchCustomer && this.searchCustomer.id) {
             params = {...params, ...{customer_id: this.searchCustomer.id}};
         }
-console.log('finance loaddata event===', event);
+// console.log('finance loaddata event===', event);
         if (this.rangeDates.length == 2 && this.rangeDates[1]) {
             this.api.get('api/finance', params).subscribe(res => {
                 this.bookings = res.data;
