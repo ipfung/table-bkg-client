@@ -26,7 +26,7 @@
             </p-dropdown>
         </div>
     </div>
-    <div class="p-fluid grid">
+    <div class="p-fluid grid" *ngIf="roles && roles.length > 1">
         <div class="col-12 md:col-2">
             <button pButton pRipple type="button" [label]="'All role' | translate" icon="pi pi-circle-fill" (click)="loadRole(0)" [style]="{color: selectedRoleId == 0 ? 'white' : 'grey', background: selectedRoleId == 0 ? 'grey' : 'white'}" [class]="selectedRoleId == 0 ? 'p-button-fill' : 'p-button-outlined'"></button>
         </div>
