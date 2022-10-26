@@ -47,6 +47,9 @@ export class UserListComponent implements OnInit {
     private subscription;
 
     constructor(private route: ActivatedRoute, private api: ApiService, public authService: AuthService, public lemonade: Lemonade) {
+        this.route.params.subscribe(params => {
+            this.paramRole = params['role'] || 'Student';
+        });
     }
 
     async ngOnInit() {
@@ -72,9 +75,6 @@ export class UserListComponent implements OnInit {
             this.rooms = res.data;
         });
 
-        this.subscription = this.route.params.subscribe(params => {
-            this.paramRole = params['role'] || '';
-        });
         // load student roles only.
         this.api.get('api/get-roles').subscribe( res => {
             this.roles = res.data;
@@ -82,8 +82,8 @@ export class UserListComponent implements OnInit {
     }
 
     ngOnDestroy() {
-console.log('ngOnDestroy=', this.subscription);
-        this.subscription.unsubscribe();
+        if (this.subscription)
+            this.subscription.unsubscribe();
     }
 
     loadRole(id) {
@@ -94,7 +94,7 @@ console.log('ngOnDestroy=', this.subscription);
 
     loadData(event: LazyLoadEvent) {
         this.loading = true;
-        let page = event ? (event.first/event.rows) : 0;
+        let page = event && event.rows > 0 ? (event.first/event.rows) : 0;
         let params = {
             page: (1+page),
             role: this.paramRole,
