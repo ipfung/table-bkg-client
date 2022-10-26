@@ -31,6 +31,7 @@
                 <p-calendar [(ngModel)]="selectedDate" [disabledDates]="nonWorkingDates" (onMonthChange)="loadTrainerNonWorkDates($event)" (onSelect)="loadTrainerTimeslotByDate($event)" [inline]="true"></p-calendar>
             </div>
             <div class="col">
+                <p-progressSpinner *ngIf="trainerTsLoading === true" class="row-spinner"></p-progressSpinner>
                 <h3 class="text-primary text-center" *ngIf="!timeSlots">
                     {{ 'Please select date from the calendar' | translate }}
                 </h3>
