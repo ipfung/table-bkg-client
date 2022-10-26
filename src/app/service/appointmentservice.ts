@@ -291,12 +291,15 @@ export class AppointmentService {
         });
     }
 
+    /**
+     * for end user book real time appointments only, as it checks requiredTrainer.
+     */
     getTimeslots() {
         let params = {
             noOfSession: this.appointmentInformation.timeInformation.noOfSession,
             service_id: this.appointmentInformation.timeInformation.serviceId,
         };
-        if (this.appointmentInformation.timeInformation.trainerId > 0) {
+        if (this.selectedService.requiredTrainer && this.appointmentInformation.timeInformation.trainerId > 0) {
             params = {...params, ...{
                 trainer_id: this.appointmentInformation.timeInformation.trainerId
             }};
