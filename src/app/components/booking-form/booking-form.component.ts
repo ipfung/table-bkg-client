@@ -25,6 +25,11 @@ export class BookingFormComponent implements OnInit {
 
     multipleYear: boolean;
 
+    // since support 'trainer_date'.
+    timeslotSetting: string;
+    selectedDate: Date;
+    nonWorkingDates: Date[];
+
     constructor(public appointmentService: AppointmentService, private authService: AuthService, private router: Router) {
     }
 
@@ -33,13 +38,51 @@ export class BookingFormComponent implements OnInit {
         this.timeInformation = appointmentInformation.timeInformation;
         this.paymentInformation = appointmentInformation.paymentInformation;
         this.paymentSelection = this.appointmentService.paymentSelection;
-        // below should be retrieved from service.
+        if (this.appointmentService.selectedService)
+            this.timeslotSetting = this.appointmentService.selectedService.timeslotSetting;
+        else {
+            this.timeslotSetting = this.timeInformation.timeslotSetting;
+        }
+        if (this.timeslotSetting == 'week') {
+            // below should be retrieved from service.
+            this.appointmentService.getTimeslots().subscribe(res => {
+                this.today = res['minDate'];
+                this.maxBookDate = res['maxDate'];
+                this.timeSlots = res['data'];
+                this.timeInformation.sessionInterval = res['sessionInterval'];
+                this.multipleYear = (this.today !== this.maxBookDate);
+                this.loading = false;
+            });
+        } else {
+            // load current year+month
+            let d = new Date();
+            if (this.timeInformation.date && this.timeInformation.time) {
+                d = new Date(this.timeInformation.date);
+                this.selectedDate = d;
+                this.loadTrainerTimeslotByDate(d);
+            }
+            this.loadTrainerNonWorkDates({year: d.getFullYear(), month: d.getMonth() + 1});
+        }
+    }
+
+    loadTrainerTimeslotByDate(d) {
+        console.log('d===', d);
+        let appointmentInfo = this.appointmentService.getAppointmentInformation();   // note!! can call getAppointmentInformation() in each function, otherwise will not store data.
+        appointmentInfo.timeInformation.trainerDate = d;
         this.appointmentService.getTimeslots().subscribe(res => {
-            this.today = res['minDate'];
-            this.maxBookDate = res['maxDate'];
             this.timeSlots = res['data'];
             this.timeInformation.sessionInterval = res['sessionInterval'];
-            this.multipleYear = (this.today !== this.maxBookDate);
+        });
+
+    }
+
+    loadTrainerNonWorkDates(e) {
+        this.appointmentService.getTrainerNonWorkDates(e.year, e.month).subscribe(res => {
+            console.log('dates=', res);
+            this.nonWorkingDates = [];
+            for (let i=0; i<res.length; i++) {
+                this.nonWorkingDates.push(new Date(res[i]));
+            }
             this.loading = false;
         });
     }
@@ -75,6 +118,7 @@ export class BookingFormComponent implements OnInit {
                 lastname: '',
                 email: await this.authService.email()
             };
+            this.timeInformation.timeslotSetting = this.timeslotSetting;  // in case user refresh this page.
             appointmentInfo.timeInformation = this.timeInformation;
             appointmentInfo.paymentInformation = this.paymentInformation;
             this.appointmentService.updateUserSelection();

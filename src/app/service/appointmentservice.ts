@@ -300,8 +300,20 @@ export class AppointmentService {
             params = {...params, ...{
                 trainer_id: this.appointmentInformation.timeInformation.trainerId
             }};
+            if (this.appointmentInformation.timeInformation.trainerDate) {
+                params = {...params, ...{
+                    the_date: this.lemonade.formatPostDate(this.appointmentInformation.timeInformation.trainerDate)
+                }};
+            }
         }
         return this.api.get('api/appointment', params);
+    }
+
+    getTrainerNonWorkDates(year, month) {
+        return this.api.get('api/trainer-non-workdate/' + this.getAppointmentInformation().timeInformation.trainerId, {
+            y: year,
+            m: month
+        });
     }
 
     getTimeslotsByDate(appointment) {
