@@ -8,7 +8,7 @@
     </ng-template>
     <ng-template pTemplate="content">
         <p-progressSpinner *ngIf="loading === true" class="row-spinner"></p-progressSpinner>
-        <p-tabView class="appointment-picker" *ngIf="timeSlots" [scrollable]="multipleYear">
+        <p-tabView class="appointment-picker" *ngIf="timeslotSetting == 'week' && timeSlots" [scrollable]="multipleYear">
             <p-tabPanel [header]="appointmentService.formatDate(item.date, true)" *ngFor="let item of timeSlots; let i = index" [selected]="i == 0">
                 <h3 class="text-primary text-center" *ngIf="item.dayoff">
                     {{ 'Day off' | translate }}
@@ -26,6 +26,27 @@
                 </div>
             </p-tabPanel>
         </p-tabView>
+        <div class="grid" *ngIf="timeslotSetting == 'trainer_date'">
+            <div class="col">
+                <p-calendar [(ngModel)]="selectedDate" [disabledDates]="nonWorkingDates" (onMonthChange)="loadTrainerNonWorkDates($event)" (onSelect)="loadTrainerTimeslotByDate($event)" [inline]="true"></p-calendar>
+            </div>
+            <div class="col">
+                <h3 class="text-primary text-center" *ngIf="!timeSlots">
+                    {{ 'Please select date from the calendar' | translate }}
+                </h3>
+                <p-panel [header]="appointmentService.formatDate(selectedDate, true)" *ngFor="let item of timeSlots;">
+                    <p-button *ngFor="let timeslot of item.freeslots" [styleClass]="getBtnCls(timeslot, item.date)" (click)="selectTime(timeslot, item.date)">
+                        <ng-template pTemplate="content">
+                            <span class="pi pi-angle-right p-button-icon p-button-icon-right ng-star-inserted"></span>
+                            <span class="p-button-label ng-star-inserted">
+                                {{ this.appointmentService.formatTime(timeslot.time, item.date) }}
+                            </span>
+                            <span class="text-right align-items-end align-content-end justify-content-end">{{ timeslot.price | currency:'HK$' }}</span>
+                        </ng-template>
+                    </p-button>
+                </p-panel>
+            </div>
+        </div>
     </ng-template>
     <ng-template pTemplate="footer">
         <div class="grid grid-nogutter justify-content-between ng-star-inserted">

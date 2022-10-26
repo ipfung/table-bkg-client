@@ -21,6 +21,7 @@ export class TrainerStudentListComponent implements OnInit {
 
     // form variables.
     supportMultiStudent: boolean;
+    timeslotSetting: string;
     editable = false;
     formDialog = false;
     submitted = false;
@@ -36,6 +37,15 @@ export class TrainerStudentListComponent implements OnInit {
     tsFormDialog = false;
     tsFormHeader = "Edit Form";
     tsSubmitted = false;
+
+    //trainer workDates.
+    workdateFormHeader: string;
+    workDate: any;
+    workdateSubmitted: boolean;
+    workdateFormDialog: boolean;
+    trainerWorkDate: Date;
+    workdateLoading: boolean;
+    trainerWorkdateTimeslots: any[];
 
     constructor(private api: ApiService, private router: Router, public lemonade: Lemonade) {
     }
@@ -57,6 +67,7 @@ export class TrainerStudentListComponent implements OnInit {
             this.editable = res.editable;
             this.newable = res.newable;
             this.supportMultiStudent = res.multi_student;
+            this.timeslotSetting = res.timeslotSetting;
             this.loading = false;
         });
     }
@@ -100,7 +111,11 @@ export class TrainerStudentListComponent implements OnInit {
             console.log('/availability-students edit list=', res);
             this.availableStudents = res.data;
         });
-        this.loadTimeslotData(trainer);
+        if (this.timeslotSetting == 'trainer_date') {
+            this.loadWorkDateData()
+        } else {
+            this.loadTimeslotData(trainer);
+        }
         this.isNew = false;
     }
 
@@ -229,6 +244,62 @@ export class TrainerStudentListComponent implements OnInit {
             if (res.success == true) {
                 this.loadTimeslotData(this.trainer);
                 this.hideTimeslotDialog();
+            }
+        });
+    }
+
+    /**
+     * Trainer working hours per date.
+     */
+    loadWorkDateData() {
+        this.api.get('api/trainer-workdate-timeslots', {
+            trainer_id: this.trainer.id
+        }).subscribe( res => {
+            this.trainerWorkdateTimeslots = res.data;
+            this.workdateLoading = false;
+        });
+    }
+
+    openNewWorkDate() {
+        this.workdateFormHeader = "Create Form";
+        this.workDate = {
+            location_id: 1,
+            trainer_id: this.trainer.id
+        };
+        this.trainerWorkDate = null;
+        this.workdateSubmitted = false;
+        this.workdateFormDialog = true;
+    }
+
+    editWorkDate(workdate) {
+        this.workdateFormHeader = "Edit Form";
+        this.workDate = {...workdate};
+        this.trainerWorkDate = new Date(workdate.work_date);
+        this.workdateSubmitted = false;
+        this.workdateFormDialog = true;
+    }
+
+    hideWorkDateDialog() {
+        this.workdateFormDialog = false;
+    }
+
+    saveWorkDate() {
+        let call;
+        this.workdateSubmitted = true;
+        if (!this.trainerWorkDate || !this.workDate.from_time || !this.workDate.to_time) {
+            return;
+        }
+        this.workDate.work_date = this.lemonade.formatPostDate(this.trainerWorkDate);
+        if (this.workDate.id > 0) {
+            call = this.api.update('api/trainer-workdate-timeslots/' + this.workDate.id, this.workDate);
+        } else {
+            call = this.api.post('api/trainer-workdate-timeslots', this.workDate);
+        }
+        call.subscribe( res => {
+            console.log('save trainer-workdate-timeslots res=', res);
+            if (res.success == true) {
+                this.loadWorkDateData();
+                this.hideWorkDateDialog();
             }
         });
     }
