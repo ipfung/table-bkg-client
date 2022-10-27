@@ -76,9 +76,15 @@ export class Lemonade {
 
     getInitial(name) {
         // or ref: https://via.placeholder.com/300.png/09f/fff
-        return name
+        let name1 = name
             .toUpperCase()
-            .split(' ')
+            .split(' ');
+        //trim array to max length of 2.
+        if (name1.length > 2) {
+            name1 = name1.slice(0, 2);
+        }
+
+        return name1
             .map(word => word[0])
             .join('');
     }
