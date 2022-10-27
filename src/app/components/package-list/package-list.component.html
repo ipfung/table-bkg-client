@@ -86,17 +86,18 @@
             <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.service_id">{{ 'Field is required' | translate: {field: 'Service' | translate} }}</small>
         </div>
         <div class="field">
-            <label for="location"> {{ 'Room' | translate }}</label>
-            <p-dropdown id="location" [options]="rooms" [(ngModel)]="pkg.room_id" optionLabel="name" optionValue="id" [showClear]="true" placeholder="{{'Select field' | translate: {field: 'Room' | translate} }}">
+            <label for="location"><span class="required">*</span>  {{ 'Room' | translate }}</label>
+            <p-dropdown id="location" [options]="rooms" [(ngModel)]="pkg.room_id" optionLabel="name" optionValue="id" [showClear]="true" placeholder="{{'Select field' | translate: {field: 'Room' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : submitted && !pkg.room_id}">
                 <ng-template let-item pTemplate="item">
                     <p-avatar [label]="lemonade.getInitial(item.name)" shape="circle" [style]="{'background-color': item.color, 'color': '#fff'}"></p-avatar>
                     {{ item.name | translate }}
                 </ng-template>
             </p-dropdown>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.room_id">{{ 'Field is required' | translate: {field: 'Room' | translate} }}</small>
         </div>
         <div class="field">
-            <label for="trainer"> {{ 'Trainer' | translate }}</label>
-            <p-dropdown id="trainer" [options]="trainers" [(ngModel)]="pkg.trainer_id" optionLabel="name" optionValue="id" [showClear]="true" placeholder="{{'Select field' | translate: {field: 'Trainer' | translate} }}">
+            <label for="trainer"><span class="required">*</span> {{ 'Trainer' | translate }}</label>
+            <p-dropdown id="trainer" [options]="trainers" [(ngModel)]="pkg.trainer_id" optionLabel="name" optionValue="id" [showClear]="true" placeholder="{{'Select field' | translate: {field: 'Trainer' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : submitted && !pkg.trainer_id}">
                 <!--                <ng-template pTemplate="selectedItem">-->
                 <!--                    <i class="pi pi-circle-fill" [style]="{color: (appointment.role_color_name)}"></i>-->
                 <!--                    {{ appointment.user_id }}-->
@@ -106,6 +107,7 @@
                     {{ item.name }}
                 </ng-template>
             </p-dropdown>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.trainer_id">{{ 'Field is required' | translate: {field: 'Trainer' | translate} }}</small>
         </div>
         <div class="field">
             <label for="dow"><span class="required">*</span> {{ 'Day of Week' | translate }}</label>
@@ -144,13 +146,14 @@
         </div>
         <div class="grid">
             <div class="field col-12 md:col-6">
-                <label for="date">{{ 'Start Date' | translate }}</label>
-                <p-calendar id="date" [(ngModel)]="pkg.start_date" (onSelect)="loadTime()" placeholder="{{'Select field' | translate: {field: 'Start Date' | translate} }}"></p-calendar>
+                <label for="date"><span class="required">*</span> {{ 'Start Date' | translate }}</label>
+                <p-calendar id="date" [(ngModel)]="pkg.start_date" (onSelect)="loadTime()" placeholder="{{'Select field' | translate: {field: 'Start Date' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : submitted && !pkg.start_date}"></p-calendar>
+                <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.start_date">{{ 'Field is required' | translate: {field: 'Start Date' | translate} }}</small>
             </div>
 
             <div class="field col-12 md:col-6">
-                <label for="time">{{ 'Start Time' | translate }}</label>
-                <p-dropdown id="time" [disabled]="times.length == 0" [options]="times" [(ngModel)]="pkg.start_time" optionValue="time" (onClick)="loadLessonDates()" placeholder="{{'Select field' | translate: {field: 'Time' | translate} }}">
+                <label for="time"><span class="required">*</span> {{ 'Start Time' | translate }}</label>
+                <p-dropdown id="time" [disabled]="times.length == 0" [options]="times" [(ngModel)]="pkg.start_time" optionValue="time" (onClick)="loadLessonDates()" placeholder="{{'Select field' | translate: {field: 'Time' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : submitted && !pkg.start_time}">
                     <ng-template pTemplate="selectedItem">
                         {{ pkg.start_time ? this.appointmentService.formatTime(pkg.start_time) : '' }}
                     </ng-template>
@@ -158,14 +161,15 @@
                         {{ this.appointmentService.formatTime(item.time) }}
                     </ng-template>
                 </p-dropdown>
+                <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.start_time">{{ 'Field is required' | translate: {field: 'Start Time' | translate} }}</small>
             </div>
         </div>
 
         <div class="grid">
             <div class="field col-12 md:col-6">
-                <label for="end_date">{{ 'End Date' | translate }}</label>
+                <label for="end_date">{{ 'End Repeat' | translate }}</label>
                 <p-calendar id="end_date" [(ngModel)]="pkg.end_date" [minDate]="pkg.start_date"></p-calendar>
-                <small class="jws-tips">{{ 'Auto Generate Appointments ASAP' | translate }}</small>
+                <small class="jws-tips">{{ 'Leave Empty = Never End Repeat' | translate }}</small>
             </div>
 
             <div class="field col-12 md:col-6">
@@ -173,6 +177,36 @@
                 <input type="text" pInputText [disabled]="true" value="{{ pkg.start_time && sessionInterval ? lemonade.formatTime(pkg.start_time + (pkg.no_of_session * sessionInterval)) : '' }}"/>
                 <small class="jws-tips">{{ 'Generated by Start Time' | translate }}</small>
             </div>
+        </div>
+
+        <div class="field" *ngIf="pkg.start_date && pkg.start_time">
+            <p-table [value]="lessons">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="min-width:20px"></th>
+                        <th style="min-width:200px">{{ 'Lesson Date & Time' | translate }}<br /><small class="jws-tips text-xs">{{ 'Auto Generate Appointments ASAP' | translate }}</small></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage" let-lesson>
+                    <tr>
+                        <td colspan="8">
+                            <span class=" ml-2" [innerHTML]="'Field is required' | translate: {field: 'Lesson Date & Time' | translate}"></span>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-lesson let-rowIndex="rowIndex" let-expanded="expanded">
+                    <tr>
+                        <td style="min-width:20px">{{ 1+rowIndex }}.</td>
+                        <td style="min-width:200px">
+                            <span class="p-column-title">{{ 'Date & Time' | translate }}</span>
+                            <div>
+                                <span class="booking-badge bg-purple-50 text-purple-400">{{ appointmentService.getBookedDateTime(lesson.date, pkg.start_time, sessionInterval, pkg.no_of_session) }}</span>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+            <div class="mt-2 text-xs" *ngIf="holidays">{{ 'Skipped holidays' | translate:{ days: holidays.length } }}: <span class="booking-badge bg-pink-50 text-pink-400 mr-2" *ngFor="let holiday of holidays">{{ lemonade.formatDate(holiday.date, true) }}</span></div>
         </div>
 
         <div class="field">

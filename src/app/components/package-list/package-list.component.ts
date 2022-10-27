@@ -23,6 +23,8 @@ export class PackageListComponent implements OnInit {
     formDialog = false;
     submitted = false;
     pkg: any;
+    lessons: any[] = [];
+    holidays: any[];
     sessions = [];
     services = [];
     rooms = [];
@@ -85,6 +87,9 @@ export class PackageListComponent implements OnInit {
             this.rows = res.per_page;
             this.totalRecords = res.total;
         });
+        // this.api.get('api/renew-orders').subscribe( res => {
+        //    console.log('orders=', res);
+        // });
     }
 
     loadTime() {
@@ -97,9 +102,6 @@ export class PackageListComponent implements OnInit {
     openNew() {
         this.formHeader = "Create Form";
         this.pkg = {
-            service_id: 0,
-            room_id: '',
-            trainer_id: '',
             quantity: 4,
             status: this.statuses[0].code,
             recurring: {
@@ -112,6 +114,17 @@ export class PackageListComponent implements OnInit {
         }
         this.submitted = false;
         this.formDialog = true;
+    }
+
+    loadLessonDates() {
+        this.appointmentService.getPackageDates({
+            start_date: this.lemonade.formatPostDate(this.pkg.start_date),
+            dow: this.pkg.recurring.repeat,
+            quantity: this.pkg.quantity
+        }).subscribe(res => {
+            this.lessons = res.data;
+            this.holidays = res.holidays;
+        });
     }
 
     edit(pkg) {
@@ -150,23 +163,24 @@ export class PackageListComponent implements OnInit {
             return;
         if (this.pkg.description == undefined)
             return;
-        if (this.pkg.service_id == undefined)
+        if (!this.pkg.service_id || !this.pkg.room_id || !this.pkg.trainer_id)
             return;
         if (this.pkg.quantity == undefined)
+            return;
+        if (!this.pkg.start_date || !this.pkg.start_time)
             return;
         if (this.pkg.recurring.repeat == undefined || this.pkg.recurring.repeat.length == 0)
             return;
 
+        const lessonDates = this.lessons.map(function (obj) {
+            return obj.date;
+        });
         let data = {...this.pkg, ...{
-                recurring: {cycle: 'weekly', quantity: this.pkg.quantity, repeat: this.pkg.recurring.repeat.sort()}
+                recurring: {cycle: 'weekly', quantity: this.pkg.quantity, repeat: this.pkg.recurring.repeat.sort()},
+                start_date: this.lemonade.formatPostDate(this.pkg.start_date),
+                lesson_dates: lessonDates,
             }
         };
-        if (this.pkg.start_date) {
-            data = {...data, ...{
-                    start_date: this.lemonade.formatPostDate(this.pkg.start_date)
-                }
-            }
-        }
         if (this.pkg.end_date) {
             data = {...data, ...{
                     end_date: this.lemonade.formatPostDate(this.pkg.end_date)
