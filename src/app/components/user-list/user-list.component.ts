@@ -130,9 +130,12 @@ export class UserListComponent implements OnInit {
     findRoleColor(roleId) {
         if (this.roles && this.roles.length > 0 && roleId > 0) {
             let data = this.roles.find(el => el.id == roleId);
+            console.log('findRoleColor22-', roleId, data.color_name);
             return data.color_name;
+        } else {
+            console.log('findRoleColor33-pink-', roleId);
+            return 'bg-purple-500';
         }
-        return 'grey';
     }
 
     roleRenderer(roleId) {

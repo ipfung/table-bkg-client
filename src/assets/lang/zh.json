@@ -166,6 +166,7 @@
     "Order Type": "訂單類型",
     "Create Form": "新增{{name}}",
     "Edit Form": "更改{{name}}",
+    "Copy Form": "複製{{name}}",
     "Date": "日期",
     "Time": "時間",
     "Field is required": "{{field}}是必填的",

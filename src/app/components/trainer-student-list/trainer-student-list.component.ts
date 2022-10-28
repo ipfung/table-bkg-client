@@ -15,6 +15,13 @@ export class TrainerStudentListComponent implements OnInit {
     newable = false;
     roles: any[];
 
+    // search
+    selectedRole = [];
+    selectedRoleId = 0;
+    userName: any;
+    userEmail: any;
+    userStatus: any;
+
     isNew = false;
     //general form
     statuses = [];
@@ -60,8 +67,32 @@ export class TrainerStudentListComponent implements OnInit {
         this.statuses = this.lemonade.userStatus;
     }
 
+    loadRole(id) {
+        console.log('hi selectedRole=', id);
+        this.selectedRoleId = id;
+        this.loadData();
+    }
+
     loadData() {
-        this.api.get('api/trainers').subscribe( res => {
+        let params = {
+        };
+        if (this.userName) {
+            params = {...params, ...{name: this.userName}};
+        }
+        if (this.userEmail) {
+            params = {...params, ...{email: this.userEmail}};
+        }
+        if (this.userStatus) {
+            params = {...params, ...{status: this.userStatus}};
+        }
+        console.log('hitrainer selectedRole=', this.selectedRole);
+        if (this.selectedRole && this.selectedRole.length > 0) {
+            const roles = this.selectedRole.map(a => a.id);
+            params = {...params, ...{role_ids: roles}};
+        } else {
+            params = {...params, ...{role_id: this.selectedRoleId}};
+        }
+        this.api.get('api/trainers', params).subscribe( res => {
             this.trainers = res.data;
             this.totalRecords = res.total;
             this.editable = res.editable;
@@ -256,6 +287,7 @@ export class TrainerStudentListComponent implements OnInit {
             trainer_id: this.trainer.id
         }).subscribe( res => {
             this.trainerWorkdateTimeslots = res.data;
+            this.tsEditable = res.editable;
             this.workdateLoading = false;
         });
     }
@@ -274,6 +306,17 @@ export class TrainerStudentListComponent implements OnInit {
     editWorkDate(workdate) {
         this.workdateFormHeader = "Edit Form";
         this.workDate = {...workdate};
+        this.trainerWorkDate = new Date(workdate.work_date);
+        this.workdateSubmitted = false;
+        this.workdateFormDialog = true;
+    }
+
+    copyWorkDate(workdate) {
+        this.workdateFormHeader = "Copy Form";
+        this.workDate = {...workdate, ...{
+                id: undefined
+            }
+        };
         this.trainerWorkDate = new Date(workdate.work_date);
         this.workdateSubmitted = false;
         this.workdateFormDialog = true;

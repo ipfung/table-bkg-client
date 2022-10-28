@@ -7,12 +7,40 @@
     </div>
 </div>
 <div class="card">
+    <!-- Search fields -->
+    <div class="p-fluid grid">
+        <div class="field col-12 md:col-4">
+            <input type="text" pInputText [(ngModel)]="userName" (change)="loadData()" placeholder="{{ 'Search F' | translate:{field: 'Name' | translate } }}">
+        </div>
+        <div class="field col-12 md:col-4">
+            <input type="text" pInputText [(ngModel)]="userEmail" (change)="loadData()" placeholder="{{ 'Search F' | translate:{field: 'Email' | translate } }}">
+        </div>
+        <div class="field col-12 md:col-4">
+            <p-dropdown [options]="statuses" optionValue="code" [(ngModel)]="userStatus" (onChange)="loadData()" (onClear)="loadData()" [showClear]="true" placeholder="{{ 'Search F' | translate:{field: 'Status' | translate } }}">
+                <ng-template pTemplate="selectedItem">
+                    {{ lemonade.comboRenderer(statuses, userStatus) | translate }}
+                </ng-template>
+                <ng-template let-item pTemplate="item">
+                    {{ item.name | translate }}
+                </ng-template>
+            </p-dropdown>
+        </div>
+    </div>
+    <div class="p-fluid grid" *ngIf="roles && roles.length > 1">
+        <div class="col-12 md:col-2">
+            <button pButton pRipple type="button" [label]="'All role' | translate" icon="pi pi-circle-fill" (click)="loadRole(0)" [style]="{color: selectedRoleId == 0 ? 'white' : 'grey', background: selectedRoleId == 0 ? 'grey' : 'white'}" [class]="selectedRoleId == 0 ? 'p-button-fill' : 'p-button-outlined'"></button>
+        </div>
+        <div class="col-12 md:col-2" *ngFor="let role of roles">
+            <button pButton pRipple type="button" [label]="role.name + ' role' | translate" icon="pi pi-circle-fill" (click)="loadRole(role.id)" [style]="{color: selectedRoleId == role.id ? 'white' : role.color_name, background: selectedRoleId == role.id ? role.color_name : 'white'}" [class]="selectedRoleId == role.id ? 'p-button-fill' : 'p-button-outlined'"></button>
+        </div>
+    </div>
+
     <p-table [value]="trainers" [paginator]="true" [rows]="25" [loading]="loading" [totalRecords]="totalRecords" dataKey="name" responsiveLayout="scroll">
         <ng-template pTemplate="header">
             <tr>
                 <th style="width: 3rem"></th>
                 <th style="min-width:120px" pSortableColumn="name">{{ 'Trainer' | translate }} <p-sortIcon field="name"></p-sortIcon></th>
-                <th style="min-width:130px" pSortableColumn="role">{{ 'Role' | translate }} <p-sortIcon field="role"></p-sortIcon></th>
+<!--                <th style="min-width:130px" pSortableColumn="role">{{ 'Role' | translate }} <p-sortIcon field="role"></p-sortIcon></th>-->
                 <th style="min-width:80px">{{ 'Avatar' | translate }}</th>
                 <th style="min-width:130px" pSortableColumn="counter">{{ 'Student Count' | translate }} <p-sortIcon field="counter"></p-sortIcon></th>
                 <th style="min-width:150px" pSortableColumn="email">{{ 'Email' | translate }} <p-sortIcon field="email"></p-sortIcon></th>
@@ -27,11 +55,11 @@
                     <button type="button" pButton pRipple [pRowToggler]="user" class="p-button-text p-button-rounded p-button-plain" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
                 </td>
                 <td>{{user.name}}</td>
+<!--                <td>-->
+<!--                    <span [class]="'role-badge role-' + user.role.name" [style]="{background: user.role.color_name}">{{ user.role.name + " role" | translate }}</span>-->
+<!--                </td>-->
                 <td>
-                    <span [class]="'role-badge role-' + user.role.name" [style]="{background: user.role.color_name}">{{ user.role.name + " role" | translate }}</span>
-                </td>
-                <td>
-                    <p-avatar [image]="lemonade.getAvatar(user)" shape="circle" [style]="{'background-color': '#266cda', 'color': '#fff', 'margin-left': '5px'}"></p-avatar>
+                    <p-avatar [label]="lemonade.getInitial(user.name)" shape="circle" class="lemonade-avatar" [style]="{background: user.role.color_name}"></p-avatar>
                 </td>
                 <td>
                     {{ user.teammates.length }}
@@ -248,6 +276,7 @@
                             <td>{{ data.from_time }} - {{ data.to_time }}</td>
                             <td>
                                 <button *ngIf="tsEditable" pButton type="button" pTooltip="{{ 'Edit' | translate }}" tooltipPosition="bottom" class="p-button-text p-0" icon="pi pi-pencil" (click)="editWorkDate(data)"></button>
+                                <button *ngIf="tsEditable" pButton type="button" pTooltip="{{ 'Copy' | translate }}" tooltipPosition="bottom" class="p-button-text p-0" icon="pi pi-copy" (click)="copyWorkDate(data)"></button>
                             </td>
                         </tr>
                     </ng-template>

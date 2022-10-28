@@ -163,6 +163,7 @@
     "Order Type": "Order Type",
     "Create Form": "New {{name}}",
     "Edit Form": "Edit {{name}}",
+    "Copy Form": "Copy {{name}}",
     "Date": "Date",
     "Time": "Time",
     "Field is required": "{{field}} is required",

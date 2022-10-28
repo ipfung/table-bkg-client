@@ -9,7 +9,8 @@ import {Lemonade} from "./service/lemonade.service";
 
 @Component({
     selector: 'app-topbar',
-    templateUrl: './app.topbar.component.html'
+    templateUrl: './app.topbar.component.html',
+    styleUrls: ['./app.topbar.component.scss']
 })
 export class AppTopBarComponent implements OnInit {
     userName: string;
