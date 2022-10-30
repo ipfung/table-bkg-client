@@ -85,16 +85,19 @@
                             <ng-template pTemplate="header">
                                 <tr>
                                     <th>{{ 'Student' | translate }}</th>
-                                    <th>{{ 'Avatar' | translate }}</th>
+                                    <th>{{ 'Mobile No.' | translate }}</th>
                                     <th>{{ 'Email' | translate }}</th>
                                     <th>{{ 'Status' | translate }}</th>
                                 </tr>
                             </ng-template>
                             <ng-template pTemplate="body" let-teammate>
                                 <tr>
-                                    <td>{{teammate.name}} / {{teammate.second_name}}</td>
                                     <td>
                                         <p-avatar [label]="lemonade.getInitial(teammate.name)" shape="circle" class="lemonade-avatar" [style]="{background: teammate.role.color_name}"></p-avatar>
+                                        {{teammate.name}} / {{teammate.second_name}}
+                                    </td>
+                                    <td>
+                                        {{ teammate.mobile_no }}
                                     </td>
                                     <td>
                                         {{ teammate.email }}
@@ -106,7 +109,7 @@
                             </ng-template>
                             <ng-template pTemplate="emptymessage">
                                 <tr>
-                                    <td colspan="4">There is no student for trainer.</td>
+                                    <td colspan="4">{{ 'There is no student for trainer.' | translate }}</td>
                                 </tr>
                             </ng-template>
                         </p-table>

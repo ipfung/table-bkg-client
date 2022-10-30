@@ -26,7 +26,7 @@
 <!--            <span>Settings</span>-->
 <!--        </a>-->
         <a href="#/user-profile" class="layout-topbar-button">
-            <p-avatar [label]="lemonade.getInitial(userName)" shape="circle" class="{'background-color': '#eee', 'color': '#aaa'}"></p-avatar>
+            <p-avatar [label]="lemonade.getInitial(userName)" shape="circle" class="lemonade-avatar" [style]="{background: userNameBg}"></p-avatar>
             <span>{{ userName }}, {{ 'Profile' | translate }}</span>
         </a>
         <a (click)="logout()" class="p-link layout-topbar-button">

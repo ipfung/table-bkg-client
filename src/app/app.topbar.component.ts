@@ -14,6 +14,7 @@ import {Lemonade} from "./service/lemonade.service";
 })
 export class AppTopBarComponent implements OnInit {
     userName: string;
+    userNameBg: string;
 
     items: MenuItem[];
 
@@ -28,6 +29,7 @@ export class AppTopBarComponent implements OnInit {
     async ngOnInit() {
         this.avatar = await this.authService.avatar();
         this.userName = await this.authService.userName();
+        this.userNameBg = await this.authService.avatarColor();
         this.subscription = this.dashboardService.notifications$.subscribe(counter => {
             this.notificationsBadge = counter;
         });
