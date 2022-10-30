@@ -41,8 +41,8 @@
                     <tr>
                         <td style="min-width:150px">
                             <span class="p-column-title">{{ 'Date' | translate }}</span>
-                                {{ daysoff.start_date }}
-                                {{ daysoff.start_date != daysoff.end_date ? ' - ' + daysoff.end_date : '' }}
+                                {{ lemonade.formatDate(daysoff.start_date, true) }}
+                                {{ daysoff.start_date != daysoff.end_date ? ' - ' + lemonade.formatDate(daysoff.end_date, true) : '' }}
                         </td>
                         <td style="min-width:150px">
                             <span class="p-column-title">{{ 'Location' | translate }}</span>
@@ -66,7 +66,7 @@
                     </div>
                     <div class="field col-12">
                         <label for="do-dates">{{ 'Date' | translate }}</label>
-                        <p-calendar id="do-dates" [(ngModel)]="offDates" selectionMode="range" required [ngClass]="{'ng-invalid ng-dirty' : daysoffSubmitted && offDates.length != 2}" [readonlyInput]="true" (onSelect)="loadData()" inputId="do-dates"></p-calendar>
+                        <p-calendar id="do-dates" [(ngModel)]="offDates" selectionMode="range" required [ngClass]="{'ng-invalid ng-dirty' : daysoffSubmitted && offDates.length != 2}" [readonlyInput]="true" (onSelect)="loadData()" [dateFormat]="lemonade.dateFormat" inputId="do-dates"></p-calendar>
                     </div>
                 </div>
                 <div class="col-12 text-right">

@@ -52,7 +52,7 @@ export class AppointmentListComponent implements OnInit {
     submitting: boolean;
     selectedCustomerId = 0;
 
-    constructor(public appointmentService: AppointmentService, private router: Router, private confirmationService: ConfirmationService, public messageService: MessageService, private translateService: TranslateService, private lemonade: Lemonade) {
+    constructor(public appointmentService: AppointmentService, private router: Router, private confirmationService: ConfirmationService, public messageService: MessageService, private translateService: TranslateService, public lemonade: Lemonade) {
     }
 
     ngOnInit(): void {

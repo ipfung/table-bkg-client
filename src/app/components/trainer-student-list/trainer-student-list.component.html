@@ -272,7 +272,7 @@
                     </ng-template>
                     <ng-template pTemplate="body" let-data let-expanded="expanded">
                         <tr>
-                            <td>{{ data.work_date }}</td>
+                            <td>{{ lemonade.formatDate(data.work_date, true) }}</td>
                             <td>{{ data.from_time }} - {{ data.to_time }}</td>
                             <td>
                                 <button *ngIf="tsEditable" pButton type="button" pTooltip="{{ 'Edit' | translate }}" tooltipPosition="bottom" class="p-button-text p-0" icon="pi pi-pencil" (click)="editWorkDate(data)"></button>
@@ -288,7 +288,7 @@
                         <h6>{{ workdateFormHeader | translate:{ name: 'Working Hours' | translate } }}</h6>
                         <div class="field col-12">
                             <label for="do-work_date">{{ 'Date' | translate }}</label>
-                            <p-calendar id="do-work_date" [(ngModel)]="trainerWorkDate" required [ngClass]="{'ng-invalid ng-dirty' : workdateSubmitted && !trainerWorkDate}" [readonlyInput]="true" inputId="do-work_date"></p-calendar>
+                            <p-calendar id="do-work_date" [(ngModel)]="trainerWorkDate" required [ngClass]="{'ng-invalid ng-dirty' : workdateSubmitted && !trainerWorkDate}" [readonlyInput]="true" inputId="do-work_date" [dateFormat]="lemonade.dateFormat"></p-calendar>
                         </div>
                         <div class="field col-12">
                             <label>{{ 'Working Hours' | translate }}</label>

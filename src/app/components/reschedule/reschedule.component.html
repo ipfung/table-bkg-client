@@ -16,7 +16,7 @@
             </div>
             <div class="field col-12 md:col-6">
                 <label for="date">{{ 'New Date' | translate }}</label>
-                <p-calendar id="date" [(ngModel)]="reschedule.date" dateFormat="dd/mm/yy" [minDate]="minDate" [maxDate]="maxDate" [showIcon]="true" [readonlyInput]="true" (onSelect)="changeDate()"></p-calendar>
+                <p-calendar id="date" [(ngModel)]="reschedule.date" [dateFormat]="lemonade.dateFormat" [minDate]="minDate" [maxDate]="maxDate" [showIcon]="true" [readonlyInput]="true" (onSelect)="changeDate()"></p-calendar>
             </div>
             <div class="field col-12 md:col-6">
                 <label for="time">{{ 'New Time' | translate }}</label>

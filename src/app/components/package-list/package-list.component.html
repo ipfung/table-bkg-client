@@ -147,7 +147,7 @@
         <div class="grid">
             <div class="field col-12 md:col-6">
                 <label for="date"><span class="required">*</span> {{ 'Start Date' | translate }}</label>
-                <p-calendar id="date" [(ngModel)]="pkg.start_date" (onSelect)="loadTime()" placeholder="{{'Select field' | translate: {field: 'Start Date' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : submitted && !pkg.start_date}"></p-calendar>
+                <p-calendar id="date" [(ngModel)]="pkg.start_date" (onSelect)="loadTime()" placeholder="{{'Select field' | translate: {field: 'Start Date' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : submitted && !pkg.start_date}" [dateFormat]="lemonade.dateFormat"></p-calendar>
                 <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.start_date">{{ 'Field is required' | translate: {field: 'Start Date' | translate} }}</small>
             </div>
 
@@ -168,7 +168,7 @@
         <div class="grid">
             <div class="field col-12 md:col-6">
                 <label for="end_date">{{ 'End Repeat' | translate }}</label>
-                <p-calendar id="end_date" [(ngModel)]="pkg.end_date" [minDate]="pkg.start_date"></p-calendar>
+                <p-calendar id="end_date" [(ngModel)]="pkg.end_date" [minDate]="pkg.start_date" [dateFormat]="lemonade.dateFormat"></p-calendar>
                 <small class="jws-tips">{{ 'Leave Empty = Never End Repeat' | translate }}</small>
             </div>
 

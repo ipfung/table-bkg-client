@@ -4,6 +4,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {MessageService} from "primeng/api";
 import {TranslateService} from "@ngx-translate/core";
 import {Subscription} from "rxjs";
+import {Lemonade} from "../../service/lemonade.service";
 
 @Component({
     selector: 'app-reschedule',
@@ -25,7 +26,7 @@ export class RescheduleComponent implements OnInit {
     success = false;
     msgs = [];
 
-    constructor(public appointmentService: AppointmentService, private route: ActivatedRoute, private router: Router, public messageService: MessageService, private translateService: TranslateService) {
+    constructor(public appointmentService: AppointmentService, public lemonade: Lemonade, private route: ActivatedRoute, private router: Router, public messageService: MessageService, private translateService: TranslateService) {
     }
 
     ngOnInit(): void {

@@ -10,7 +10,7 @@
     <!-- Search fields -->
     <div class="p-fluid grid">
         <div class="field col-12 md:col-4">
-            <p-calendar [(ngModel)]="rangeDates" selectionMode="range" [readonlyInput]="true" (onSelect)="loadData()" inputId="range"></p-calendar>
+            <p-calendar [(ngModel)]="rangeDates" selectionMode="range" [readonlyInput]="true" (onSelect)="loadData()" inputId="range" [dateFormat]="lemonade.dateFormat"></p-calendar>
         </div>
         <div class="field col-12 md:col-4">
             <p-autoComplete [(ngModel)]="userObj" [forceSelection]="true" [suggestions]="users" (completeMethod)="searchUsers($event)" (onSelect)="loadData()" field="name" placeholder="{{'Search User' | translate }}">

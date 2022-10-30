@@ -19,6 +19,7 @@ export class Lemonade {
         }
     ];
 
+    readonly dateFormat = 'dd/mm/yy';
     timeFormat = 'h:mm aa';
     readonly weeks = [
         {
