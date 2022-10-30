@@ -39,10 +39,10 @@
                         </div>
 <!--                        <a class="font-medium no-underline ml-2 text-right cursor-pointer" style="color: var(&#45;&#45;primary-color)">Forgot password?</a>-->
                     </div>
-                    <div class="text-primary mb-3" *ngIf="errorMessage">
+                    <div class="text-pink-500 mb-3" *ngIf="errorMessage">
                         {{ errorMessage | translate }}
                     </div>
-                    <button pButton pRipple label="{{ 'Sign In' | translate }}" class="w-full p-3 text-xl" (click)="onLoginClick()"></button>
+                    <button pButton pRipple label="{{ 'Sign In' | translate }}" [disabled]="submitted" class="w-full p-3 text-xl" (click)="onLoginClick()"></button>
                 </div>
             </div>
         </div>

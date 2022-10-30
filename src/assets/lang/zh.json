@@ -7,6 +7,7 @@
     "Password": "密碼",
     "Remember me": "記住我",
     "Sign In": "登入",
+    "Invalid login details": "無效的登錄信息",
     "New Booking": "新預約",
     "Dashboard Current Status": "{{room}}的現況",
     "Idle": "閒置中",

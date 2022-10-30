@@ -77,6 +77,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         }
         this.isApp = environment.isApp;
         this.subscription = this.authService.loginComplete$.subscribe(obj => {
+            this.submitted = false;
             this.errorMessage = obj.message;
         });
     }
@@ -104,7 +105,6 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
 
     onLoginClick() {
-        this.submitted = true;
         if (!this.password || this.password.trim() == '') {
             this.pwd.nativeElement.click();
             this.pwdField.nativeElement.focus();
@@ -116,12 +116,14 @@ export class LoginComponent implements OnInit, OnDestroy {
                 this.phone1.nativeElement.click();
                 return;
             }
+            this.submitted = true;
             this.authService.mobileLogin(this.login_mobile, this.password, this.isApp ? true : this.remember);
         } else {
             if (!this.login || this.login.trim() == '') {
                 this.username.nativeElement.click();
                 return;
             }
+            this.submitted = true;
             this.authService.emailLogin(this.login, this.password, this.isApp ? true : this.remember);
         }
     }
