@@ -41,7 +41,6 @@
                 <th style="width: 3rem"></th>
                 <th style="min-width:120px" pSortableColumn="name">{{ 'Trainer' | translate }} <p-sortIcon field="name"></p-sortIcon></th>
 <!--                <th style="min-width:130px" pSortableColumn="role">{{ 'Role' | translate }} <p-sortIcon field="role"></p-sortIcon></th>-->
-                <th style="min-width:80px">{{ 'Avatar' | translate }}</th>
                 <th style="min-width:130px" pSortableColumn="counter">{{ 'Student Count' | translate }} <p-sortIcon field="counter"></p-sortIcon></th>
                 <th style="min-width:150px" pSortableColumn="email">{{ 'Email' | translate }} <p-sortIcon field="email"></p-sortIcon></th>
                 <th style="min-width:90px" pSortableColumn="rating">{{ 'Reviews' | translate }} <p-sortIcon field="rating"></p-sortIcon></th>
@@ -54,13 +53,13 @@
                 <td>
                     <button type="button" pButton pRipple [pRowToggler]="user" class="p-button-text p-button-rounded p-button-plain" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
                 </td>
-                <td>{{user.name}}</td>
+                <td>
+                    <p-avatar [label]="lemonade.getInitial(user.name)" shape="circle" class="lemonade-avatar" [style]="{background: user.role.color_name}"></p-avatar>
+                    {{user.name}}
+                </td>
 <!--                <td>-->
 <!--                    <span [class]="'role-badge role-' + user.role.name" [style]="{background: user.role.color_name}">{{ user.role.name + " role" | translate }}</span>-->
 <!--                </td>-->
-                <td>
-                    <p-avatar [label]="lemonade.getInitial(user.name)" shape="circle" class="lemonade-avatar" [style]="{background: user.role.color_name}"></p-avatar>
-                </td>
                 <td>
                     {{ user.teammates.length }}
                 </td>

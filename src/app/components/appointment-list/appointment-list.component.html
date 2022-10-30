@@ -41,7 +41,7 @@
                 <th style="min-width:200px">{{ 'Table' | translate }} / {{ 'Duration' | translate }}</th>
                 <th style="min-width:120px" *ngIf="supportFinance">{{ 'Payment' | translate }}</th>
                 <th style="min-width:120px">{{ 'Status' | translate }}</th>
-                <th style="min-width:120px">{{ 'Punch In' | translate }}</th>
+                <th style="min-width:100px">{{ 'Punch In' | translate }}</th>
                 <th style="min-width:20px"></th>
             </tr>
         </ng-template>
@@ -76,9 +76,11 @@
                     <span class="booking-badge bg-purple-50 text-purple-400">{{ appointmentService.formatDateTime(appointment.start_time) }} - {{ appointmentService.formatDateTime(appointment.end_time) }}</span>
                 </td>
                 <td *ngIf="showCustomer" style="min-width:150px">
-                    <i class="pi pi-circle-fill mr-2" [style]="{color: appointment.role_color_name}"></i>
                     <span class="p-column-title">{{ 'Customer' | translate }}</span>
-                    {{ appointment.customer_name }}
+                    <div>
+                        <p-avatar [label]="lemonade.getInitial(appointment.customer_name)" shape="circle" class="lemonade-avatar" [style]="{background: appointment.role_color_name}"></p-avatar>
+                        {{ appointment.customer_name }}
+                    </div>
                 </td>
                 <td *ngIf="showTrainer" style="min-width:150px">
                     <span class="p-column-title">{{ 'Trainer' | translate }}</span>
@@ -109,7 +111,7 @@
                     <button pButton type="button" *ngIf="showCustomer" [disabled]="!isAbleApprove(appointment)" pTooltip="{{ 'Approve' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-check" (click)="approve(appointment)"></button>
                     <p-progressSpinner *ngIf="appointment.loading === true" class="row-spinner ml-2"></p-progressSpinner>
                 </td>
-                <td style="min-width:120px">
+                <td style="min-width:100px">
                     <span class="p-column-title">{{ 'Punch In' | translate }}</span>
                     <button pButton type="button" *ngIf="ableCheckin(appointment)" class="p-button-text" icon="pi pi-clock" iconPos="left" (click)="punchIn(appointment)"></button>
                     <span *ngIf="appointment.checkin">{{ appointmentService.formatDateTime(appointment.checkin) }}</span>

@@ -51,7 +51,7 @@
                 <td *ngIf="showCustomer" style="min-width:120px">
                     <span class="p-column-title">{{ 'Customer' | translate }}</span>
                     <div>
-                        <i class="pi pi-circle-fill" [style]="{color: payment.customer.role.color_name}"></i>
+                        <p-avatar [label]="lemonade.getInitial(payment.customer.name)" shape="circle" class="lemonade-avatar" [style]="{background: payment.customer.role.color_name}"></p-avatar>
                         {{ payment.customer.name }}<br />
                         <span class="text-sm text-gray-500">{{ payment.customer.email }}</span>
                     </div>
@@ -98,11 +98,13 @@
         <p-divider><b>{{ 'Customer' | translate}}</b></p-divider>
 
         <div class="grid">
-        <div class="col font-bold"><i class="pi pi-circle-fill" [style]="{color: payment.customer.role.color_name}"></i> {{ payment.customer.name }}</div>
-            <div class="col text-right">
-                <h6 class="text-gray-500">{{ payment.customer.email }}</h6>
-                <img [src]="lemonade.getAvatar(payment.customer)" [alt]="payment.customer.name" width="40" *ngIf="payment.customer.avatar">
-            </div>
+        <div class="col font-bold">
+            <p-avatar [label]="lemonade.getInitial(payment.customer.name)" shape="circle" class="lemonade-avatar" [style]="{background: payment.customer.role.color_name}"></p-avatar> {{ payment.customer.name }}
+        </div>
+        <div class="col text-right">
+            <h6 class="text-gray-500">{{ payment.customer.email }}</h6>
+<!--                <img [src]="lemonade.getAvatar(payment.customer)" [alt]="payment.customer.name" width="40" *ngIf="payment.customer.avatar">-->
+        </div>
         </div>
 
         <p-divider><b>{{ 'Order Details' | translate}}</b></p-divider>
