@@ -76,6 +76,7 @@ export class Lemonade {
     }
 
     getInitial(name) {
+        if (!name) return '';
         // or ref: https://via.placeholder.com/300.png/09f/fff
         let name1 = name
             .toUpperCase()

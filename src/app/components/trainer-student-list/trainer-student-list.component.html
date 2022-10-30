@@ -95,7 +95,7 @@
                                 <tr>
                                     <td>{{teammate.name}} / {{teammate.second_name}}</td>
                                     <td>
-                                        <p-avatar [image]="lemonade.getAvatar(teammate)" shape="circle"></p-avatar>
+                                        <p-avatar [label]="lemonade.getInitial(teammate.name)" shape="circle" class="lemonade-avatar" [style]="{background: teammate.role.color_name}"></p-avatar>
                                     </td>
                                     <td>
                                         {{ teammate.email }}
