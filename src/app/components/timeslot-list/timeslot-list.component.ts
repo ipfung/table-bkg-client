@@ -1,11 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import {ApiService} from "../../service/api.service";
 import {Lemonade} from "../../service/lemonade.service";
+import {ConfirmationService} from "primeng/api";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
-  selector: 'app-timeslot-list',
-  templateUrl: './timeslot-list.component.html',
-  styleUrls: ['./timeslot-list.component.scss']
+    selector: 'app-timeslot-list',
+    providers: [ConfirmationService],
+    templateUrl: './timeslot-list.component.html',
+    styleUrls: ['./timeslot-list.component.scss']
 })
 export class TimeslotListComponent implements OnInit {
 
@@ -30,7 +33,7 @@ export class TimeslotListComponent implements OnInit {
     daysoffFormDialog: boolean;
     offDates: Date[];
 
-    constructor(private api: ApiService, public lemonade: Lemonade) {
+    constructor(private api: ApiService, private confirmationService: ConfirmationService, private translateService: TranslateService, public lemonade: Lemonade) {
     }
 
     ngOnInit(): void {
@@ -63,9 +66,16 @@ export class TimeslotListComponent implements OnInit {
 
     copyTimeslot() {
         // copy from Monday to all other days.
-        this.api.post('api/copy-timeslots', {}).subscribe(res => {
-            if (res.success == true)
-                this.loadData();
+        this.translateService.get(['Apply to all days', 'Error']).subscribe( res => {
+            this.confirmationService.confirm({
+                message: res['Apply to all days'] + '?',
+                accept: () => {
+                    this.api.post('api/copy-timeslots', {}).subscribe(res => {
+                        if (res.success == true)
+                            this.loadData();
+                    });
+                }
+            });
         });
     }
 

@@ -6,7 +6,7 @@
                 <ng-template pTemplate="icons">
                     <!-- a fake button to beautify the toolbar --><button pButton class="p-panel-header-icon p-link" icon="pi pi-" [disabled]="true"></button>
                     <button *ngIf="col.data && col.data.length > 0 && 1 == col.code" pButton class="p-panel-header-icon p-link" icon="pi pi-copy" pTooltip="{{ 'Apply to all days' | translate }}" (click)="copyTimeslot()"></button>
-                    <button *ngIf="editable" pButton class="p-panel-header-icon p-link" icon="pi pi-plus" pTooltip="{{ 'Create' | translate }}" (click)="openNew(col.code)"></button>
+                    <button *ngIf="editable" pButton class="p-panel-header-icon p-link" icon="pi pi-plus" pTooltip="{{ 'New' | translate }}" (click)="openNew(col.code)"></button>
                 </ng-template>
                 <div class="grid mt-2" *ngIf="!isCreating(col.code); else tsform"></div>
                 <div *ngIf="col.data && col.data.length > 0; else norecord">
@@ -76,6 +76,7 @@
             </div>
         </p-tabPanel>
     </p-tabView>
+    <p-confirmDialog header="{{ 'Confirmation' | translate }}" icon="pi pi-clock"></p-confirmDialog>
 </div>
 
 <ng-template #norecord>
@@ -85,12 +86,12 @@
 <ng-template #tsform>
     <h6>{{ formHeader | translate:{ name: 'Working Hours' | translate } }}</h6>
     <div class="grid">
-        <div class="col-8">
+        <div class="col-12 md:col-8">
             <p-calendar [(ngModel)]="timeslot.from_time" dataType="string" [timeOnly]="true" [showSeconds]="false" inputId="time"></p-calendar>
             -
             <p-calendar [(ngModel)]="timeslot.to_time" dataType="string" [timeOnly]="true" [showSeconds]="false" inputId="time"></p-calendar>
         </div>
-        <div class="col-4 text-right">
+        <div class="col-12 md:col-4 text-right">
             <button pButton pRipple label="{{ 'Cancel' | translate }}" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
             <button pButton pRipple label="{{ 'Save' | translate }}" icon="pi pi-check" class="p-button-text" (click)="save()"></button>
         </div>
