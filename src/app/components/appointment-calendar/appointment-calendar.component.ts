@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ApiService} from "../../service/api.service";
 import {Lemonade} from "../../service/lemonade.service";
+import {environment} from "../../../environments/environment";
 
 @Component({
     selector: 'app-appointment-calendar',
@@ -36,14 +37,25 @@ export class AppointmentCalendarComponent implements OnInit {
         this.api.get('api/rooms').subscribe(res => {
             this.rooms = res.data;
         });
-        this.options = {
-            initialView: 'timeGridWeek',
-            initialDate : this.lemonade.formatPostDate(new Date()),
-            headerToolbar: {
-                left: 'prev,next today',
+        const isApp = environment.isApp;
+        let headerToolbar = {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        }, initialView = 'timeGridWeek';
+        if (isApp) {
+            initialView = 'timeGridDay'
+            // day view only
+            headerToolbar = {
+                left: 'prev',
                 center: 'title',
-                right: 'dayGridMonth,timeGridWeek,timeGridDay'
-            },
+                right: 'next'
+            };
+        }
+        this.options = {
+            initialView: initialView,
+            initialDate : this.lemonade.formatPostDate(new Date()),
+            headerToolbar: headerToolbar,
 
             editable: false,
             selectable: true,
