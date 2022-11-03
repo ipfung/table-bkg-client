@@ -16,6 +16,7 @@ export class AppComponent {
         this.primengConfig.ripple = true;
         document.documentElement.style.fontSize = '14px';
         this.translate.setDefaultLang('zh');
+        this.translate.get('primeng').subscribe(res => this.primengConfig.setTranslation(res));
         // console.log('lang===', this.translate.getDefaultLang());
     }
 
