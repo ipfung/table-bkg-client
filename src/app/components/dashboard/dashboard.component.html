@@ -67,7 +67,7 @@
                     <ng-template pTemplate="header">
                         <tr>
                             <th pSortableColumn="time">{{ 'Date & Time' | translate }} <p-sortIcon field="time"></p-sortIcon></th>
-                            <th *ngIf="data.showCustomerCount" pSortableColumn="trainer">{{ 'Trainer' | translate }} <p-sortIcon field="trainer"></p-sortIcon></th>
+                            <th *ngIf="data.role != 'external_coach'" pSortableColumn="trainer">{{ 'Trainer' | translate }} <p-sortIcon field="trainer"></p-sortIcon></th>
                             <th *ngIf="data.isTrainerUser" pSortableColumn="customer">{{ 'Customer' | translate }} <p-sortIcon field="customer"></p-sortIcon></th>
                             <th pSortableColumn="duration">{{ 'Duration' | translate }} <p-sortIcon field="duration"></p-sortIcon></th>
                             <th pSortableColumn="status">{{ 'Status' | translate }} <p-sortIcon field="status"></p-sortIcon></th>
@@ -87,8 +87,9 @@
                                 {{ lemonade.formatFullDateTime(appointment.start_time, true) }}
                                 <i class="ml-2 pi pi-circle-fill" [style]="{color: appointment.role_color_name}"></i>
                             </td>
-                            <td *ngIf="data.showCustomerCount" style="width: 20%; min-width: 8rem;">
-                                {{ appointment.user_name }}
+                            <td *ngIf="data.role != 'external_coach'" style="width: 20%; min-width: 8rem;">
+                                {{ appointment.user_name }} <br/>
+                                <span class="text-xs">{{ appointment.package_name }}</span>
                             </td>
                             <td *ngIf="data.isTrainerUser" style="width: 20%; min-width: 8rem;">
                                 {{ appointment.customer_name }}
@@ -126,6 +127,31 @@
                             </td>
                             <td style="width: 25%; min-width: 8rem;">
                                 <span class="text-xs user-badge status-{{ room.appointment_id > 0 ? 'banned' : 'active' }}"><i class="pi pi-circle text-xs pt-2 {{ room.appointment_id > 0 ? 'text-pink-500' : 'text-green-500' }}"></i> {{ (room.appointment_id > 0 ? 'Occupied' : 'Idle') | translate }}</span>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+            <div class="card" *ngIf="data.role == 'user' || data.role == 'member'">
+                <h5>{{ 'Remaining packages' | translate }}</h5>
+                <p-table [value]="packages" responsiveLayout="scroll">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th pSortableColumn="package_name">{{ 'Package name' | translate }}</th>
+                            <th pSortableColumn="remaining_lesson">{{ 'Total Remaining' | translate }}</th>
+                            <th pSortableColumn="expiry_date">{{ 'Expiry Date' | translate }}</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-package>
+                        <tr>
+                            <td style="width: 40%; min-width: 9rem;">
+                                {{ package.name }}
+                            </td>
+                            <td style="width: 25%; min-width: 8rem;">
+                                {{ package.remaining }} / {{ getOrderQuantity(package.recurring) }} {{ 'Lesson' | translate }}
+                            </td>
+                            <td style="width: 25%; min-width: 8rem;">
+                                {{ getOrderExpiryDate(package.recurring) }}
                             </td>
                         </tr>
                     </ng-template>

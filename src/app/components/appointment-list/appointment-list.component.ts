@@ -41,7 +41,8 @@ export class AppointmentListComponent implements OnInit {
     lessons: any[] = [];
     holidays: any[];
     packages: any[];
-    packageInfo: any;
+    selectedPackage: any;
+    minExpiryDate: Date;
 
     submitted = false;
     formDialog = false;
@@ -255,7 +256,7 @@ export class AppointmentListComponent implements OnInit {
         this.formDialog = true;
         this.prepareForForm();
         // make a new appointment information if it is empty.
-        this.packageInfo = null;
+        this.selectedPackage = null;
         this.selectedCustomerId = 0;
         this.appointment = {...this.appointmentService.defaultAppointment};
         this.appointment.isPackage = false;
@@ -305,25 +306,25 @@ export class AppointmentListComponent implements OnInit {
     }
 
     loadPackage() {
-        if (this.packageInfo && this.appointment.timeInformation.package_id != this.packageInfo.id) {
+        if (this.selectedPackage && this.appointment.timeInformation.package_id != this.selectedPackage.id) {
             this.lessons = [];
             this.holidays = undefined;
             this.appointment.timeInformation = {
                 ...this.appointment.timeInformation, ...{
-                    serviceId: this.packageInfo.service_id,
-                    trainerId: this.packageInfo.trainer_id,
-                    roomId: this.packageInfo.room_id,
-                    noOfSession: this.packageInfo.no_of_session,
-                    date: this.packageInfo.start_date ? new Date(this.packageInfo.start_date) : null,
-                    time: this.packageInfo.start_time ? this.packageInfo.start_time : null,
+                    serviceId: this.selectedPackage.service_id,
+                    trainerId: this.selectedPackage.trainer_id,
+                    roomId: this.selectedPackage.room_id,
+                    noOfSession: this.selectedPackage.no_of_session,
+                    date: this.selectedPackage.start_date ? new Date(this.selectedPackage.start_date) : null,
+                    time: this.selectedPackage.start_time ? this.selectedPackage.start_time : null,
                     status: this.statuses[0].code
                 }
             };
-            this.appointment.packageInfo = {...this.packageInfo};
-            this.appointment.packageInfo.recurring = JSON.parse(this.packageInfo.recurring).repeat;
+            this.appointment.packageInfo = {...this.selectedPackage};
+            this.appointment.packageInfo.recurring = JSON.parse(this.selectedPackage.recurring).repeat;
             this.appointment.isPackage = true;
-            this.appointment.timeInformation.package_id = this.packageInfo.id;
-            if (this.packageInfo.start_date) {
+            this.appointment.timeInformation.package_id = this.selectedPackage.id;
+            if (this.selectedPackage.start_date) {
                 this.loadPackageTime();
                 this.loadLessonDates();
             }
@@ -332,12 +333,12 @@ export class AppointmentListComponent implements OnInit {
 
     clearPackage() {
         this.appointment.timeInformation.package_id = 0;
-        this.packageInfo = null;
+        this.selectedPackage = null;
     }
 
     loadPackageTime() {
         // always to package info to load data, especially the packageInfo.start_date because timeInformation.date could be changed manually.
-        this.appointmentService.getPackageTimeslot(this.packageInfo.service_id, this.packageInfo.no_of_session, new Date(this.packageInfo.start_date)).subscribe( res => {
+        this.appointmentService.getPackageTimeslot(this.selectedPackage.service_id, this.selectedPackage.no_of_session, new Date(this.selectedPackage.start_date)).subscribe(res => {
             this.times = res.data;
             this.appointment.timeInformation.sessionInterval = res.sessionInterval;
         });
@@ -346,7 +347,7 @@ export class AppointmentListComponent implements OnInit {
     loadTime(e) {
         const customer = this.appointment.customer;
         if (customer && this.selectedCustomerId !== customer.id) {
-            if (customer.settings && customer.settings.trainer && !this.packageInfo) {
+            if (customer.settings && customer.settings.trainer && !this.selectedPackage) {
                 const settings = customer.settings;
                 this.translateService.get(['Is it a trainer course?', 'Error']).subscribe( res => {
                     this.confirmationService.confirm({
@@ -371,7 +372,7 @@ export class AppointmentListComponent implements OnInit {
             this.appointment.timeInformation.customerId = customer.id;
             this.selectedCustomerId = customer.id;
         }
-        if (this.packageInfo && this.packageInfo.start_time) {
+        if (this.selectedPackage && this.selectedPackage.start_time) {
             this.loadPackageTime();
             return;
         }
@@ -390,7 +391,7 @@ export class AppointmentListComponent implements OnInit {
                     this.times = res.data[0].freeslots;
                     this.appointment.timeInformation.sessionInterval = res.sessionInterval;
                 }
-                if (!this.packageInfo) {
+                if (!this.selectedPackage) {
                     // reset for non-package.
                     this.appointment.timeInformation.time = undefined;
                     if (this.appointment.paymentInformation.commission <= 0)
@@ -437,11 +438,13 @@ export class AppointmentListComponent implements OnInit {
         }).subscribe(res => {
             this.lessons = res.data;
             this.holidays = res.holidays;
-            if (!this.packageInfo) {
+            if (!this.selectedPackage) {
                 this.appointment.packageInfo.price = this.appointment.packageInfo.quantity * this.appointment.paymentInformation.price;
                 if (this.appointment.paymentInformation.commission > 0) {
                     this.appointment.packageInfo.commission = this.appointment.packageInfo.quantity * this.appointment.paymentInformation.commission;
                 }
+            } else {
+                this.minExpiryDate = new Date(this.lessons[this.lessons.length-1].date);
             }
         });
     }
@@ -485,7 +488,14 @@ export class AppointmentListComponent implements OnInit {
             });
             data = {...data, ...{
                     is_package: true,
-                    recurring: {cycle: 'weekly', quantity: packageInfo.quantity, repeat: packageInfo.recurring},
+                    recurring: {
+                        cycle: 'weekly',
+                        start_date: this.lemonade.formatPostDate(timeInfo.date),
+                        // end_date = package expiry date, nullable.
+                        end_date: packageInfo.end_date ? this.lemonade.formatPostDate(packageInfo.end_date) : null,
+                        quantity: packageInfo.quantity,
+                        repeat: packageInfo.recurring
+                    },
                     lesson_dates: lessonDates,
                     repeatable: packageInfo.repeatable,
                     package_amount: packageInfo.price,
@@ -510,7 +520,7 @@ export class AppointmentListComponent implements OnInit {
                 me.holidays = undefined;
                 me.lessons = undefined;
                 me.selectedCustomerId = 0;
-                me.packageInfo = undefined;
+                me.selectedPackage = undefined;
             } else {
                 me.messageService.add({
                     severity: 'error',

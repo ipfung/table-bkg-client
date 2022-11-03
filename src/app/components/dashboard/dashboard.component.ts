@@ -19,11 +19,14 @@ export class DashboardComponent implements OnInit {
 
     rooms = [];
 
+    packages = [];
+
     data = {
         showBookingCount: false,
         totalBooking: 0,
         totalFutureBooking: 0,
         showCustomerCount: false,
+        showPackagesCount: false,
         totalSales: 0,
         totalUnpaid: 0,
         showSalesChart: false,
@@ -31,7 +34,8 @@ export class DashboardComponent implements OnInit {
         showUnknown: false,
         showUpcomingAppointments: false,
         showNotifications: false,
-        isTrainerUser: false
+        isTrainerUser: false,
+        role: 'abc'
     };
 
     chartData: any;
@@ -72,6 +76,7 @@ export class DashboardComponent implements OnInit {
             if (res.showUpcomingAppointments) {
                 this.appointments = res.appointments;
             }
+            this.packages = res.reminingPackages;
             if (res.showSalesChart) {
                 this.translateService.get(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun', 'This Week', 'Last Week']).subscribe( str => {
                     this.chartData = {
@@ -107,6 +112,20 @@ export class DashboardComponent implements OnInit {
         if(this.subscription){
             this.subscription.unsubscribe();
         }
+    }
+
+    getOrderQuantity(recurringStr) {
+        const recurring = JSON.parse(recurringStr);
+        if (recurring.quantity)
+            return recurring.quantity;
+        return 'na';
+    }
+
+    getOrderExpiryDate(recurringStr) {
+        const recurring = JSON.parse(recurringStr);
+        if (recurring.end_date)
+            return this.lemonade.formatDate(recurring.end_date, true);
+        return '';
     }
 
     updateChartOptions() {
