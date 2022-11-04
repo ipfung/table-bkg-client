@@ -89,7 +89,7 @@
                             </td>
                             <td *ngIf="data.role != 'external_coach'" style="width: 20%; min-width: 8rem;">
                                 {{ appointment.user_name }} <br/>
-                                <span class="text-xs">{{ appointment.package_name }}</span>
+                                <span class="booking-badge bg-blue-50 text-blue-400 text-xs">{{ appointment.package_name }}</span>
                             </td>
                             <td *ngIf="data.isTrainerUser" style="width: 20%; min-width: 8rem;">
                                 {{ appointment.customer_name }}
@@ -145,12 +145,13 @@
                     <ng-template pTemplate="body" let-package>
                         <tr>
                             <td style="width: 40%; min-width: 9rem;">
-                                {{ package.name }}
+                                <span class="booking-badge bg-blue-50 text-blue-400">{{ package.name }}</span>
                             </td>
-                            <td style="width: 25%; min-width: 8rem;">
-                                {{ package.remaining }} / {{ getOrderQuantity(package.recurring) }} {{ 'Lesson' | translate }}
+                            <td style="width: 35%; min-width: 8rem;">
+                                <span class="booking-badge bg-gray-50 text-gray-400"><span class="font-bold text-pink-500">{{ package.remaining }}</span> / {{ getOrderQuantity(package.recurring) }} {{ 'Lesson' | translate }}</span>
+                                <div class="text-xs">{{ 'Last lesson on' | translate }}: {{ lemonade.formatDate(package.last_lesson_date, true) }}</div>
                             </td>
-                            <td style="width: 25%; min-width: 8rem;">
+                            <td style="width: 25%; min-width: 3rem;">
                                 {{ getOrderExpiryDate(package.recurring) }}
                             </td>
                         </tr>
