@@ -144,6 +144,13 @@ export class PackageListComponent implements OnInit {
             }
         };
         this.loadTime();
+        // load old lesson dates from appointments.
+        this.lessons = [];
+        for (const obj in pkg.appointments) {
+            this.lessons.push({
+                date: pkg.appointments[obj].start_time.substr(0, 10)
+            });
+        }
         this.formDialog = true;
     }
 

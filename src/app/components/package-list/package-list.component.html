@@ -50,7 +50,7 @@
                 <td style="min-width:150px">
                     <span class="p-column-title">{{ 'Price' | translate }} / {{ 'No. of Appointments' | translate }}</span>
                     <div>
-                        {{ pkg.price | currency:'HK$' }} / {{ pkg.quantity }}
+                        {{ pkg.price | currency:'HK$' }} / {{ pkg.quantity }} {{ 'Lesson' | translate }}
                     </div>
                 </td>
                 <td style="min-width:120px">
@@ -70,6 +70,19 @@
 
 <p-dialog [(visible)]="formDialog" [style]="{width:'50em', height: '100vh'}" header="{{ formHeader | translate:{name: 'Packages' | translate} }}" position="right" [modal]="true" class="p-fluid">
     <ng-template pTemplate="content">
+
+        <div class="field">
+            <label for="status">{{ 'Status' | translate }}</label>
+            <p-dropdown id="status" [options]="statuses" optionValue="code" [(ngModel)]="pkg.status" placeholder="{{'Select field' | translate: {field: 'Status' | translate} }}">
+                <ng-template pTemplate="selectedItem">
+                    {{ lemonade.comboRenderer(statuses, pkg.status) | translate }}
+                </ng-template>
+                <ng-template let-item pTemplate="item">
+                    {{ item.name | translate }}
+                </ng-template>
+            </p-dropdown>
+        </div>
+
         <div class="field">
             <label for="name"><span class="required">*</span> {{ 'Package Name' | translate }}</label>
             <input type="text" pInputText id="name" [(ngModel)]="pkg.name" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !pkg.name}"/>
@@ -109,9 +122,14 @@
             </p-dropdown>
             <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.trainer_id">{{ 'Field is required' | translate: {field: 'Trainer' | translate} }}</small>
         </div>
+
+        <p-divider align="center">
+            <span class="p-tag">{{ 'Below fields will be disabled once saved.' | translate }}</span>
+        </p-divider>
+
         <div class="field">
             <label for="dow"><span class="required">*</span> {{ 'Day of Week' | translate }}</label>
-            <p-selectButton id="dow" [options]="day_of_weeks" [(ngModel)]="pkg.recurring.repeat" optionLabel="name" optionValue="code" [multiple]="true" [ngClass]="{'ng-invalid ng-dirty' : submitted && pkg.recurring.repeat.length == 0}">
+            <p-selectButton id="dow" [disabled]="pkg.id > 0" [options]="day_of_weeks" [(ngModel)]="pkg.recurring.repeat" optionLabel="name" optionValue="code" [multiple]="true" [ngClass]="{'ng-invalid ng-dirty' : submitted && pkg.recurring.repeat.length == 0}">
                 <ng-template let-item>
                     <span class="w-full text-center">{{ item.name | translate }}</span>
                 </ng-template>
@@ -120,7 +138,7 @@
         </div>
         <div class="field">
             <label for="duration"><span class="required">*</span> {{ 'Duration' | translate }}</label>
-            <p-dropdown id="duration" [options]="sessions" [(ngModel)]="pkg.no_of_session" optionValue="code" [ngClass]="{'ng-invalid ng-dirty' : submitted && !pkg.no_of_session}">
+            <p-dropdown id="duration" [disabled]="pkg.id > 0" [options]="sessions" [(ngModel)]="pkg.no_of_session" optionValue="code" [ngClass]="{'ng-invalid ng-dirty' : submitted && !pkg.no_of_session}">
                 <ng-template pTemplate="selectedItem">
                     {{ appointmentService.getSessionName(pkg.no_of_session, sessions) }}
                 </ng-template>
@@ -135,25 +153,25 @@
         <div class="grid">
             <div class="field col-12 md:col-6">
                 <label for="lesson_number"><span class="required">*</span> {{ 'No. of Appointments' | translate }}</label>
-                <p-inputNumber id="lesson_number" [(ngModel)]="pkg.quantity" mode="decimal" [showButtons]="true" inputId="minmax-buttons" [min]="1" [max]="30"></p-inputNumber>
+                <p-inputNumber id="lesson_number" [disabled]="pkg.id > 0" [(ngModel)]="pkg.quantity" mode="decimal" [showButtons]="true" inputId="minmax-buttons" [min]="1" [max]="30"></p-inputNumber>
                 <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.quantity">{{ 'Field is required' | translate: {field: 'No. of Appointments' | translate} }}</small>
             </div>
             <div class="field col-12 md:col-6">
                 <label for="price"><span class="required">*</span> <b>{{ 'Price' | translate }}</b></label>
-                <p-inputNumber id="price" [(ngModel)]="pkg.price" mode="currency" currency="HKD" locale="zh-HK" [ngClass]="{'ng-invalid ng-dirty' : submitted && !pkg.price}"></p-inputNumber>
+                <p-inputNumber id="price" [disabled]="pkg.id > 0" [(ngModel)]="pkg.price" mode="currency" currency="HKD" locale="zh-HK" [ngClass]="{'ng-invalid ng-dirty' : submitted && !pkg.price}"></p-inputNumber>
                 <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.price">{{ 'Field is required' | translate: {field: 'Price' | translate} }}</small>
             </div>
         </div>
         <div class="grid">
             <div class="field col-12 md:col-6">
                 <label for="date"><span class="required">*</span> {{ 'Start Date' | translate }}</label>
-                <p-calendar id="date" [(ngModel)]="pkg.start_date" (onSelect)="loadTime()" placeholder="{{'Select field' | translate: {field: 'Start Date' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : submitted && !pkg.start_date}" [dateFormat]="lemonade.dateFormat"></p-calendar>
+                <p-calendar id="date" [disabled]="pkg.id > 0" [(ngModel)]="pkg.start_date" (onSelect)="loadTime()" placeholder="{{'Select field' | translate: {field: 'Start Date' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : submitted && !pkg.start_date}" [dateFormat]="lemonade.dateFormat"></p-calendar>
                 <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.start_date">{{ 'Field is required' | translate: {field: 'Start Date' | translate} }}</small>
             </div>
 
             <div class="field col-12 md:col-6">
                 <label for="time"><span class="required">*</span> {{ 'Start Time' | translate }}</label>
-                <p-dropdown id="time" [disabled]="times.length == 0" [options]="times" [(ngModel)]="pkg.start_time" optionValue="time" (onClick)="loadLessonDates()" placeholder="{{'Select field' | translate: {field: 'Time' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : submitted && !pkg.start_time}">
+                <p-dropdown id="time" [disabled]="times.length == 0 || pkg.id > 0" [options]="times" [(ngModel)]="pkg.start_time" optionValue="time" (onClick)="loadLessonDates()" placeholder="{{'Select field' | translate: {field: 'Time' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : submitted && !pkg.start_time}">
                     <ng-template pTemplate="selectedItem">
                         {{ pkg.start_time ? this.appointmentService.formatTime(pkg.start_time) : '' }}
                     </ng-template>
@@ -164,6 +182,10 @@
                 <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.start_time">{{ 'Field is required' | translate: {field: 'Start Time' | translate} }}</small>
             </div>
         </div>
+
+        <p-divider align="center">
+            <span class="p-tag">{{ 'Above fields will be disabled once saved.' | translate }}</span>
+        </p-divider>
 
         <div class="grid">
             <div class="field col-12 md:col-6">
@@ -207,18 +229,6 @@
                 </ng-template>
             </p-table>
             <div class="mt-2 text-xs" *ngIf="holidays">{{ 'Skipped holidays' | translate:{ days: holidays.length } }}: <span class="booking-badge bg-pink-50 text-pink-400 mr-2" *ngFor="let holiday of holidays">{{ lemonade.formatDate(holiday.date, true) }}</span></div>
-        </div>
-
-        <div class="field">
-            <label for="status">{{ 'Status' | translate }}</label>
-            <p-dropdown id="status" [options]="statuses" optionValue="code" [(ngModel)]="pkg.status" placeholder="{{'Select field' | translate: {field: 'Status' | translate} }}">
-                <ng-template pTemplate="selectedItem">
-                    {{ lemonade.comboRenderer(statuses, pkg.status) | translate }}
-                </ng-template>
-                <ng-template let-item pTemplate="item">
-                    {{ item.name | translate }}
-                </ng-template>
-            </p-dropdown>
         </div>
 
     </ng-template>

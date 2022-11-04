@@ -397,7 +397,9 @@ export class AppointmentService {
     }
 
     getBookedDateTime(date, timeEpoch, sessionInterval, noOfSession) {
-        return this.formatTime(timeEpoch, date) + " - " + this.formatTime(parseInt(timeEpoch, 10) + (noOfSession * sessionInterval));
+        if (date && timeEpoch && sessionInterval && noOfSession)
+            return this.formatTime(timeEpoch, date) + " - " + this.formatTime(parseInt(timeEpoch, 10) + (noOfSession * sessionInterval));
+        return '';
     }
 
     getSessionName(noOfSession, tableSessions?) {
