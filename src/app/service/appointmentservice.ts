@@ -312,8 +312,8 @@ export class AppointmentService {
         return this.api.get('api/appointment', params);
     }
 
-    getTrainerNonWorkDates(year, month) {
-        return this.api.get('api/trainer-non-workdate/' + this.getAppointmentInformation().timeInformation.trainerId, {
+    getTrainerNonWorkDates(trainerId, year, month) {
+        return this.api.get('api/trainer-non-workdate/' + trainerId, {
             y: year,
             m: month
         });
