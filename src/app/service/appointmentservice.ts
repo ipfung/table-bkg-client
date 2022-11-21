@@ -220,10 +220,16 @@ export class AppointmentService {
         return this.appointmentInformation;
     }
 
-    getRescheduleTimeslots() {
-        return this.api.get('api/appointment', {
+    getRescheduleTimeslots(trainerDate?) {
+        let params = {
             bookId: this.reschedule.bookId
-        });
+        };
+        if (trainerDate) {
+            params = {...params, ...{
+                the_date: this.lemonade.formatPostDate(trainerDate)
+            }};
+        }
+        return this.api.get('api/appointment', params);
     }
 
     getRooms() {
