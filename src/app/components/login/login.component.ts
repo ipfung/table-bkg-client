@@ -40,6 +40,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     valCheck: string[] = ['remember'];
 
     logo: string;
+    appNames: string[];
 
     loginMethod: string = 'email';
 
@@ -76,6 +77,9 @@ export class LoginComponent implements OnInit, OnDestroy {
             this.login = await this.authService.loginId();
         }
         this.isApp = environment.isApp;
+        this.api.get('api/lemonade').subscribe(res => {
+            this.appNames = res.name.split('-');
+        });
         this.subscription = this.authService.loginComplete$.subscribe(obj => {
             this.errorMessage = obj.message;
         });
