@@ -53,7 +53,9 @@ export class AppointmentListComponent implements OnInit {
     submitting: boolean;
     selectedCustomerId = 0;
 
-    constructor(public appointmentService: AppointmentService, private router: Router, private confirmationService: ConfirmationService, public messageService: MessageService, private translateService: TranslateService, public lemonade: Lemonade) {
+    timeslotSetting: string;
+
+    constructor(public appointmentService: AppointmentService, private router: Router, private confirmationService: ConfirmationService, public messageService: MessageService, private translateService: TranslateService, private lemonade: Lemonade) {
     }
 
     ngOnInit(): void {
@@ -86,6 +88,7 @@ export class AppointmentListComponent implements OnInit {
                 this.requiredTrainer = res.requiredTrainer;
                 this.supportPackages = res.supportPackages;
                 this.supportFinance = res.supportFinance;
+                this.timeslotSetting = res.timeslotSetting;
                 this.loading = false;
             });
         }
@@ -163,6 +166,7 @@ export class AppointmentListComponent implements OnInit {
     }
 
     reschedule(appointment) {
+        appointment.timeslotSetting = this.timeslotSetting;
         this.appointmentService.reschedule.appointment = appointment;
         this.router.navigate(['/reschedule', appointment.id]);
     }
