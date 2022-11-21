@@ -29,6 +29,7 @@ export class BookingFormComponent implements OnInit {
     timeslotSetting: string;
     selectedDate: Date;
     nonWorkingDates: Date[];
+    trainerTsLoading: boolean;
 
     constructor(public appointmentService: AppointmentService, private authService: AuthService, private router: Router) {
     }
@@ -66,19 +67,19 @@ export class BookingFormComponent implements OnInit {
     }
 
     loadTrainerTimeslotByDate(d) {
-        console.log('d===', d);
+        this.trainerTsLoading = true;
         let appointmentInfo = this.appointmentService.getAppointmentInformation();   // note!! can call getAppointmentInformation() in each function, otherwise will not store data.
         appointmentInfo.timeInformation.trainerDate = d;
         this.appointmentService.getTimeslots().subscribe(res => {
             this.timeSlots = res['data'];
             this.timeInformation.sessionInterval = res['sessionInterval'];
+            this.trainerTsLoading = false;
         });
-
     }
 
     loadTrainerNonWorkDates(e) {
+        this.loading = true;
         this.appointmentService.getTrainerNonWorkDates(e.year, e.month).subscribe(res => {
-            console.log('dates=', res);
             this.nonWorkingDates = [];
             for (let i=0; i<res.length; i++) {
                 this.nonWorkingDates.push(new Date(res[i]));
