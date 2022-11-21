@@ -315,6 +315,11 @@ export class AppointmentService {
                 }};
             }
         }
+        if (this.selectedService.requiredRoom && this.appointmentInformation.timeInformation.roomId) {
+            params = {...params, ...{
+                room_id: this.appointmentInformation.timeInformation.roomId
+            }};
+        }
         return this.api.get('api/appointment', params);
     }
 
