@@ -40,7 +40,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     valCheck: string[] = ['remember'];
 
     logo: string;
-    appNames: string[];
+    appNames: string[] = ['Appointment System', 'Lemonade'];
 
     loginMethod: string = 'email';
 
