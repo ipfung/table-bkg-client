@@ -193,7 +193,9 @@ export class TrainerStudentListComponent implements OnInit {
         this.timeslot = {
             trainer_id: this.trainer.id,
             location_id: 1,
-            day_idx: weekDay
+            day_idx: weekDay,
+            from_time: '09:00',
+            to_time: '18:00'
         };
         this.tsSubmitted = false;
         this.tsFormDialog = true;
@@ -264,7 +266,9 @@ export class TrainerStudentListComponent implements OnInit {
         this.workdateFormHeader = "Create Form";
         this.workDate = {
             location_id: 1,
-            trainer_id: this.trainer.id
+            trainer_id: this.trainer.id,
+            from_time: '09:00',
+            to_time: '18:00'
         };
         this.trainerWorkDate = null;
         this.workdateSubmitted = false;

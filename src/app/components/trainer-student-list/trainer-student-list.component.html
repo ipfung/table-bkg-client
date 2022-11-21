@@ -206,13 +206,13 @@
                     <h6>{{ tsFormHeader | translate:{ name: 'Working Hours' | translate } }}</h6>
                     <div class="grid grid-nogutter flex mb-3">
                         <div class="col-2">
-                            <p-calendar [(ngModel)]="timeslot.from_time" dataType="string" [timeOnly]="true" [showSeconds]="false" inputId="time1"></p-calendar>
+                            <p-calendar [(ngModel)]="timeslot.from_time" dataType="string" [timeOnly]="true" [showSeconds]="false" [stepMinute]="5" inputId="time1"></p-calendar>
                         </div>
                         <div class="col-1 text-right flex align-items-center justify-content-center">
                             -
                         </div>
                         <div class="col-2">
-                            <p-calendar [(ngModel)]="timeslot.to_time" dataType="string" [timeOnly]="true" [showSeconds]="false" inputId="time2"></p-calendar>
+                            <p-calendar [(ngModel)]="timeslot.to_time" dataType="string" [timeOnly]="true" [showSeconds]="false" [stepMinute]="5" inputId="time2"></p-calendar>
                         </div>
                         <div class="col-2"></div>
                         <div class="col-2 text-right">
@@ -264,9 +264,9 @@
                         <div class="field col-12">
                             <label>{{ 'Working Hours' | translate }}</label>
                             <div class="flex">
-                                <p-calendar [(ngModel)]="workDate.from_time" dataType="string" [timeOnly]="true" [showSeconds]="false" inputId="time1"></p-calendar>
+                                <p-calendar [(ngModel)]="workDate.from_time" dataType="string" [timeOnly]="true" [showSeconds]="false" [stepMinute]="15" inputId="time1"></p-calendar>
                                 <span> {{ 'to' | translate }} </span>
-                                <p-calendar [(ngModel)]="workDate.to_time" dataType="string" [timeOnly]="true" [showSeconds]="false" inputId="time2"></p-calendar>
+                                <p-calendar [(ngModel)]="workDate.to_time" dataType="string" [timeOnly]="true" [showSeconds]="false" [stepMinute]="15" inputId="time2"></p-calendar>
                             </div>
                         </div>
                     </div>
