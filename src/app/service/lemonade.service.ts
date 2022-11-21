@@ -175,7 +175,8 @@ export class Lemonade {
                 // use code.
                 data = list.find(el => el.code == code);
             }
-            return data.name;
+            if (data)
+                return data.name;
         }
         return '';
     }
