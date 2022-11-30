@@ -138,9 +138,14 @@
                     </p-dropdown>
                 </div>
 
+                <div class="field" *ngIf="timeslotSetting == 'trainer_date'">
+                    <label for="buffer_time">{{ 'Buffer Time' | translate }} <i pTooltip="{{ 'Buffer time between appointment' | translate }}" tooltipPosition="top" class="pi pi-question-circle jws-tips"></i></label>
+                    <p-inputNumber id="buffer_time" [(ngModel)]="trainer.settings.buffer_time" suffix=" mins" mode="decimal" [showButtons]="true" inputId="buffer_time" [min]="0" [max]="120" [step]="5"></p-inputNumber>
+                </div>
+
                 <div class="field">
                     <label for="status">{{ 'Status' | translate }}</label>
-                    <p-dropdown id="status" [options]="statuses" optionValue="code" [(ngModel)]="trainer.status" placeholder="Select a Status">
+                    <p-dropdown id="status" [options]="statuses" optionValue="code" [(ngModel)]="trainer.status" placeholder="{{ 'Select a Status' | translate }}">
                         <ng-template pTemplate="selectedItem">
                             {{ lemonade.comboRenderer(statuses, trainer.status) | translate }}
                         </ng-template>
