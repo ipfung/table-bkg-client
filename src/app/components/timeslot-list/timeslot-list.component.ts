@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import {ApiService} from "../../service/api.service";
 import {Lemonade} from "../../service/lemonade.service";
-import {ConfirmationService} from "primeng/api";
+import {ConfirmationService, MessageService} from "primeng/api";
 import {TranslateService} from "@ngx-translate/core";
 
 @Component({
     selector: 'app-timeslot-list',
-    providers: [ConfirmationService],
+    providers: [MessageService, ConfirmationService],
     templateUrl: './timeslot-list.component.html',
     styleUrls: ['./timeslot-list.component.scss']
 })
@@ -33,7 +33,7 @@ export class TimeslotListComponent implements OnInit {
     daysoffFormDialog: boolean;
     offDates: Date[];
 
-    constructor(private api: ApiService, private confirmationService: ConfirmationService, private translateService: TranslateService, public lemonade: Lemonade) {
+    constructor(private api: ApiService, private confirmationService: ConfirmationService, private translateService: TranslateService, private messageService: MessageService, public lemonade: Lemonade) {
     }
 
     ngOnInit(): void {
@@ -156,6 +156,32 @@ export class TimeslotListComponent implements OnInit {
 
     hideDaysoffDialog() {
         this.daysoffFormDialog = false;
+    }
+
+    deleteDaysoff() {
+        this.translateService.get(['Are you sure to delete?', 'The record is deleted successfully.', 'Warning', 'Error']).subscribe( msg => {
+            this.confirmationService.confirm({
+                message: msg['Are you sure to delete?'],
+                accept: () => {
+                    this.api.delete('api/daysoff/' + this.daysoff.id).subscribe(res => {
+                        if (res.success == true) {
+                            this.loadDaysoffData();
+                            this.hideDaysoffDialog();
+                            this.messageService.add({
+                                severity: 'success',
+                                summary: msg['The record is deleted successfully.']
+                            });
+                        } else {
+                            this.messageService.add({
+                                severity: 'error',
+                                summary: msg['Error'],
+                                detail: res.error
+                            });
+                        }
+                    });
+                }
+            });
+        });
     }
 
     saveDaysoff() {
