@@ -496,7 +496,7 @@ export class AppointmentListComponent implements OnInit {
                         cycle: 'weekly',
                         start_date: this.lemonade.formatPostDate(timeInfo.date),
                         // end_date = package expiry date, nullable.
-                        end_date: packageInfo.end_date ? this.lemonade.formatPostDate(packageInfo.end_date) : null,
+                        end_date: (packageInfo.end_date && packageInfo.end_date instanceof Date) ? this.lemonade.formatPostDate(packageInfo.end_date) : null,
                         quantity: packageInfo.quantity,
                         repeat: packageInfo.recurring
                     },
