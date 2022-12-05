@@ -242,7 +242,7 @@
         </div>
 
         <div class="grid" *ngIf="supportFinance">
-            <div class="field col-12 md:col-6">
+            <div class="field col-12 md:col-6" *ngIf="!selectedPackage">
                 <label>{{ 'Unit Price' | translate }}</label>
                 <p><b>{{ appointment.paymentInformation.price | currency:'HK$' }}</b></p>
             </div>
