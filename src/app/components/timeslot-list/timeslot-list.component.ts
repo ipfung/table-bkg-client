@@ -168,7 +168,8 @@ export class TimeslotListComponent implements OnInit {
             return;
         }
         this.daysoff.start_date = this.lemonade.formatPostDate(this.offDates[0]);
-        this.daysoff.end_date = this.lemonade.formatPostDate(this.offDates[1]);
+        if (this.offDates[1] instanceof Date)
+            this.daysoff.end_date = this.lemonade.formatPostDate(this.offDates[1]);
         if (this.daysoff.id > 0) {
             call = this.api.update('api/daysoff/' + this.daysoff.id, this.daysoff);
         } else {
