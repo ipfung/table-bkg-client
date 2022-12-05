@@ -3,10 +3,12 @@ import {ApiService} from "../../service/api.service";
 import {AuthService} from "../../service/auth.service";
 import {Lemonade} from "../../service/lemonade.service";
 import {ActivatedRoute} from "@angular/router";
-import {LazyLoadEvent} from "primeng/api";
+import {ConfirmationService, LazyLoadEvent, MessageService} from "primeng/api";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
     selector: 'app-user-list',
+    providers: [MessageService, ConfirmationService],
     templateUrl: './user-list.component.html',
     styleUrls: ['./user-list.component.scss']
 })
@@ -46,7 +48,7 @@ export class UserListComponent implements OnInit {
 
     private subscription;
 
-    constructor(private route: ActivatedRoute, private api: ApiService, public authService: AuthService, public lemonade: Lemonade) {
+    constructor(private route: ActivatedRoute, private api: ApiService, public authService: AuthService, private translateService: TranslateService, private messageService: MessageService, private confirmationService: ConfirmationService, public lemonade: Lemonade) {
         this.route.params.subscribe(params => {
             this.paramRole = params['role'] || 'Student';
         });
@@ -208,6 +210,32 @@ export class UserListComponent implements OnInit {
             failed = (!this.partner.password);
         }
         return !failed;
+    }
+
+    delete() {
+        this.translateService.get(['Are you sure to delete?', 'The record is deleted successfully.', 'Warning', 'Error']).subscribe( msg => {
+            this.confirmationService.confirm({
+                message: msg['Are you sure to delete?'],
+                accept: () => {
+                    this.api.delete('api/users/' + this.partner.id).subscribe(res => {
+                        if (res.success == true) {
+                            this.loadData(null);
+                            this.hideDialog();
+                            this.messageService.add({
+                                severity: 'success',
+                                summary: msg['The record is deleted successfully.']
+                            });
+                        } else {
+                            this.messageService.add({
+                                severity: 'error',
+                                summary: msg['Error'],
+                                detail: res.error
+                            });
+                        }
+                    });
+                }
+            });
+        });
     }
 
     save() {

@@ -110,7 +110,10 @@
     </p-table>
 </div>
 
+<p-toast></p-toast>
+
 <p-dialog [(visible)]="formDialog" [style]="{width:'50em', height: '100vh'}" header="{{ formHeader | translate:{name: 'User' | translate} }}" position="right" [modal]="true" class="p-fluid">
+    <p-confirmDialog header="{{ 'Confirmation' | translate }}" icon="pi pi-clock"></p-confirmDialog>
     <ng-template pTemplate="content">
         <div class="field">
             <label for="name"><span class="required">*</span> {{ 'Name' | translate }}</label>
@@ -218,7 +221,14 @@
     </ng-template>
 
     <ng-template pTemplate="footer">
-        <button pButton pRipple label="{{ 'Cancel' | translate }}" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
-        <button pButton pRipple label="{{ 'Save' | translate }}" icon="pi pi-check" class="p-button-text" (click)="save()"></button>
+        <div class="grid grid-nogutter justify-content-between ng-star-inserted">
+            <div>
+                <button *ngIf="partner.id > 0 && this.editable" pButton pRipple label="{{ 'Delete' | translate }}" icon="pi pi-trash" class="p-button-text" (click)="delete()"></button>
+            </div>
+            <div>
+                <button pButton pRipple label="{{ 'Cancel' | translate }}" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+                <button *ngIf="this.editable" pButton pRipple label="{{ 'Save' | translate }}" icon="pi pi-check" class="p-button-text" (click)="save()"></button>
+            </div>
+        </div>
     </ng-template>
 </p-dialog>
