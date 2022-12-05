@@ -105,7 +105,7 @@ export class AppointmentListComponent implements OnInit {
     }
 
     isPaid(appointment) {
-        return appointment.payment_status === 'paid' && this.showCustomer == false;
+        return appointment.payment_status === 'paid';
     }
 
     makePayment(appointment) {
