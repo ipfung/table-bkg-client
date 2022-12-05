@@ -55,7 +55,7 @@ export class AppointmentListComponent implements OnInit {
 
     timeslotSetting: string;
 
-    constructor(public appointmentService: AppointmentService, private router: Router, private confirmationService: ConfirmationService, public messageService: MessageService, private translateService: TranslateService, private lemonade: Lemonade) {
+    constructor(public appointmentService: AppointmentService, private router: Router, private confirmationService: ConfirmationService, public messageService: MessageService, private translateService: TranslateService, public lemonade: Lemonade) {
     }
 
     ngOnInit(): void {
@@ -116,7 +116,7 @@ export class AppointmentListComponent implements OnInit {
         const start_time = new Date(booking.start_time);
         const hour_ago = subHours(start_time, 1);
         // check is now between 1 hour before of start time and start time itself.
-        return !booking.checkin && isWithinInterval(new Date(), { start: hour_ago, end: new Date(booking.end_time) });
+        return !booking.loading && !booking.checkin && isWithinInterval(new Date(), { start: hour_ago, end: new Date(booking.end_time) });
     }
 
     punchIn(booking) {
@@ -137,8 +137,8 @@ export class AppointmentListComponent implements OnInit {
                                     detail: res.error
                                 });
                             }
+                            booking.loading = false;
                         });
-                        booking.loading = false;
                     }
                 });
             });
