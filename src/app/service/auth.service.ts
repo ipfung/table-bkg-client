@@ -16,6 +16,7 @@ export class AuthService {
     static readonly AVATAR = 'lemonade-avatar';
     static readonly AVATAR_COLOR = 'lemonade-avatar-color';
     static readonly PID = 'lemonade-pid';   //push notification
+    static readonly APPOINTMENT_BTN = 'lemonade-show-apt-btn';
 
     private loginComplete = new Subject<any>();
     private logoutComplete = new Subject<any>();
@@ -51,6 +52,10 @@ export class AuthService {
 
     async avatarColor() {
         return get(AuthService.AVATAR_COLOR);
+    }
+
+    async appointmentButton() {
+        return get(AuthService.APPOINTMENT_BTN);
     }
 
     mobileLogin(login: string, passord: string, remem: boolean): void {
@@ -111,6 +116,7 @@ export class AuthService {
         set(AuthService.EMAIL, res.email);
         set(AuthService.AVATAR, res.avatar);
         set(AuthService.AVATAR_COLOR, res.color);
+        set(AuthService.APPOINTMENT_BTN, res.appointment_btn);
     }
 
     async logOut() {

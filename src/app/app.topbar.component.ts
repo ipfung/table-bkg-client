@@ -15,6 +15,7 @@ import {Lemonade} from "./service/lemonade.service";
 export class AppTopBarComponent implements OnInit {
     userName: string;
     userNameBg: string;
+    showAppointmentButton: boolean;
 
     items: MenuItem[];
 
@@ -30,6 +31,8 @@ export class AppTopBarComponent implements OnInit {
         this.avatar = await this.authService.avatar();
         this.userName = await this.authService.userName();
         this.userNameBg = await this.authService.avatarColor();
+        const btn = await this.authService.appointmentButton();
+        this.showAppointmentButton = (btn === 'true');
         this.subscription = this.dashboardService.notifications$.subscribe(counter => {
             this.notificationsBadge = counter;
         });
