@@ -216,8 +216,7 @@
 
         <div class="grid">
             <div class="field col-12 md:col-6">
-                <label for="date"><span class="required">*</span> {{ 'Date' | translate }}</label>
-                <small class="text-xs" *ngIf="packageInfo && packageInfo.start_date"> <sup>#</sup>{{ 'Date can be changed' | translate }}</small>
+                <label for="date"><span class="required">*</span> {{ 'Date' | translate }} <i *ngIf="packageInfo && packageInfo.start_date" pTooltip="{{ 'Date can be changed' | translate }}" tooltipPosition="top" class="pi pi-question-circle"></i></label>
                 <p-calendar id="date" [(ngModel)]="appointment.timeInformation.date" (onSelect)="loadTime($event)" required [ngClass]="{'ng-invalid ng-dirty' : submitted && !appointment.timeInformation.date}"></p-calendar>
                 <small class="ng-dirty ng-invalid" *ngIf="submitted && !appointment.timeInformation.date">{{ 'Field is required' | translate: {field: 'Date' | translate} }}</small>
             </div>
