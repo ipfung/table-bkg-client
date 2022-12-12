@@ -14,7 +14,7 @@
                 <th style="min-width:200px">{{ 'Package Name' | translate }}</th>
                 <th style="min-width:150px">{{ 'Room' | translate }} / {{ 'Service' | translate }}</th>
                 <th style="min-width:150px">{{ 'Schedules' | translate }}</th>
-                <th style="min-width:150px">{{ 'Price' | translate }} / {{ 'No. of Appointments' | translate }}</th>
+                <th style="min-width:150px">{{ 'Price' | translate }} / {{ 'Total Lesson' | translate }}</th>
                 <th style="min-width:50px">{{ 'Status' | translate }}</th>
                 <th style="min-width:20px"></th>
             </tr>
@@ -48,7 +48,7 @@
                     </div>
                 </td>
                 <td style="min-width:150px">
-                    <span class="p-column-title">{{ 'Price' | translate }} / {{ 'No. of Appointments' | translate }}</span>
+                    <span class="p-column-title">{{ 'Price' | translate }} / {{ 'Total Lesson' | translate }}</span>
                     <div>
                         {{ pkg.price | currency:'HK$' }} / {{ pkg.quantity }} {{ 'Lesson' | translate }}
                     </div>
@@ -207,11 +207,12 @@
                     <tr>
                         <th style="min-width:20px"></th>
                         <th style="min-width:200px">{{ 'Lesson Date & Time' | translate }}<br /><small class="jws-tips text-xs">{{ 'Auto Generate Appointments ASAP' | translate }}</small></th>
+                        <th style="min-width:20px"></th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="emptymessage" let-lesson>
                     <tr>
-                        <td colspan="8">
+                        <td colspan="3">
                             <span class=" ml-2" [innerHTML]="'Field is required' | translate: {field: 'Lesson Date & Time' | translate}"></span>
                         </td>
                     </tr>
