@@ -10,6 +10,9 @@ export const environment = {
     // theme: 'lara-dark-purple',
     // dark: true,
     isApp: false,
+    project: 'tutorial',
+    name: 'Ping Pong Dev',
+    payment: true,
     url: 'http://localhost:8001/'
 };
 

@@ -6,6 +6,7 @@ import {TranslateService} from "@ngx-translate/core";
 import { enUS, zhHK } from 'date-fns/locale'
 import {Lemonade} from "./lemonade.service";
 import {AuthService} from "./auth.service";
+import {environment} from "../../environments/environment";
 
 @Injectable()
 export class AppointmentService {
@@ -70,7 +71,7 @@ export class AppointmentService {
      * true = show payment-form.
      * false = don't show payment-form and show payment-confirmation directly.
      */
-    readonly paymentSelection = false;
+    readonly paymentSelection = environment.payment;
 
     /**
      * service object that contains service's name, price...etc
