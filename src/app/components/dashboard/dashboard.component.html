@@ -132,7 +132,7 @@
                     </ng-template>
                 </p-table>
             </div>
-            <div class="card" *ngIf="data.role == 'user' || data.role == 'member'">
+            <div class="card" *ngIf="data.showFinance && (data.role == 'user' || data.role == 'member')">
                 <h5>{{ 'Remaining packages' | translate }}</h5>
                 <p-table [value]="packages" responsiveLayout="scroll">
                     <ng-template pTemplate="header">

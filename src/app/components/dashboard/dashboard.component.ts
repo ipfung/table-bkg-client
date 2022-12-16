@@ -35,6 +35,7 @@ export class DashboardComponent implements OnInit {
         showUpcomingAppointments: false,
         showNotifications: false,
         isTrainerUser: false,
+        showFinance: false,
         role: 'abc'
     };
 
