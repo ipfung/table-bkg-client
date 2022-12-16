@@ -115,16 +115,18 @@ export class RescheduleComponent implements OnInit {
     }
 
     getTimeslotsByDate() {
-       const ymd = this.appointmentService.formatPostDate(this.reschedule.date);
-        // console.log('yymmdd====', ymd);
-        let slots = this.timeSlots.find(el => el.date == ymd);
-        // console.log('slowttt===', slots.freeslots);
-        if (slots) return slots.freeslots;
+        if (this.reschedule.date) {
+            const ymd = this.appointmentService.formatPostDate(this.reschedule.date);
+            // console.log('yymmdd====', ymd);
+            let slots = this.timeSlots.find(el => el.date == ymd);
+            // console.log('slowttt===', slots.freeslots);
+            if (slots) return slots.freeslots;
+        }
         return [];
     }
 
     selectedDescription() {
-        if (this.reschedule.time) {
+        if (this.reschedule.date && this.reschedule.time) {
             return this.appointmentService.getBookedDateTime(this.appointmentService.formatPostDate(this.reschedule.date), this.reschedule.time, this.reschedule.sessionInterval, this.reschedule.noOfSession);
         }
         return '-';
