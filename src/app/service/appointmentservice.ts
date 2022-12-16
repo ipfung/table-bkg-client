@@ -253,7 +253,7 @@ export class AppointmentService {
         };
         if (query && query != '') {
             params = {...params, ...{
-                name: query
+                q: query
             }};
         }
         return this.api.get('api/users', params);

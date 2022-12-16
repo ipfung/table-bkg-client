@@ -162,7 +162,7 @@
                 <!--                </ng-template>-->
                 <ng-template let-item pTemplate="item">
                     <i class="pi pi-circle-fill" [style]="{color: item.role.color_name}"></i>
-                    {{ item.name }}
+                    {{ item.name }} / M: {{ item.mobile_no}} / E: {{ item.email}}
                 </ng-template>
             </p-autoComplete>
             <small class="ng-dirty ng-invalid" *ngIf="submitted && !appointment.customer">{{ 'Field is required' | translate: {field: 'Customer' | translate} }}</small>
