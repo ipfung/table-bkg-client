@@ -205,7 +205,7 @@ export class AppointmentService {
         }
         if (this.appointmentInformation == undefined)
             this.prepareDefaultAppointment();
-        if (!this.tableSessions) {
+        if (!this.tableSessions || !this.selectedService) {
             this.api.get('api/user-service').subscribe(resp => {
                 this.selectedService = resp;
                 this.appointmentInformation.timeInformation.serviceId = resp.id;
@@ -422,13 +422,25 @@ export class AppointmentService {
             let timeLen = tableSessions.find(el => el.code == noOfSession);
             let name = timeLen.name;
             if (timeLen.hour > 0) {
-                this.translateService.get('hour Hours', {
-                    hour: timeLen.hour,
-                    s: timeLen.hour > 1 ? 's' : ''
-                }).subscribe(res => {
-                    name = res;
-                });
-                return name;
+                if (timeLen.minute != 30 && timeLen.minute != 0) {
+                    this.translateService.get('hour Minutes', {
+                        hour: timeLen.hour,
+                        s: timeLen.hour > 1 ? 's' : '',
+                        minute: timeLen.minute,
+                        ms: timeLen.minute > 1 ? 's' : ''
+                    }).subscribe(res => {
+                        name = res;
+                    });
+                    return name;
+                } else {
+                    this.translateService.get('hour Hours', {
+                        hour: timeLen.hour,
+                        s: timeLen.hour > 1 ? 's' : ''
+                    }).subscribe(res => {
+                        name = res;
+                    });
+                    return name;
+                }
             } else {
                 this.translateService.get('N minutes', {
                     minute: timeLen.minute,
