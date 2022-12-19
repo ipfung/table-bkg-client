@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import {environment} from "../environments/environment";
 import { FormsModule } from '@angular/forms';
 import {HTTP_INTERCEPTORS, HttpClient, HttpClientModule} from '@angular/common/http';
 import { BrowserModule } from '@angular/platform-browser';
@@ -174,7 +175,7 @@ import { PackageListComponent } from './components/package-list/package-list.com
 import {DashboardService} from "./service/dashboard.service";
 
 export function createTranslateLoader(http: HttpClient) {
-    return new TranslateHttpLoader(http, './assets/lang/', '.json');
+    return new TranslateHttpLoader(http, './assets/lang/', '-' + environment.project + '.json');
 }
 
 FullCalendarModule.registerPlugins([
