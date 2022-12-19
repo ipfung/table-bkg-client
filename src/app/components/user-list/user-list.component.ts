@@ -213,7 +213,7 @@ export class UserListComponent implements OnInit {
     }
 
     delete() {
-        this.translateService.get(['Are you sure to delete?', 'The record is deleted successfully.', 'Warning', 'Error']).subscribe( msg => {
+        this.translateService.get(['Are you sure to delete?']).subscribe( msg => {
             this.confirmationService.confirm({
                 message: msg['Are you sure to delete?'],
                 accept: () => {
@@ -221,16 +221,9 @@ export class UserListComponent implements OnInit {
                         if (res.success == true) {
                             this.loadData(null);
                             this.hideDialog();
-                            this.messageService.add({
-                                severity: 'success',
-                                summary: msg['The record is deleted successfully.']
-                            });
+                            this.lemonade.ok(this.messageService, 'The record is deleted successfully.');
                         } else {
-                            this.messageService.add({
-                                severity: 'error',
-                                summary: msg['Error'],
-                                detail: res.error
-                            });
+                            this.lemonade.error(this.messageService, res);
                         }
                     });
                 }
@@ -252,8 +245,10 @@ export class UserListComponent implements OnInit {
             if (res.success === true) {
                 this.loadData(null);
                 this.hideDialog();
+                this.lemonade.ok(this.messageService);
             } else {
                 // error.
+                this.lemonade.error(this.messageService, res);
             }
         });
     }

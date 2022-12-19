@@ -207,4 +207,35 @@ export class Lemonade {
         return recurring.repeat;
     }
 
+    /**
+     *
+     * @param messageService
+     * @param obj {message: '', params: []}
+     */
+    ok(messageService, obj?: any) {
+        let message = 'Record is stored successfully';
+        let hasParams = false;
+        if (obj && obj.message) {
+            message = obj.message;
+            hasParams = (obj.params);
+        } else if (typeof obj === 'string' || obj instanceof String) {
+            // @ts-ignore
+            message = obj;
+        }
+        this.translateService.get(['Succeed', message]).subscribe( msg => {
+            messageService.add({
+                severity: 'success',
+                summary: msg['Success'],
+                detail: msg[message]
+            });
+        });
+    }
+
+    error(messageService, err) {
+        messageService.add({
+            severity: 'error',
+            summary: 'Error1',
+            detail: err.error
+        });
+    }
 }

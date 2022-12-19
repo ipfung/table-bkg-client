@@ -2,9 +2,11 @@ import {Component, OnInit} from '@angular/core';
 import {ApiService} from "../../service/api.service";
 import {Router} from "@angular/router";
 import {Lemonade} from "../../service/lemonade.service";
+import {MessageService} from "primeng/api";
 
 @Component({
     selector: 'app-trainer-student-list',
+    providers: [MessageService],
     templateUrl: './trainer-student-list.component.html',
     styleUrls: ['./trainer-student-list.component.scss']
 })
@@ -54,7 +56,7 @@ export class TrainerStudentListComponent implements OnInit {
     workdateLoading: boolean;
     trainerWorkdateTimeslots: any[];
 
-    constructor(private api: ApiService, private router: Router, public lemonade: Lemonade) {
+    constructor(private api: ApiService, private router: Router, public lemonade: Lemonade, private messageService: MessageService) {
     }
 
     ngOnInit(): void {
@@ -123,6 +125,8 @@ export class TrainerStudentListComponent implements OnInit {
         this.formHeader = "Create Form";
         this.trainer = {
             status: this.statuses[0].code,
+            settings: {
+            },
             teammates: []
         };
         this.submitted = false;
@@ -186,8 +190,10 @@ export class TrainerStudentListComponent implements OnInit {
             if (res.success === true) {
                 this.loadData();
                 this.hideDialog();
+                this.lemonade.ok(this.messageService);
             } else {
                 // error.
+                this.lemonade.error(this.messageService, res);
             }
         });
     }
