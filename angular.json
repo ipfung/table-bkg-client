@@ -56,10 +56,6 @@
                                     "with": "src/environments/environment.prod.ts"
                                 }
                             ],
-                            "index": {
-                                "input": "src/index.prod.html",
-                                "output": "index.html"
-                            },
                             "outputHashing": "all"
                         },
                         "app-prod": {
@@ -81,10 +77,6 @@
                                     "with": "src/environments/environment.app-prod.ts"
                                 }
                             ],
-                            "index": {
-                                "input": "src/index.app-prod.html",
-                                "output": "index.html"
-                            },
                             "outputHashing": "all"
                         },
                         "app-dev": {
@@ -106,10 +98,6 @@
                                     "with": "src/environments/environment.app-dev.ts"
                                 }
                             ],
-                            "index": {
-                                "input": "src/index.app-dev.html",
-                                "output": "index.html"
-                            },
                             "outputHashing": "all"
                         },
                         "development": {
