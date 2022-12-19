@@ -30,6 +30,7 @@ export class UserListComponent implements OnInit {
     selectedRoleId = 0;
     userName: any;
     userEmail: any;
+    userMobile: any;
     userStatus: any;
 
     // form variables.
@@ -42,6 +43,13 @@ export class UserListComponent implements OnInit {
     services = [];
     statuses = [];
     formHeader = "Edit Form";
+    // customer's notifications.
+    notifications: any[];
+    notifyRows = 0;
+    notifyTotalRecords = 0;
+    notifyLoading = true;
+    notifyNewable: boolean;
+
     // env settings
     requiredTrainer: boolean;
     requiredRoom: boolean;
@@ -106,6 +114,9 @@ export class UserListComponent implements OnInit {
         }
         if (this.userEmail) {
             params = {...params, ...{email: this.userEmail}};
+        }
+        if (this.userMobile) {
+            params = {...params, ...{mobile_no: this.userMobile}};
         }
         if (this.userStatus) {
             params = {...params, ...{status: this.userStatus}};
@@ -250,6 +261,22 @@ export class UserListComponent implements OnInit {
                 // error.
                 this.lemonade.error(this.messageService, res);
             }
+        });
+    }
+
+    loadDataNotifications(event: LazyLoadEvent) {
+        this.notifyLoading = true;
+        let page = event && event.rows > 0 ? (event.first/event.rows) : 0;
+        let params = {
+            page: (1+page),
+            customer_id: this.partner.id
+        };
+        this.api.get('api/notifications', params).subscribe( res => {
+            this.notifications = res.data;
+            this.notifyNewable = res.showCustomer;
+            this.notifyLoading = false;
+            this.notifyRows = res.per_page;
+            this.notifyTotalRecords = res.total;
         });
     }
 }

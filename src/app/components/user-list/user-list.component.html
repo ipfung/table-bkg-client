@@ -16,6 +16,9 @@
             <input type="text" pInputText [(ngModel)]="userEmail" (change)="loadData(null)" placeholder="{{ 'Search F' | translate:{field: 'Email' | translate } }}">
         </div>
         <div class="field col-12 md:col-4">
+            <input type="text" pInputText [(ngModel)]="userMobile" (change)="loadData(null)" placeholder="{{ 'Search F' | translate:{field: 'Mobile No.' | translate } }}">
+        </div>
+        <div class="field col-12 md:col-4">
             <p-dropdown [options]="statuses" optionValue="code" [(ngModel)]="userStatus" (onChange)="loadData(null)" (onClear)="loadData(null)" [showClear]="true" placeholder="{{ 'Search F' | translate:{field: 'Status' | translate } }}">
                 <ng-template pTemplate="selectedItem">
                     {{ lemonade.comboRenderer(statuses, userStatus) | translate }}
@@ -115,109 +118,144 @@
 <p-dialog [(visible)]="formDialog" [style]="{width:'50em', height: '100vh'}" header="{{ formHeader | translate:{name: 'User' | translate} }}" position="right" [modal]="true" class="p-fluid">
     <p-confirmDialog header="{{ 'Confirmation' | translate }}" icon="pi pi-clock"></p-confirmDialog>
     <ng-template pTemplate="content">
-        <div class="field">
-            <label for="name"><span class="required">*</span> {{ 'Name' | translate }}</label>
-            <input type="text" pInputText id="name" [(ngModel)]="partner.name" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !partner.name}"/>
-            <small class="ng-dirty ng-invalid" *ngIf="submitted && !partner.name">{{ 'Field is required' | translate: {field: 'Name' | translate} }}</small>
-        </div>
+        <p-tabView>
+            <p-tabPanel header="{{ 'General Details' | translate }}">
+                <div class="field">
+                    <label for="name"><span class="required">*</span> {{ 'Name' | translate }}</label>
+                    <input type="text" pInputText id="name" [(ngModel)]="partner.name" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !partner.name}"/>
+                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !partner.name">{{ 'Field is required' | translate: {field: 'Name' | translate} }}</small>
+                </div>
 
-        <div class="field">
-            <label for="second_name"><span class="required">*</span> {{ 'Chinese Name' | translate }}</label>
-            <input type="text" pInputText id="second_name" [(ngModel)]="partner.second_name" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !partner.second_name}"/>
-            <small class="ng-dirty ng-invalid" *ngIf="submitted && !partner.second_name">{{ 'Field is required' | translate: {field: 'Chinese Name' | translate} }}</small>
-        </div>
+                <div class="field">
+                    <label for="second_name"><span class="required">*</span> {{ 'Chinese Name' | translate }}</label>
+                    <input type="text" pInputText id="second_name" [(ngModel)]="partner.second_name" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !partner.second_name}"/>
+                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !partner.second_name">{{ 'Field is required' | translate: {field: 'Chinese Name' | translate} }}</small>
+                </div>
 
-        <div class="field">
-            <label for="mobile_no"><span class="required">*</span> {{ 'Mobile No.' | translate }}</label>
-            <input type="text" autocomplete="off" pInputText id="mobile_no" [(ngModel)]="partner.mobile_no" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !partner.mobile_no}"/>
-            <small class="ng-dirty ng-invalid" *ngIf="submitted && !partner.mobile_no">{{ 'Field is required' | translate: {field: 'Mobile No.' | translate} }}</small>
-        </div>
+                <div class="field">
+                    <label for="mobile_no"><span class="required">*</span> {{ 'Mobile No.' | translate }}</label>
+                    <input type="text" autocomplete="off" pInputText id="mobile_no" [(ngModel)]="partner.mobile_no" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !partner.mobile_no}"/>
+                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !partner.mobile_no">{{ 'Field is required' | translate: {field: 'Mobile No.' | translate} }}</small>
+                </div>
 
-        <div class="field">
-            <label for="email"><span class="required">*</span> {{ 'Email' | translate }}</label>
-            <input type="text" autocomplete="off" [disabled]="!isNew" pInputText id="email" [(ngModel)]="partner.email" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !partner.email}"/>
-            <small class="ng-dirty ng-invalid" *ngIf="submitted && !partner.email">{{ 'Field is required' | translate: {field: 'Email' | translate} }}</small>
-        </div>
+                <div class="field">
+                    <label for="email"><span class="required">*</span> {{ 'Email' | translate }}</label>
+                    <input type="text" autocomplete="off" [disabled]="!isNew" pInputText id="email" [(ngModel)]="partner.email" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !partner.email}"/>
+                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !partner.email">{{ 'Field is required' | translate: {field: 'Email' | translate} }}</small>
+                </div>
 
-        <div class="field">
-            <label for="pwd">{{ 'Password' | translate }}</label>
-            <p-password id="pwd" [(ngModel)]="partner.password" [required]="isNew" placeholder="{{ 'Password' | translate }}" [toggleMask]="true" styleClass="w-full mb-3" [ngClass]="{'ng-invalid ng-dirty' : isNew && submitted && !partner.password}"></p-password>
-            <small class="ng-dirty ng-invalid" *ngIf="isNew && submitted && !partner.password">{{ 'Field is required' | translate: {field: 'Password' | translate} }}</small>
-        </div>
+                <div class="field">
+                    <label for="pwd">{{ 'Password' | translate }}</label>
+                    <p-password id="pwd" [(ngModel)]="partner.password" [required]="isNew" placeholder="{{ 'Password' | translate }}" [toggleMask]="true" styleClass="w-full mb-3" [ngClass]="{'ng-invalid ng-dirty' : isNew && submitted && !partner.password}"></p-password>
+                    <small class="ng-dirty ng-invalid" *ngIf="isNew && submitted && !partner.password">{{ 'Field is required' | translate: {field: 'Password' | translate} }}</small>
+                </div>
 
-        <div class="field">
-            <label for="role"><span class="required">*</span> {{ 'Role' | translate }}</label>
-            <p-dropdown id="role" [options]="roles" [(ngModel)]="partner.role_id" optionValue="id">
-                <ng-template pTemplate="selectedItem">
-                    <i class="pi pi-circle-fill" [style]="{color: findRoleColor(partner.role_id)}"></i>
-                    {{ roleRenderer(partner.role_id) + " role" | translate }}
-                </ng-template>
-                <ng-template let-item pTemplate="item">
-                    <i class="pi pi-circle-fill" [style]="{color: item.color_name}"></i>
-                    {{ item.name + " role" | translate }}
-                </ng-template>
-            </p-dropdown>
-        </div>
+                <div class="field">
+                    <label for="role"><span class="required">*</span> {{ 'Role' | translate }}</label>
+                    <p-dropdown id="role" [options]="roles" [(ngModel)]="partner.role_id" optionValue="id">
+                        <ng-template pTemplate="selectedItem">
+                            <i class="pi pi-circle-fill" [style]="{color: findRoleColor(partner.role_id)}"></i>
+                            {{ roleRenderer(partner.role_id) + " role" | translate }}
+                        </ng-template>
+                        <ng-template let-item pTemplate="item">
+                            <i class="pi pi-circle-fill" [style]="{color: item.color_name}"></i>
+                            {{ item.name + " role" | translate }}
+                        </ng-template>
+                    </p-dropdown>
+                </div>
 
-        <div class="field">
-            <label for="status">{{ 'Status' | translate }}</label>
-            <p-dropdown id="status" [options]="statuses" optionValue="code" [(ngModel)]="partner.status" placeholder="{{ 'Select a Status' | translate }}">
-                <ng-template pTemplate="selectedItem">
-                    {{ lemonade.comboRenderer(statuses, partner.status) | translate }}
-                </ng-template>
-                <ng-template let-item pTemplate="item">
-                    {{ item.name | translate }}
-                </ng-template>
-            </p-dropdown>
-        </div>
+                <div class="field">
+                    <label for="status">{{ 'Status' | translate }}</label>
+                    <p-dropdown id="status" [options]="statuses" optionValue="code" [(ngModel)]="partner.status" placeholder="{{ 'Select a Status' | translate }}">
+                        <ng-template pTemplate="selectedItem">
+                            {{ lemonade.comboRenderer(statuses, partner.status) | translate }}
+                        </ng-template>
+                        <ng-template let-item pTemplate="item">
+                            {{ item.name | translate }}
+                        </ng-template>
+                    </p-dropdown>
+                </div>
 
-        <p-divider align="center">
-            <span class="p-tag">{{ 'Default Values' | translate }}</span>
-        </p-divider>
+                <p-divider align="center">
+                    <span class="p-tag">{{ 'Default Values' | translate }}</span>
+                </p-divider>
 
-        <div class="field">
-            <label for="service"><span class="required">*</span> {{ 'Service' | translate }}</label>
-            <p-dropdown id="service" [options]="services" [(ngModel)]="partner.service_id" optionValue="id" optionLabel="name">
-            </p-dropdown>
-        </div>
+                <div class="field">
+                    <label for="service"><span class="required">*</span> {{ 'Service' | translate }}</label>
+                    <p-dropdown id="service" [options]="services" [(ngModel)]="partner.service_id" optionValue="id" optionLabel="name">
+                    </p-dropdown>
+                </div>
 
-        <div class="field">
-            <label for="room"><span class="required" *ngIf="requiredRoom">*</span> {{ 'Room' | translate }}</label>
-            <p-dropdown id="room" [options]="rooms" [(ngModel)]="partner.settings.room" optionLabel="name" optionValue="id" [showClear]="true" placeholder="{{'Select field' | translate: {field: 'Room' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : submitted && !partner.settings.room}">
-                <ng-template let-item pTemplate="item">
-                    <p-avatar [label]="lemonade.getInitial(item.name)" shape="circle" [style]="{'background-color': item.color, 'color': '#fff'}"></p-avatar>
-                    {{ item.name | translate }}
-                </ng-template>
-            </p-dropdown>
-            <small class="ng-dirty ng-invalid" *ngIf="requiredRoom && submitted && !partner.settings.room">{{ 'Field is required' | translate: {field: 'Room' | translate} }}</small>
-        </div>
+                <div class="field">
+                    <label for="room"><span class="required" *ngIf="requiredRoom">*</span> {{ 'Room' | translate }}</label>
+                    <p-dropdown id="room" [options]="rooms" [(ngModel)]="partner.settings.room" optionLabel="name" optionValue="id" [showClear]="true" placeholder="{{'Select field' | translate: {field: 'Room' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : requiredRoom && submitted && !partner.settings.room}">
+                        <ng-template let-item pTemplate="item">
+                            <p-avatar [label]="lemonade.getInitial(item.name)" shape="circle" [style]="{'background-color': item.color, 'color': '#fff'}"></p-avatar>
+                            {{ item.name | translate }}
+                        </ng-template>
+                    </p-dropdown>
+                    <small class="ng-dirty ng-invalid" *ngIf="requiredRoom && submitted && !partner.settings.room">{{ 'Field is required' | translate: {field: 'Room' | translate} }}</small>
+                </div>
 
-        <div class="field">
-            <label for="trainer"><span class="required" *ngIf="requiredTrainer">*</span> {{ 'Trainer' | translate }}</label>
-            <p-dropdown id="trainer" [options]="trainers" [(ngModel)]="partner.settings.trainer" optionLabel="name" optionValue="id" [showClear]="true" placeholder="{{'Select field' | translate: {field: 'Trainer' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : submitted && !partner.settings.trainer}">
-                <ng-template pTemplate="selectedItem">
-                    {{ lemonade.comboRenderer(trainers, partner.settings.trainer, 'id') }}
-                </ng-template>
-                <ng-template let-item pTemplate="item">
-                    <i class="pi pi-circle-fill" [style]="{color: item.role.color_name}"></i>
-                    {{ item.name }}
-                </ng-template>
-            </p-dropdown>
-            <small class="ng-dirty ng-invalid" *ngIf="requiredTrainer && submitted && !partner.settings.trainer">{{ 'Field is required' | translate: {field: 'Room' | translate} }}</small>
-        </div>
+                <div class="field">
+                    <label for="trainer"><span class="required" *ngIf="requiredTrainer">*</span> {{ 'Trainer' | translate }}</label>
+                    <p-dropdown id="trainer" [options]="trainers" [(ngModel)]="partner.settings.trainer" optionLabel="name" optionValue="id" [showClear]="true" placeholder="{{'Select field' | translate: {field: 'Trainer' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : requiredTrainer && submitted && !partner.settings.trainer}">
+                        <ng-template pTemplate="selectedItem">
+                            {{ lemonade.comboRenderer(trainers, partner.settings.trainer, 'id') }}
+                        </ng-template>
+                        <ng-template let-item pTemplate="item">
+                            <i class="pi pi-circle-fill" [style]="{color: item.role.color_name}"></i>
+                            {{ item.name }}
+                        </ng-template>
+                    </p-dropdown>
+                    <small class="ng-dirty ng-invalid" *ngIf="requiredTrainer && submitted && !partner.settings.trainer">{{ 'Field is required' | translate: {field: 'Room' | translate} }}</small>
+                </div>
 
-        <div class="grid">
-            <div class="field col-12 md:col-6">
-                <label for="trainer_charge">{{ 'Trainer Charge' | translate }}</label>
-                <p-inputNumber id="trainer_charge" [(ngModel)]="partner.settings.trainer_charge" mode="currency" currency="HKD" locale="zh-HK"></p-inputNumber>
-            </div>
+                <div class="grid">
+                    <div class="field col-12 md:col-6">
+                        <label for="trainer_charge">{{ 'Trainer Charge' | translate }}</label>
+                        <p-inputNumber id="trainer_charge" [(ngModel)]="partner.settings.trainer_charge" mode="currency" currency="HKD" locale="zh-HK"></p-inputNumber>
+                    </div>
 
-            <div class="field col-12 md:col-6">
-                <label for="trainer_commission">{{ 'Commission' | translate }}</label>
-                <p-inputNumber id="trainer_commission" [(ngModel)]="partner.settings.trainer_commission" mode="currency" currency="HKD" locale="zh-HK"></p-inputNumber>
-            </div>
-        </div>
+                    <div class="field col-12 md:col-6">
+                        <label for="trainer_commission">{{ 'Commission' | translate }}</label>
+                        <p-inputNumber id="trainer_commission" [(ngModel)]="partner.settings.trainer_commission" mode="currency" currency="HKD" locale="zh-HK"></p-inputNumber>
+                    </div>
+                </div>
+            </p-tabPanel>
 
+            <p-tabPanel [disabled]="!(partner.id > 0)" header="{{ 'Notifications' | translate }}">
+                <p-table [value]="notifications" [lazy]="true" (onLazyLoad)="loadDataNotifications($event)" [paginator]="true" [rows]="notifyRows" [loading]="notifyLoading" [totalRecords]="notifyTotalRecords" dataKey="id" responsiveLayout="stack">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="min-width:380px">{{ 'Messages' | translate }}</th>
+                            <th style="min-width:80px">{{ 'Status' | translate }}</th>
+                            <th style="min-width:20px"></th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-notify let-rowIndex="rowIndex">
+                        <tr>
+                            <td style="min-width:120px">
+                                <span class="p-column-title">{{ 'Name' | translate }}</span>
+                                <div [class]="notify.has_read == 1 ? '' : 'font-bold'">{{ notify.title }}</div>
+                                <div [class]="notify.has_read == 1 ? '' : 'font-bold'">{{ notify.body }}</div>
+                            </td>
+                            <td style="min-width:80px">
+                                <span class="p-column-title">{{ 'Status' | translate }}</span>
+                                <span [class]="'user-badge status-' + notify.status">{{ notify.status | translate }}</span>
+                            </td>
+                            <td style="min-width:20px">
+                                <span class="p-column-title">{{ 'Actions' | translate }}</span>
+                                <div>
+                                    <button pButton type="button" *ngIf="canBlock(notify) && notify.status == 'banned'" pTooltip="{{ 'Whitelist' | translate }}" tooltipPosition="bottom" class="p-0 p-button-text" icon="pi pi-check-circle" (click)="blacklist(notify, false)"></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+
+                </p-table>
+            </p-tabPanel>
+        </p-tabView>
     </ng-template>
 
     <ng-template pTemplate="footer">
