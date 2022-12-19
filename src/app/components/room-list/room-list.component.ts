@@ -1,9 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {ApiService} from "../../service/api.service";
 import {Lemonade} from "../../service/lemonade.service";
+import {MessageService} from "primeng/api";
 
 @Component({
     selector: 'app-room-list',
+    providers: [MessageService],
     templateUrl: './room-list.component.html',
     styleUrls: ['./room-list.component.scss']
 })
@@ -22,7 +24,7 @@ export class RoomListComponent implements OnInit {
     locations = [];
     formHeader = "Edit Form";
 
-    constructor(private api: ApiService, public lemonade: Lemonade) {
+    constructor(private api: ApiService, public lemonade: Lemonade, private messageService: MessageService) {
     }
 
     ngOnInit(): void {
@@ -92,6 +94,10 @@ export class RoomListComponent implements OnInit {
                 this.submitted = false;
                 this.loadData();
                 this.hideDialog();
+                this.lemonade.ok(this.messageService);
+            } else {
+                // error.
+                this.lemonade.error(this.messageService, res);
             }
         });
     }
