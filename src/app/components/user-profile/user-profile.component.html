@@ -63,8 +63,12 @@
                     </p-tabPanel>
                     <p-tabPanel header="{{ 'Backup' | translate }}" *ngIf="obj.role_name == 'manager'">
                         <div class="field col-12">
+                            <label>{{ 'Student' | translate }}</label>
+                            <b><button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcel('student')" class="p-button-success" label="{{ 'Excel' | translate }}"></button></b>
+                        </div>
+                        <div class="field col-12">
                             <label>{{ 'Appointment' | translate }}</label>
-                            <b><button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcel()" class="p-button-success" label="{{ 'Excel' | translate }}"></button></b>
+                            <b><button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcel('appointment')" class="p-button-success" label="{{ 'Excel' | translate }}"></button></b>
                         </div>
                     </p-tabPanel>
                 </p-tabView>

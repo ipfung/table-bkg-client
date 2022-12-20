@@ -4,6 +4,7 @@ import {Lemonade} from "../../service/lemonade.service";
 import {ApiService} from "../../service/api.service";
 import {MessageService} from "primeng/api";
 import * as FileSaver from 'file-saver';
+import {environment} from "../../../environments/environment";
 
 @Component({
     selector: 'app-user-profile',
@@ -74,35 +75,57 @@ export class UserProfileComponent implements OnInit {
         });
     }
 
-    exportAppointmentData(list) {
-        return list.map(row => ({
-            customer_name: row.customer_name,
-            price: row.price,
-            start_time: row.start_time,
-            end_time: row.end_time,
-            room: row.name,
-            check_in: row.checkin,
-            check_out: row.checkout,
-            trainer_name: row.trainer_id != row.customer_id ? row.user_name : '',
-            package_name: row.package_name,
-            appointment_status: row.status,
-            payment_status: row.payment_status,
-            created_at: row.created_at,
-            updated_at: row.updated_at
-        }));
+    exportData(module, list) {
+        if (module == 'appointment') {
+            return list.map(row => ({
+                customer_name: row.customer_name,
+                price: row.price,
+                start_time: row.start_time,
+                end_time: row.end_time,
+                room: row.name,
+                check_in: row.checkin,
+                check_out: row.checkout,
+                trainer_name: row.trainer_id != row.customer_id ? row.user_name : '',
+                package_name: row.package_name,
+                appointment_status: row.status,
+                payment_status: row.payment_status,
+                created_at: row.created_at,
+                updated_at: row.updated_at
+            }));
+        } else if (module == 'student') {
+            return list.map(row => ({
+                name: row.name,
+                chinese_name: row.second_name,
+                email: row.email,
+                mobile: row.mobile_no,
+                status: row.status,
+                created_at: row.created_at,
+                updated_at: row.updated_at
+            }));
+        }
     }
 
-    exportExcel() {
+    exportExcel(module) {
         import('xlsx').then((xlsx) => {
-            this.api.get('api/booking', {
-                from_date: '2022-01-01',
-                to_date: '2099-12-31'
-            }).subscribe(res => {
-                const data = this.exportAppointmentData(res.data);
+            let api = '', params = {};
+            if (module == 'appointment') {
+                api = 'booking';
+                params = {
+                    from_date: '2022-01-01',
+                    to_date: '2099-12-31'
+                };
+            } else if (module == 'student') {
+                api = 'users';
+                params = {
+                    role: 'Student',
+                };
+            }
+            this.api.get('api/' + api, params).subscribe(res => {
+                const data = this.exportData(module, res.data);
                 const worksheet = xlsx.utils.json_to_sheet(data);
-                const workbook = { Sheets: { data: worksheet }, SheetNames: ['Appointment'] };
+                const workbook = { Sheets: { data: worksheet }, SheetNames: ['data'] };  // change 'data' to 'Appointments' will fail to export
                 const excelBuffer: any = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });
-                this.saveAsExcelFile(excelBuffer, 'appointments');
+                this.saveAsExcelFile(excelBuffer, environment.name + '_' + module);
             });
         });
     }
