@@ -4,7 +4,7 @@
             <div class="px-4 py-5 md:px-6 lg:px-8">
                 <div class="flex align-items-center flex-column">
                     <div class="text-center">
-                        <p-avatar [image]="getAvatar()" shape="circle" styleClass="profile-avatar"></p-avatar>
+                        <p-avatar [label]="lemonade.getInitial(userName)" shape="circle" styleClass="profile-avatar" class="lemonade-avatar" [style]="{background: obj.role_color_name}"></p-avatar>
                         <h4 class="mb-0">{{ userName }}</h4>
                     </div>
                 </div>
@@ -27,8 +27,12 @@
                 <p-tabView>
                     <p-tabPanel header="{{ 'About' | translate }}">
                         <div class="field col-12">
-                            <label>{{ 'Name' | translate }}</label>
+                            <label>{{ 'Chinese Name' | translate }}</label>
                             <b>{{ obj.second_name }}</b>
+                        </div>
+                        <div class="field col-12">
+                            <label>{{ 'Name' | translate }}</label>
+                            <b>{{ userName }}</b>
                         </div>
                         <div class="field col-12">
                             <label>{{ 'Email' | translate }}</label>

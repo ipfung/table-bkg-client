@@ -23,6 +23,7 @@ export class UserProfileComponent implements OnInit {
     new_password: string;
     cfm_password: string;
 
+    //ref: https://www.pinterest.co.uk/pin/201184308333695574/
     constructor(private api: ApiService, public authService: AuthService, private messageService: MessageService, public lemonade: Lemonade) {
     }
 
