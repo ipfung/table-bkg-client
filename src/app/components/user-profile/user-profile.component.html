@@ -42,12 +42,12 @@
                             <label>{{ 'Mobile No.' | translate }}</label>
                             <b>{{ obj.mobile_no }}</b>
                         </div>
-                    </p-tabPanel>
-                    <p-tabPanel header="{{ 'Settings' | translate }}">
                         <div class="field col-12">
                             <label>{{ 'Password' | translate }}</label> <button pButton type="button" label="{{ 'Change password' | translate }}" icon="pi pi-lock" class="p-button-sm" (click)="changePwd()"></button>
                             <b>**********</b>
                         </div>
+                    </p-tabPanel>
+                    <p-tabPanel header="{{ 'Service' | translate }}">
                         <div class="field col-12" *ngIf="obj.service_name && obj.service_name != ''">
                             <label>{{ 'Service' | translate }}</label>
                             <b>{{ obj.service_name }}</b>
@@ -60,22 +60,12 @@
                             <label>{{ 'Trainer' | translate }}</label>
                             <b>{{ obj.trainer_name }}</b>
                         </div>
-<!--                        <div class="field col-12">-->
-<!--                            <label>{{ 'Duration' | translate }}</label>-->
-<!--                            <b>{{ appointmentService.getSessionName(appointmentInformation.timeInformation.noOfSession) }}</b>-->
-<!--                        </div>-->
-<!--                        <div class="field col-12">-->
-<!--                            <label>{{ 'Date & Time' | translate }}</label>-->
-<!--                            <b>{{ appointmentService.getBookedDateTime(appointmentInformation.timeInformation.date, appointmentInformation.timeInformation.time, appointmentInformation.timeInformation.sessionInterval, appointmentInformation.timeInformation.noOfSession) }} </b>-->
-<!--                        </div>-->
-<!--                        <div class="field col-12">-->
-<!--                            <label>{{ 'Amount' | translate }}</label>-->
-<!--                            <b>HK${{ appointmentInformation.paymentInformation.price }}</b>-->
-<!--                        </div>-->
-<!--                        <div class="field col-12" *ngIf="appointmentInformation.paymentSelection">-->
-<!--                            <label>{{ 'Payment Method' | translate }}</label>-->
-<!--                            <b>{{ appointmentService.getPaymentMethodName(appointmentInformation.paymentInformation.method) }}</b>-->
-<!--                        </div>-->
+                    </p-tabPanel>
+                    <p-tabPanel header="{{ 'Backup' | translate }}" *ngIf="obj.role_name == 'manager'">
+                        <div class="field col-12">
+                            <label>{{ 'Appointment' | translate }}</label>
+                            <b><button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcel()" class="p-button-success" label="{{ 'Excel' | translate }}"></button></b>
+                        </div>
                     </p-tabPanel>
                 </p-tabView>
             </ng-template>
