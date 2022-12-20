@@ -1,13 +1,110 @@
-<div class="surface-section px-4 py-5 md:px-6 lg:px-8">
-    <div class="flex align-items-center flex-column">
-        <div class="text-center">
-            <p-avatar [image]="getAvatar()" shape="circle" size="xlarge"></p-avatar>
-            <h4 class="mb-0">{{ userName }}</h4>
-            <h6 class="text-gray-500 mt-0">{{ email }}</h6>
-        </div>
+<div class="grid">
+    <div class="col-12 md:col-4">
+        <p-card>
+            <div class="px-4 py-5 md:px-6 lg:px-8">
+                <div class="flex align-items-center flex-column">
+                    <div class="text-center">
+                        <p-avatar [image]="getAvatar()" shape="circle" styleClass="profile-avatar"></p-avatar>
+                        <h4 class="mb-0">{{ userName }}</h4>
+                    </div>
+                </div>
+            </div>
+        </p-card>
 <!--        <div class="mt-3 lg:mt-0">-->
 <!--            <button pButton pRipple label="Add" class="p-button-outlined mr-2" icon="pi pi-user-plus"></button>-->
 <!--            <button pButton pRipple label="{{ 'Save' | translate }}" icon="pi pi-check"></button>-->
 <!--        </div>-->
     </div>
+    <div class="col-12 md:col-8">
+        <p-card>
+            <ng-template pTemplate="title">
+                {{ userName }}
+            </ng-template>
+            <ng-template pTemplate="subtitle">
+                <h6 class="text-gray-500 mt-0">{{ obj.role_name + ' role' | translate }}</h6>
+            </ng-template>
+            <ng-template pTemplate="content">
+                <p-tabView>
+                    <p-tabPanel header="{{ 'About' | translate }}">
+                        <div class="field col-12">
+                            <label>{{ 'Name' | translate }}</label>
+                            <b>{{ obj.second_name }}</b>
+                        </div>
+                        <div class="field col-12">
+                            <label>{{ 'Email' | translate }}</label>
+                            <b><a href="mailto:{{ email }}">{{ email }}</a></b>
+                        </div>
+                        <div class="field col-12">
+                            <label>{{ 'Mobile No.' | translate }}</label>
+                            <b>{{ obj.mobile_no }}</b>
+                        </div>
+                    </p-tabPanel>
+                    <p-tabPanel header="{{ 'Settings' | translate }}">
+                        <div class="field col-12">
+                            <label>{{ 'Password' | translate }}</label> <button pButton type="button" label="{{ 'Change password' | translate }}" icon="pi pi-lock" class="p-button-sm" (click)="changePwd()"></button>
+                            <b>**********</b>
+                        </div>
+                        <div class="field col-12" *ngIf="obj.service_name && obj.service_name != ''">
+                            <label>{{ 'Service' | translate }}</label>
+                            <b>{{ obj.service_name }}</b>
+                        </div>
+                        <div class="field col-12" *ngIf="obj.room_name && obj.room_name != ''">
+                            <label>{{ 'Room' | translate }}</label>
+                            <b>{{ obj.room_name }}</b>
+                        </div>
+                        <div class="field col-12" *ngIf="obj.trainer_name && obj.trainer_name != ''">
+                            <label>{{ 'Trainer' | translate }}</label>
+                            <b>{{ obj.trainer_name }}</b>
+                        </div>
+<!--                        <div class="field col-12">-->
+<!--                            <label>{{ 'Duration' | translate }}</label>-->
+<!--                            <b>{{ appointmentService.getSessionName(appointmentInformation.timeInformation.noOfSession) }}</b>-->
+<!--                        </div>-->
+<!--                        <div class="field col-12">-->
+<!--                            <label>{{ 'Date & Time' | translate }}</label>-->
+<!--                            <b>{{ appointmentService.getBookedDateTime(appointmentInformation.timeInformation.date, appointmentInformation.timeInformation.time, appointmentInformation.timeInformation.sessionInterval, appointmentInformation.timeInformation.noOfSession) }} </b>-->
+<!--                        </div>-->
+<!--                        <div class="field col-12">-->
+<!--                            <label>{{ 'Amount' | translate }}</label>-->
+<!--                            <b>HK${{ appointmentInformation.paymentInformation.price }}</b>-->
+<!--                        </div>-->
+<!--                        <div class="field col-12" *ngIf="appointmentInformation.paymentSelection">-->
+<!--                            <label>{{ 'Payment Method' | translate }}</label>-->
+<!--                            <b>{{ appointmentService.getPaymentMethodName(appointmentInformation.paymentInformation.method) }}</b>-->
+<!--                        </div>-->
+                    </p-tabPanel>
+                </p-tabView>
+            </ng-template>
+            <ng-template pTemplate="footer">
+            </ng-template>
+        </p-card>
+    </div>
 </div>
+
+<p-toast></p-toast>
+
+<p-dialog [(visible)]="formDialog" [style]="{width:'50em', height: '100vh'}" header="{{ formHeader | translate }}" position="right" [modal]="true" class="p-fluid">
+    <ng-template pTemplate="content">
+        <div class="field">
+            <label for="old_password">{{ 'Old password' | translate }}</label>
+            <p-password id="old_password" [(ngModel)]="old_password" [required]="true" placeholder="{{ 'Old password' | translate }}" [toggleMask]="true" styleClass="w-full mb-3" [ngClass]="{'ng-invalid ng-dirty' : submitted && !old_password}"></p-password>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !old_password">{{ 'Field is required' | translate: {field: 'Old password' | translate} }}</small>
+        </div>
+        <div class="field">
+            <label for="new_password">{{ 'New password' | translate }}</label>
+            <p-password id="new_password" [(ngModel)]="new_password" [required]="true" placeholder="{{ 'New password' | translate }}" [toggleMask]="true" styleClass="w-full mb-3" [ngClass]="{'ng-invalid ng-dirty' : !new_password}"></p-password>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !new_password">{{ 'Field is required' | translate: {field: 'New password' | translate} }}</small>
+        </div>
+        <div class="field">
+            <label for="cfm_password">{{ 'Confirm password' | translate }}</label>
+            <p-password id="cfm_password" [(ngModel)]="cfm_password" [required]="true" placeholder="{{ 'Confirm password' | translate }}" [toggleMask]="true" styleClass="w-full mb-3" [ngClass]="{'ng-invalid ng-dirty' : !cfm_password || new_password != cfm_password}"></p-password>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !cfm_password">{{ 'Field is required' | translate: {field: 'Confirm password' | translate} }}</small>
+            <small class="ng-dirty ng-invalid" *ngIf="cfm_password != new_password">{{ 'Password not match' | translate }}</small>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="{{ 'Cancel' | translate }}" icon="pi pi-times" class="p-button-text" (click)="hidePwdDialog()"></button>
+        <button pButton pRipple label="{{ 'Save' | translate }}" icon="pi pi-check" class="p-button-text" (click)="savePwd()"></button>
+    </ng-template>
+</p-dialog>
