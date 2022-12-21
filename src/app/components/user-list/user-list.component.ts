@@ -181,6 +181,7 @@ export class UserListComponent implements OnInit {
         this.partner = {
             status: this.statuses[0].code,
             settings: {
+                notifications: {}
             }
         };
         this.submitted = false;
@@ -194,6 +195,11 @@ export class UserListComponent implements OnInit {
         if (Array.isArray(user.settings)) {   // this fixes if settings = [] in DB.
             if (user.settings.length == 0)
                 this.partner.settings = {};
+        }
+        if (!this.partner.settings.notifications) {
+            this.partner.settings = {...this.partner.settings, ...{
+                notifications: {}
+            }};
         }
         this.submitted = false;
         this.formDialog = true;

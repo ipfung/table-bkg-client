@@ -177,6 +177,16 @@
                 </div>
 
                 <p-divider align="center">
+                    <span class="p-tag">{{ 'Notifications' | translate }}</span>
+                </p-divider>
+
+                <div class="field" *ngIf="partner.settings.notifications">
+                    <label>{{ 'Type of Notifications' | translate }}</label>
+                    <div class="form-checkbox"><p-checkbox [(ngModel)]="partner.settings.notifications.email" label="{{ 'Email' | translate }}" [binary]="true"></p-checkbox></div>
+                    <div class="form-checkbox"><p-checkbox [(ngModel)]="partner.settings.notifications.whatsapp" label="WhatsApp" [binary]="true"></p-checkbox></div>
+                </div>
+
+                <p-divider align="center">
                     <span class="p-tag">{{ 'Default Values' | translate }}</span>
                 </p-divider>
 

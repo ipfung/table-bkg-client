@@ -126,6 +126,7 @@ export class TrainerStudentListComponent implements OnInit {
         this.trainer = {
             status: this.statuses[0].code,
             settings: {
+                notifications: {}
             },
             teammates: []
         };
@@ -146,6 +147,11 @@ export class TrainerStudentListComponent implements OnInit {
             console.log('/availability-students edit list=', res);
             this.availableStudents = res.data;
         });
+        if (!this.trainer.settings.notifications) {
+            this.trainer.settings = {...this.trainer.settings, ...{
+                    notifications: {}
+                }};
+        }
         if (this.timeslotSetting == 'trainer_date') {
             this.loadWorkDateData()
         } else {

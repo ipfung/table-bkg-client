@@ -186,6 +186,16 @@
                         </ng-template>
                     </p-dropdown>
                 </div>
+
+                <p-divider align="center">
+                    <span class="p-tag">{{ 'Notifications' | translate }}</span>
+                </p-divider>
+
+                <div class="field" *ngIf="trainer.settings.notifications">
+                    <label>{{ 'Type of Notifications' | translate }}</label>
+                    <div class="form-checkbox"><p-checkbox [(ngModel)]="trainer.settings.notifications.email" label="{{ 'Email' | translate }}" [binary]="true"></p-checkbox></div>
+                    <div class="form-checkbox"><p-checkbox [(ngModel)]="trainer.settings.notifications.whatsapp" label="WhatsApp" [binary]="true"></p-checkbox></div>
+                </div>
             </p-tabPanel>
             <p-tabPanel *ngIf="supportMultiStudent" [disabled]="trainer.id <= 0" header="{{ 'Student' | translate }}">
                 <img [src]="lemonade.getAvatar(trainer)" [alt]="trainer.name" width="100" class="mt-0 mx-auto mb-2 block" *ngIf="trainer.avatar">
