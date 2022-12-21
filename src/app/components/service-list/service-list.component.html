@@ -1,0 +1,124 @@
+<div class="flex justify-content-between">
+    <div class="flex align-items-center justify-content-center p-2 border-round mr-1 text-2xl font-bold">
+        {{ 'Service' | translate }}
+    </div>
+    <div class="flex align-items-center justify-content-center py-2 border-round">
+<!--        <button *ngIf="editable" pButton pRipple label="{{ 'New' | translate }}" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>-->
+    </div>
+</div>
+<div class="card">
+
+    <p-table [value]="services" [loading]="loading" dataKey="id" sortField="name" sortMode="single"  responsiveLayout="stack">
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="min-width:200px">{{ 'Service Name' | translate }}</th>
+                <th style="min-width:150px">{{ 'Every Duration' | translate }}</th>
+                <th style="min-width:150px">{{ 'Minimum Duration' | translate }}</th>
+                <th style="min-width:150px">{{ 'Maximum Duration' | translate }}</th>
+                <th style="min-width:120px">{{ 'Price' | translate }}</th>
+                <th style="min-width:20px"></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-service let-rowIndex="rowIndex">
+            <tr>
+                <td style="min-width:200px">
+                    <span class="p-column-title">{{ 'Service Name' | translate }}</span>
+                    <div>
+                        <p-avatar [label]="lemonade.getInitial(service.name)" shape="circle" [style]="{'background-color': service.color, 'color': '#fff'}"></p-avatar>
+                        {{ service.name }}
+                    </div>
+                </td>
+                <td style="min-width:150px">
+                    <span class="p-column-title">{{ 'Every Duration' | translate }}</span>
+                    {{ service.duration }} {{ 'mins' | translate }}
+                </td>
+                <td style="min-width:150px">
+                    <span class="p-column-title">{{ 'Minimum Duration' | translate }}</span>
+                    {{ service.min_duration }} {{ 'mins' | translate }}
+                </td>
+                <td style="min-width:150px">
+                    <span class="p-column-title">{{ 'Maximum Duration' | translate }}</span>
+                    {{ service.max_duration }} {{ 'mins' | translate }}
+                </td>
+                <td style="min-width:120px">
+                    <span class="p-column-title">{{ 'Price' | translate }}</span>
+                    {{ service.price | currency:'HK$' }}
+                </td>
+                <td style="min-width:20px">
+                    <span class="p-column-title">{{ 'Actions' | translate }}</span>
+                    <div>
+                        <button *ngIf="editable" pButton type="button" [disabled]="!canAmend(service)" pTooltip="{{ 'Edit' | translate }}" tooltipPosition="bottom" class="p-0 p-button-text" icon="pi pi-pencil" (click)="edit(service)"></button>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-toast></p-toast>
+
+<p-dialog [(visible)]="formDialog" [style]="{width:'50em', height: '100vh'}" header="{{ formHeader | translate:{name: 'Service' | translate} }}" position="right" [modal]="true" class="p-fluid">
+    <ng-template pTemplate="content">
+        <p-tabView>
+            <p-tabPanel header="{{ 'Details' | translate }}">
+                <div class="field">
+                    <label for="name"><span class="required">*</span> {{ 'Service Name' | translate }}</label>
+                    <input type="text" pInputText id="name" [(ngModel)]="service.name" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !service.name}"/>
+                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !service.name">{{ 'Field is required' | translate: {field: 'Service' | translate} }}</small>
+                </div>
+
+<!--                <div class="field">-->
+<!--                    <label for="category"><span class="required">*</span> {{ 'Category' | translate }}</label>-->
+<!--                    <p-dropdown id="category" [options]="categories" [(ngModel)]="service.location_id" optionLabel="name" optionValue="id" [ngClass]="{'ng-invalid ng-dirty' : submitted && !service.location_id}"></p-dropdown>-->
+<!--                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !service.location_id">{{ 'Field is required' | translate: {field: 'Location' | translate} }}</small>-->
+<!--                </div>-->
+
+                <div class="field">
+                    <label for="description">{{ 'Description' | translate }}</label>
+                    <textarea id="description" pInputTextarea [(ngModel)]="service.description"></textarea>
+                </div>
+
+                <div class="field">
+                    <label for="status">{{ 'Status' | translate }}</label>
+                    <p-dropdown id="status" [options]="statuses" optionValue="code" [(ngModel)]="service.status" placeholder="{{ 'Select a Status' | translate }}">
+                        <ng-template pTemplate="selectedItem">
+                            {{ lemonade.comboRenderer(statuses, service.status) | translate }}
+                        </ng-template>
+                        <ng-template let-item pTemplate="item">
+                            {{ item.name | translate }}
+                        </ng-template>
+                    </p-dropdown>
+                </div>
+            </p-tabPanel>
+
+            <p-tabPanel header="{{ 'Price' | translate }} & {{ 'Duration' | translate }}">
+
+                <div class="field">
+                    <label><span class="required">*</span> {{ 'Price' | translate }}</label>
+                    <p-inputNumber [(ngModel)]="service.price" mode="currency" currency="HKD" locale="zh-HK" min="0" [ngClass]="{'ng-invalid ng-dirty' : submitted && !service.price}"></p-inputNumber>
+                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !service.price">{{ 'Field is required' | translate: {field: 'Price' | translate} }}</small>
+                </div>
+
+                <div class="field">
+                    <label for="duration">{{ 'Every Duration' | translate }}</label>
+                    <p-inputNumber id="duration" [(ngModel)]="service.duration" suffix="{{ 'mins' | translate }}" mode="decimal" [showButtons]="true" inputId="duration" [min]="5" [max]="360" [step]="5"></p-inputNumber>
+                </div>
+
+                <div class="field">
+                    <label for="min_duration">{{ 'Minimum Duration' | translate }}</label>
+                    <p-inputNumber id="min_duration" [(ngModel)]="service.min_duration" suffix="{{ 'mins' | translate }}" mode="decimal" [showButtons]="true" inputId="min_duration" [min]="5" [max]="360" [step]="5"></p-inputNumber>
+                </div>
+
+                <div class="field">
+                    <label for="max_duration">{{ 'Maximum Duration' | translate }}</label>
+                    <p-inputNumber id="max_duration" [(ngModel)]="service.max_duration" suffix="{{ 'mins' | translate }}" mode="decimal" [showButtons]="true" inputId="max_duration" [min]="5" [max]="360" [step]="5"></p-inputNumber>
+                </div>
+            </p-tabPanel>
+        </p-tabView>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="{{ 'Cancel' | translate }}" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="{{ 'Save' | translate }}" icon="pi pi-check" class="p-button-text" (click)="save()"></button>
+    </ng-template>
+</p-dialog>
