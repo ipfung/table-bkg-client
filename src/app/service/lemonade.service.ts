@@ -69,6 +69,10 @@ export class Lemonade {
         }
     }
 
+    getAppName() {
+        return environment.name;
+    }
+
     formatPostDate(d) {
         if (d)
             return format(d, 'yyyy-MM-dd');
