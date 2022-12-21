@@ -63,7 +63,7 @@
 
         <div class="field">
             <label for="status">{{ 'Status' | translate }}</label>
-            <p-dropdown id="status" [options]="statuses" optionValue="code" [(ngModel)]="room.status" placeholder="Select a Status">
+            <p-dropdown id="status" [options]="statuses" optionValue="code" [(ngModel)]="room.status" placeholder="{{ 'Select a Status' | translate }}">
                 <ng-template pTemplate="selectedItem">
                     {{ lemonade.comboRenderer(statuses, room.status) | translate }}
                 </ng-template>
