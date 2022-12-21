@@ -17,6 +17,7 @@ export class UserProfileComponent implements OnInit {
     email: string;
     userName: string;
     obj: any;
+    itemName: any;
 
     submitted: boolean;
     formDialog: boolean;
@@ -24,6 +25,8 @@ export class UserProfileComponent implements OnInit {
     old_password: string;
     new_password: string;
     cfm_password: string;
+
+    notifications: any;
 
     //ref: https://www.pinterest.co.uk/pin/201184308333695574/
     constructor(private api: ApiService, public authService: AuthService, private messageService: MessageService, public lemonade: Lemonade) {
@@ -52,27 +55,44 @@ export class UserProfileComponent implements OnInit {
         this.submitted = false;
     }
 
-    changePwd() {
-        this.formHeader = "Change password";
+    changeProfile(item) {
+        this.formHeader = "Change " + item;
+        this.itemName = item;
+        this.notifications = {...this.obj.notifications};
         this.submitted = false;
         this.formDialog = true;
     }
 
-    savePwd() {
+    save() {
         this.submitted = true;
-        this.api.update('api/user-password/' + this.obj.id, {
-            old_password: this.old_password,
-            password: this.new_password,
-            password_confirmation: this.cfm_password
-        }).subscribe( res => {
-            if (res.success === true) {
-                this.hidePwdDialog();
-                this.lemonade.ok(this.messageService);
-            } else {
-                // error.
-                this.lemonade.error(this.messageService, res);
-            }
-        });
+        if ('password' == this.itemName) {
+            this.api.update('api/user-' + this.itemName + '/' + this.obj.id, {
+                old_password: this.old_password,
+                password: this.new_password,
+                password_confirmation: this.cfm_password
+            }).subscribe( res => {
+                if (res.success === true) {
+                    this.hidePwdDialog();
+                    this.lemonade.ok(this.messageService);
+                } else {
+                    // error.
+                    this.lemonade.error(this.messageService, res);
+                }
+            });
+        } else if ('notifications' == this.itemName) {
+            this.api.update('api/user-' + this.itemName + '/' + this.obj.id, {
+                notifications: this.notifications
+            }).subscribe( res => {
+                if (res.success === true) {
+                    this.hidePwdDialog();
+                    this.obj.notifications = this.notifications;
+                    this.lemonade.ok(this.messageService);
+                } else {
+                    // error.
+                    this.lemonade.error(this.messageService, res);
+                }
+            });
+        }
     }
 
     exportData(module, list) {

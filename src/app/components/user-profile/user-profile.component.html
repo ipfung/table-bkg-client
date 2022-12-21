@@ -43,8 +43,13 @@
                             <b>{{ obj.mobile_no }}</b>
                         </div>
                         <div class="field col-12">
-                            <label>{{ 'Password' | translate }}</label> <button pButton type="button" label="{{ 'Change password' | translate }}" icon="pi pi-lock" class="p-button-sm" (click)="changePwd()"></button>
+                            <label>{{ 'Password' | translate }}</label> <button pButton type="button" label="{{ 'Change password' | translate }}" icon="pi pi-lock" class="p-button-sm" (click)="changeProfile('password')"></button>
                             <b>**********</b>
+                        </div>
+                        <div class="field col-12" *ngIf="obj.notifications">
+                            <label>{{ 'Type of Notifications' | translate }}</label> <button pButton type="button" label="{{ 'Change notifications' | translate }}" icon="pi pi-bell" class="p-button-sm" (click)="changeProfile('notifications')"></button>
+                            <div class="form-checkbox"><p-checkbox [(ngModel)]="obj.notifications.email" label="{{ 'Email' | translate }}" [binary]="true" [disabled]="true"></p-checkbox></div>
+                            <div class="form-checkbox"><p-checkbox [(ngModel)]="obj.notifications.whatsapp" label="WhatsApp" [binary]="true" [disabled]="true"></p-checkbox></div>
                         </div>
                     </p-tabPanel>
                     <p-tabPanel header="{{ 'Service' | translate }}">
@@ -83,26 +88,35 @@
 
 <p-dialog [(visible)]="formDialog" [style]="{width:'50em', height: '100vh'}" header="{{ formHeader | translate }}" position="right" [modal]="true" class="p-fluid">
     <ng-template pTemplate="content">
-        <div class="field">
-            <label for="old_password">{{ 'Old password' | translate }}</label>
-            <p-password id="old_password" [(ngModel)]="old_password" [required]="true" placeholder="{{ 'Old password' | translate }}" [toggleMask]="true" styleClass="w-full mb-3" [ngClass]="{'ng-invalid ng-dirty' : submitted && !old_password}"></p-password>
-            <small class="ng-dirty ng-invalid" *ngIf="submitted && !old_password">{{ 'Field is required' | translate: {field: 'Old password' | translate} }}</small>
+        <div *ngIf="'password' == itemName">
+            <div class="field">
+                <label for="old_password">{{ 'Old password' | translate }}</label>
+                <p-password id="old_password" [(ngModel)]="old_password" [required]="true" placeholder="{{ 'Old password' | translate }}" [toggleMask]="true" styleClass="w-full mb-3" [ngClass]="{'ng-invalid ng-dirty' : submitted && !old_password}"></p-password>
+                <small class="ng-dirty ng-invalid" *ngIf="submitted && !old_password">{{ 'Field is required' | translate: {field: 'Old password' | translate} }}</small>
+            </div>
+            <div class="field">
+                <label for="new_password">{{ 'New password' | translate }}</label>
+                <p-password id="new_password" [(ngModel)]="new_password" [required]="true" minlength="8" placeholder="{{ 'New password' | translate }}" [toggleMask]="true" styleClass="w-full mb-3" [ngClass]="{'ng-invalid ng-dirty' : !new_password}"></p-password>
+                <small class="ng-dirty ng-invalid" *ngIf="submitted && !new_password">{{ 'Field is required' | translate: {field: 'New password' | translate} }}</small>
+            </div>
+            <div class="field">
+                <label for="cfm_password">{{ 'Confirm password' | translate }}</label>
+                <p-password id="cfm_password" [(ngModel)]="cfm_password" [required]="true" minlength="8" placeholder="{{ 'Confirm password' | translate }}" [toggleMask]="true" styleClass="w-full mb-3" [ngClass]="{'ng-invalid ng-dirty' : !cfm_password || new_password != cfm_password}"></p-password>
+                <small class="ng-dirty ng-invalid" *ngIf="submitted && !cfm_password">{{ 'Field is required' | translate: {field: 'Confirm password' | translate} }}</small>
+                <small class="ng-dirty ng-invalid" *ngIf="cfm_password != new_password">{{ 'Password not match' | translate }}</small>
+            </div>
         </div>
-        <div class="field">
-            <label for="new_password">{{ 'New password' | translate }}</label>
-            <p-password id="new_password" [(ngModel)]="new_password" [required]="true" placeholder="{{ 'New password' | translate }}" [toggleMask]="true" styleClass="w-full mb-3" [ngClass]="{'ng-invalid ng-dirty' : !new_password}"></p-password>
-            <small class="ng-dirty ng-invalid" *ngIf="submitted && !new_password">{{ 'Field is required' | translate: {field: 'New password' | translate} }}</small>
-        </div>
-        <div class="field">
-            <label for="cfm_password">{{ 'Confirm password' | translate }}</label>
-            <p-password id="cfm_password" [(ngModel)]="cfm_password" [required]="true" placeholder="{{ 'Confirm password' | translate }}" [toggleMask]="true" styleClass="w-full mb-3" [ngClass]="{'ng-invalid ng-dirty' : !cfm_password || new_password != cfm_password}"></p-password>
-            <small class="ng-dirty ng-invalid" *ngIf="submitted && !cfm_password">{{ 'Field is required' | translate: {field: 'Confirm password' | translate} }}</small>
-            <small class="ng-dirty ng-invalid" *ngIf="cfm_password != new_password">{{ 'Password not match' | translate }}</small>
+        <div *ngIf="'notifications' == itemName">
+            <div class="field">
+                <label>{{ 'Type of Notifications' | translate }}</label>
+                <div class="form-checkbox"><p-checkbox [(ngModel)]="notifications.email" label="{{ 'Email' | translate }}" [binary]="true"></p-checkbox></div>
+                <div class="form-checkbox"><p-checkbox [(ngModel)]="notifications.whatsapp" label="WhatsApp" [binary]="true"></p-checkbox></div>
+            </div>
         </div>
     </ng-template>
 
     <ng-template pTemplate="footer">
         <button pButton pRipple label="{{ 'Cancel' | translate }}" icon="pi pi-times" class="p-button-text" (click)="hidePwdDialog()"></button>
-        <button pButton pRipple label="{{ 'Save' | translate }}" icon="pi pi-check" class="p-button-text" (click)="savePwd()"></button>
+        <button pButton pRipple label="{{ 'Save' | translate }}" icon="pi pi-check" class="p-button-text" (click)="save()"></button>
     </ng-template>
 </p-dialog>
