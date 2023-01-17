@@ -24,6 +24,7 @@ export class UserListComponent implements OnInit {
     users = [];
     newable = false;
     editable = false;
+    showQr = false;
     // search
     roles: any[];
     selectedRole = [];
@@ -53,6 +54,7 @@ export class UserListComponent implements OnInit {
     // env settings
     requiredTrainer: boolean;
     requiredRoom: boolean;
+    qrCode: string;
 
     private subscription;
 
@@ -132,6 +134,7 @@ export class UserListComponent implements OnInit {
             this.users = res.data;
             this.editable = res.editable;
             this.newable = res.newable;
+            this.showQr = res.student_qr;
             this.requiredTrainer = res.requiredTrainer;
             this.requiredRoom = res.requiredRoom;
             this.loading = false;
@@ -201,9 +204,20 @@ export class UserListComponent implements OnInit {
                 notifications: {}
             }};
         }
+        if (this.showQr) {
+            this.generateQr();
+        }
         this.submitted = false;
         this.formDialog = true;
         this.isNew = false;
+    }
+
+    generateQr() {
+        this.api.get('api/student-qr/' + this.partner.id).subscribe( res => {
+            // console.log('qr=', res);
+            console.log('qr2=', atob(res['data']['content']));
+            this.qrCode = atob(res['data']['content']);
+        });
     }
 
     canAmend(user) {
@@ -263,6 +277,9 @@ export class UserListComponent implements OnInit {
                 this.loadData(null);
                 this.hideDialog();
                 this.lemonade.ok(this.messageService);
+                if (this.showQr) {
+                    this.generateQr();
+                }
             } else {
                 // error.
                 this.lemonade.error(this.messageService, res);

@@ -10,7 +10,7 @@
     <!-- Search fields -->
     <div class="p-fluid grid">
         <div class="field col-12 md:col-4">
-            <input type="text" pInputText [(ngModel)]="userName" (change)="loadData(null)" placeholder="{{ 'Search F' | translate:{field: 'Name' | translate } }}">
+            <input type="text" pInputText [(ngModel)]="userName" (change)="loadData(null)" placeholder="{{ 'Search F' | translate:{field: 'English Name' | translate } }}">
         </div>
         <div class="field col-12 md:col-4">
             <input type="text" pInputText [(ngModel)]="userEmail" (change)="loadData(null)" placeholder="{{ 'Search F' | translate:{field: 'Email' | translate } }}">
@@ -41,7 +41,7 @@
     <p-table [value]="users" [lazy]="true" (onLazyLoad)="loadData($event)" [paginator]="true" [rows]="rows" [loading]="loading" [totalRecords]="totalRecords" dataKey="id" sortField="appointment_date" sortMode="single"  responsiveLayout="stack">
         <ng-template pTemplate="header">
             <tr>
-                <th style="min-width:120px">{{ 'Name' | translate }}</th>
+                <th style="min-width:120px">{{ 'English Name' | translate }}</th>
                 <th style="min-width:100px">{{ 'Chinese Name' | translate }}</th>
 <!--                <th style="min-width:120px">{{ 'Role' | translate }}</th>-->
                 <th style="min-width:90px">{{ 'Mobile No.' | translate }}</th>
@@ -62,7 +62,7 @@
         <ng-template pTemplate="body" let-user let-rowIndex="rowIndex">
             <tr>
                 <td style="min-width:120px">
-                    <span class="p-column-title">{{ 'Name' | translate }}</span>
+                    <span class="p-column-title">{{ 'English Name' | translate }}</span>
                     <div>
                         <p-avatar [label]="lemonade.getInitial(user.name)" shape="circle" class="lemonade-avatar" [style]="{background: user.role.color_name}"></p-avatar>
                         {{ user.name }}
@@ -121,9 +121,9 @@
         <p-tabView>
             <p-tabPanel header="{{ 'General Details' | translate }}">
                 <div class="field">
-                    <label for="name"><span class="required">*</span> {{ 'Name' | translate }}</label>
+                    <label for="name"><span class="required">*</span> {{ 'English Name' | translate }}</label>
                     <input type="text" pInputText id="name" [(ngModel)]="partner.name" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !partner.name}"/>
-                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !partner.name">{{ 'Field is required' | translate: {field: 'Name' | translate} }}</small>
+                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !partner.name">{{ 'Field is required' | translate: {field: 'English Name' | translate} }}</small>
                 </div>
 
                 <div class="field">
@@ -232,6 +232,15 @@
                         <p-inputNumber id="trainer_commission" [(ngModel)]="partner.settings.trainer_commission" mode="currency" currency="HKD" locale="zh-HK"></p-inputNumber>
                     </div>
                 </div>
+            </p-tabPanel>
+
+            <p-tabPanel *ngIf="this.showQr" [disabled]="!(partner.id > 0)" header="{{ 'Student Card' | translate }}">
+                <div id="qr-student-card" class="card p-card-shadow" [style]="{'max-width': '360px'}">
+                    <div class="p-card-content qrcode"><div class="" [innerHTML]="qrCode | sanitizeHtml"></div></div>
+                    <div class="p-card-title">{{partner.name}}</div>
+                    <div class="p-card-subtitle">{{ roleRenderer(partner.role_id) + ' role' | translate }}</div>
+                </div>
+                <button pButton label="{{ 'Print' | translate }}" icon="pi pi-printer" printSectionId="qr-student-card" [useExistingCss]="true" ngxPrint></button>
             </p-tabPanel>
 
             <p-tabPanel [disabled]="!(partner.id > 0)" header="{{ 'Notifications' | translate }}">

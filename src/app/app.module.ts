@@ -7,6 +7,9 @@ import { LocationStrategy, HashLocationStrategy } from '@angular/common';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 
+import {SanitizeHtmlPipe} from './pipes/sanitize-html.pipe';
+import {NgxPrintModule} from 'ngx-print';
+
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
@@ -199,6 +202,7 @@ FullCalendarModule.registerPlugins([
                 deps: [HttpClient]
             }
         }),
+        NgxPrintModule,
         BrowserAnimationsModule,
         AccordionModule,
         AutoCompleteModule,
@@ -293,6 +297,7 @@ FullCalendarModule.registerPlugins([
         AppConfigComponent,
         AppMenuComponent,
         AppMenuitemComponent,
+        SanitizeHtmlPipe,
         DashboardComponent,
         FormLayoutComponent,
         FloatLabelComponent,
