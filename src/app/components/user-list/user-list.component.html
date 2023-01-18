@@ -222,18 +222,32 @@
                 </div>
 
                 <div class="grid">
-                    <div class="field col-12 md:col-4">
+                    <div class="field col-12 md:col-6">
                         <label for="trainer_charge">{{ 'Charge' | translate }}</label>
                         <p-inputNumber id="trainer_charge" [(ngModel)]="partner.settings.trainer_charge" mode="currency" currency="HKD" locale="zh-HK" (onInput)="updateCommission($event)"></p-inputNumber>
                     </div>
 
-                    <div class="field col-12 md:col-4">
+                    <div class="field col-12 md:col-6">
+                        <label for="duration">{{ 'Per' | translate }}</label>
+                        <p-dropdown id="duration" [options]="sessions" [(ngModel)]="partner.settings.no_of_session" optionValue="code" placeholder="{{ 'Select field' | translate:{field: 'Duration' | translate } }}" [ngClass]="{'ng-invalid ng-dirty' : submitted && !partner.settings.no_of_session}">
+                            <ng-template pTemplate="selectedItem">
+                                {{ appointmentService.getSessionName(partner.settings.no_of_session, sessions) }}
+                            </ng-template>
+                            <ng-template let-time pTemplate="item">
+                                <div *ngIf="time.hour > 0 && time.minute != 30 && time.minute != 0" [translate]="'hour Minutes'" [translateParams]="{hour: time.hour, s: time.hour > 1 ? 's' : '', minute: time.minute, ms: time.minute > 1 ? 's' : ''}"></div>
+                                <div *ngIf="time.hour > 0 && (time.minute == 30 || time.minute == 0)" [translate]="'hour Hours'" [translateParams]="{hour: time.hour, s: time.hour > 1 ? 's' : ''}"></div>
+                                <div *ngIf="time.hour == 0" [translate]="'N minutes'" [translateParams]="{minute: time.minute, s: time.minute > 1 ? 's' : ''}"></div>
+                            </ng-template>
+                        </p-dropdown>
+                    </div>
+
+                    <div class="field col-12 md:col-6">
                         <label for="trainer_commission">{{ 'Trainer Charge' | translate }}</label>
                         <p-inputNumber id="trainer_commission" [(ngModel)]="partner.settings.trainer_commission" mode="currency" currency="HKD" locale="zh-HK" [max]="partner.settings.trainer_charge" (onInput)="updateTrainerCommission($event)" [ngClass]="{'ng-invalid ng-dirty' : submitted && !commission_bal}"></p-inputNumber>
                         <small class="ng-dirty ng-invalid" *ngIf="submitted && !commission_bal">{{ 'The equation is not correct' | translate }}</small>
                     </div>
 
-                    <div class="field col-12 md:col-4">
+                    <div class="field col-12 md:col-6">
                         <label for="company_income">{{ 'Company Income' | translate }}</label>
                         <p-inputNumber id="company_income" [(ngModel)]="partner.settings.company_income" mode="currency" currency="HKD" locale="zh-HK" [max]="partner.settings.trainer_charge" (onInput)="updateCompanyIncome($event)" [ngClass]="{'ng-invalid ng-dirty' : submitted && !commission_bal}"></p-inputNumber>
                         <small class="ng-dirty ng-invalid" *ngIf="submitted && !commission_bal">{{ 'The equation is not correct' | translate }}</small>

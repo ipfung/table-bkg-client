@@ -5,6 +5,7 @@ import {Lemonade} from "../../service/lemonade.service";
 import {ActivatedRoute} from "@angular/router";
 import {ConfirmationService, LazyLoadEvent, MessageService} from "primeng/api";
 import {TranslateService} from "@ngx-translate/core";
+import {AppointmentService} from "../../service/appointmentservice";
 
 @Component({
     selector: 'app-user-list',
@@ -42,6 +43,7 @@ export class UserListComponent implements OnInit {
     rooms = [];
     trainers = [];
     services = [];
+    sessions = [];
     statuses = [];
     formHeader = "Edit Form";
     // customer's notifications.
@@ -60,7 +62,7 @@ export class UserListComponent implements OnInit {
 
     private subscription;
 
-    constructor(private route: ActivatedRoute, private api: ApiService, public authService: AuthService, private translateService: TranslateService, private messageService: MessageService, private confirmationService: ConfirmationService, public lemonade: Lemonade) {
+    constructor(private route: ActivatedRoute, private api: ApiService, public authService: AuthService, private translateService: TranslateService, private messageService: MessageService, private confirmationService: ConfirmationService, public appointmentService: AppointmentService, public lemonade: Lemonade) {
         this.route.params.subscribe(params => {
             this.paramRole = params['role'] || 'Student';
         });
@@ -74,6 +76,7 @@ export class UserListComponent implements OnInit {
             status: 1001
         }).subscribe( res => {
             this.services = res.data;
+            this.sessions = this.services[0].sessions;
         });
 
         this.api.get('api/trainers', {
@@ -148,10 +151,10 @@ export class UserListComponent implements OnInit {
     findRoleColor(roleId) {
         if (this.roles && this.roles.length > 0 && roleId > 0) {
             let data = this.roles.find(el => el.id == roleId);
-            console.log('findRoleColor22-', roleId, data.color_name);
+            // console.log('findRoleColor22-', roleId, data.color_name);
             return data.color_name;
         } else {
-            console.log('findRoleColor33-pink-', roleId);
+            // console.log('findRoleColor33-pink-', roleId);
             return 'bg-purple-500';
         }
     }
@@ -275,6 +278,9 @@ export class UserListComponent implements OnInit {
     updateCommission(e) {
         console.log('updateCommission e=', e);
         this.partner.settings.company_income = e.value - this.partner.settings.trainer_commission;
+        if (!this.partner.settings.no_of_session) {
+            this.partner.settings.no_of_session = this.sessions[0].code;
+        }
     }
 
     updateTrainerCommission(e) {
