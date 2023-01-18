@@ -18,6 +18,8 @@ export class UserProfileComponent implements OnInit {
     userName: string;
     obj: any;
     itemName: any;
+    qrCode: string;
+    qrCodeText: string;
 
     submitted: boolean;
     formDialog: boolean;
@@ -41,6 +43,16 @@ export class UserProfileComponent implements OnInit {
         this.userName = await this.authService.userName();
         this.api.get('api/user').subscribe(res => {
             this.obj = res;
+            if (res.role_name == 'user' || res.role_name == 'member') {
+                this.generateQr(res.id);
+            }
+        });
+    }
+
+    generateQr(id) {
+        this.api.get('api/student-qr/' + id).subscribe( res => {
+            this.qrCode = atob(res['data']['content']);
+            this.qrCodeText = res['data']['text'];
         });
     }
 
