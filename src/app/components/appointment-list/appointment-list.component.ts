@@ -151,7 +151,7 @@ export class AppointmentListComponent implements OnInit {
      * @param appointment
      */
     isValidStatus(appointment) {
-        return appointment.loading !== true && (appointment.status == 'approved' || appointment.status == 'pending');
+        return appointment.loading !== true && appointment.take_leave_at && (appointment.status == 'approved' || appointment.status == 'pending');
     }
 
     /**
@@ -169,6 +169,40 @@ export class AppointmentListComponent implements OnInit {
         appointment.timeslotSetting = this.timeslotSetting;
         this.appointmentService.reschedule.appointment = appointment;
         this.router.navigate(['/reschedule', appointment.id]);
+    }
+
+    /**
+     * leave must be taken before start_time, not checked-in and approved.
+     * @param appointment
+     */
+    canTakeLeave(appointment) {
+        const now = new Date(),
+            start_time = (new Date(appointment.start_time));
+        return appointment.loading !== true && !appointment.take_leave_at && !appointment.checkin && now < start_time && appointment.status == 'approved';
+    }
+
+    takeLeave(booking) {
+        this.translateService.get(['Take leave', 'Warning']).subscribe( res => {
+            this.confirmationService.confirm({
+                message: res['Take leave'] + '?',
+                accept: () => {
+                    booking.loading = true;
+                    this.appointmentService.takeLeave(booking.id).subscribe(res => {
+                        // console.log('take_leave_at=', res);
+                        if (res.success == true) {
+                            booking.take_leave_at = res.take_leave_at;
+                        } else {
+                            this.messageService.add({
+                                severity: 'error',
+                                summary: res['Error'],
+                                detail: res.error
+                            });
+                        }
+                        booking.loading = false;
+                    });
+                }
+            });
+        });
     }
 
     isAbleApprove(appointment) {

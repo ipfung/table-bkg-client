@@ -173,6 +173,12 @@ export class AppointmentService {
         });
     }
 
+    takeLeave(bookId) {
+        return this.api.update('api/take-leave/' + bookId, {
+            t: Math.floor(new Date().getTime()/1000.0)
+        });
+    }
+
     updateUserSelection() {
         let dt = new Date();
         dt.setHours( dt.getHours() + AppointmentService.EXPIRY_TIME );
