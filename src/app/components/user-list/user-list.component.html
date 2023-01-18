@@ -222,14 +222,21 @@
                 </div>
 
                 <div class="grid">
-                    <div class="field col-12 md:col-6">
-                        <label for="trainer_charge">{{ 'Trainer Charge' | translate }}</label>
-                        <p-inputNumber id="trainer_charge" [(ngModel)]="partner.settings.trainer_charge" mode="currency" currency="HKD" locale="zh-HK"></p-inputNumber>
+                    <div class="field col-12 md:col-4">
+                        <label for="trainer_charge">{{ 'Charge' | translate }}</label>
+                        <p-inputNumber id="trainer_charge" [(ngModel)]="partner.settings.trainer_charge" mode="currency" currency="HKD" locale="zh-HK" (onInput)="updateCommission($event)"></p-inputNumber>
                     </div>
 
-                    <div class="field col-12 md:col-6">
-                        <label for="trainer_commission">{{ 'Commission' | translate }}</label>
-                        <p-inputNumber id="trainer_commission" [(ngModel)]="partner.settings.trainer_commission" mode="currency" currency="HKD" locale="zh-HK"></p-inputNumber>
+                    <div class="field col-12 md:col-4">
+                        <label for="trainer_commission">{{ 'Trainer Charge' | translate }}</label>
+                        <p-inputNumber id="trainer_commission" [(ngModel)]="partner.settings.trainer_commission" mode="currency" currency="HKD" locale="zh-HK" [max]="partner.settings.trainer_charge" (onInput)="updateTrainerCommission($event)" [ngClass]="{'ng-invalid ng-dirty' : submitted && !commission_bal}"></p-inputNumber>
+                        <small class="ng-dirty ng-invalid" *ngIf="submitted && !commission_bal">{{ 'The equation is not correct' | translate }}</small>
+                    </div>
+
+                    <div class="field col-12 md:col-4">
+                        <label for="company_income">{{ 'Company Income' | translate }}</label>
+                        <p-inputNumber id="company_income" [(ngModel)]="partner.settings.company_income" mode="currency" currency="HKD" locale="zh-HK" [max]="partner.settings.trainer_charge" (onInput)="updateCompanyIncome($event)" [ngClass]="{'ng-invalid ng-dirty' : submitted && !commission_bal}"></p-inputNumber>
+                        <small class="ng-dirty ng-invalid" *ngIf="submitted && !commission_bal">{{ 'The equation is not correct' | translate }}</small>
                     </div>
                 </div>
             </p-tabPanel>

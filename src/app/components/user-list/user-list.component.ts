@@ -50,6 +50,8 @@ export class UserListComponent implements OnInit {
     notifyTotalRecords = 0;
     notifyLoading = true;
     notifyNewable: boolean;
+    //
+    commission_bal: boolean = true;
 
     // env settings
     requiredTrainer: boolean;
@@ -240,6 +242,14 @@ export class UserListComponent implements OnInit {
         if (this.isNew && !failed) {
             failed = (!this.partner.password);
         }
+        if (this.partner.settings) {
+            if (this.partner.settings.trainer_charge && this.partner.settings.trainer_commission && this.partner.settings.company_income) {
+                if (this.partner.settings.trainer_commission + this.partner.settings.company_income != this.partner.settings.trainer_charge) {
+                    this.commission_bal = false;
+                    failed = true;
+                }
+            }
+        }
         return !failed;
     }
 
@@ -260,6 +270,20 @@ export class UserListComponent implements OnInit {
                 }
             });
         });
+    }
+
+    updateCommission(e) {
+        console.log('updateCommission e=', e);
+        this.partner.settings.company_income = e.value - this.partner.settings.trainer_commission;
+    }
+
+    updateTrainerCommission(e) {
+        console.log('updateTrainerCommission e=', e);
+        this.partner.settings.company_income = this.partner.settings.trainer_charge - e.value;
+    }
+
+    updateCompanyIncome(e) {
+        this.partner.settings.trainer_commission = this.partner.settings.trainer_charge - e.value;
     }
 
     save() {
