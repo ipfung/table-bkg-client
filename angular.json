@@ -38,6 +38,7 @@
                     },
                     "configurations": {
                         "production": {
+                            "outputPath": "dist/pingpong",
                             "budgets": [
                                 {
                                     "type": "initial",
@@ -59,6 +60,7 @@
                             "outputHashing": "all"
                         },
                         "app-prod": {
+                            "outputPath": "dist/pingpong",
                             "budgets": [
                                 {
                                     "type": "initial",
@@ -80,6 +82,24 @@
                             "outputHashing": "all"
                         },
                         "app-dev": {
+                            "fileReplacements": [
+                                {
+                                    "replace": "src/environments/environment.ts",
+                                    "with": "src/environments/environment.app-dev.ts"
+                                }
+                            ],
+                            "outputHashing": "all"
+                        },
+                        "driving-dev": {
+                            "fileReplacements": [
+                                {
+                                    "replace": "src/environments/environment.ts",
+                                    "with": "src/environments/environment.driving.ts"
+                                }
+                            ]
+                        },
+                        "driving-demo": {
+                            "outputPath": "dist/driving-demo",
                             "budgets": [
                                 {
                                     "type": "initial",
@@ -95,7 +115,81 @@
                             "fileReplacements": [
                                 {
                                     "replace": "src/environments/environment.ts",
-                                    "with": "src/environments/environment.app-dev.ts"
+                                    "with": "src/environments/environment.driving-demo.ts"
+                                }
+                            ],
+                            "outputHashing": "all"
+                        },
+                        "hksts-production": {
+                            "outputPath": "dist/driving-hksts",
+                            "budgets": [
+                                {
+                                    "type": "initial",
+                                    "maximumWarning": "3mb",
+                                    "maximumError": "5mb"
+                                },
+                                {
+                                    "type": "anyComponentStyle",
+                                    "maximumWarning": "6kb",
+                                    "maximumError": "10kb"
+                                }
+                            ],
+                            "fileReplacements": [
+                                {
+                                    "replace": "src/environments/environment.ts",
+                                    "with": "src/environments/environment.driving-hksts-prod.ts"
+                                }
+                            ],
+                            "outputHashing": "all"
+                        },
+                        "tutorial-dev": {
+                            "fileReplacements": [
+                                {
+                                    "replace": "src/environments/environment.ts",
+                                    "with": "src/environments/environment.tutorial.ts"
+                                }
+                            ]
+                        },
+                        "tutorial-demo": {
+                            "outputPath": "dist/tutorial-demo",
+                            "budgets": [
+                                {
+                                    "type": "initial",
+                                    "maximumWarning": "3mb",
+                                    "maximumError": "5mb"
+                                },
+                                {
+                                    "type": "anyComponentStyle",
+                                    "maximumWarning": "6kb",
+                                    "maximumError": "10kb"
+                                }
+                            ],
+                            "fileReplacements": [
+                                {
+                                    "replace": "src/environments/environment.ts",
+                                    "with": "src/environments/environment.tutorial-bravokids-prod.ts"
+                                }
+                            ],
+                            "outputHashing": "all"
+                        },
+                        "bravokids-production": {
+                            "outputPath": "dist/bravokids",
+                            "budgets": [
+                                {
+                                    "type": "initial",
+                                    "maximumWarning": "3mb",
+                                    "maximumError": "5mb"
+                                },
+                                {
+                                    "type": "anyComponentStyle",
+                                    "maximumWarning": "6kb",
+                                    "maximumError": "10kb"
+                                }
+                            ],
+                            "fileReplacements": [
+                                {
+                                    "replace": "src/environments/environment.ts",
+                                    "with": "src/environments/environment.tutorial-bravokids-prod.ts"
                                 }
                             ],
                             "outputHashing": "all"
@@ -119,6 +213,12 @@
                         },
                         "development": {
                             "browserTarget": "lemonade-bkg:build:development"
+                        },
+                        "driving": {
+                            "browserTarget": "lemonade-bkg:build:driving-dev"
+                        },
+                        "tutorial": {
+                            "browserTarget": "lemonade-bkg:build:tutorial-dev"
                         }
                     },
                     "defaultConfiguration": "development"

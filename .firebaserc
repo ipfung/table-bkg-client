@@ -1,5 +1,21 @@
 {
   "projects": {
     "default": "lemonade-bkg"
-  }
+  },
+  "targets": {
+    "lemonade-bkg": {
+      "hosting": {
+        "hksts": [
+          "lemonade-driving-2"
+        ],
+        "pingpong": [
+          "lemonade-bkg"
+        ],
+        "driving-demo": [
+          "lemonade-driving-demo"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }
