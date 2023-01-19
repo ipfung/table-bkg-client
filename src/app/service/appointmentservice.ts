@@ -25,41 +25,6 @@ export class AppointmentService {
     //     {name: '3 Hours', code: 6, hour: 3},
     // ];
 
-    public readonly paymentMethods = [{
-        code: 'octopus',
-        name: 'Octopus',
-        image: 'octopus.png'
-    }, {
-        code: 'payme',
-        name: 'PayMe from HSBC',
-        image: 'PayMe-Logo.wine.svg'
-    }, {
-        code: 'fps',
-        name: '轉數快',
-        image: 'fps_color.svg',
-        width: '50%'
-    }, {
-        code: 'alipayHK',
-        name: 'Alipay / 支付寶',
-        image: 'Alipay-Logo.wine.svg'
-    }, {
-        code: 'wechatpayHK',
-        name: 'WeChat Pay',
-        image: 'WeChat_Pay_Emblem_HorW238.png'
-    }, {
-        code: 'pps',
-        name: 'PPS',
-        image: 'PPS_Logo.gif'
-    }, {
-        code: 'paypal',
-        name: 'PayPal',
-        image: 'PayPal-Logo.wine.svg'
-    }, {
-        code: 'stripe',
-        name: 'Stripe',
-        image: 'Stripe_(company)-Logo.wine.svg'
-    }];
-
     /**
      * serviceSelection, set to true if client needs different 'duration' setup.
      * true = show service-selection page as step 1.
@@ -102,6 +67,8 @@ export class AppointmentService {
         paymentInformation: {
             method: '',
             price: 0,
+            commission: 0,
+            status: 'pending',
             // cardholderName:'',
             // cardholderNumber:'',
             // date:'',
@@ -353,6 +320,7 @@ export class AppointmentService {
         const data = {
             ...{
                 paymentMethod: paymentInfo.method,
+                paymentStatus: 'paid',   // FIXME
                 price: paymentInfo.price
             }, ...this.appointmentInformation.timeInformation
         };
@@ -461,8 +429,8 @@ export class AppointmentService {
     }
 
     getPaymentMethodName(code) {
-        if (this.paymentMethods.length > 0) {
-            let paymentMethod = this.paymentMethods.find(el => el.code == code);
+        if (this.lemonade.paymentMethods.length > 0) {
+            let paymentMethod = this.lemonade.paymentMethods.find(el => el.code == code);
             return paymentMethod.name;
         }
         return '';

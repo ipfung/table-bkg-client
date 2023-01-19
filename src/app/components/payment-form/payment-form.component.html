@@ -22,7 +22,7 @@
             </div>
         </div>
         <div class="p-fluid formgrid grid">
-                <div class="col-12 md:col-6 lg:col-4 p-4" *ngFor="let mtd of appointmentService.paymentMethods">
+                <div class="col-12 md:col-6 lg:col-4 p-4" *ngFor="let mtd of lemonade.paymentMethods">
                     <p-button [styleClass]="getPaymentBtnCls(mtd)" [style]="{'height': '12rem'}" (click)="selectPayment(mtd)">
                         <ng-template pTemplate="content">
                             <div class="block">

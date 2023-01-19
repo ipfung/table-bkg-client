@@ -55,6 +55,11 @@ export class AppointmentListComponent implements OnInit {
 
     timeslotSetting: string;
 
+    //payment
+    payment_methods: any[];
+    payment_statuses: any[];
+    paymentGateway: any = '';
+
     constructor(public appointmentService: AppointmentService, private router: Router, private confirmationService: ConfirmationService, public messageService: MessageService, private translateService: TranslateService, public lemonade: Lemonade) {
     }
 
@@ -62,6 +67,13 @@ export class AppointmentListComponent implements OnInit {
         this.rangeDates = [new Date(), addDays(new Date(), 14)];
         this.loadData();
         this.statuses = this.lemonade.appointmentStatus;
+        this.payment_statuses = this.lemonade.paymentStatuses;
+        // addition payment methods.
+        const methods = [{
+            code: 'cash',
+            name: 'Cash'
+        }];
+        this.payment_methods = methods.concat(this.lemonade.paymentMethods);
     }
 
     loadData() {
@@ -231,7 +243,6 @@ export class AppointmentListComponent implements OnInit {
                 }
             });
         });
-
     }
 
     approve(booking) {
@@ -296,7 +307,9 @@ export class AppointmentListComponent implements OnInit {
         // make a new appointment information if it is empty.
         this.selectedPackage = null;
         this.selectedCustomerId = 0;
-        this.appointment = {...this.appointmentService.defaultAppointment};
+        // use JSON.parse(JSON.stringify()) to create a brand new object.
+        this.appointment = JSON.parse(JSON.stringify(this.appointmentService.defaultAppointment));
+        // this.appointment = {...this.appointmentService.defaultAppointment};
         this.appointment.isPackage = false;
         this.appointment.timeInformation.status = this.statuses[0].code;
         this.appointment.timeInformation.notify_parties = true;
@@ -344,25 +357,27 @@ export class AppointmentListComponent implements OnInit {
     }
 
     loadPackage() {
-        if (this.selectedPackage && this.appointment.timeInformation.package_id != this.selectedPackage.id) {
+        const pkg = this.selectedPackage;
+        if (pkg && this.appointment.timeInformation.package_id != pkg.id) {
             this.lessons = [];
             this.holidays = undefined;
             this.appointment.timeInformation = {
                 ...this.appointment.timeInformation, ...{
-                    serviceId: this.selectedPackage.service_id,
-                    trainerId: this.selectedPackage.trainer_id,
-                    roomId: this.selectedPackage.room_id,
-                    noOfSession: this.selectedPackage.no_of_session,
-                    date: this.selectedPackage.start_date ? new Date(this.selectedPackage.start_date) : null,
-                    time: this.selectedPackage.start_time ? this.selectedPackage.start_time : null,
+                    serviceId: pkg.service_id,
+                    trainerId: pkg.trainer_id,
+                    roomId: pkg.room_id,
+                    noOfSession: pkg.no_of_session,
+                    date: pkg.start_date ? new Date(pkg.start_date) : null,
+                    time: pkg.start_time ? pkg.start_time : null,
                     status: this.statuses[0].code
                 }
             };
-            this.appointment.packageInfo = {...this.selectedPackage};
-            this.appointment.packageInfo.recurring = JSON.parse(this.selectedPackage.recurring).repeat;
+            this.appointment.packageInfo = {...pkg};
+            this.appointment.paymentInformation.order_total = pkg.price;
+            this.appointment.packageInfo.recurring = JSON.parse(pkg.recurring).repeat;
             this.appointment.isPackage = true;
-            this.appointment.timeInformation.package_id = this.selectedPackage.id;
-            if (this.selectedPackage.start_date) {
+            this.appointment.timeInformation.package_id = pkg.id;
+            if (pkg.start_date) {
                 this.loadPackageTime();
                 this.loadLessonDates();
             }
@@ -384,17 +399,22 @@ export class AppointmentListComponent implements OnInit {
 
     loadTime(e) {
         const customer = this.appointment.customer;
-        if (customer && this.selectedCustomerId !== customer.id) {
+        if (customer && this.selectedCustomerId !== customer.id) {   // fire when change customer.
             if (customer.settings && customer.settings.trainer && !this.selectedPackage) {
                 const settings = customer.settings;
                 this.translateService.get(['Is it a trainer course?', 'Error']).subscribe( res => {
                     this.confirmationService.confirm({
                         message: res['Is it a trainer course?'],
                         accept: () => {
+                            this.appointment.timeInformation.useTrainerData = true;
                             this.appointment.timeInformation.trainerId = settings.trainer;
+                            this.appointment.timeInformation.dftNoOfSession = settings.no_of_session;  // readonly
+                            this.appointment.timeInformation.noOfSession = settings.no_of_session;
                             this.appointment.paymentInformation = {
                                 price: settings.trainer_charge,
-                                commission: settings.trainer_commission
+                                commission: settings.trainer_commission,
+                                order_total: settings.trainer_charge,
+                                total_commission: settings.trainer_commission
                             };
                             if (settings.room)
                                 this.appointment.timeInformation.roomId = settings.room;
@@ -404,7 +424,8 @@ export class AppointmentListComponent implements OnInit {
             } else {
                 this.appointment.paymentInformation = {
                     price: 0,
-                    commission: 0
+                    commission: 0,
+                    total_commission: 0
                 };
             }
             this.appointment.timeInformation.customerId = customer.id;
@@ -432,13 +453,24 @@ export class AppointmentListComponent implements OnInit {
                 if (!this.selectedPackage) {
                     // reset for non-package.
                     this.appointment.timeInformation.time = undefined;
-                    if (this.appointment.paymentInformation.commission <= 0)
-                        this.appointment.paymentInformation.price = 0;
+                    // if (this.appointment.paymentInformation.commission <= 0)
+                    //     this.appointment.paymentInformation.price = 0;
                 }
             });
         } else {
             this.times = [];
         }
+        // calculate order_total & total_commission, if it's trainer data.
+        if (this.appointment.timeInformation.useTrainerData) {
+            this.appointment.paymentInformation.order_total = this.calculateCharge(this.appointment.paymentInformation.price);
+            this.appointment.paymentInformation.total_commission = this.calculateCharge(this.appointment.paymentInformation.commission);
+        }
+    }
+
+    private calculateCharge(price) {
+        if (price > 0)
+            return price / this.appointment.timeInformation.dftNoOfSession * this.appointment.timeInformation.noOfSession;
+        return 0;
     }
 
     setPriceByTime(e) {
@@ -446,9 +478,11 @@ export class AppointmentListComponent implements OnInit {
             if (this.times.length > 0) {
                 const theTime = this.times.find(el => el.time == this.appointment.timeInformation.time);
                 this.appointment.paymentInformation.price = theTime.price;
+                this.appointment.paymentInformation.order_total = theTime.price;
                 this.appointment.packageInfo.price = theTime.price * this.appointment.packageInfo.quantity;
             } else {
                 this.appointment.paymentInformation.price = 0;
+                this.appointment.paymentInformation.order_total = 0;
                 this.appointment.packageInfo.price = 0;
             }
         }
@@ -477,6 +511,7 @@ export class AppointmentListComponent implements OnInit {
             this.lessons = res.data;
             this.holidays = res.holidays;
             if (!this.selectedPackage) {
+                // FIXME 20230119 why !this.selectedPackage?? to support mutliple lesson?
                 this.appointment.packageInfo.price = this.appointment.packageInfo.quantity * this.appointment.paymentInformation.price;
                 if (this.appointment.paymentInformation.commission > 0) {
                     this.appointment.packageInfo.commission = this.appointment.packageInfo.quantity * this.appointment.paymentInformation.commission;
@@ -503,12 +538,17 @@ export class AppointmentListComponent implements OnInit {
             return;
         if (timeInfo.time == undefined)
             return;
+        if (this.appointment.paymentInformation.status == 'paid' && !this.paymentGateway)
+            return;
         let data = {
             ...timeInfo, ...{
                 date: this.lemonade.formatPostDate(timeInfo.date),
                 paymentMethod: 'onsite',
+                paymentGateway: this.appointment.paymentInformation.status == 'paid' ? this.paymentGateway : '',
+                paymentStatus: this.appointment.paymentInformation.status,
                 price: this.appointment.paymentInformation.price,
-                commission: this.appointment.paymentInformation.commission||0,
+                commission: this.appointment.paymentInformation.total_commission||0,
+                order_total: this.appointment.paymentInformation.order_total
             }
         };
         if (this.appointment.isPackage === true) {

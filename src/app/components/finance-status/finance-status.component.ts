@@ -28,9 +28,11 @@ export class FinanceStatusComponent implements OnInit {
 
     //form
     formDialog = false;
-    payment: any;
+    order: any;
     editingPayment = false;
     payment_statuses = [];
+    payment_methods = [];
+    new_payment: any;
 
     constructor(private api: ApiService, private translateService: TranslateService, public lemonade: Lemonade) {
     }
@@ -45,15 +47,13 @@ export class FinanceStatusComponent implements OnInit {
                 {name: res['partially payment'], code: 'partially', color: '#256029'},
             ];
         });
-        this.payment_statuses = [
-            {
-                name: 'paid',
-                code: 'paid'
-            }, {
-                name: 'pending',
-                code: 'pending'
-            }
-        ];
+        this.payment_statuses = this.lemonade.paymentStatuses;
+        // addition payment methods.
+        const methods = [{
+            code: 'cash',
+            name: 'Cash'
+        }];
+        this.payment_methods = methods.concat(this.lemonade.paymentMethods);
     }
 
     searchCustomers(e) {
@@ -95,8 +95,13 @@ export class FinanceStatusComponent implements OnInit {
         return this.lemonade.formatDate(description.start_time, true) + ' ' +this.lemonade.formatDateTime(description.start_time) + ' - ' + this.lemonade.formatDateTime(description.end_time);
     }
 
-    edit(payment) {
-        this.payment = {...payment, ...{payment_amount: payment.paid_amount}};
+    edit(order) {
+        this.order = {...order};
+        this.new_payment = {
+            amount: order.paid_amount,
+            // status: order.payment_status,
+            gateway: order.payment.gateway
+        };
         this.formDialog = true;
     }
 
@@ -120,10 +125,7 @@ export class FinanceStatusComponent implements OnInit {
     }
 
     save() {
-        this.api.update('api/payment/' + this.payment.id, {
-            "amount": this.payment.payment_amount,
-            "status": this.payment.payment_status
-        }).subscribe( res => {
+        this.api.update('api/payment/' + this.order.payment.id, this.new_payment).subscribe( res => {
             console.log('save res=', res);
             if (res.success == true) {
                 this.hideDialog();

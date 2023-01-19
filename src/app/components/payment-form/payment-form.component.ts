@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
 import {AppointmentService} from "../../service/appointmentservice";
 import {AuthService} from "../../service/auth.service";
+import {Lemonade} from "../../service/lemonade.service";
 
 @Component({
     selector: 'app-payment-form',
@@ -13,7 +14,7 @@ export class PaymentFormComponent implements OnInit {
 
     timeInformation: any;
 
-    constructor(public appointmentService: AppointmentService, private authService: AuthService, private router: Router) {
+    constructor(public appointmentService: AppointmentService, public lemonade: Lemonade, private authService: AuthService, private router: Router) {
     }
 
     ngOnInit() {
