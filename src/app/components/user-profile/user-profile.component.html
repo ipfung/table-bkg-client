@@ -10,8 +10,8 @@
                 </div>
             </div>
         </p-card>
-        <p-card styleClass="mt-3">
-            <div *ngIf="qrCode" class="text-center">
+        <p-card *ngIf="qrCode" styleClass="mt-3">
+            <div class="text-center">
                 <div class="qrcode">
                     <div class="pb-3">{{ 'Student Card' | translate }}</div>
                     <div [innerHTML]="qrCode | sanitizeHtml"></div>
