@@ -32,7 +32,7 @@
                 <th style="min-width:100px">{{ 'Order Date' | translate }}</th>
                 <th style="min-width:120px">{{ 'Trainer' | translate }}</th>
                 <th style="min-width:120px">{{ 'Customer' | translate }}</th>
-                <th style="min-width:80px">{{ 'Customer Income' | translate }}</th>
+                <th style="min-width:80px">{{ 'Charge' | translate }}</th>
                 <th style="min-width:80px">{{ 'Commission' | translate }}</th>
                 <th style="min-width:80px">{{ 'Company Income' | translate }}</th>
                 <th style="min-width:20px"></th>
@@ -64,7 +64,7 @@
                     </div>
                 </td>
                 <td style="min-width:80px">
-                    <span class="p-column-title">{{ 'Customer Income' | translate }}</span>
+                    <span class="p-column-title">{{ 'Charge' | translate }}</span>
                     {{order.order_total | currency:'HK$'}}
                 </td>
                 <td style="min-width:80px">
@@ -124,13 +124,13 @@
         </div>
 
         <div class="field">
-            <label for="order_total"><span class="required">*</span> {{ 'Customer Income' | translate }}</label>
+            <label for="order_total"><span class="required">*</span> {{ 'Charge' | translate }}</label>
             <p-inputNumber id="order_total" [(ngModel)]="order.order_total" mode="currency" currency="HKD" locale="zh-HK" [ngClass]="{'ng-invalid ng-dirty' : submitted && !order.order_total}"></p-inputNumber>
             <small class="ng-dirty ng-invalid" *ngIf="submitted && order.order_total <= 0">{{ 'Field is required' | translate: {field: 'Income' | translate} }}</small>
         </div>
 
         <div class="field">
-            <label for="commission"><span class="required">*</span> {{ 'Commission' | translate }}</label>
+            <label for="commission"><span class="required">*</span> {{ 'Trainer Commission' | translate }}</label>
             <p-inputNumber id="commission" [(ngModel)]="order.commission" mode="currency" currency="HKD" locale="zh-HK" [ngClass]="{'ng-invalid ng-dirty' : submitted && !order.commission}"></p-inputNumber>
             <small class="ng-dirty ng-invalid" *ngIf="submitted && order.commission <= 0">{{ 'Field is required' | translate: {field: 'Commission' | translate} }}</small>
         </div>

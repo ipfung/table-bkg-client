@@ -10,7 +10,7 @@
     <!-- Search fields -->
     <div class="p-fluid grid">
         <div class="field col-12 md:col-4">
-            <input type="text" pInputText [(ngModel)]="userName" (change)="loadData()" placeholder="{{ 'Search F' | translate:{field: 'Name' | translate } }}">
+            <input type="text" pInputText [(ngModel)]="userName" (change)="loadData()" placeholder="{{ 'Search F' | translate:{field: 'English Name' | translate } }}">
         </div>
         <div class="field col-12 md:col-4">
             <input type="text" pInputText [(ngModel)]="userEmail" (change)="loadData()" placeholder="{{ 'Search F' | translate:{field: 'Email' | translate } }}">
@@ -127,9 +127,9 @@
         <p-tabView>
             <p-tabPanel header="{{ 'General Details' | translate }}">
                 <div class="field">
-                    <label for="name">{{ 'Name' | translate }}</label>
+                    <label for="name">{{ 'English Name' | translate }}</label>
                     <input type="text" pInputText id="name" [(ngModel)]="trainer.name" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !trainer.name}"/>
-                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !trainer.name">{{ 'Field is required' | translate: {field: 'Name' | translate} }}</small>
+                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !trainer.name">{{ 'Field is required' | translate: {field: 'English Name' | translate} }}</small>
                 </div>
 
                 <div class="field">
@@ -172,7 +172,7 @@
 
                 <div class="field" *ngIf="timeslotSetting == 'trainer_date'">
                     <label for="buffer_time">{{ 'Buffer Time' | translate }} <i pTooltip="{{ 'Buffer time between appointment' | translate }}" tooltipPosition="top" class="pi pi-question-circle jws-tips"></i></label>
-                    <p-inputNumber id="buffer_time" [(ngModel)]="trainer.settings.buffer_time" suffix=" mins" mode="decimal" [showButtons]="true" inputId="buffer_time" [min]="0" [max]="120" [step]="5"></p-inputNumber>
+                    <p-inputNumber id="buffer_time" [(ngModel)]="trainer.settings.buffer_time" suffix="{{ 'mins' | translate }}" mode="decimal" [showButtons]="true" inputId="buffer_time" [min]="0" [max]="120" [step]="5"></p-inputNumber>
                 </div>
 
                 <div class="field">
