@@ -31,6 +31,7 @@
                 <p-calendar [(ngModel)]="selectedDate" [disabledDates]="nonWorkingDates" (onMonthChange)="loadTrainerNonWorkDates($event)" (onSelect)="loadTrainerTimeslotByDate($event)" [inline]="true"></p-calendar>
             </div>
             <div class="col">
+                <p-progressSpinner *ngIf="trainerTsLoading === true" class="row-spinner"></p-progressSpinner>
                 <h3 class="text-primary text-center" *ngIf="!timeSlots">
                     {{ 'Please select date from the calendar' | translate }}
                 </h3>
@@ -44,6 +45,8 @@
                             <span class="text-right align-items-end align-content-end justify-content-end">{{ timeslot.price | currency:'HK$' }}</span>
                         </ng-template>
                     </p-button>
+                    <h5 *ngIf="item.freeslots.length == 0 && !item.dayoff">{{ 'Fully booked' | translate }}</h5>
+                    <h5 *ngIf="item.freeslots.length == 0 && !item.dayoff && timeInformation.noOfSession > 1">{{ 'OR' | translate }} {{ 'Time Length issue' | translate }}</h5>
                 </p-panel>
             </div>
         </div>

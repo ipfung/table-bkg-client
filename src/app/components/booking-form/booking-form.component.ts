@@ -79,7 +79,8 @@ export class BookingFormComponent implements OnInit {
 
     loadTrainerNonWorkDates(e) {
         this.loading = true;
-        this.appointmentService.getTrainerNonWorkDates(e.year, e.month).subscribe(res => {
+        let appointmentInfo = this.appointmentService.getAppointmentInformation();   // note!! can call getAppointmentInformation() in each function, otherwise will not store data.
+        this.appointmentService.getTrainerNonWorkDates(appointmentInfo.timeInformation.trainerId, e.year, e.month).subscribe(res => {
             this.nonWorkingDates = [];
             for (let i=0; i<res.length; i++) {
                 this.nonWorkingDates.push(new Date(res[i]));
