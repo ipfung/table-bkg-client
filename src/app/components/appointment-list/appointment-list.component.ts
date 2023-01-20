@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
 import {AppointmentService} from "../../service/appointmentservice";
-import {addDays, intervalToDuration, isWithinInterval, subHours} from "date-fns";
+import {addDays, addMinutes, isWithinInterval, subHours, subMinutes} from "date-fns";
 import {ConfirmationService, MessageService} from "primeng/api";
 import {TranslateService} from "@ngx-translate/core";
 import {Lemonade} from "../../service/lemonade.service";
@@ -26,6 +26,7 @@ export class AppointmentListComponent implements OnInit {
     rangeDates: Date[];
     users: any[];
     userObj: any;
+    trainerObj: any;
     aptStatus: any = '';
 
     // appointment form
@@ -52,6 +53,10 @@ export class AppointmentListComponent implements OnInit {
     supportFinance = false;
     submitting: boolean;
     selectedCustomerId = 0;
+
+    isManager = false;
+    checkInBeforeMinute = 15;
+    checkInAfterMinute = 15;
 
     timeslotSetting: string;
 
@@ -85,7 +90,10 @@ export class AppointmentListComponent implements OnInit {
                 to_date: this.lemonade.formatPostDate(this.rangeDates[1])
             }
             if (this.userObj) {
-                params = {...params, ...{ownerId: this.userObj.id}};
+                params = {...params, ...{customerId: this.userObj.id}};
+            }
+            if (this.trainerObj > 0) {
+                params = {...params, ...{trainerId: this.trainerObj}};
             }
             if (this.aptStatus) {
                 params = {...params, ...{status: this.aptStatus}};
@@ -93,14 +101,23 @@ export class AppointmentListComponent implements OnInit {
 
             this.appointmentService.getBookings(params).subscribe(res => {
                 this.bookings = res.data;
+                this.pageHeader = this.showCustomer ? 'Appointment' : 'My Booking';
+                this.isManager = res.manager;
+                //
                 this.showCustomer = res.showCustomer;
                 this.showTrainer = res.showTrainer;
-                this.pageHeader = this.showCustomer ? 'Appointment' : 'My Booking';
                 this.newable = res.newable;
                 this.requiredTrainer = res.requiredTrainer;
                 this.supportPackages = res.supportPackages;
                 this.supportFinance = res.supportFinance;
                 this.timeslotSetting = res.timeslotSetting;
+                this.checkInBeforeMinute = res.checkInBeforeMinute;
+                this.checkInAfterMinute = res.checkInAfterMinute;
+                if (this.showTrainer) {
+                    this.appointmentService.getActiveTrainers().subscribe(res => {
+                        this.trainers = res.data;
+                    });
+                }
                 this.loading = false;
             });
         }
@@ -126,9 +143,12 @@ export class AppointmentListComponent implements OnInit {
 
     ableCheckin(booking) {
         const start_time = new Date(booking.start_time);
-        const hour_ago = subHours(start_time, 1);
-        // check is now between 1 hour before of start time and start time itself.
-        return !booking.loading && !booking.checkin && isWithinInterval(new Date(), { start: hour_ago, end: new Date(booking.end_time) });
+        const before = subMinutes(start_time, this.checkInBeforeMinute);
+        const after = addMinutes(start_time, this.checkInAfterMinute);
+        const managerAfter = addDays(start_time, 14);
+// console.log('start_time=', start_time, before, after, managerAfter);
+        // check is now between time.
+        return !booking.loading && !booking.checkin && ((this.isManager && isWithinInterval(new Date(), {start: before, end: managerAfter})) || isWithinInterval(new Date(), { start: before, end: after }));
     }
 
     punchIn(booking) {
@@ -325,11 +345,6 @@ export class AppointmentListComponent implements OnInit {
         this.appointmentService.getRooms().subscribe( res => {
             this.rooms = res.data;
         });
-        if (this.showTrainer) {
-            this.appointmentService.getActiveTrainers().subscribe(res => {
-                this.trainers = res.data;
-            });
-        }
         this.appointmentService.getActivePackages().subscribe(res => {
             this.packages = res.data;
         });
@@ -538,8 +553,12 @@ export class AppointmentListComponent implements OnInit {
             return;
         if (timeInfo.time == undefined)
             return;
-        if (this.appointment.paymentInformation.status == 'paid' && !this.paymentGateway)
-            return;
+        if (this.supportFinance) {
+            if (!this.appointment.paymentInformation.order_total)
+                return;
+            if (this.appointment.paymentInformation.status == 'paid' && !this.paymentGateway)
+                return;
+        }
         let data = {
             ...timeInfo, ...{
                 date: this.lemonade.formatPostDate(timeInfo.date),

@@ -9,10 +9,10 @@
 <div class="card">
     <!-- Search fields -->
     <div class="p-fluid grid">
-        <div class="field col-12 md:col-4">
+        <div class="field col-12 md:col-3">
             <p-calendar [(ngModel)]="rangeDates" selectionMode="range" [readonlyInput]="true" (onSelect)="loadData()" inputId="range" [dateFormat]="lemonade.dateFormat"></p-calendar>
         </div>
-        <div class="field col-12 md:col-4">
+        <div class="field col-12 md:col-3">
             <p-autoComplete [(ngModel)]="userObj" [forceSelection]="true" [suggestions]="users" (completeMethod)="searchUsers($event)" (onSelect)="loadData()" field="name" placeholder="{{'Search User' | translate }}">
                 <ng-template let-item pTemplate="item">
                     <i class="pi pi-circle-fill" [style]="{color: item.role.color_name}"></i>
@@ -20,7 +20,15 @@
                 </ng-template>
             </p-autoComplete>
         </div>
-        <div class="field col-12 md:col-4">
+        <div class="field col-12 md:col-3">
+            <p-dropdown [(ngModel)]="trainerObj" [options]="trainers" optionValue="id" optionLabel="name" (onChange)="loadData()" placeholder="{{'Search F' | translate:{field: 'Trainer' | translate } }}">
+                <ng-template let-item pTemplate="item">
+                    <i class="pi pi-circle-fill" [style]="{color: item.role.color_name}"></i>
+                    {{ item.name }}
+                </ng-template>
+            </p-dropdown>
+        </div>
+        <div class="field col-12 md:col-3">
             <p-dropdown [options]="statuses" optionValue="code" [(ngModel)]="aptStatus" (onChange)="loadData()" (onClear)="loadData()" [showClear]="true" placeholder="{{ 'Search F' | translate:{field: 'Status' | translate } }}">
                 <ng-template pTemplate="selectedItem">
                     {{ lemonade.comboRenderer(statuses, aptStatus) | translate }}
@@ -114,7 +122,7 @@
                 <td style="min-width:100px">
                     <span class="p-column-title">{{ 'Punch In' | translate }}</span>
                     <button pButton type="button" *ngIf="ableCheckin(appointment)" class="p-button-text" icon="pi pi-clock" iconPos="left" (click)="punchIn(appointment)"></button>
-                    <span *ngIf="appointment.checkin">{{ appointmentService.formatDateTime(appointment.checkin) }}</span>
+                    <span *ngIf="appointment.checkin">{{ appointmentService.formatPunchInTime(appointment.start_time, appointment.checkin) }}</span>
 <!--                    / <span class="">{{ appointmentService.formatDateTime(appointment.checkout) }}</span>-->
                 </td>
                 <td style="min-width:20px">
@@ -357,7 +365,7 @@
                 <div class="field">
                     <label>{{ 'Package Amount' | translate }}</label>
                     <p-inputNumber [(ngModel)]="appointment.packageInfo.price" [disabled]="selectedPackage" mode="currency" currency="HKD" locale="zh-HK" [ngClass]="{'ng-invalid ng-dirty' : submitted && !appointment.packageInfo.price}"></p-inputNumber>
-                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !appointment.packageInfo.price">{{ 'Field is required' | translate: {field: 'Total Amount' | translate} }}</small>
+                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !appointment.packageInfo.price">{{ 'Field is required' | translate: {field: 'Package Amount' | translate} }}</small>
                 </div>
             </div>
         </div>
@@ -369,7 +377,8 @@
 
             <div class="field">
                 <label for="order_total"><span class="required">*</span> {{ 'Total Amount' | translate }}</label>
-                <p-inputNumber id="order_total" [(ngModel)]="appointment.paymentInformation.order_total" mode="currency" currency="HKD" locale="zh-HK"></p-inputNumber>
+                <p-inputNumber id="order_total" [(ngModel)]="appointment.paymentInformation.order_total" mode="currency" currency="HKD" locale="zh-HK" [ngClass]="{'ng-invalid ng-dirty' : submitted && !appointment.paymentInformation.order_total}"></p-inputNumber>
+                <small class="ng-dirty ng-invalid" *ngIf="submitted && !appointment.paymentInformation.order_total">{{ 'Field is required' | translate: {field: 'Total Amount' | translate} }}</small>
             </div>
 
             <div class="field" *ngIf="showTrainer && appointment.timeInformation.trainerId > 0">

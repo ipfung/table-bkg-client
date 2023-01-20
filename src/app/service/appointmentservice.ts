@@ -7,6 +7,7 @@ import { enUS, zhHK } from 'date-fns/locale'
 import {Lemonade} from "./lemonade.service";
 import {AuthService} from "./auth.service";
 import {environment} from "../../environments/environment";
+import {isSameDay} from "date-fns";
 
 @Injectable()
 export class AppointmentService {
@@ -372,6 +373,14 @@ export class AppointmentService {
 
     formatDateTime(datetime: string) {
         return this.lemonade.formatDateTime(datetime);
+    }
+
+    formatPunchInTime(start_time: string, checkin_time: string) {
+        const st = new Date(start_time),
+            ct = new Date(checkin_time);
+        if (isSameDay(st, ct))
+            return this.lemonade.formatDateTime(checkin_time);
+        return this.formatDate(checkin_time, false) + ' ' + this.lemonade.formatDateTime(checkin_time);
     }
 
     /**
