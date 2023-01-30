@@ -91,8 +91,11 @@ export class FinanceStatusComponent implements OnInit {
     }
 
     displayOrderDetail(detail) {
-        const description = JSON.parse(detail.order_description);
-        return this.lemonade.formatDate(description.start_time, true) + ' ' +this.lemonade.formatDateTime(description.start_time) + ' - ' + this.lemonade.formatDateTime(description.end_time);
+        if (detail && detail.description) {
+            const description = JSON.parse(detail.order_description);
+            return this.lemonade.formatDate(description.start_time, true) + ' ' + this.lemonade.formatDateTime(description.start_time) + ' - ' + this.lemonade.formatDateTime(description.end_time);
+        }
+        return '';
     }
 
     edit(order) {
