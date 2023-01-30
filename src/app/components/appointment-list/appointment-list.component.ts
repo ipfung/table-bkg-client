@@ -26,7 +26,7 @@ export class AppointmentListComponent implements OnInit {
     rangeDates: Date[];
     users: any[];
     userObj: any;
-    trainerObj: any;
+    trainerObj = null;
     aptStatus: any = '';
 
     // appointment form
