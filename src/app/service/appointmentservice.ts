@@ -448,22 +448,30 @@ export class AppointmentService {
 
 @Injectable()
 export class AppointmentStepsGuardService implements CanActivate {
-    constructor(private router: Router, private appointmentService: AppointmentService) { }
+    constructor(private router: Router, private appointmentService: AppointmentService, private authService: AuthService) { }
 
-    canActivate(route: ActivatedRouteSnapshot): boolean {
-        if (!this.appointmentService.serviceSelection) {
-            const isValid = this.appointmentService.isAppointmentValid();
+    canActivate(route: ActivatedRouteSnapshot): Promise<boolean>|boolean {
+        return new Promise((resolve, reject) => {
+            this.authService.appointmentButton().then(res => {
+                const canAccess = (res === 'true');
+                if (!canAccess) {
+                    this.router.navigate(['/appointment-list']);
+                    resolve(false);
+                }
+            });
+            if (!this.appointmentService.serviceSelection) {
+                const isValid = this.appointmentService.isAppointmentValid();
 // console.log('AppointmentStepsGuardService isvalid=', isValid, route.routeConfig.path);
-            if (!isValid) {
-                this.router.navigate(['/appointment/time-range']);
+                if (!isValid) {
+                    this.router.navigate(['/appointment/time-range']);
+                }
+                const isServiceSelectionPage = route.routeConfig.path === 'service-selection';
+                if (isServiceSelectionPage) {
+                    this.router.navigate(['/appointment/time-range']);
+                }
+                resolve(isValid);
             }
-            const isServiceSelectionPage = route.routeConfig.path === 'service-selection';
-            if (isServiceSelectionPage) {
-                this.router.navigate(['/appointment/time-range']);
-            }
-            return isValid;
-        }
-        return true;
-
+            resolve(true);
+        });
     }
 }

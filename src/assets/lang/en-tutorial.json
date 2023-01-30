@@ -77,7 +77,7 @@
     "Buffer Time": "Buffer Time",
     "Buffer time between appointment": "Buffer time between appointment",
     "My Booking": "My Booking",
-    "No booking found.": "No booking record, create a <a href='#/appointment'>booking</a> now.",
+    "No booking found.": "No booking record.",
     "Payment": "Payment",
     "Payment Reminder": "Send Payment Reminder",
     "Enter new payment amount": "Enter new payment amount",
