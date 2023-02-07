@@ -214,9 +214,9 @@ export class AppointmentListComponent implements OnInit {
     }
 
     takeLeave(booking) {
-        this.translateService.get(['Take leave', 'Warning']).subscribe( res => {
+        this.translateService.get(['Take Leave', 'Warning']).subscribe( msg => {
             this.confirmationService.confirm({
-                message: res['Take leave'] + '?',
+                message: msg['Take Leave'] + '?',
                 accept: () => {
                     booking.loading = true;
                     this.appointmentService.takeLeave(booking.id).subscribe(res => {
