@@ -3,29 +3,44 @@
             <div class="card mb-0">
                 <div class="flex justify-content-between mb-3">
                     <div>
-                        <span class="block text-500 font-medium mb-3">{{ 'Appointments' | translate }}</span>
-                        <div class="text-900 font-medium text-xl">{{ data.totalBooking }}</div>
+                        <span class="block text-500 font-medium mb-3">{{ 'Today Appointments' | translate }}</span>
+                        <div class="text-900 font-medium text-xl">{{ data.todayApprovedBooking }} {{ 'approved' | translate }}</div>
+                    </div>
+                    <div class="flex align-items-center justify-content-center bg-green-100 border-round" [ngStyle]="{width: '2.5rem', height: '2.5rem'}">
+                        <i class="pi pi-exclamation-circle text-green-500 text-xl"></i>
+                    </div>
+                </div>
+                <span class="text-green-500 font-medium">{{ data.todayPendingBooking }} {{ 'pending' | translate }} </span>
+                <span class="text-500">{{ ('Appointments' | translate).toLowerCase() }}</span>
+            </div>
+        </div>
+        <div class="col-12 lg:col-6 xl:col-3" *ngIf="data.showBookingCount">
+            <div class="card mb-0">
+                <div class="flex justify-content-between mb-3">
+                    <div>
+                        <span class="block text-500 font-medium mb-3">{{ 'This Month Appointments' | translate }}</span>
+                        <div class="text-900 font-medium text-xl">{{ data.totalBooking }} {{ 'approved' | translate }}</div>
                     </div>
                     <div class="flex align-items-center justify-content-center bg-blue-100 border-round" [ngStyle]="{width: '2.5rem', height: '2.5rem'}">
                         <i class="pi pi-exclamation-circle text-blue-500 text-xl"></i>
                     </div>
                 </div>
-                <span class="text-green-500 font-medium">{{ data.totalFutureBooking }} upcoming </span>
+                <span class="text-green-500 font-medium">{{ data.totalFutureBooking }} {{ 'pending' | translate }} </span>
                 <span class="text-500">{{ ('Appointments' | translate).toLowerCase() }}</span>
             </div>
         </div>
-        <div class="col-12 lg:col-6 xl:col-3" *ngIf="data.showCustomerCount">
+        <div class="col-12 lg:col-6 xl:col-3" *ngIf="data.showPayment">
             <div class="card mb-0">
                 <div class="flex justify-content-between mb-3">
                     <div>
-                        <span class="block text-500 font-medium mb-3">{{ 'Finance' | translate }}</span>
-                        <div class="text-900 font-medium text-xl">{{ data.totalSales | currency:'HK$' }}</div>
+                        <span class="block text-500 font-medium mb-3">{{ 'Today Finance' | translate }}</span>
+                        <div class="text-900 font-medium text-xl">{{ data.totalSalesToday | currency:'HK$' }}</div>
                     </div>
                     <div class="flex align-items-center justify-content-center bg-orange-100 border-round" [ngStyle]="{width: '2.5rem', height: '2.5rem'}">
                         <i class="pi pi-dollar text-orange-500 text-xl"></i>
                     </div>
                 </div>
-                <span class="text-pink-500 font-medium">{{ data.totalUnpaid | currency:'HK$' }} </span>
+                <span class="text-pink-500 font-medium">{{ data.totalUnpaidToday | currency:'HK$' }} </span>
                 <span class="text-500">{{ 'unpaid' | translate }}</span>
             </div>
         </div>
@@ -42,21 +57,6 @@
                 </div>
                 <span class="text-green-500 font-medium">{{ data.totalCustomerLastWeek }}  </span>
                 <span class="text-500">{{ 'new last week' | translate }}</span>
-            </div>
-        </div>
-        <div class="col-12 lg:col-6 xl:col-3" *ngIf="data.showCustomerCount">
-            <div class="card mb-0">
-                <div class="flex justify-content-between mb-3">
-                    <div>
-                        <span class="block text-500 font-medium mb-3">{{ 'Load' | translate }}</span>
-                        <div class="text-900 font-medium text-xl">{{ data.percentLoad }} %</div>
-                    </div>
-                    <div class="flex align-items-center justify-content-center bg-purple-100 border-round" [ngStyle]="{width: '2.5rem', height: '2.5rem'}">
-                        <i class="pi pi-comment text-purple-500 text-xl"></i>
-                    </div>
-                </div>
-                <span class="text-green-500 font-medium">85 </span>
-                <span class="text-500">responded</span>
             </div>
         </div>
 
