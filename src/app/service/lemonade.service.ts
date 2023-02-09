@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {ElementRef, Injectable} from '@angular/core';
 import format from "date-fns/format";
 import {TranslateService} from "@ngx-translate/core";
 import { enUS, zhHK } from 'date-fns/locale'
@@ -285,5 +285,14 @@ export class Lemonade {
             summary: 'Error1',
             detail: err.error
         });
+    }
+
+    // ref: https://stackoverflow.com/questions/53343911/dynamic-iframe-source-with-angular
+    setIframe(iframe: ElementRef, content: any): void {
+        const win: Window = iframe.nativeElement.contentWindow;
+        const doc: Document = win.document;
+        doc.open();
+        doc.write(content);
+        doc.close()
     }
 }

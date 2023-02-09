@@ -4,6 +4,7 @@ import {ApiService} from "../../service/api.service";
 import {Lemonade} from "../../service/lemonade.service";
 import {LazyLoadEvent} from "primeng/api";
 import {TranslateService} from "@ngx-translate/core";
+import {AppointmentService} from "../../service/appointmentservice";
 
 @Component({
     selector: 'app-finance-status',
@@ -29,7 +30,6 @@ export class FinanceStatusComponent implements OnInit {
     //print invoice
     @ViewChild('iframe') iframe: ElementRef;
     printDialog = false;
-    printContent: any;
 
     //form
     formDialog = false;
@@ -39,7 +39,7 @@ export class FinanceStatusComponent implements OnInit {
     payment_methods = [];
     new_payment: any;
 
-    constructor(private api: ApiService, private translateService: TranslateService, public lemonade: Lemonade) {
+    constructor(private api: ApiService, private appointmentService: AppointmentService, private translateService: TranslateService, public lemonade: Lemonade) {
     }
 
     ngOnInit(): void {
@@ -142,22 +142,12 @@ export class FinanceStatusComponent implements OnInit {
         });
     }
 
-    // ref: https://stackoverflow.com/questions/53343911/dynamic-iframe-source-with-angular
-    setIframe(iframe: ElementRef): void {
-        const win: Window = this.iframe.nativeElement.contentWindow;
-        const doc: Document = win.document;
-        doc.open();
-        doc.write(this.printContent);
-        doc.close()
-    }
-
     printInvoice(order) {
         // window.open(this.api.url + '/api/invoice/' + order.id, '_blank');   // don't work cause token couldn't pass to server.
         // this.router.navigate(['/invoice', order.id]);
-        this.api.html('api/invoice/' + order.id).subscribe( res => {
-            this.printContent = res;
+        this.appointmentService.printInvoice(order.id).subscribe( res => {
             setTimeout(() => {
-                this.setIframe(this.iframe);
+                this.lemonade.setIframe(this.iframe, res);
             });
             this.printDialog = true;
         });

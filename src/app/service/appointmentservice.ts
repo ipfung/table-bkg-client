@@ -363,6 +363,10 @@ export class AppointmentService {
         });
     }
 
+    printInvoice(orderId) {
+        return this.api.html('api/invoice/' + orderId);
+    }
+
     getLang() {
         return this.lang;
     }

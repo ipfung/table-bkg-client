@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {Router} from "@angular/router";
 import {AppointmentService} from "../../service/appointmentservice";
 import {addDays, addMinutes, isWithinInterval, subHours, subMinutes} from "date-fns";
@@ -59,6 +59,10 @@ export class AppointmentListComponent implements OnInit {
     checkInAfterMinute = 15;
 
     timeslotSetting: string;
+
+    //print invoice
+    @ViewChild('iframe') iframe: ElementRef;
+    printDialog = false;
 
     //payment
     payment_methods: any[];
@@ -641,5 +645,16 @@ export class AppointmentListComponent implements OnInit {
         }
 
         return total;
+    }
+
+    printInvoice(orderId) {
+        // window.open(this.api.url + '/api/invoice/' + order.id, '_blank');   // don't work cause token couldn't pass to server.
+        // this.router.navigate(['/invoice', order.id]);
+        this.appointmentService.printInvoice(orderId).subscribe( res => {
+            setTimeout(() => {
+                this.lemonade.setIframe(this.iframe, res);
+            });
+            this.printDialog = true;
+        });
     }
 }
