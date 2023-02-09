@@ -14,6 +14,10 @@ export class ApiService {
       console.log('api url===', this.url);
   }
 
+  html(endpoint: string) {
+      return this.http.get(this.url + endpoint, {responseType: "text"});
+  }
+
   get(endpoint: string, params?: object, reqOpts?: any): Observable<any> {
     if (!reqOpts) {
       reqOpts = {

@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {addDays, subDays} from "date-fns";
 import {ApiService} from "../../service/api.service";
 import {Lemonade} from "../../service/lemonade.service";
@@ -25,6 +25,11 @@ export class FinanceStatusComponent implements OnInit {
     paymentStatusList = [];
     searchCustomer: any;
     customers = [];
+
+    //print invoice
+    @ViewChild('iframe') iframe: ElementRef;
+    printDialog = false;
+    printContent: any;
 
     //form
     formDialog = false;
@@ -91,7 +96,7 @@ export class FinanceStatusComponent implements OnInit {
     }
 
     displayOrderDetail(detail) {
-        if (detail && detail.description) {
+        if (detail && detail.order_description) {
             const description = JSON.parse(detail.order_description);
             return this.lemonade.formatDate(description.start_time, true) + ' ' + this.lemonade.formatDateTime(description.start_time) + ' - ' + this.lemonade.formatDateTime(description.end_time);
         }
@@ -134,6 +139,27 @@ export class FinanceStatusComponent implements OnInit {
                 this.hideDialog();
                 this.loadData(null);
             }
+        });
+    }
+
+    // ref: https://stackoverflow.com/questions/53343911/dynamic-iframe-source-with-angular
+    setIframe(iframe: ElementRef): void {
+        const win: Window = this.iframe.nativeElement.contentWindow;
+        const doc: Document = win.document;
+        doc.open();
+        doc.write(this.printContent);
+        doc.close()
+    }
+
+    printInvoice(order) {
+        // window.open(this.api.url + '/api/invoice/' + order.id, '_blank');   // don't work cause token couldn't pass to server.
+        // this.router.navigate(['/invoice', order.id]);
+        this.api.html('api/invoice/' + order.id).subscribe( res => {
+            this.printContent = res;
+            setTimeout(() => {
+                this.setIframe(this.iframe);
+            });
+            this.printDialog = true;
         });
     }
 }
