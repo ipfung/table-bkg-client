@@ -85,8 +85,8 @@
                     <span class="p-column-title">{{ 'Actions' | translate }}</span>
                     <div>
                         <button pButton type="button" pTooltip="{{ 'Payment Info' | translate }}" tooltipPosition="bottom" class="p-0 p-button-text" icon="pi pi-pencil" (click)="edit(payment)"></button>
-                        <button *ngIf="showCustomer && payment.payment_status !== 'paid'" [disabled]="payment.reminder" pButton type="button" pTooltip="{{ 'Payment Reminder' | translate }}" tooltipPosition="bottom" class="p-0 p-button-text" icon="pi {{ payment.reminder === 9 ? 'pi-spin pi-spinner' : 'pi-envelope' }}" (click)="paymentReminder(payment)"></button>
                         <button pButton type="button" pTooltip="{{ 'Receipt' | translate }}" tooltipPosition="bottom" class="p-0 p-button-text" icon="pi pi-print" (click)="printInvoice(payment)"></button>
+                        <button *ngIf="showCustomer && payment.payment_status !== 'paid'" [disabled]="payment.reminder" pButton type="button" pTooltip="{{ 'Payment Reminder' | translate }}" tooltipPosition="bottom" class="p-0 p-button-text" icon="pi {{ payment.reminder === 9 ? 'pi-spin pi-spinner' : 'pi-envelope' }}" (click)="paymentReminder(payment)"></button>
                     </div>
                 </td>
             </tr>
