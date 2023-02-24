@@ -632,6 +632,7 @@ export class AppointmentListComponent implements OnInit {
                 me.lessons = undefined;
                 me.selectedCustomerId = 0;
                 me.selectedPackage = undefined;
+                me.printInvoice(res.order_id);
             } else {
                 me.messageService.add({
                     severity: 'error',
@@ -660,11 +661,14 @@ export class AppointmentListComponent implements OnInit {
     printInvoice(orderId) {
         // window.open(this.api.url + '/api/invoice/' + order.id, '_blank');   // don't work cause token couldn't pass to server.
         // this.router.navigate(['/invoice', order.id]);
-        this.appointmentService.printInvoice(orderId).subscribe( res => {
-            setTimeout(() => {
-                this.lemonade.setIframe(this.iframe, res);
+        const call = this.appointmentService.printInvoice(orderId);
+        if (call) {
+            call.subscribe(res => {
+                setTimeout(() => {
+                    this.lemonade.setIframe(this.iframe, res);
+                });
+                this.printDialog = true;
             });
-            this.printDialog = true;
-        });
+        }
     }
 }

@@ -40,7 +40,7 @@ export class FinanceStatusComponent implements OnInit {
     payment_methods = [];
     new_payment: any;
 
-    constructor(private api: ApiService, private appointmentService: AppointmentService, private translateService: TranslateService, public lemonade: Lemonade, private route: ActivatedRoute) {
+    constructor(private api: ApiService, public appointmentService: AppointmentService, private translateService: TranslateService, public lemonade: Lemonade, private route: ActivatedRoute) {
     }
 
     ngOnInit(): void {
@@ -151,11 +151,14 @@ export class FinanceStatusComponent implements OnInit {
     printInvoice(order) {
         // window.open(this.api.url + '/api/invoice/' + order.id, '_blank');   // don't work cause token couldn't pass to server.
         // this.router.navigate(['/invoice', order.id]);
-        this.appointmentService.printInvoice(order.id).subscribe( res => {
-            setTimeout(() => {
-                this.lemonade.setIframe(this.iframe, res);
+        const call = this.appointmentService.printInvoice(order.id);
+        if (call) {
+            call.subscribe(res => {
+                setTimeout(() => {
+                    this.lemonade.setIframe(this.iframe, res);
+                });
+                this.printDialog = true;
             });
-            this.printDialog = true;
-        });
+        }
     }
 }
