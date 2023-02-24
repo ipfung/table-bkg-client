@@ -1,7 +1,7 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {Router} from "@angular/router";
 import {AppointmentService} from "../../service/appointmentservice";
-import {addDays, addMinutes, isWithinInterval, subHours, subMinutes} from "date-fns";
+import {addDays, addMinutes, isAfter, isWithinInterval, subHours, subMinutes} from "date-fns";
 import {ConfirmationService, MessageService} from "primeng/api";
 import {TranslateService} from "@ngx-translate/core";
 import {Lemonade} from "../../service/lemonade.service";
@@ -380,13 +380,22 @@ export class AppointmentListComponent implements OnInit {
         if (pkg && this.appointment.timeInformation.package_id != pkg.id) {
             this.lessons = [];
             this.holidays = undefined;
+            let pkgStartDate = null;
+            if (pkg.start_date) {
+                // use package start date as default.
+                pkgStartDate = new Date(pkg.start_date);
+                // but if today > package start date, use today as start date.
+                if (isAfter(new Date(), pkgStartDate)) {
+                    pkgStartDate = new Date();
+                }
+            }
             this.appointment.timeInformation = {
                 ...this.appointment.timeInformation, ...{
                     serviceId: pkg.service_id,
                     trainerId: pkg.trainer_id,
                     roomId: pkg.room_id,
                     noOfSession: pkg.no_of_session,
-                    date: pkg.start_date ? new Date(pkg.start_date) : null,
+                    date: pkgStartDate,
                     time: pkg.start_time ? pkg.start_time : null,
                     status: this.statuses[0].code
                 }
@@ -440,6 +449,7 @@ export class AppointmentListComponent implements OnInit {
                         }
                     });
                 });
+            } else if (this.selectedPackage) {
             } else {
                 this.appointment.paymentInformation = {
                     price: 0,
