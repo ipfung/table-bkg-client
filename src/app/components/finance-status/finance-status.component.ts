@@ -5,6 +5,7 @@ import {Lemonade} from "../../service/lemonade.service";
 import {LazyLoadEvent} from "primeng/api";
 import {TranslateService} from "@ngx-translate/core";
 import {AppointmentService} from "../../service/appointmentservice";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
     selector: 'app-finance-status',
@@ -39,7 +40,7 @@ export class FinanceStatusComponent implements OnInit {
     payment_methods = [];
     new_payment: any;
 
-    constructor(private api: ApiService, private appointmentService: AppointmentService, private translateService: TranslateService, public lemonade: Lemonade) {
+    constructor(private api: ApiService, private appointmentService: AppointmentService, private translateService: TranslateService, public lemonade: Lemonade, private route: ActivatedRoute) {
     }
 
     ngOnInit(): void {
@@ -52,6 +53,11 @@ export class FinanceStatusComponent implements OnInit {
                 {name: res['partially payment'], code: 'partially', color: '#256029'},
             ];
         });
+        // support paymentStatus params.
+        if (this.route.snapshot.paramMap.get('paymentStatus')) {
+            this.searchPaymentStatus = this.route.snapshot.paramMap.get('paymentStatus');
+            this.rangeDates = [subDays(new Date(), 365), addDays(new Date(), 7)];
+        }
         this.payment_statuses = this.lemonade.paymentStatuses;
         // addition payment methods.
         const methods = [{

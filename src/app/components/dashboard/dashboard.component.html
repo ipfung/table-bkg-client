@@ -1,5 +1,5 @@
     <div class="grid">
-        <div class="col-12 lg:col-6 xl:col-3" *ngIf="data.showBookingCount">
+        <div class="col-12 lg:col-6 xl:col-3 dashboard" *ngIf="data.showBookingCount">
             <div class="card mb-0">
                 <div class="flex justify-content-between mb-3">
                     <div>
@@ -14,7 +14,7 @@
                 <span class="text-500">{{ ('Appointments' | translate).toLowerCase() }}</span>
             </div>
         </div>
-        <div class="col-12 lg:col-6 xl:col-3" *ngIf="data.showBookingCount">
+        <div class="col-12 lg:col-6 xl:col-3 dashboard" *ngIf="data.showBookingCount">
             <div class="card mb-0">
                 <div class="flex justify-content-between mb-3">
                     <div>
@@ -29,7 +29,7 @@
                 <span class="text-500">{{ ('Appointments' | translate).toLowerCase() }}</span>
             </div>
         </div>
-        <div class="col-12 lg:col-6 xl:col-3" *ngIf="data.showPayment">
+        <div class="col-12 lg:col-6 xl:col-3 dashboard" *ngIf="data.showPayment">
             <div class="card mb-0">
                 <div class="flex justify-content-between mb-3">
                     <div>
@@ -41,7 +41,7 @@
                     </div>
                 </div>
                 <span class="text-pink-500 font-medium">{{ data.totalUnpaidToday | currency:'HK$' }} </span>
-                <span class="text-500">{{ 'unpaid' | translate }}</span>
+                <span class="text-500"><button pButton type="button" label="{{ 'unpaid' | translate }}" class="p-button-text" (click)="goToUnSettle()"></button></span>
             </div>
         </div>
         <div class="col-12 lg:col-6 xl:col-3" *ngIf="data.showCustomerCount">

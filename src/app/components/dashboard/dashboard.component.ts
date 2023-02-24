@@ -7,9 +7,11 @@ import {ApiService} from "../../service/api.service";
 import {TranslateService} from "@ngx-translate/core";
 import {Lemonade} from "../../service/lemonade.service";
 import {DashboardService} from "../../service/dashboard.service";
+import {Router} from "@angular/router";
 
 @Component({
     templateUrl: './dashboard.component.html',
+    styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
 
@@ -55,7 +57,7 @@ export class DashboardComponent implements OnInit {
     notifications = [];
     noOfNotifications = 5;
 
-    constructor(public configService: ConfigService, private api: ApiService, private lemonade: Lemonade, private dashboardService: DashboardService, private translateService: TranslateService) {}
+    constructor(public configService: ConfigService, private router: Router, private api: ApiService, private lemonade: Lemonade, private dashboardService: DashboardService, private translateService: TranslateService) {}
 
     ngOnInit() {
         this.config = this.configService.config;
@@ -200,5 +202,9 @@ export class DashboardComponent implements OnInit {
                 },
             }
         };
+    }
+
+    goToUnSettle() {
+        this.router.navigate(['/finance', {paymentStatus: 'unpaid'}]);
     }
 }
