@@ -314,6 +314,8 @@ export class UserListComponent implements OnInit {
                 // error.
                 this.lemonade.error(this.messageService, res);
             }
+        }, error => {
+            this.lemonade.validateError(this.messageService, error);
         });
     }
 
