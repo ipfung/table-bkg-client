@@ -2,12 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import {ApiService} from "../../service/api.service";
 import {Lemonade} from "../../service/lemonade.service";
 import {AppointmentService} from "../../service/appointmentservice";
-import {LazyLoadEvent} from "primeng/api";
+import {ConfirmationService, LazyLoadEvent, MessageService} from "primeng/api";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
-  selector: 'app-package-list',
-  templateUrl: './package-list.component.html',
-  styleUrls: ['./package-list.component.scss']
+    selector: 'app-package-list',
+    providers: [MessageService, ConfirmationService],
+    templateUrl: './package-list.component.html',
+    styleUrls: ['./package-list.component.scss']
 })
 export class PackageListComponent implements OnInit {
 
@@ -36,7 +38,7 @@ export class PackageListComponent implements OnInit {
     formHeader = "Edit Form";
     sessionInterval: any;
 
-    constructor(private api: ApiService, public appointmentService: AppointmentService, public lemonade: Lemonade) {
+    constructor(private api: ApiService, public appointmentService: AppointmentService, public lemonade: Lemonade, private translateService: TranslateService, private messageService: MessageService, private confirmationService: ConfirmationService) {
     }
 
     ngOnInit(): void {
@@ -205,7 +207,33 @@ export class PackageListComponent implements OnInit {
                 this.submitted = false;
                 this.loadData(null);
                 this.hideDialog();
+            } else {
+                // error.
+                this.lemonade.error(this.messageService, res);
             }
+        }, error => {
+            this.lemonade.validateError(this.messageService, error);
+        });
+    }
+
+    delete() {
+        console.log('delete packages.');
+        this.translateService.get(['Are you sure to delete?']).subscribe( msg => {
+            this.confirmationService.confirm({
+                message: msg['Are you sure to delete?'],
+                accept: () => {
+                    this.api.delete('api/packages/' + this.pkg.id).subscribe(res => {
+                        if (res.success == true) {
+                            this.submitted = false;
+                            this.loadData(null);
+                            this.hideDialog();
+                            this.lemonade.ok(this.messageService, 'The record is deleted successfully.');
+                        } else {
+                            this.lemonade.error(this.messageService, res);
+                        }
+                    });
+                }
+            });
         });
     }
 }

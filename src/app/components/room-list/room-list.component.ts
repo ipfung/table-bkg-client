@@ -1,11 +1,12 @@
 import {Component, OnInit} from '@angular/core';
 import {ApiService} from "../../service/api.service";
 import {Lemonade} from "../../service/lemonade.service";
-import {MessageService} from "primeng/api";
+import {ConfirmationService, MessageService} from "primeng/api";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
     selector: 'app-room-list',
-    providers: [MessageService],
+    providers: [MessageService, ConfirmationService],
     templateUrl: './room-list.component.html',
     styleUrls: ['./room-list.component.scss']
 })
@@ -24,7 +25,7 @@ export class RoomListComponent implements OnInit {
     locations = [];
     formHeader = "Edit Form";
 
-    constructor(private api: ApiService, public lemonade: Lemonade, private messageService: MessageService) {
+    constructor(private api: ApiService, public lemonade: Lemonade, private translateService: TranslateService, private messageService: MessageService, private confirmationService: ConfirmationService) {
     }
 
     ngOnInit(): void {
@@ -99,6 +100,28 @@ export class RoomListComponent implements OnInit {
                 // error.
                 this.lemonade.error(this.messageService, res);
             }
+        }, error => {
+            this.lemonade.validateError(this.messageService, error);
+        });
+    }
+
+    delete() {
+        this.translateService.get(['Are you sure to delete?']).subscribe( msg => {
+            this.confirmationService.confirm({
+                message: msg['Are you sure to delete?'],
+                accept: () => {
+                    this.api.delete('api/rooms/' + this.room.id).subscribe(res => {
+                        if (res.success == true) {
+                            this.submitted = false;
+                            this.loadData();
+                            this.hideDialog();
+                            this.lemonade.ok(this.messageService, 'The record is deleted successfully.');
+                        } else {
+                            this.lemonade.error(this.messageService, res);
+                        }
+                    });
+                }
+            });
         });
     }
 }
