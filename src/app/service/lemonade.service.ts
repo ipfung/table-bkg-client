@@ -2,7 +2,7 @@ import {ElementRef, Injectable} from '@angular/core';
 import format from "date-fns/format";
 import {TranslateService} from "@ngx-translate/core";
 import { enUS, zhHK } from 'date-fns/locale'
-import {addDays, intervalToDuration} from "date-fns";
+import {addDays, intervalToDuration, isToday} from "date-fns";
 import {environment} from "../../environments/environment";
 
 @Injectable()
@@ -172,7 +172,15 @@ export class Lemonade {
             if (showWeekNo) {
                 fmt = "EEE d/M" + (isDiffYr ? '/Y' : '');
             }
-            return format(d, fmt, {locale: this.lang});
+            let str = '';
+            // show today.
+            if (isToday(d)) {
+                this.translateService.get(['Today']).subscribe( msg => {
+                    str += msg["Today"] + ", ";
+                });
+            }
+            str += format(d, fmt, {locale: this.lang});
+            return str;
         }
         return '';
     }

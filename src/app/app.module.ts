@@ -175,6 +175,7 @@ import {PushService} from "./service/push.service";
 import { SubmitModalComponent } from './components/submit-modal/submit-modal.component';
 import { TrainerCommissionComponent } from './components/trainer-commission/trainer-commission.component';
 import { ServiceListComponent } from './components/service-list/service-list.component';
+import { ClassCheckinComponent } from './components/class-checkin/class-checkin.component';
 import { PackageListComponent } from './components/package-list/package-list.component';
 import {DashboardService} from "./service/dashboard.service";
 
@@ -351,6 +352,7 @@ FullCalendarModule.registerPlugins([
         TrainerCommissionComponent,
         ServiceListComponent,
         PackageListComponent,
+        ClassCheckinComponent,
         AppointmentCalendarComponent,
     ],
     providers: [

@@ -99,6 +99,7 @@ import {ServiceListComponent} from "./components/service-list/service-list.compo
                     // {path: 'documentation', component: DocumentationComponent}
                     {path:'reschedule/:id', component: RescheduleComponent, canActivate: [ AuthGuardService ]},
                     {path:'appointment-list', component: AppointmentListComponent, canActivate: [ AuthGuardService ]},
+                    {path:'checkin/:id', component: ClassCheckinComponent, canActivate: [ AuthGuardService ]},
                 ],
             },
             {path:'index', component: LandingComponent},

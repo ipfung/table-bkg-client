@@ -123,6 +123,16 @@ export class AppointmentService {
         });
     }
 
+    bulkPunchIn(appointmentId, data) {
+        let params = {
+            t: Math.floor(new Date().getTime()/1000.0)
+        };
+        return this.api.post('api/course-checkin/' + appointmentId, {
+            ...params,
+            ...data
+        });
+    }
+
     cancel(bookId) {
         return this.api.update('api/booking-cancel/' + bookId, {
             t: Math.floor(new Date().getTime()/1000.0)

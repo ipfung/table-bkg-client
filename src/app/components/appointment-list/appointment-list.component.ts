@@ -106,7 +106,7 @@ export class AppointmentListComponent implements OnInit {
             this.appointmentService.getBookings(params).subscribe(res => {
                 this.bookings = res.data;
                 this.pageHeader = this.showCustomer ? 'Appointment' : 'My Booking';
-                this.isManager = res.manager;
+                this.isManager = res.manager;   // 202303 internal coach or above
                 //
                 this.showCustomer = res.showCustomer;
                 this.showTrainer = res.showTrainer;
@@ -143,6 +143,18 @@ export class AppointmentListComponent implements OnInit {
 
     makePayment(appointment) {
         alert("to be implemented");
+    }
+
+    ableCheckinCourse(booking) {
+        const start_time = new Date(booking.start_time);
+        const before = subMinutes(start_time, this.checkInBeforeMinute);
+// console.log('start_time=', start_time, before, after, managerAfter);
+        // check is now between time.
+        return !booking.loading && !booking.checkin && booking.package_id > 0 && this.isManager && isAfter(new Date(), before);
+    }
+
+    punchInCourse(appointment) {
+        this.router.navigate(['/checkin', appointment.appointment_id]);
     }
 
     ableCheckin(booking) {

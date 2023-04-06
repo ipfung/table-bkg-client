@@ -1,0 +1,125 @@
+<div class="flex justify-content-between">
+    <div class="flex align-items-center justify-content-center p-2 border-round mr-1 text-2xl font-bold">
+        {{ 'Course Register' | translate }}
+    </div>
+</div>
+<div class="card course-detail">
+    <div class="formgrid grid">
+        <div class="field col-12 md:col-3">
+            <label>{{ 'Package Name' | translate }}</label>
+            <b>{{ pkg.name }}</b>
+        </div>
+        <div class="field col-12 md:col-3">
+            <label>{{ 'Lesson Date' | translate }}</label>
+            <b>{{ lemonade.formatDate(pkg.start_time, true) }}</b>
+        </div>
+        <div class="field col-12 md:col-3">
+            <label>{{ 'Lesson Time' | translate }}</label>
+            <b>{{ lemonade.formatDateTime(pkg.start_time) }} - {{ lemonade.formatDateTime(pkg.end_time) }}</b>
+        </div>
+        <div class="field col-12 md:col-3">
+            <label>{{ 'Room' | translate }}</label>
+            <b>{{ pkg.room }}</b>
+        </div>
+    </div>
+</div>
+<div class="card">
+    <p-table [value]="bookings" [loading]="loading" dataKey="id" sortField="appointment_date" sortMode="single" responsiveLayout="stack">
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="min-width:150px">{{ 'Student' | translate }}</th>
+                <th style="min-width:120px" *ngIf="supportFinance">{{ 'Payment' | translate }}</th>
+                <th style="min-width:120px">{{ 'Status' | translate }}</th>
+                <th style="min-width:60px">{{ 'Attend' | translate }}</th>
+                <th style="min-width:60px">{{ 'Late' | translate }}</th>
+                <th style="min-width:60px">{{ 'Absent' | translate }}</th>
+                <th style="min-width:60px">{{ 'Take Leave' | translate }}</th>
+                <th style="min-width:60px">{{ 'Reschedule' | translate }}</th>
+                <th style="min-width:90px">{{ 'Remark' | translate }}</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage" let-booking>
+            <tr>
+                <td colspan="8">
+                    <span class="font-bold ml-2" [innerHTML]="'No student found.' | translate"></span>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="groupheader" let-booking>
+            <tr pRowGroupHeader>
+                <td colspan="8">
+                    <i class="pi pi-calendar"></i>
+                    <span class="font-bold ml-2">{{ lemonade.formatDate(booking.appointment_date, true) }} {{ appointmentService.formatDateTime(booking.start_time) }} - {{ appointmentService.formatDateTime(booking.end_time) }} ({{ duration(booking) }})</span>
+                </td>
+            </tr>
+            <tr pRowGroupHeader>
+                <td colspan="8">
+                    <i class="pi pi-calendar"></i>
+                    <span class="font-bold ml-2">{{ booking.package_name }}</span>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-appointment let-rowIndex="rowIndex" let-expanded="expanded">
+            <tr >
+                <td style="min-width:150px">
+                    <span class="p-column-title">{{ 'Student' | translate }}</span>
+                    <div>
+                        <p-avatar [label]="lemonade.getInitial(appointment.customer_name)" shape="circle" class="lemonade-avatar" [style]="{background: appointment.role_color_name}"></p-avatar>
+                        {{ appointment.customer_name }}
+                    </div>
+                </td>
+                <td style="min-width:120px" *ngIf="supportFinance">
+                    <span class="p-column-title">{{ 'Payment' | translate }}</span>
+                    <div [pTooltip]="isPaid(appointment) ? ('Paid' | translate) : ('unpaid' | translate)" tooltipPosition="bottom">
+                        <i [class]="isPaid(appointment) ? 'pi pi-money-bill text-green-600' : 'pi pi-exclamation-circle text-pink-600'"></i>
+                        <span [class]="isPaid(appointment) ? 'pl-1 text-green-600' : 'pl-1 text-pink-600'"> {{ appointment.price | currency:'HK$' }}</span>
+                    </div>
+                </td>
+                <td style="min-width:120px">
+                    <span class="p-column-title">{{ 'Status' | translate }}</span>
+                    <span [class]="'booking-badge status-' + appointment.status">{{ appointment.status | translate }}</span>
+                    <div class="mt-2 font-bold" *ngIf="appointment.checkin">{{ appointmentService.formatPunchInTime(appointment.start_time, appointment.checkin) }}</div>
+                </td>
+                <td style="min-width:60px">
+                    <span class="p-column-title">{{ 'Attend' | translate }}</span>
+                    <p-radioButton [disabled]="alreadyCheckin(appointment)" name="attendance" value="attend" [(ngModel)]="appointment.attendance"></p-radioButton>
+                </td>
+                <td style="min-width:60px">
+                    <span class="p-column-title">{{ 'Late' | translate }}</span>
+                    <p-radioButton [disabled]="alreadyCheckin(appointment)" name="attendance" value="late" [(ngModel)]="appointment.attendance"></p-radioButton>
+                </td>
+                <td style="min-width:60px">
+                    <span class="p-column-title">{{ 'Absent' | translate }}</span>
+                    <p-radioButton [disabled]="alreadyCheckin(appointment)" name="attendance" value="absent" [(ngModel)]="appointment.attendance"></p-radioButton>
+                </td>
+                <td style="min-width:60px">
+                    <span class="p-column-title">{{ 'Take Leave' | translate }}</span>
+                    <p-radioButton [disabled]="alreadyCheckin(appointment)" name="attendance" value="take_leave" [(ngModel)]="appointment.attendance"></p-radioButton>
+                </td>
+                <td style="min-width:60px">
+                    <span class="p-column-title">{{ 'Reschedule' | translate }}</span>
+                    <p-radioButton [disabled]="alreadyCheckin(appointment)" name="attendance" value="reschedule" [(ngModel)]="appointment.attendance"></p-radioButton>
+                </td>
+                <td style="min-width:90px">
+                    <span class="p-column-title">{{ 'Remark' | translate }}</span>
+                    <input type="text" pInputText [disabled]="alreadyCheckin(appointment)" [(ngModel)]="appointment.remark" />
+                </td>
+            </tr>
+        </ng-template>
+        <!--        <ng-template pTemplate="rowexpansion" let-appointment>-->
+        <!--            <tr>-->
+        <!--                <td colspan="8">hihi</td>-->
+        <!--            </tr>-->
+        <!--        </ng-template>-->
+
+    </p-table>
+
+    <div class="mt-3 p-card-footer ng-star-inserted">
+        <button pButton pRipple [disabled]="saved" label="{{ 'Save' | translate }}" icon="pi pi-check" (click)="save()"></button>
+    </div>
+
+    <p-confirmDialog header="{{ 'Confirmation' | translate }}" icon="pi pi-clock"></p-confirmDialog>
+    <p-toast></p-toast>
+</div>
+
+<app-submit-modal [visible]="submitting"></app-submit-modal>

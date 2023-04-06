@@ -121,7 +121,8 @@
                 </td>
                 <td style="min-width:100px">
                     <span class="p-column-title">{{ 'Punch In' | translate }}</span>
-                    <button pButton type="button" *ngIf="ableCheckin(appointment)" class="p-button-text" icon="pi pi-clock" iconPos="left" (click)="punchIn(appointment)"></button>
+                    <button pButton type="button" *ngIf="ableCheckinCourse(appointment)" class="p-button-text" icon="pi pi-check-square" iconPos="left" pTooltip="{{ 'Course Register' | translate }}" tooltipPosition="bottom" (click)="punchInCourse(appointment)"></button>
+                    <button pButton type="button" *ngIf="ableCheckin(appointment)" class="p-button-text" icon="pi pi-clock" iconPos="left" pTooltip="{{ 'Punch In' | translate }}" (click)="punchIn(appointment)"></button>
                     <span *ngIf="appointment.checkin">{{ appointmentService.formatPunchInTime(appointment.start_time, appointment.checkin) }}</span>
 <!--                    / <span class="">{{ appointmentService.formatDateTime(appointment.checkout) }}</span>-->
                 </td>
