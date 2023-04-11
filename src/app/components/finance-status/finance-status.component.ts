@@ -148,10 +148,10 @@ export class FinanceStatusComponent implements OnInit {
         });
     }
 
-    printInvoice(order) {
+    printInvoice(order, docType) {
         // window.open(this.api.url + '/api/invoice/' + order.id, '_blank');   // don't work cause token couldn't pass to server.
         // this.router.navigate(['/invoice', order.id]);
-        const call = this.appointmentService.printInvoice(order.id);
+        const call = this.appointmentService.printInvoice(order.id, docType);
         if (call) {
             call.subscribe(res => {
                 setTimeout(() => {

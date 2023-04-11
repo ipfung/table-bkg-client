@@ -393,8 +393,17 @@ export class AppointmentService {
         });
     }
 
-    printInvoice(orderId) {
-        return this.api.html('api/invoice/' + orderId);
+    /**
+     * @param orderId
+     * @param docType 'invoice' or 'receipt'
+     */
+    printInvoice(orderId, docType) {
+        if (this.paymentSelection) {
+            return this.api.html('api/' + docType + '/' + orderId);
+        } else {
+            console.log('not support payment.');
+            return null;
+        }
     }
 
     getLang() {

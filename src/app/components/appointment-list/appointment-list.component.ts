@@ -644,7 +644,7 @@ export class AppointmentListComponent implements OnInit {
                 me.lessons = undefined;
                 me.selectedCustomerId = 0;
                 me.selectedPackage = undefined;
-                me.printInvoice(res.order_id);
+                me.printInvoice(res.order_id, 'invoice');
             } else {
                 me.messageService.add({
                     severity: 'error',
