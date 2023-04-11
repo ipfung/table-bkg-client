@@ -141,8 +141,8 @@ export class AppointmentListComponent implements OnInit {
         return appointment.payment_status === 'paid';
     }
 
-    makePayment(appointment) {
-        alert("to be implemented");
+    payNow(appointment) {
+        window.location.href = this.appointmentService.makePayment(appointment.order_num);
     }
 
     ableCheckinCourse(booking) {

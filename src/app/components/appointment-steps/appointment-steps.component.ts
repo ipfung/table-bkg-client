@@ -37,7 +37,7 @@ export class AppointmentStepsComponent implements OnInit {
             }, {
                 label: res['Date & Time'],
                 routerLink: 'datetime'
-            })
+            });
             if (paymentSelection) {
                 this.items.push({
                     label: res['Payment'],
@@ -52,11 +52,21 @@ export class AppointmentStepsComponent implements OnInit {
 
         this.subscription = this.appointmentService.paymentComplete$.subscribe((data) => {
             if (data.success === true) {
-                this.messageService.add({
-                    severity: 'success',
-                    summary: 'Appointment booked',
-                    detail: 'Dear ' + data.personalInformation.firstname + ', your booking is completed.'
-                });
+                if (paymentSelection && data.pay_status == 'pending') {
+                    this.messageService.add({
+                        severity: 'success',
+                        summary: 'Appointment reserved',
+                        detail: 'Dear ' + data.personalInformation.firstname + ', redirecting to the payment gateway.'
+                    });
+                    window.location.href = this.appointmentService.checkout(data.order_num);
+                    return;
+                } else {
+                    this.messageService.add({
+                        severity: 'success',
+                        summary: 'Appointment booked',
+                        detail: 'Dear ' + data.personalInformation.firstname + ', your booking is completed.'
+                    });
+                }
                 this.router.navigate(['appointment']);
             } else {
                 this.messageService.add({

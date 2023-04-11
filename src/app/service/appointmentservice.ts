@@ -331,7 +331,7 @@ export class AppointmentService {
         const data = {
             ...{
                 paymentMethod: paymentInfo.method,
-                paymentStatus: 'paid',   // FIXME
+                paymentStatus: 'pending',   // always pending until payment gateway done
                 price: paymentInfo.price
             }, ...this.appointmentInformation.timeInformation
         };
@@ -340,7 +340,9 @@ export class AppointmentService {
             console.log('complete res=', res);
             if (res.success === true) {
                 me.paymentComplete.next({...{
-                        success: true
+                        success: true,
+                        pay_status: res.pay_status,
+                        order_num: res.order_num
                     }, ...me.appointmentInformation});
                 // clear after payment complete.
                 me.clearUserSelection();
@@ -348,6 +350,24 @@ export class AppointmentService {
                 me.paymentComplete.next(res);
             }
         });
+    }
+
+    checkout(orderNo) {
+        if (this.paymentSelection) {
+            return this.api.url + 'checkout/' + orderNo;
+        } else {
+            console.log('not support payment.');
+            return null;
+        }
+    }
+
+    makePayment(orderNo) {
+        if (this.paymentSelection) {
+            return this.api.url + 'pay/' + orderNo;
+        } else {
+            console.log('not support payment.');
+            return null;
+        }
     }
 
     submit(data, callback) {
