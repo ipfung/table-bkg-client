@@ -48,6 +48,7 @@ import {AppointmentCalendarComponent} from "./components/appointment-calendar/ap
 import {ServiceSelectionComponent} from "./components/service-selection/service-selection.component";
 import {TrainerCommissionComponent} from "./components/trainer-commission/trainer-commission.component";
 import {PackageListComponent} from "./components/package-list/package-list.component";
+import {ClassCheckinComponent} from "./components/class-checkin/class-checkin.component";
 import {ServiceListComponent} from "./components/service-list/service-list.component";
 @NgModule({
     imports: [
