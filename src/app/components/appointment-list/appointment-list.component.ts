@@ -670,10 +670,10 @@ export class AppointmentListComponent implements OnInit {
         return total;
     }
 
-    printInvoice(orderId) {
+    printInvoice(orderId, docType) {
         // window.open(this.api.url + '/api/invoice/' + order.id, '_blank');   // don't work cause token couldn't pass to server.
         // this.router.navigate(['/invoice', order.id]);
-        const call = this.appointmentService.printInvoice(orderId);
+        const call = this.appointmentService.printInvoice(orderId, docType);
         if (call) {
             call.subscribe(res => {
                 setTimeout(() => {
