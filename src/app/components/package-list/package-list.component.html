@@ -7,11 +7,44 @@
     </div>
 </div>
 <div class="card">
+    <!-- Search fields -->
+    <div class="p-fluid grid">
+        <div class="field col-12 md:col-3">
+            <input type="text" pInputText [(ngModel)]="nameSrhObj" (change)="loadData()" placeholder="{{'Search F' | translate:{field: 'Package Name' | translate } }}" />
+        </div>
+        <div class="field col-12 md:col-3">
+            <p-dropdown [(ngModel)]="trainerObj" [options]="trainers" optionValue="id" optionLabel="name" (onChange)="loadData()" [showClear]="true" placeholder="{{'Search F' | translate:{field: 'Trainer' | translate } }}">
+                <ng-template let-item pTemplate="item">
+                    <i class="pi pi-circle-fill" [style]="{color: item.role.color_name}"></i>
+                    {{ item.name }}
+                </ng-template>
+            </p-dropdown>
+        </div>
+        <div class="field col-12 md:col-3">
+            <p-dropdown [(ngModel)]="roomObj" [options]="rooms" optionValue="id" optionLabel="name" (onChange)="loadData()" [showClear]="true" placeholder="{{'Search F' | translate:{field: 'Room' | translate } }}">
+                <ng-template let-item pTemplate="item">
+                    <p-avatar [label]="lemonade.getInitial(item.name)" shape="circle" [style]="{'background-color': item.color, 'color': '#fff'}"></p-avatar>
+                    {{ item.name | translate }}
+                </ng-template>
+            </p-dropdown>
+        </div>
+        <div class="field col-12 md:col-3">
+            <p-dropdown [options]="statuses" optionValue="code" [(ngModel)]="pkgStatus" (onChange)="loadData()" (onClear)="loadData()" [showClear]="true" placeholder="{{ 'Search F' | translate:{field: 'Status' | translate } }}">
+                <ng-template pTemplate="selectedItem">
+                    {{ lemonade.comboRenderer(statuses, pkgStatus) | translate }}
+                </ng-template>
+                <ng-template let-item pTemplate="item">
+                    {{ item.name | translate }}
+                </ng-template>
+            </p-dropdown>
+        </div>
+    </div>
 
     <p-table [value]="packages" [lazy]="true" (onLazyLoad)="loadData($event)" [paginator]="true" [rows]="rows" [loading]="loading" [totalRecords]="totalRecords" dataKey="id" sortField="name" sortMode="single"  responsiveLayout="stack">
         <ng-template pTemplate="header">
             <tr>
                 <th style="min-width:200px">{{ 'Package Name' | translate }}</th>
+                <th style="min-width:70px">{{ 'Trainer' | translate }}</th>
                 <th style="min-width:150px">{{ 'Room' | translate }} / {{ 'Service' | translate }}</th>
                 <th style="min-width:150px">{{ 'Schedules' | translate }}</th>
                 <th style="min-width:150px">{{ 'Price' | translate }} / {{ 'Total Lesson' | translate }}</th>
@@ -27,6 +60,10 @@
                         <span class="booking-badge bg-blue-50 text-blue-400">{{ pkg.name }}</span><br />
                         <span class="text-xs">{{ pkg.description }}</span>
                     </div>
+                </td>
+                <td style="min-width:70px">
+                    <span class="p-column-title">{{ 'Trainer' | translate }}</span>
+                    {{ pkg.trainer ? pkg.trainer.name : '' }}
                 </td>
                 <td style="min-width:150px">
                     <span class="p-column-title">{{ 'Room' | translate }} / {{ 'Service' | translate }}</span>

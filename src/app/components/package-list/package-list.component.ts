@@ -18,6 +18,13 @@ export class PackageListComponent implements OnInit {
     rows = 0;
     totalRecords = 0;
 
+    // search fields
+    rangeDates: Date[];
+    nameSrhObj: any;
+    trainerObj = null;
+    roomObj = null;
+    pkgStatus: any = '';
+
     packages = [];
     editable = false;
 
@@ -76,12 +83,24 @@ export class PackageListComponent implements OnInit {
 
     }
 
-    loadData(event: LazyLoadEvent) {
+    loadData(event?: LazyLoadEvent) {
         this.loading = true;
         let page = event ? (event.first/event.rows) : 0;
         let params = {
             page: (1 + page),
         };
+        if (this.nameSrhObj) {
+            params = {...params, ...{name: this.nameSrhObj}};
+        }
+        if (this.trainerObj > 0) {
+            params = {...params, ...{trainerId: this.trainerObj}};
+        }
+        if (this.roomObj > 0) {
+            params = {...params, ...{roomId: this.roomObj}};
+        }
+        if (this.pkgStatus) {
+            params = {...params, ...{status: this.pkgStatus}};
+        }
         this.api.get('api/packages', params).subscribe( res => {
             this.packages = res.data;
             this.loading = false;
