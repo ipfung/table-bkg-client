@@ -19,7 +19,6 @@
     "Idle": "Idle",
     "Occupied": "Occupied",
     "Duration": "Duration",
-    "Choose your time length": "Choose your time length",
     "hour Minutes": "{{hour}} Hour{{s}} {{minute}} Minute{{ms}}",
     "hour Hours": "{{hour}} Hour{{s}}",
     "N minutes": "{{minute}} Minute{{s}}",
@@ -210,6 +209,8 @@
     "Default Service": "Default Service",
     "Service Name": "Service Name",
     "Details": "Details",
+    "Default Values": "Appointment Default Values",
+    "Default Service": "Default Service",
     "Save": "Save",
     "Cancel": "Cancel",
     "Delete": "Delete",
@@ -296,6 +297,10 @@
     "Notify Customer": "Notify Customer",
     "Are you sure to delete?": "Are you sure to delete?",
     "Error": "Error",
+    "Looks like you are lost": "Oops... Looks like you are lost",
+    "View your appointments": "View your appointments",
+    "Go to Dashboard": "Go to Dashboard",
+    "Requested resource is not available.": "Requested resource is not available.",
     "The record is deleted successfully.": "The record is deleted successfully.",
     "Succeed": "Succeed"
 }
