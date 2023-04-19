@@ -6,11 +6,12 @@ import {
 import { Observable } from 'rxjs';
 import {finalize, tap} from 'rxjs/operators';
 import {AuthService} from "../service/auth.service";
+import {Router} from "@angular/router";
 
 /** Pass untouched request through to the next request handler. */
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  constructor(private authService: AuthService) {
+  constructor(private authService: AuthService, private router: Router) {
   }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -70,6 +71,9 @@ console.log('hello auth response', event);
             console.log('hello auth error', err);
             if (err.status === 401) {
                 this.authService.logOut();
+            } else if (err.status === 403) {
+                this.router.navigate(['/pages/access']);
+                return;
             } else if (err.status === 500) {
               // show login
 

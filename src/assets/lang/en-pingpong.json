@@ -301,6 +301,8 @@
     "View your appointments": "View your appointments",
     "Go to Dashboard": "Go to Dashboard",
     "Requested resource is not available.": "Requested resource is not available.",
+    "Access Denied": "Access Denied",
+    "You do not have the necessary permissions. Please contact admins.": "You do not have the necessary permissions. Please contact admins.",
     "The record is deleted successfully.": "The record is deleted successfully.",
     "Succeed": "Succeed"
 }

@@ -300,6 +300,8 @@
     "View your appointments": "查看您的預約",
     "Go to Dashboard": "轉到儀表板",
     "Requested resource is not available.": "請求的頁面不存在。",
+    "Access Denied": "拒絕存取",
+    "You do not have the necessary permissions. Please contact admins.": "您沒有必要的權限，請聯繫管理員。",
     "The record is deleted successfully.": "記錄刪除成功。",
     "Succeed": "已成功",
     "primeng": {
