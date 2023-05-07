@@ -272,6 +272,10 @@ export class AppointmentService {
         });
     }
 
+    generateLessonDates(packageId) {
+        return this.api.get('api/gen-package-lessons/' + packageId);
+    }
+
     getPackageDates(params) {
         return this.api.post('api/package-dates', params);
     }

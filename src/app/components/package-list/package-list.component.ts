@@ -139,14 +139,31 @@ export class PackageListComponent implements OnInit {
         this.formDialog = true;
     }
 
+    /**
+     * generate more lesson dates in background where will save into DB as well.
+     * append to lesson dates and reload package list data.
+     */
+    generateLessonDates() {
+        this.appointmentService.generateLessonDates(this.pkg.id).subscribe(res => {
+            if (res.data.length > 0) {
+                this.lessons = [...this.lessons, ...res.data];
+                this.loadData(null);
+            }
+            if (res.holidays.length > 0)
+                this.holidays = [ ...this.holidays, ...res.holidays];
+        });
+    }
+
     loadLessonDates() {
         this.appointmentService.getPackageDates({
             start_date: this.lemonade.formatPostDate(this.pkg.start_date),
             dow: this.pkg.recurring.repeat,
             quantity: this.pkg.quantity
         }).subscribe(res => {
-            this.lessons = res.data;
-            this.holidays = res.holidays;
+            if (res.data.length > 0)
+                this.lessons = res.data;
+            if (res.holidays.length > 0)
+                this.holidays = res.holidays;
         });
     }
 
