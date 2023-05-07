@@ -130,7 +130,7 @@
                     <button pButton type="button" *ngIf="canAmend(appointment)" pTooltip="{{ 'Reschedule' | translate }}" tooltipPosition="bottom" class="p-button-text" label="{{ 'Reschedule' | translate }}" icon="pi pi-replay" (click)="reschedule(appointment)"></button>
                     <button pButton type="button" *ngIf="canTakeLeave(appointment)" pTooltip="{{ 'Take Leave' | translate }}" tooltipPosition="bottom" class="p-button-text" label="{{ 'Take Leave' | translate }}" icon="pi pi-shield" (click)="takeLeave(appointment)"></button>
                     <div *ngIf="appointment.take_leave_at" class="booking-badge bg-pink-50 text-pink-400">{{ 'Taken Leave' | translate }}</div>
-                    <button *ngIf="supportFinance" pButton type="button" [disabled]="isPaid(appointment) || !isValidStatus(appointment)" pTooltip="{{ 'Pay Now' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-credit-card" (click)="payNow(appointment)"></button>
+                    <button *ngIf="supportFinance && supportPaymentGateway" pButton type="button" [disabled]="isPaid(appointment) || !isValidStatus(appointment)" pTooltip="{{ 'Pay Now' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-credit-card" (click)="payNow(appointment)"></button>
                 </td>
             </tr>
         </ng-template>

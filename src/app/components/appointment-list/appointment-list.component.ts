@@ -52,6 +52,7 @@ export class AppointmentListComponent implements OnInit {
     requiredTrainer = false;
     supportPackages = false;
     supportFinance = false;
+    supportPaymentGateway = false;
     submitting: boolean;
     selectedCustomerId = 0;
 
@@ -115,6 +116,7 @@ export class AppointmentListComponent implements OnInit {
                 this.requiredTrainer = res.requiredTrainer;
                 this.supportPackages = res.supportPackages;
                 this.supportFinance = res.supportFinance;
+                this.supportPaymentGateway = res.paymentGateway;
                 this.timeslotSetting = res.timeslotSetting;
                 this.checkInBeforeMinute = res.checkInBeforeMinute;
                 this.checkInAfterMinute = res.checkInAfterMinute;
