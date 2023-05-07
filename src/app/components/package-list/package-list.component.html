@@ -178,7 +178,7 @@
         </div>
         <div class="field">
             <label for="duration"><span class="required">*</span> {{ 'Duration' | translate }}</label>
-            <p-dropdown id="duration" [disabled]="pkg.id > 0" [options]="sessions" [(ngModel)]="pkg.no_of_session" optionValue="code" [ngClass]="{'ng-invalid ng-dirty' : submitted && !pkg.no_of_session}">
+            <p-dropdown id="duration" [disabled]="pkg.id > 0" [options]="sessions" (onClick)="loadTime()" [(ngModel)]="pkg.no_of_session" optionValue="code" [ngClass]="{'ng-invalid ng-dirty' : submitted && !pkg.no_of_session}">
                 <ng-template pTemplate="selectedItem">
                     {{ appointmentService.getSessionName(pkg.no_of_session, sessions) }}
                 </ng-template>
@@ -211,7 +211,7 @@
 
             <div class="field col-12 md:col-6">
                 <label for="time"><span class="required">*</span> {{ 'Start Time' | translate }}</label>
-                <p-dropdown id="time" [disabled]="times.length == 0 || pkg.id > 0" [options]="times" [(ngModel)]="pkg.start_time" optionValue="time" (onClick)="loadLessonDates()" placeholder="{{'Select field' | translate: {field: 'Time' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : submitted && !pkg.start_time}">
+                <p-dropdown id="time" [disabled]="times.length == 0 || pkg.id > 0" [options]="times" [(ngModel)]="pkg.start_time" optionValue="time" (onClick)="loadLessonDates()" placeholder="{{'Select field' | translate: {field: 'Time' | translate} }}" [showClear]="true" [ngClass]="{'ng-invalid ng-dirty' : submitted && !pkg.start_time}">
                     <ng-template pTemplate="selectedItem">
                         {{ pkg.start_time ? this.appointmentService.formatTime(pkg.start_time) : '' }}
                     </ng-template>

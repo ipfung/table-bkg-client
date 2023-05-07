@@ -114,10 +114,12 @@ export class PackageListComponent implements OnInit {
     }
 
     loadTime() {
-        this.appointmentService.getPackageTimeslot(this.pkg.service_id, this.pkg.no_of_session, this.pkg.start_date).subscribe( res => {
-            this.times = res.data;
-            this.sessionInterval = res.sessionInterval;
-        });
+        if (this.pkg.service_id > 0 && this.pkg.no_of_session > 0 && this.pkg.start_date) {
+            this.appointmentService.getPackageTimeslot(this.pkg.service_id, this.pkg.no_of_session, this.pkg.start_date).subscribe(res => {
+                this.times = res.data;
+                this.sessionInterval = res.sessionInterval;
+            });
+        }
     }
 
     openNew() {
