@@ -208,6 +208,7 @@ export class PackageListComponent implements OnInit {
         let data = {...this.pkg, ...{
                 recurring: {cycle: 'weekly', quantity: this.pkg.quantity, repeat: this.pkg.recurring.repeat.sort()},
                 start_date: this.lemonade.formatPostDate(this.pkg.start_date),
+                sessionInterval: this.sessionInterval,
                 lesson_dates: lessonDates,
             }
         };
