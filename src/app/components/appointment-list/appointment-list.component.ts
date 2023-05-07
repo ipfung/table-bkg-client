@@ -44,6 +44,7 @@ export class AppointmentListComponent implements OnInit {
     packages: any[];
     selectedPackage: any;
     minExpiryDate: Date;
+    minDate: Date;
 
     submitted = false;
     formDialog = false;
@@ -400,6 +401,8 @@ export class AppointmentListComponent implements OnInit {
                 if (isAfter(new Date(), pkgStartDate)) {
                     pkgStartDate = new Date();
                 }
+                // use package start date as min, in-case for back date.
+                this.minDate = new Date(pkg.start_date);
             }
             this.appointment.timeInformation = {
                 ...this.appointment.timeInformation, ...{
@@ -547,7 +550,8 @@ export class AppointmentListComponent implements OnInit {
         this.appointmentService.getPackageDates({
             start_date: this.lemonade.formatPostDate(this.appointment.timeInformation.date),
             dow: this.appointment.packageInfo.recurring,
-            quantity: this.appointment.packageInfo.quantity
+            quantity: this.appointment.packageInfo.quantity,
+            package_id: this.selectedPackage ? this.selectedPackage.id : 0
         }).subscribe(res => {
             this.lessons = res.data;
             this.holidays = res.holidays;
