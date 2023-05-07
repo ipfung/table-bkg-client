@@ -90,6 +90,8 @@ export class UserProfileComponent implements OnInit {
                     // error.
                     this.lemonade.error(this.messageService, res);
                 }
+            }, error => {
+                this.lemonade.validateError(this.messageService, error);
             });
         } else if ('notifications' == this.itemName) {
             this.api.update('api/user-' + this.itemName + '/' + this.obj.id, {
@@ -103,6 +105,8 @@ export class UserProfileComponent implements OnInit {
                     // error.
                     this.lemonade.error(this.messageService, res);
                 }
+            }, error => {
+                this.lemonade.validateError(this.messageService, error);
             });
         }
     }
