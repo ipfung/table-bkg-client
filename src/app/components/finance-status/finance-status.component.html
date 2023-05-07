@@ -80,13 +80,14 @@
                         <i *ngIf="payment.payment_status == 'partially'" class="pi pi-thumbs-down text-brown-500"></i>
                         {{ payment.payment_status + ' payment' | translate }}
                     </span>
+                    <button *ngIf="supportPaymentGateway && payment.payment_status !== 'paid'" pButton type="button" pTooltip="{{ 'Pay Now' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-credit-card" (click)="payNow(payment)"></button>
                 </td>
                 <td style="min-width:20px">
                     <span class="p-column-title">{{ 'Actions' | translate }}</span>
                     <div>
                         <button pButton type="button" pTooltip="{{ 'Payment Info' | translate }}" tooltipPosition="bottom" class="p-0 p-button-text" icon="pi pi-pencil" (click)="edit(payment)"></button>
                         <button *ngIf="appointmentService.paymentSelection" pButton type="button" pTooltip="{{ 'Invoice' | translate }}" tooltipPosition="bottom" class="p-0 p-button-text" icon="pi pi-print" (click)="printInvoice(payment, 'invoice')"></button>
-                        <button *ngIf="appointmentService.paymentSelection" pButton type="button" pTooltip="{{ 'Receipt' | translate }}" tooltipPosition="bottom" class="p-0 p-button-text" icon="pi pi-ticket" (click)="printInvoice(payment, 'receipt')"></button>
+                        <button *ngIf="appointmentService.paymentSelection" pButton [disabled]="payment.payment_status !== 'paid'" type="button" pTooltip="{{ 'Receipt' | translate }}" tooltipPosition="bottom" class="p-0 p-button-text" icon="pi pi-ticket" (click)="printInvoice(payment, 'receipt')"></button>
                         <button *ngIf="showCustomer && payment.payment_status !== 'paid'" [disabled]="payment.reminder" pButton type="button" pTooltip="{{ 'Payment Reminder' | translate }}" tooltipPosition="bottom" class="p-0 p-button-text" icon="pi {{ payment.reminder === 9 ? 'pi-spin pi-spinner' : 'pi-envelope' }}" (click)="paymentReminder(payment)"></button>
                     </div>
                 </td>

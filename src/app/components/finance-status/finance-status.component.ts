@@ -26,6 +26,7 @@ export class FinanceStatusComponent implements OnInit {
     searchPaymentStatus = '';
     paymentStatusList = [];
     searchCustomer: any;
+    supportPaymentGateway = false;
     customers = [];
 
     //print invoice
@@ -94,6 +95,7 @@ export class FinanceStatusComponent implements OnInit {
             this.api.get('api/finance', params).subscribe(res => {
                 this.bookings = res.data;
                 this.showCustomer = res.showCustomer;
+                this.supportPaymentGateway = res.paymentGateway;
                 this.loading = false;
                 this.rows = res.per_page;
                 this.totalRecords = res.total;
@@ -117,6 +119,10 @@ export class FinanceStatusComponent implements OnInit {
             gateway: order.payment.gateway
         };
         this.formDialog = true;
+    }
+
+    payNow(order) {
+        window.location.href = this.appointmentService.makePayment(order.order_number);
     }
 
     paymentReminder(payment) {
