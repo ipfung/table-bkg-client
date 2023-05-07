@@ -272,7 +272,7 @@
             <div class="mt-2 text-xs" *ngIf="holidays">{{ 'Skipped holidays' | translate:{ days: holidays.length } }}: <span class="booking-badge bg-pink-50 text-pink-400 mr-2" *ngFor="let holiday of holidays">{{ lemonade.formatDate(holiday.date, true) }}</span></div>
         </div>
         <div class="field">
-            <button pButton *ngIf="pkg.id > 0" label="{{ 'Generate More Lesson Dates' | translate }}" icon="pi pi-spin pi-cog" class="p-button-text" (click)="generateLessonDates()"></button>
+            <button pButton *ngIf="pkg.id > 0" [disabled]="disableLoadMore" label="{{ 'Generate More Lesson Dates' | translate }}" icon="pi pi-spin pi-cog" class="p-button-text" (click)="generateLessonDates()"></button>
         </div>
 
     </ng-template>

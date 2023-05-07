@@ -27,6 +27,7 @@ export class PackageListComponent implements OnInit {
     pkgStatus: any = '';
     idSrh: number = 0;
     openForm: boolean;
+    disableLoadMore: boolean;
 
     packages = [];
     editable = false;
@@ -165,9 +166,18 @@ export class PackageListComponent implements OnInit {
      */
     generateLessonDates() {
         this.appointmentService.generateLessonDates(this.pkg.id).subscribe(res => {
+            if (res.success === false) {
+                this.lemonade.error(this.messageService, res);
+                this.disableLoadMore = true;
+                return;
+            }
             if (res.data.length > 0) {
                 this.lessons = [...this.lessons, ...res.data];
                 this.loadData(null);
+                this.lemonade.ok(this.messageService);
+                if (res.data.length < this.pkg.quantity) {
+                    this.disableLoadMore = true;
+                }
             }
             if (res.holidays.length > 0)
                 this.holidays = [ ...this.holidays, ...res.holidays];
@@ -266,6 +276,7 @@ export class PackageListComponent implements OnInit {
                 this.submitted = false;
                 this.loadData(null);
                 this.hideDialog();
+                this.lemonade.ok(this.messageService);
             } else {
                 // error.
                 this.lemonade.error(this.messageService, res);
