@@ -82,6 +82,7 @@ export class AppointmentService {
 
     reschedule = {
         appointment: null,
+        appointment_id: 0,
         bookId: 0,
         date: '',
         time: '',
@@ -215,6 +216,14 @@ export class AppointmentService {
             }};
         }
         return this.api.get('api/appointment', params);
+    }
+
+    getReschedulePackageTimeslots() {
+        let params = {
+            bookId: this.reschedule.bookId,
+            packageId: this.reschedule.appointment.package_id
+        };
+        return this.api.get('api/reschedule-package/' + params.packageId, params);
     }
 
     getRooms() {
@@ -378,6 +387,22 @@ export class AppointmentService {
         // submit to server.
         this.api.post('api/appointment', data).subscribe( res => {
             callback(res);
+        });
+    }
+
+    saveReschedulePackage() {
+        this.api.post('api/reschedule-package/' + this.reschedule.bookId, {
+            appointment_id: this.reschedule.appointment_id
+        }).subscribe( res => {
+            console.log('reschedule package res=', res);
+            if (res.success === true) {
+                this.paymentComplete.next({...{
+                        success: true,
+                        room: res.room
+                    }, ...this.reschedule});
+            } else {
+                this.paymentComplete.next(res);
+            }
         });
     }
 

@@ -4,6 +4,7 @@ import {Lemonade} from "../../service/lemonade.service";
 import {AppointmentService} from "../../service/appointmentservice";
 import {ConfirmationService, LazyLoadEvent, MessageService} from "primeng/api";
 import {TranslateService} from "@ngx-translate/core";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
     selector: 'app-package-list',
@@ -24,6 +25,8 @@ export class PackageListComponent implements OnInit {
     trainerObj = null;
     roomObj = null;
     pkgStatus: any = '';
+    idSrh: number = 0;
+    openForm: boolean;
 
     packages = [];
     editable = false;
@@ -45,7 +48,7 @@ export class PackageListComponent implements OnInit {
     formHeader = "Edit Form";
     sessionInterval: any;
 
-    constructor(private api: ApiService, public appointmentService: AppointmentService, public lemonade: Lemonade, private translateService: TranslateService, private messageService: MessageService, private confirmationService: ConfirmationService) {
+    constructor(private api: ApiService, public appointmentService: AppointmentService, public lemonade: Lemonade, private translateService: TranslateService, private messageService: MessageService, private confirmationService: ConfirmationService, private route: ActivatedRoute) {
     }
 
     ngOnInit(): void {
@@ -59,6 +62,14 @@ export class PackageListComponent implements OnInit {
             }
         ];
         this.day_of_weeks = this.lemonade.weeks;
+
+        // support paymentStatus params.
+        if (this.route.snapshot.paramMap.get('id')) {
+            this.idSrh = parseInt(this.route.snapshot.paramMap.get('id'));
+        }
+        if (this.route.snapshot.paramMap.get('openForm')) {
+            this.openForm = this.route.snapshot.paramMap.get('openForm') == 'yes';
+        }
 
         // load data for form.
         this.api.get('api/services', {
@@ -89,6 +100,9 @@ export class PackageListComponent implements OnInit {
         let params = {
             page: (1 + page),
         };
+        if (this.idSrh > 0) {
+            params = {...params, ...{id: this.idSrh}};
+        }
         if (this.nameSrhObj) {
             params = {...params, ...{name: this.nameSrhObj}};
         }
@@ -107,6 +121,12 @@ export class PackageListComponent implements OnInit {
             this.editable = res.editable;
             this.rows = res.per_page;
             this.totalRecords = res.total;
+            if (this.openForm && this.idSrh > 0) {
+                setTimeout(() => {
+                    this.edit(this.packages[0]);
+                    this.openForm = false;   // reset the state.
+                });
+            }
         });
         // this.api.get('api/renew-orders').subscribe( res => {
         //    console.log('orders=', res);

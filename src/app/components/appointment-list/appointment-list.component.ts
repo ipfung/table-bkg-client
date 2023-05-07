@@ -202,7 +202,7 @@ export class AppointmentListComponent implements OnInit {
      * @param appointment
      */
     isValidStatus(appointment) {
-        return appointment.loading !== true && appointment.take_leave_at && (appointment.status == 'approved' || appointment.status == 'pending');
+        return (appointment.loading !== true && (appointment.status == 'approved' || appointment.status == 'pending'));
     }
 
     /**
@@ -216,10 +216,24 @@ export class AppointmentListComponent implements OnInit {
         return (now < hour48_ago && this.isValidStatus(appointment));
     }
 
-    reschedule(appointment) {
+    /**
+     * action must be done X hour before start_time
+     * @param appointment
+     */
+    canReschedule(appointment) {
+        if (this.isManager)
+            return this.isValidStatus(appointment);
+        return (this.newable && this.showTrainer && appointment.take_leave_at == null && this.isValidStatus(appointment));
+    }
+
+    reschedule(evt, appointment) {
         appointment.timeslotSetting = this.timeslotSetting;
         this.appointmentService.reschedule.appointment = appointment;
-        this.router.navigate(['/reschedule', appointment.id]);
+        if (appointment.package_id) {
+            this.router.navigate(['/reschedule-package', appointment.id]);
+        } else {
+            this.router.navigate(['/reschedule', appointment.id]);
+        }
     }
 
     /**

@@ -1,0 +1,96 @@
+<h4>{{ 'Reschedule Packages' | translate }}</h4>
+<p-card>
+    <p-toast></p-toast>
+
+    <ng-template pTemplate="title">
+        {{ reschedule.appointment.package_name }}
+        <button type="button" pButton icon="pi pi-caret-right" label="{{ 'Go to Package' | translate }}" (click)="toPackage()"></button>
+    </ng-template>
+    <ng-template pTemplate="subtitle">
+        {{ reschedule.appointment.user_name }}
+    </ng-template>
+    <ng-template pTemplate="content">
+        <div class="p-fluid formgrid grid">
+            <div class="field col-12">
+                <label>{{ 'Customer' | translate }}</label>
+                <b>
+                    <p-avatar [label]="lemonade.getInitial(reschedule.appointment.customer_name)" shape="circle" class="lemonade-avatar" [style]="{background: reschedule.appointment.role_color_name}"></p-avatar>
+                    {{ reschedule.appointment.customer_name }}
+                </b>
+            </div>
+            <div class="field col-12">
+                <label>{{ 'Notify' | translate }}</label>
+                <b>
+                    <p-checkbox name="notify_parties" [binary]="true" label="{{ 'Notify Customer' | translate }}" [(ngModel)]="reschedule.appointment.notify_parties"></p-checkbox>
+                </b>
+            </div>
+            <div class="field col-12">
+                <label>{{ 'Original Date & Time' | translate }}</label>
+                <b>{{ appointmentService.formatDate(reschedule.appointment.start_time, true) }} {{ appointmentService.formatDateTime(reschedule.appointment.start_time) }} - {{ appointmentService.formatDateTime(reschedule.appointment.end_time) }}</b>
+            </div>
+            <div class="field col-12">
+                <label for="new_pkg_date">{{ 'New Package Date' | translate }}</label>
+                <p-listbox id="new_pkg_date" [options]="package_dates" [(ngModel)]="selectedNewPkg" (onClick)="setPackageDate()" optionDisabled="used">
+                    <ng-template let-pkg pTemplate="item">
+                        <div *ngIf="pkg.date">
+                            {{ appointmentService.formatDate(pkg.date, true) }} {{ appointmentService.formatTime(packages.start_time) }} - {{ appointmentService.formatTime(packages.end_time) }}
+                            {{ pkg.used ? ('Student already in this lesson' | translate) : '' }}
+                        </div>
+                        <div *ngIf="!pkg.date">
+                            [{{ 'Use custom date' | translate }}]
+                        </div>
+                    </ng-template>
+                </p-listbox>
+            </div>
+            <div class="field col-12 md:col-6">
+                <label for="date">{{ 'New Custom Date' | translate }}</label>
+                <p-calendar id="date" [disabled]="selectedNewPkg && selectedNewPkg.id > 0" [(ngModel)]="customDate" [dateFormat]="lemonade.dateFormat" [minDate]="minDate" [maxDate]="maxDate" [showIcon]="true" [readonlyInput]="true" (onSelect)="setCustomDate()"></p-calendar>
+            </div>
+<!--            <div class="field col-12 md:col-6">-->
+<!--                <label for="time">{{ 'New Time' | translate }}</label>-->
+<!--                <p-dropdown id="time" [disabled]="dateTimeSlots && dateTimeSlots.length == 0" [options]="dateTimeSlots" [(ngModel)]="reschedule.time" optionValue="time">-->
+<!--                    <ng-template pTemplate="selectedItem">-->
+<!--                        {{ appointmentService.formatTime(reschedule.time) }}-->
+<!--                    </ng-template>-->
+<!--                    <ng-template let-time pTemplate="item">-->
+<!--                        {{ appointmentService.formatTime(time.time) }}-->
+<!--                    </ng-template>-->
+<!--                </p-dropdown>-->
+<!--            </div>-->
+        </div>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <div class="grid grid-nogutter justify-content-between ng-star-inserted">
+            <p-button label="{{ 'Back' | translate }}" (onClick)="back()" icon="pi pi-angle-left"></p-button>
+            <p-button label="{{ 'Confirmation' | translate }}" icon="pi pi-angle-right" iconPos="right" (click)="confirmModal = true;"></p-button>
+        </div>
+        <div class="grid grid-nogutter justify-content-end">
+            <div class="flex align-items-center justify-content-center p-2 border-round mr-1">{{ 'Selected' | translate }}: {{ selectedDescription() }}</div>
+        </div>
+    </ng-template>
+</p-card>
+
+<p-dialog #cd header="{{ 'Reschedule Confirmation' | translate }}" [(visible)]="confirmModal" position="bottom" icon="pi pi-clock" [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '50vw'}">
+    <div class="col-12">
+        <p-messages [value]="msgs"></p-messages>
+    </div>
+    <div class="field col-12">
+        <label for="date">{{ 'Original Date & Time' | translate }}</label>
+        <b>{{ appointmentService.formatDate(reschedule.appointment.start_time, true) }} {{ appointmentService.formatDateTime(reschedule.appointment.start_time) }} - {{ appointmentService.formatDateTime(reschedule.appointment.end_time) }}</b>
+    </div>
+    <div class="field col-12">
+        <label>{{ 'New Date & Time' | translate }}</label>
+        <b>{{ selectedDescription() }} </b>
+    </div>
+    <ng-template pTemplate="footer">
+        <div *ngIf="!success">
+            <button type="button" pButton icon="pi pi-times" label="{{ 'No' | translate }}" (click)="confirmModal = false;"></button>
+            <button type="button" pButton icon="pi pi-check" label="{{ 'Yes' | translate }}" (click)="complete()"></button>
+        </div>
+        <div *ngIf="success">
+            <div></div>
+            <button type="button" pButton icon="pi pi-power-off" label="{{ 'Close' | translate }}" (click)="back()"></button>
+        </div>
+    </ng-template>
+</p-dialog>
+

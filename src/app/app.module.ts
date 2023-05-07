@@ -158,6 +158,7 @@ import {Lemonade} from "./service/lemonade.service";
 import {AuthInterceptor} from "./interceptors/auth-interceptor";
 import { AppointmentListComponent } from './components/appointment-list/appointment-list.component';
 import { RescheduleComponent } from './components/reschedule/reschedule.component';
+import { ReschedulePackageComponent } from './components/reschedule-package/reschedule-package.component';
 import { UserProfileComponent } from './components/user-profile/user-profile.component';
 import { UserListComponent } from './components/user-list/user-list.component';
 import { NotificationsListComponent } from './components/notifications-list/notifications-list.component';
@@ -340,6 +341,7 @@ FullCalendarModule.registerPlugins([
         BookingTimeRangeComponent,
         AppointmentListComponent,
         RescheduleComponent,
+        ReschedulePackageComponent,
         UserProfileComponent,
         UserListComponent,
         NotificationsListComponent,

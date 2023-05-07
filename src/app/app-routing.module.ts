@@ -37,6 +37,7 @@ import {AuthGuardService} from "./service/auth.service";
 import {AppointmentStepsGuardService} from "./service/appointmentservice";
 import {AppointmentListComponent} from "./components/appointment-list/appointment-list.component";
 import {RescheduleComponent} from "./components/reschedule/reschedule.component";
+import {ReschedulePackageComponent} from "./components/reschedule-package/reschedule-package.component";
 import {UserProfileComponent} from "./components/user-profile/user-profile.component";
 import {UserListComponent} from "./components/user-list/user-list.component";
 import {TrainerStudentListComponent} from "./components/trainer-student-list/trainer-student-list.component";
@@ -99,6 +100,7 @@ import {ServiceListComponent} from "./components/service-list/service-list.compo
                     // {path: 'blocks', component: BlocksComponent},
                     // {path: 'documentation', component: DocumentationComponent}
                     {path:'reschedule/:id', component: RescheduleComponent, canActivate: [ AuthGuardService ]},
+                    {path:'reschedule-package/:id', component: ReschedulePackageComponent, canActivate: [ AuthGuardService ]},
                     {path:'appointment-list', component: AppointmentListComponent, canActivate: [ AuthGuardService ]},
                     {path:'checkin/:id', component: ClassCheckinComponent, canActivate: [ AuthGuardService ]},
                 ],
