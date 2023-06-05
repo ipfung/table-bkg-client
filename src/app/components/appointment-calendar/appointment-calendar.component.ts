@@ -5,6 +5,7 @@ import {environment} from "../../../environments/environment";
 import {CalendarOptions} from "@fullcalendar/core";
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
+import {AppointmentService} from "../../service/appointmentservice";
 
 @Component({
     selector: 'app-appointment-calendar',
@@ -29,7 +30,14 @@ export class AppointmentCalendarComponent implements OnInit {
     trainers: any[];
     options: CalendarOptions;
 
-    constructor(private api: ApiService, public lemonade: Lemonade) {
+    // list
+    showStudentList = false;
+    showCustomer = false;
+    showTrainer = false;
+    bookings: any;
+    supportFinance = false;
+
+    constructor(private api: ApiService, private appointmentService: AppointmentService, public lemonade: Lemonade) {
     }
 
     ngOnInit(): void {
@@ -41,6 +49,8 @@ export class AppointmentCalendarComponent implements OnInit {
             this.rooms = res.data;
         });
         const isApp = environment.isApp;
+        const me = this;
+        const srv = me.appointmentService;
         let headerToolbar = {
             left: 'prev,next today',
             center: 'title',
@@ -66,8 +76,37 @@ export class AppointmentCalendarComponent implements OnInit {
             selectMirror: true,
             dayMaxEvents: true,
             eventDidMount: function(info) {
-                console.log("cal extendedProps=", info.event.extendedProps);
+                // console.log("cal extendedProps=", info.event.extendedProps);
                 console.log("cal  info=", info);
+            },
+            eventClick: function(info) {
+                var eventObj = info.event;
+                me.showStudentList = false;
+
+                if (eventObj.extendedProps.package) {
+                    srv.getBookings({
+                        appointmentId: eventObj.extendedProps.appointment_id
+                    }).subscribe(res => {
+                        me.bookings = res.data;
+                        me.showCustomer = res.showCustomer;
+                        me.showTrainer = res.showTrainer;
+                        me.supportFinance = res.supportFinance;
+                        me.showStudentList = true;
+                    });
+                }
+
+                // if (eventObj.url) {
+                //     alert(
+                //         'Clicked ' + eventObj.title + '.\n' +
+                //         'Will open ' + eventObj.url + ' in a new tab'
+                //     );
+                //
+                //     window.open(eventObj.url);
+                //
+                //     info.jsEvent.preventDefault(); // prevents browser from following link in current tab.
+                // } else {
+                //     alert('Clicked ' + eventObj.title);
+                // }
             }
             // events: {   // below causes 2 issues, (1) can't pass token, (2) can't pass content-type json.
             //     url: this.api.url + 'api/appointments',
@@ -81,6 +120,10 @@ export class AppointmentCalendarComponent implements OnInit {
             // }
         };
     }
+
+    // debugMe(arg) {
+    //     console.log(arg.event);
+    // }
 
     searchTrainers(e) {
         this.api.get('api/users', {

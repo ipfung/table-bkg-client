@@ -32,10 +32,116 @@
 
     <full-calendar [options]="options">
         <ng-template #eventContent let-arg>
-            <div class="fc-daygrid-event-dot" style="border-color: {{ arg.event.extendedProps.role_color_name }};"></div>
-            <div class="fc-event-time">{{ lemonade.format(arg.event.start, lemonade.timeFormat) }}</div>
-            <div class="fc-event-title">{{ arg.event.title }}</div>
+                <div *ngIf="arg.view.type == 'dayGridMonth'" class="month fc-daygrid-event-dot" style="border-color: {{ arg.event.borderColor }};"></div>
+                <div *ngIf="arg.view.type == 'dayGridMonth'" class="month fc-event-time">{{ lemonade.format(arg.event.start, lemonade.timeFormat) }}</div>
+                <div *ngIf="arg.view.type == 'dayGridMonth'" class="month fc-event-title" style="color: {{ arg.event.extendedProps.role_color_name }};"><b>{{ arg.event.extendedProps.package ? arg.event.extendedProps.package.name : arg.event.title }}</b></div>
+            <div *ngIf="arg.view.type == 'timeGridWeek'">
+                <div class="week fc-event-time">{{ lemonade.format(arg.event.start, lemonade.timeFormat) }} - {{ lemonade.format(arg.event.end, lemonade.endTimeFormat) }} / {{ arg.event.extendedProps.room_name }}</div>
+                <div *ngIf="arg.event.extendedProps.package" class="week fc-event-title"><b>{{ arg.event.extendedProps.package.name }}</b> <i>&#160;&#160;{{ arg.event.extendedProps.total_booked + '/' + arg.event.extendedProps.package.total_space }}</i></div>
+                <div class="week lemonade-event-coach" style="color: {{ arg.event.extendedProps.role_color_name }};">{{ arg.event.title }}</div>
+            </div>
+            <div *ngIf="arg.view.type == 'timeGridDay'">
+                <div class="day fc-event-time">{{ lemonade.format(arg.event.start, lemonade.timeFormat) }} - {{ lemonade.format(arg.event.end, lemonade.endTimeFormat) }} / {{ arg.event.extendedProps.room_name }}</div>
+                <div class="day fc-event-title">
+                    <b>{{ arg.event.extendedProps.package ? arg.event.extendedProps.package.name + ' - ' : '' }}</b>
+                    <b class="lemonade-event-coach" style="color: {{ arg.event.extendedProps.role_color_name }};">{{ arg.event.title }}</b>
+                    <i *ngIf="arg.event.extendedProps.package">&#160;&#160;&#160;{{ arg.event.extendedProps.total_booked + '/' + arg.event.extendedProps.package.total_space }}</i>
+                </div>
+            </div>
 <!--            <b>{{ debugMe(arg) }}</b>-->
         </ng-template>
     </full-calendar>
+
+    <p-table *ngIf="showStudentList" [value]="bookings" dataKey="id" sortField="appointment_date" sortMode="single" [scrollable]="true" rowGroupMode="subheader" groupRowsBy="appointment_date" responsiveLayout="scroll">
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="min-width:200px">{{ 'Date & Time' | translate }}</th>
+                <th *ngIf="showCustomer" style="min-width:150px">{{ 'Customer' | translate }}</th>
+                <th *ngIf="showTrainer" style="min-width:150px">{{ 'Trainer' | translate }}</th>
+                <th style="min-width:200px">{{ 'Table' | translate }} / {{ 'Duration' | translate }}</th>
+                <th style="min-width:120px" *ngIf="supportFinance">{{ 'Payment' | translate }}</th>
+                <th style="min-width:120px">{{ 'Status' | translate }}</th>
+                <th style="min-width:100px">{{ 'Punch In' | translate }}</th>
+                <th style="min-width:20px"></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage" let-booking>
+            <tr>
+                <td colspan="8">
+                    <span class="font-bold ml-2" [innerHTML]="'No booking found.' | translate"></span>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="groupheader" let-booking>
+            <tr pRowGroupHeader>
+                <td colspan="8">
+                    <i class="pi pi-calendar"></i>
+                    <!--                    <img [alt]="customer.representative.name" src="assets/showcase/images/demo/avatar/{{customer.representative.image}}" width="32" style="vertical-align: middle" />-->
+                    <span class="font-bold ml-2">{{ lemonade.formatDate(booking.appointment_date, true) }}</span>
+                </td>
+            </tr>
+        </ng-template>
+        <!--        <ng-template pTemplate="groupfooter" let-appointment>-->
+        <!--            <tr class="p-rowgroup-footer">-->
+        <!--                <td style="min-width: 80%">-->
+        <!--                    <div style="text-align: right; width: 100%">Total Customers</div>-->
+        <!--                </td>-->
+        <!--                <td style="width: 20%">{{calculateCustomerTotal(customer.representative.name)}}</td>-->
+        <!--            </tr>-->
+        <!--        </ng-template>-->
+        <ng-template pTemplate="body" let-appointment let-rowIndex="rowIndex" let-expanded="expanded">
+            <tr >
+                <td style="min-width:200px">
+                    <span class="p-column-title">{{ 'Date & Time' | translate }}</span>
+                    <span class="booking-badge bg-purple-50 text-purple-400">{{ appointmentService.formatDateTime(appointment.start_time) }} - {{ appointmentService.formatDateTime(appointment.end_time) }}</span>
+                </td>
+                <td *ngIf="showCustomer" style="min-width:150px">
+                    <span class="p-column-title">{{ 'Customer' | translate }}</span>
+                    <div>
+                        <p-avatar [label]="lemonade.getInitial(appointment.customer_name)" shape="circle" class="lemonade-avatar" [style]="{background: appointment.role_color_name}"></p-avatar>
+                        {{ appointment.customer_name }}
+                    </div>
+                </td>
+                <td *ngIf="showTrainer" style="min-width:150px">
+                    <span class="p-column-title">{{ 'Trainer' | translate }}</span>
+                    <div>
+                        {{ appointment.user_name }}
+                        <div class="booking-badge bg-blue-50 text-blue-400" *ngIf="appointment.package_name">{{ appointment.package_name }}</div>
+                    </div>
+                </td>
+                <td style="min-width:200px">
+                    <span class="p-column-title">{{ 'Table' | translate }} / {{ 'Duration' | translate }}</span>
+                    <div class="flex">
+                        <p-avatar [label]="lemonade.getInitial(appointment.name)" shape="circle" [style]="{'background-color': appointment.color, 'color': '#fff'}"></p-avatar>
+                        <span class="pl-2"> {{appointment.name}}<br/><span class="booking-badge bg-green-50 text-green-400 pl-2">{{ lemonade.duration(appointment.start_time, appointment.end_time) }}</span></span>
+                    </div>
+                </td>
+                <td style="min-width:120px" *ngIf="supportFinance">
+                    <span class="p-column-title">{{ 'Payment' | translate }}</span>
+                    <div [pTooltip]="appointment.payment_status === 'paid' ? ('Paid' | translate) : ('unpaid' | translate)" tooltipPosition="bottom">
+                        <i [class]="appointment.payment_status === 'paid' ? 'pi pi-money-bill text-green-600' : 'pi pi-exclamation-circle text-pink-600'"></i>
+                        <span [class]="appointment.payment_status === 'paid' ? 'pl-1 text-green-600' : 'pl-1 text-pink-600'"> {{ appointment.price | currency:'HK$' }}</span>
+                    </div>
+                </td>
+                <td style="min-width:120px">
+                    <span class="p-column-title">{{ 'Status' | translate }}</span>
+                    <span [class]="'booking-badge status-' + appointment.status">{{ appointment.status | translate }}</span>
+                </td>
+                <td style="min-width:100px">
+                    <span class="p-column-title">{{ 'Punch In' | translate }}</span>
+                    <span *ngIf="appointment.checkin">{{ appointmentService.formatPunchInTime(appointment.start_time, appointment.checkin) }}</span>
+                    <!--                    / <span class="">{{ appointmentService.formatDateTime(appointment.checkout) }}</span>-->
+                </td>
+                <td style="min-width:20px">
+                    <div *ngIf="appointment.take_leave_at" class="booking-badge bg-pink-50 text-pink-400">{{ 'Taken Leave' | translate }}</div>
+                </td>
+            </tr>
+        </ng-template>
+        <!--        <ng-template pTemplate="rowexpansion" let-appointment>-->
+        <!--            <tr>-->
+        <!--                <td colspan="8">hihi</td>-->
+        <!--            </tr>-->
+        <!--        </ng-template>-->
+
+    </p-table>
 </div>
