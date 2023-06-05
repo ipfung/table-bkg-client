@@ -30,5 +30,12 @@
 <!--        </div>-->
     </div>
 
-    <full-calendar [options]="options"></full-calendar>
+    <full-calendar [options]="options">
+        <ng-template #eventContent let-arg>
+            <div class="fc-daygrid-event-dot" style="border-color: {{ arg.event.extendedProps.role_color_name }};"></div>
+            <div class="fc-event-time">{{ lemonade.format(arg.event.start, lemonade.timeFormat) }}</div>
+            <div class="fc-event-title">{{ arg.event.title }}</div>
+<!--            <b>{{ debugMe(arg) }}</b>-->
+        </ng-template>
+    </full-calendar>
 </div>

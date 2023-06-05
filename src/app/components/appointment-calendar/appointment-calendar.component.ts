@@ -2,6 +2,9 @@ import {Component, OnInit} from '@angular/core';
 import {ApiService} from "../../service/api.service";
 import {Lemonade} from "../../service/lemonade.service";
 import {environment} from "../../../environments/environment";
+import {CalendarOptions} from "@fullcalendar/core";
+import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
 
 @Component({
     selector: 'app-appointment-calendar',
@@ -24,7 +27,7 @@ export class AppointmentCalendarComponent implements OnInit {
     selectedRoom = [];
     trainer: any;
     trainers: any[];
-    options: any;
+    options: CalendarOptions;
 
     constructor(private api: ApiService, public lemonade: Lemonade) {
     }
@@ -42,9 +45,9 @@ export class AppointmentCalendarComponent implements OnInit {
             left: 'prev,next today',
             center: 'title',
             right: 'dayGridMonth,timeGridWeek,timeGridDay'
-        }, initialView = 'timeGridWeek';
+        }, initialView = 'dayGridMonth';
         if (isApp) {
-            initialView = 'timeGridDay'
+            initialView = 'timeGridWeek'
             // day view only
             headerToolbar = {
                 left: 'prev',
@@ -55,12 +58,17 @@ export class AppointmentCalendarComponent implements OnInit {
         this.options = {
             initialView: initialView,
             initialDate : this.lemonade.formatPostDate(new Date()),
+            plugins: [dayGridPlugin, timeGridPlugin],
             headerToolbar: headerToolbar,
 
             editable: false,
             selectable: true,
             selectMirror: true,
             dayMaxEvents: true,
+            eventDidMount: function(info) {
+                console.log("cal extendedProps=", info.event.extendedProps);
+                console.log("cal  info=", info);
+            }
             // events: {   // below causes 2 issues, (1) can't pass token, (2) can't pass content-type json.
             //     url: this.api.url + 'api/appointments',
             //     startParam: 'start_time',
