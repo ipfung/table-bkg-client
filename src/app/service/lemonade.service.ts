@@ -217,6 +217,10 @@ export class Lemonade {
         return format(d, "EEE d/M " + this.timeFormat, {locale: this.lang});
     }
 
+    format(d, fmt) {
+        return format(d, fmt, {locale: this.lang});
+    }
+
     duration(start_time, end_time) {
         const duration = intervalToDuration({
             start: new Date(start_time),
