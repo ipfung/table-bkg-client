@@ -138,15 +138,23 @@
             <p-dropdown id="service" [options]="services" [(ngModel)]="pkg.service_id" optionLabel="name" optionValue="id" [ngClass]="{'ng-invalid ng-dirty' : submitted && !pkg.service_id}"></p-dropdown>
             <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.service_id">{{ 'Field is required' | translate: {field: 'Service' | translate} }}</small>
         </div>
-        <div class="field">
-            <label for="location"><span class="required">*</span>  {{ 'Room' | translate }}</label>
-            <p-dropdown id="location" [options]="rooms" [(ngModel)]="pkg.room_id" optionLabel="name" optionValue="id" [showClear]="true" placeholder="{{'Select field' | translate: {field: 'Room' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : submitted && !pkg.room_id}">
-                <ng-template let-item pTemplate="item">
-                    <p-avatar [label]="lemonade.getInitial(item.name)" shape="circle" [style]="{'background-color': item.color, 'color': '#fff'}"></p-avatar>
-                    {{ item.name | translate }}
-                </ng-template>
-            </p-dropdown>
-            <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.room_id">{{ 'Field is required' | translate: {field: 'Room' | translate} }}</small>
+
+        <div class="grid">
+            <div class="field col-12 md:col-6">
+                <label for="location"><span class="required">*</span>  {{ 'Room' | translate }}</label>
+                <p-dropdown id="location" [options]="rooms" [(ngModel)]="pkg.room_id" optionLabel="name" optionValue="id" [showClear]="true" placeholder="{{'Select field' | translate: {field: 'Room' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : submitted && !pkg.room_id}">
+                    <ng-template let-item pTemplate="item">
+                        <p-avatar [label]="lemonade.getInitial(item.name)" shape="circle" [style]="{'background-color': item.color, 'color': '#fff'}"></p-avatar>
+                        {{ item.name | translate }}
+                    </ng-template>
+                </p-dropdown>
+                <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.room_id">{{ 'Field is required' | translate: {field: 'Room' | translate} }}</small>
+            </div>
+            <div class="field col-12 md:col-6">
+                <label for="total_space"><span class="required">*</span> <b>{{ 'Total Space' | translate }}</b></label>
+                <p-inputNumber id="total_space" [(ngModel)]="pkg.total_space" mode="decimal" [showButtons]="true" inputId="minmax-buttons" [min]="1" [max]="300"></p-inputNumber>
+                <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.price">{{ 'Field is required' | translate: {field: 'Total Space' | translate} }}</small>
+            </div>
         </div>
         <div class="field">
             <label for="trainer"><span class="required">*</span> {{ 'Trainer' | translate }}</label>
@@ -192,18 +200,6 @@
         </div>
         <div class="grid">
             <div class="field col-12 md:col-6">
-                <label for="lesson_number"><span class="required">*</span> {{ 'No. of Appointments' | translate }}</label>
-                <p-inputNumber id="lesson_number" [disabled]="pkg.id > 0" [(ngModel)]="pkg.quantity" mode="decimal" [showButtons]="true" inputId="minmax-buttons" [min]="1" [max]="30"></p-inputNumber>
-                <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.quantity">{{ 'Field is required' | translate: {field: 'No. of Appointments' | translate} }}</small>
-            </div>
-            <div class="field col-12 md:col-6">
-                <label for="price"><span class="required">*</span> <b>{{ 'Price' | translate }}</b></label>
-                <p-inputNumber id="price" [disabled]="pkg.id > 0" [(ngModel)]="pkg.price" mode="currency" currency="HKD" locale="zh-HK" [ngClass]="{'ng-invalid ng-dirty' : submitted && !pkg.price}"></p-inputNumber>
-                <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.price">{{ 'Field is required' | translate: {field: 'Price' | translate} }}</small>
-            </div>
-        </div>
-        <div class="grid">
-            <div class="field col-12 md:col-6">
                 <label for="date"><span class="required">*</span> {{ 'Start Date' | translate }}</label>
                 <p-calendar id="date" [disabled]="pkg.id > 0" [(ngModel)]="pkg.start_date" (onSelect)="loadTime()" placeholder="{{'Select field' | translate: {field: 'Start Date' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : submitted && !pkg.start_date}" [dateFormat]="lemonade.dateFormat"></p-calendar>
                 <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.start_date">{{ 'Field is required' | translate: {field: 'Start Date' | translate} }}</small>
@@ -238,6 +234,19 @@
                 <label for="time">{{ 'End Time' | translate }}</label>
                 <input type="text" pInputText [disabled]="true" value="{{ pkg.start_time && sessionInterval ? lemonade.formatTime(pkg.start_time + (pkg.no_of_session * sessionInterval)) : '' }}"/>
                 <small class="jws-tips">{{ 'Generated by Start Time' | translate }}</small>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="field col-12 md:col-6">
+                <label for="lesson_number"><span class="required">*</span> {{ 'No. of Appointments' | translate }}</label>
+                <p-inputNumber id="lesson_number" [(ngModel)]="pkg.quantity" mode="decimal" [showButtons]="true" inputId="minmax-buttons" [min]="1" [max]="30"></p-inputNumber>
+                <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.quantity">{{ 'Field is required' | translate: {field: 'No. of Appointments' | translate} }}</small>
+            </div>
+            <div class="field col-12 md:col-6">
+                <label for="price"><span class="required">*</span> <b>{{ 'Price' | translate }}</b></label>
+                <p-inputNumber id="price" [disabled]="true === pkg.free_of_charge" [(ngModel)]="pkg.price" mode="currency" currency="HKD" locale="zh-HK" [ngClass]="{'ng-invalid ng-dirty' : submitted && (!pkg.price || pkg.price <= 0)}"></p-inputNumber>
+                <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.price">{{ 'Field is required' | translate: {field: 'Price' | translate} }}</small>
             </div>
         </div>
 

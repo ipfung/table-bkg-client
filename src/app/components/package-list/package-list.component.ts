@@ -148,6 +148,7 @@ export class PackageListComponent implements OnInit {
         this.pkg = {
             quantity: 4,
             status: this.statuses[0].code,
+            total_space: 1,
             recurring: {
                 repeat: []
             }
