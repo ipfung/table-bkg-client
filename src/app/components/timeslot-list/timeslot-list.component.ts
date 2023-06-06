@@ -146,6 +146,10 @@ export class TimeslotListComponent implements OnInit {
         this.daysoffFormDialog = true;
     }
 
+    isEditingDaysoff(daysoff) {
+        return this.daysoff && this.daysoff.id == daysoff.id;
+    }
+
     editDaysoff(daysoff) {
         this.daysoffFormHeader = "Edit Form";
         this.daysoff = {...daysoff};

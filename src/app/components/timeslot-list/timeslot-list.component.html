@@ -38,7 +38,7 @@
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-daysoff let-rowIndex="rowIndex">
-                    <tr>
+                    <tr class="lemonade-row-edit-{{ isEditingDaysoff(daysoff) }}">
                         <td style="min-width:150px">
                             <span class="p-column-title">{{ 'Date' | translate }}</span>
                                 {{ lemonade.formatDate(daysoff.start_date, true) }}
@@ -72,11 +72,11 @@
                 <div class="col-12 text-right">
                     <div class="grid grid-nogutter justify-content-between ng-star-inserted">
                         <div>
-                            <button pButton pRipple label="{{ 'Delete' | translate }}" icon="pi pi-trash" class="p-button-text" (click)="deleteDaysoff()"></button>
+                            <button pButton pRipple label="{{ 'Delete' | translate }}" icon="pi pi-trash" (click)="deleteDaysoff()"></button>
                         </div>
                         <div>
                             <button pButton pRipple label="{{ 'Cancel' | translate }}" icon="pi pi-times" class="p-button-text" (click)="hideDaysoffDialog()"></button>
-                            <button pButton pRipple label="{{ 'Save' | translate }}" icon="pi pi-check" class="p-button-text" (click)="saveDaysoff()"></button>
+                            <button pButton pRipple label="{{ 'Save' | translate }}" icon="pi pi-check" (click)="saveDaysoff()"></button>
                         </div>
                     </div>
                 </div>
@@ -102,7 +102,7 @@
         </div>
         <div class="col-12 md:col-4 text-right">
             <button pButton pRipple label="{{ 'Cancel' | translate }}" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
-            <button pButton pRipple label="{{ 'Save' | translate }}" icon="pi pi-check" class="p-button-text" (click)="save()"></button>
+            <button pButton pRipple label="{{ 'Save' | translate }}" icon="pi pi-check" (click)="save()"></button>
         </div>
     </div>
 </ng-template>
