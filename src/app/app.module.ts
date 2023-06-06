@@ -169,9 +169,6 @@ import { TimeslotListComponent } from './components/timeslot-list/timeslot-list.
 import { AppointmentCalendarComponent } from './components/appointment-calendar/appointment-calendar.component';
 import { ServiceSelectionComponent } from './components/service-selection/service-selection.component';
 import {FullCalendarModule} from "@fullcalendar/angular";
-import dayGridPlugin from '@fullcalendar/daygrid';
-import timeGridPlugin from '@fullcalendar/timegrid';
-import interactionPlugin from '@fullcalendar/interaction';
 import {PushService} from "./service/push.service";
 import { SubmitModalComponent } from './components/submit-modal/submit-modal.component';
 import { TrainerCommissionComponent } from './components/trainer-commission/trainer-commission.component';
@@ -183,12 +180,6 @@ import {DashboardService} from "./service/dashboard.service";
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/lang/', '-' + environment.project + '.json');
 }
-
-FullCalendarModule.registerPlugins([
-    dayGridPlugin,
-    timeGridPlugin,
-    interactionPlugin
-]);
 
 
 @NgModule({
