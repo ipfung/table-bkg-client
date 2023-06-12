@@ -47,8 +47,8 @@
                 <th style="min-width:70px">{{ 'Trainer' | translate }}</th>
                 <th style="min-width:150px">{{ 'Room' | translate }} / {{ 'Service' | translate }}</th>
                 <th style="min-width:150px">{{ 'Schedules' | translate }}</th>
-                <th style="min-width:150px">{{ 'Price' | translate }} / {{ 'Total Lesson' | translate }}</th>
-                <th style="min-width:50px">{{ 'Status' | translate }}</th>
+                <th style="min-width:160px">{{ 'Price' | translate }} / {{ 'Total Lesson' | translate }}</th>
+                <th style="min-width:40px">{{ 'Status' | translate }}</th>
                 <th style="min-width:20px"></th>
             </tr>
         </ng-template>
@@ -84,13 +84,14 @@
                         <span class="text-xs" *ngIf="pkg.start_date"><br/> {{ lemonade.formatDate(pkg.start_date) }}</span><span class="text-xs" *ngIf="pkg.end_date"> {{ 'to' | translate }} {{ lemonade.formatDate(pkg.end_date) }}</span><span class="text-xs booking-badge bg-purple-50 text-purple-400" *ngIf="pkg.start_time"> {{ lemonade.formatTime(pkg.start_time) }} - {{ lemonade.formatTime(pkg.end_time) }}</span>
                     </div>
                 </td>
-                <td style="min-width:150px">
+                <td style="min-width:160px">
                     <span class="p-column-title">{{ 'Price' | translate }} / {{ 'Total Lesson' | translate }}</span>
                     <div>
-                        {{ pkg.price | currency:'HK$' }} / {{ pkg.quantity }} {{ 'Lesson' | translate }}
+                        <span>{{ pkg.price ? (pkg.price | currency:'HK$') : ('Free of Charge' | translate) }} / {{ pkg.quantity }} {{ 'Lesson' | translate }}</span>
+                        <br/><span class="text-xs">{{ 'Capacity' | translate }}: {{ pkg.total_space }}</span>
                     </div>
                 </td>
-                <td style="min-width:120px">
+                <td style="min-width:40px">
                     <span class="p-column-title">{{ 'Status' | translate }}</span>
                     <span [class]="'user-badge status-' + lemonade.comboRenderer(statuses, pkg.status).toLowerCase()">{{ lemonade.comboRenderer(statuses, pkg.status).toLowerCase() | translate }}</span>
                 </td>
@@ -151,9 +152,9 @@
                 <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.room_id">{{ 'Field is required' | translate: {field: 'Room' | translate} }}</small>
             </div>
             <div class="field col-12 md:col-6">
-                <label for="total_space"><span class="required">*</span> <b>{{ 'Total Space' | translate }}</b></label>
+                <label for="total_space"><span class="required">*</span> <b>{{ 'Capacity' | translate }}</b></label>
                 <p-inputNumber id="total_space" [(ngModel)]="pkg.total_space" mode="decimal" [showButtons]="true" inputId="minmax-buttons" [min]="1" [max]="300"></p-inputNumber>
-                <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.price">{{ 'Field is required' | translate: {field: 'Total Space' | translate} }}</small>
+                <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.price">{{ 'Field is required' | translate: {field: 'Capacity' | translate} }}</small>
             </div>
         </div>
         <div class="field">
@@ -251,12 +252,41 @@
         </div>
 
         <div class="field" *ngIf="pkg.start_date && pkg.start_time">
-            <p-table [value]="lessons">
+            <p-divider></p-divider>
+
+            <div *ngIf="lessonDateDialog" class="mb-3 p-2 surface-50">
+                <h6>{{ lessonDateFormHeader | translate:{ name: 'Custom Date' | translate } }}</h6>
+                <div class="field col-12" *ngIf="lesson.date">
+                    <label for="do-old">{{ 'Original Date' | translate }}</label>
+                    <p-calendar id="do-old" [disabled]="true" [(ngModel)]="lesson.date" selectionMode="single" required [readonlyInput]="true" [dateFormat]="lemonade.dateFormat" inputId="do-old"></p-calendar>
+                </div>
+                <div class="field col-12">
+                    <label for="do-dates">{{ 'New Custom Date' | translate }}</label>
+                    <p-calendar id="do-dates" [(ngModel)]="lesson.new_date" selectionMode="single" required [ngClass]="{'ng-invalid ng-dirty' : lessonDateSubmitted && !lesson.new_date}" [readonlyInput]="true" [dateFormat]="lemonade.dateFormat" inputId="do-dates"></p-calendar>
+                </div>
+                <div class="col-12">
+                    <div class="lemonade-edit-footer grid grid-nogutter justify-content-between ng-star-inserted">
+                        <div>
+                            <button *ngIf="lesson.idx > 0" pButton pRipple pTooltip="{{ 'Delete' | translate }}" icon="pi pi-trash" class="p-button-text" (click)="deactivateLessonDate()"></button>
+                        </div>
+                        <div>
+                            <button pButton pRipple label="{{ 'Close' | translate }}" icon="pi pi-times" class="p-button-text" (click)="hideLessonDateDialog()"></button>
+                            <button pButton pRipple label="{{ lesson.idx > 0 ? 'Update' : 'Add' | translate }}" icon="pi pi-check" (click)="saveLessonDate()"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <p-table [value]="lessons" [scrollable]="true" scrollHeight="400px">
                 <ng-template pTemplate="header">
                     <tr>
-                        <th style="min-width:20px"></th>
-                        <th style="min-width:200px">{{ 'Lesson Date & Time' | translate }}<br /><small class="jws-tips text-xs">{{ 'Auto Generate Appointments ASAP' | translate }}</small></th>
-                        <th style="min-width:20px"></th>
+                        <th style="max-width:35px"></th>
+                        <th style="min-width:170px"><div>{{ 'Lesson Date & Time' | translate }}</div><div><small class="jws-tips text-xs">{{ 'Auto Generate Appointments ASAP' | translate }}</small></div></th>
+                        <th style="max-width:90px">{{ 'Registered' | translate }}</th>
+                        <th style="max-width:100px">
+                            <button *ngIf="pkg.id > 0 && editable" pButton pRipple pTooltip="{{ 'Create Form' | translate:{ name: 'Custom Date' | translate } }}" icon="pi pi-plus" class="p-button-sm p-button-text" (click)="addCustomDate()"></button>
+                            <button pButton *ngIf="pkg.id > 0 && editable" [disabled]="disableLoadMore" pTooltip="{{ 'Generate More Lesson Dates' | translate }}" icon="pi pi-spin pi-cog" class="p-button-sm p-button-text" (click)="generateLessonDates()"></button>
+                        </th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="emptymessage" let-lesson>
@@ -267,12 +297,21 @@
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-lesson let-rowIndex="rowIndex" let-expanded="expanded">
-                    <tr>
-                        <td style="min-width:20px">{{ 1+rowIndex }}.</td>
-                        <td style="min-width:200px">
+                    <tr class="lemonade-row-edit-{{ isEditingLessonDate(lesson) }}">
+                        <td style="max-width:35px">{{ 1+rowIndex }}.</td>
+                        <td style="min-width:170px">
                             <span class="p-column-title">{{ 'Date & Time' | translate }}</span>
-                            <div>
-                                <span class="booking-badge bg-purple-50 text-purple-400">{{ appointmentService.getBookedDateTime(lesson.date, pkg.start_time, sessionInterval, pkg.no_of_session) }}</span>
+                            <span [class]="'booking-badge bg-purple-50 text-purple-400 jws-' + lesson.action ">{{ appointmentService.getBookedDateTime(lesson.date, pkg.start_time, sessionInterval, pkg.no_of_session) }}</span>
+                        </td>
+                        <td style="max-width:90px">
+                            <span class="p-column-title">{{ 'Registered' | translate }}</span>
+                            {{ lesson.total_booked ? lesson.total_booked : 0 }}
+                        </td>
+                        <td style="max-width:100px">
+                            <div *ngIf="!lesson.total_booked || lesson.total_booked <= 0">
+<!--                                <button pButton type="button" *ngIf="lesson.action != 'delete'" pTooltip="{{ 'Delete' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-times" (click)="deactivateLessonDate(lesson, rowIndex)"></button>-->
+<!--                                <button pButton type="button" *ngIf="lesson.action == 'delete'" pTooltip="{{ 'Alive' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-check" (click)="activateLessonDate(lesson, rowIndex)"></button>-->
+                                <button pButton type="button" *ngIf="editable && lesson.action !== 'delete'" pTooltip="{{ 'Edit' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-pencil" (click)="editLessonDate(lesson, rowIndex)"></button>
                             </div>
                         </td>
                     </tr>
@@ -280,20 +319,16 @@
             </p-table>
             <div class="mt-2 text-xs" *ngIf="holidays">{{ 'Skipped holidays' | translate:{ days: holidays.length } }}: <span class="booking-badge bg-pink-50 text-pink-400 mr-2" *ngFor="let holiday of holidays">{{ lemonade.formatDate(holiday.date, true) }}</span></div>
         </div>
-        <div class="field">
-            <button pButton *ngIf="pkg.id > 0" [disabled]="disableLoadMore" label="{{ 'Generate More Lesson Dates' | translate }}" icon="pi pi-spin pi-cog" class="p-button-text" (click)="generateLessonDates()"></button>
-        </div>
-
     </ng-template>
 
     <ng-template pTemplate="footer">
         <div class="grid grid-nogutter justify-content-between ng-star-inserted">
             <div>
-                <button *ngIf="pkg.id > 0 && this.editable" pButton pRipple label="{{ 'Delete' | translate }}" icon="pi pi-trash" class="p-button-text" (click)="delete()"></button>
+                <button *ngIf="pkg.id > 0 && this.editable && !lessonDateDialog" pButton pRipple pTooltip="{{ 'Delete' | translate }}" icon="pi pi-trash" class="p-button-text" (click)="delete()"></button>
             </div>
             <div>
                 <button pButton pRipple label="{{ 'Cancel' | translate }}" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
-                <button pButton pRipple label="{{ 'Save' | translate }}" icon="pi pi-check" class="p-button-text" (click)="save()"></button>
+                <button pButton pRipple [disabled]="lessonDateDialog" label="{{ 'Save' | translate }}" icon="pi pi-check" (click)="save()"></button>
             </div>
         </div>
     </ng-template>

@@ -48,6 +48,10 @@ export class PackageListComponent implements OnInit {
     locations = [];
     formHeader = "Edit Form";
     sessionInterval: any;
+    lesson: any;
+    lessonDateDialog: boolean;
+    lessonDateFormHeader: string;
+    lessonDateSubmitted: boolean;
 
     constructor(private api: ApiService, public appointmentService: AppointmentService, public lemonade: Lemonade, private translateService: TranslateService, private messageService: MessageService, private confirmationService: ConfirmationService, private route: ActivatedRoute) {
     }
@@ -198,6 +202,116 @@ export class PackageListComponent implements OnInit {
         });
     }
 
+    deactivateLessonDate() {
+        console.log('delete lesson date.');
+        this.translateService.get(['Are you sure to delete the lesson date?']).subscribe( msg => {
+            this.confirmationService.confirm({
+                message: msg['Are you sure to delete the lesson date?'],
+                accept: () => {
+                    this.api.delete('api/package-lesson-date/' + this.pkg.id, {
+                        params: {
+                            old_date: this.lemonade.formatPostDate(this.lesson.date)
+                        }
+                    }).subscribe(res => {
+                        if (res.success == true) {
+                            this.lessonDateSubmitted = false;
+                            // this.lessons.splice(this.lesson.idx, 1);
+                            this.lessons[this.lesson.idx].action = 'delete';
+                            this.hideLessonDateDialog();
+                            this.lemonade.ok(this.messageService, 'The lesson date is deleted successfully.');
+                        } else {
+                            this.lemonade.error(this.messageService, res);
+                        }
+                    });
+                }
+            });
+        });
+    }
+
+    activateLessonDate(lesson, idx) {
+        delete lesson.action;
+    }
+
+    addCustomDate() {
+        this.lessonDateFormHeader = "Create Form";
+        this.lesson = {
+            package_id: this.pkg.id,
+            idx: -1
+        };
+        this.lessonDateSubmitted = false;
+        this.lessonDateDialog = true;
+    }
+
+    isEditingLessonDate(lesson) {
+        return this.lesson && this.lemonade.formatPostDate(this.lesson.date) == lesson.date;
+    }
+
+    editLessonDate(lesson, idx) {
+        this.lessonDateFormHeader = "Edit Form";
+        this.lesson = {...lesson};
+        this.lesson.package_id = this.pkg.id;
+        this.lesson.idx = idx;
+        this.lesson.date = new Date(lesson.date);
+        this.lessonDateSubmitted = false;
+        this.lessonDateDialog = true;
+    }
+
+    hideLessonDateDialog() {
+        this.lessonDateDialog = false;
+    }
+
+    saveLessonDate() {
+        this.lessonDateSubmitted = true;
+        if (!this.lesson.new_date) {
+            return;
+        }
+        if (!this.sessionInterval) {
+            this.loadTime();
+        }
+        //TODO save to server and update into table.
+        if (this.lesson.date) {   // update
+            this.api.update('api/package-lesson-date/' + this.pkg.id, {
+                sessionInterval: this.sessionInterval,
+                new_date: this.lemonade.formatPostDate(new Date(this.lesson.new_date)),
+                old_date: this.lemonade.formatPostDate(this.lesson.date)
+            }).subscribe(res => {
+                console.log('package update res=',res);
+                if (res.success) {
+                    this.lemonade.ok(this.messageService, {
+                        message: 'Date has been updated successfully'
+                    });
+                    this.lessons[this.lesson.idx].date = this.lesson.new_date;
+                    this.lesson.date = false;
+                    this.hideLessonDateDialog();
+                } else {
+                    // error.
+                    this.lemonade.error(this.messageService, res);
+                }
+            });
+        } else {   // create
+            const d = this.lemonade.formatPostDate(new Date(this.lesson.new_date));
+            console.log('this.lesson.new_date-', this.lesson.new_date);
+            this.api.post('api/package-lesson-date/' + this.pkg.id, {
+                sessionInterval: this.sessionInterval,
+                new_date: d
+            }).subscribe(res => {
+                console.log('package res=',res);
+                if (res.success) {
+                    this.lemonade.ok(this.messageService, {
+                        message: 'Date has been stored successfully'
+                    });
+                    this.lessons.push({
+                        date: d
+                    });
+                    this.hideLessonDateDialog();
+                } else {
+                    // error.
+                    this.lemonade.error(this.messageService, res);
+                }
+            });
+        }
+    }
+
     edit(pkg) {
         this.formHeader = "Edit Form";
         // fix pkg.recurring.repeat if it's crashed.
@@ -218,8 +332,10 @@ export class PackageListComponent implements OnInit {
         // load old lesson dates from appointments.
         this.lessons = [];
         for (const obj in pkg.appointments) {
+            const apt = pkg.appointments[obj];
             this.lessons.push({
-                date: pkg.appointments[obj].start_time.substr(0, 10)
+                date: apt.start_time.substr(0, 10),
+                total_booked: apt.customer_bookings ? apt.customer_bookings.length : 0
             });
         }
         this.formDialog = true;

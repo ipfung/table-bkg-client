@@ -99,6 +99,12 @@ body{
     font-style: italic;
 }
 
+.lemonade-edit-footer {
+    button {
+        width: auto !important;
+    }
+}
+
 .required {
     color: red;
 }
