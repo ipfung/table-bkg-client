@@ -158,12 +158,13 @@
                 <ng-template pTemplate="selectedItem">
                     {{ selectedPackage.name }} <span class="text-xs booking-badge bg-pink-50 text-pink-400">{{ lemonade.getRecurringCycle(selectedPackage.recurring) | translate }}: {{ lemonade.displayRecurring(selectedPackage.recurring) }}</span>
                     <span class="text-xs" *ngIf="selectedPackage.start_date"> {{ lemonade.formatDate(selectedPackage.start_date) }}</span><span class="text-xs" *ngIf="selectedPackage.end_date"> {{ 'to' | translate }} {{ lemonade.formatDate(selectedPackage.end_date) }}</span><span class="text-xs booking-badge bg-purple-50 text-purple-400" *ngIf="selectedPackage.start_time"> {{ lemonade.formatTime(selectedPackage.start_time) }} - {{ lemonade.formatTime(selectedPackage.end_time) }}</span>
-                    <span class="text-xs text-pink-500"> {{ selectedPackage.price | currency: 'HK$'}}</span>
+                    <span class="text-xs text-blue-500"> {{ selectedPackage.price | currency: 'HK$'}}</span>
                 </ng-template>
                 <ng-template let-item pTemplate="item">
                     {{ item.name | translate }} - <span class="text-xs">{{ item.description }}</span> <span class="text-xs booking-badge bg-pink-50 text-pink-400">{{ lemonade.getRecurringCycle(item.recurring) | translate }}: {{ lemonade.displayRecurring(item.recurring) }}</span>
+                    <br />
                     <span class="text-xs" *ngIf="item.start_date"> {{ lemonade.formatDate(item.start_date) }}</span><span class="text-xs" *ngIf="item.end_date"> {{ 'to' | translate }} {{ lemonade.formatDate(item.end_date) }}</span><span class="text-xs booking-badge bg-purple-50 text-purple-400" *ngIf="item.start_time"> {{ lemonade.formatTime(item.start_time) }} - {{ lemonade.formatTime(item.end_time) }}</span>
-                    <span class="text-xs text-pink-500"> {{ item.price | currency: 'HK$'}}</span>
+                    <span class="text-base text-blue-500"> {{ item.price | currency: 'HK$'}}</span>
                 </ng-template>
             </p-dropdown>
         </div>
