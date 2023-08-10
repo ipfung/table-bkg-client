@@ -39,6 +39,8 @@ export class AppointmentService {
      */
     readonly paymentSelection = environment.payment;
 
+    readonly isApp = environment.isApp;
+
     /**
      * service object that contains service's name, price...etc
      * it may also contain trainer object in it.
@@ -367,7 +369,7 @@ export class AppointmentService {
 
     checkout(orderNo) {
         if (this.paymentSelection) {
-            return this.api.url + 'checkout/' + orderNo;
+            return this.api.url + 'checkout/' + orderNo + (this.isApp ? '?urlType=app' : '');
         } else {
             console.log('not support payment.');
             return null;
@@ -376,7 +378,7 @@ export class AppointmentService {
 
     makePayment(orderNo) {
         if (this.paymentSelection) {
-            return this.api.url + 'pay/' + orderNo;
+            return this.api.url + 'pay/' + orderNo + (this.isApp ? '?urlType=app' : '');
         } else {
             console.log('not support payment.');
             return null;
