@@ -65,6 +65,7 @@ export class Lemonade {
 
     readonly dateFormat = 'dd/mm/yy';
     timeFormat = 'h:mm aa';
+    readonly endTimeFormat = 'h:mm';
     readonly weeks = [
         {
             name: 'Monday',
