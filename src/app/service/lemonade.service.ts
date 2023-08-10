@@ -29,38 +29,45 @@ export class Lemonade {
 
     // shall we put methods in env for different customer?
     readonly paymentMethods = [{
-        code: 'octopus',
-        name: 'Octopus',
-        image: 'octopus.png'
-    }, {
-        code: 'payme',
-        name: 'PayMe from HSBC',
-        image: 'PayMe-Logo.wine.svg'
-    }, {
-        code: 'fps',
-        name: '轉數快',
-        image: 'fps_color.svg',
-        width: '50%'
-    }, {
-        code: 'alipayHK',
-        name: 'Alipay / 支付寶',
-        image: 'Alipay-Logo.wine.svg'
-    }, {
-        code: 'wechatpayHK',
-        name: 'WeChat Pay',
-        image: 'WeChat_Pay_Emblem_HorW238.png'
-    }, {
-        code: 'pps',
-        name: 'PPS',
-        image: 'PPS_Logo.gif'
-    }, {
-        code: 'paypal',
-        name: 'PayPal',
-        image: 'PayPal-Logo.wine.svg'
-    }, {
-        code: 'stripe',
-        name: 'Stripe',
-        image: 'Stripe_(company)-Logo.wine.svg'
+        code: 'mpay',
+        name: 'mPay',
+        image: 'mPay.png',
+        selected: true    // don't set to any specific gateway.
+    //     code: 'octopus',
+    //     name: 'Octopus',
+    //     image: 'octopus.png'
+    // }, {
+    //     code: 'payme',
+    //     name: 'PayMe from HSBC',
+    //     image: 'PayMe-Logo.wine.svg'
+    // }, {
+    //     code: 'fps',
+    //     name: '轉數快',
+    //     image: 'fps_color.svg',
+    //     width: '50%'
+    // }, {
+    //     code: 'alipayHK',
+    //     name: 'Alipay / 支付寶',
+    //     image: 'Alipay-Logo.wine.svg'
+    // }, {
+    //     code: 'wechatpayHK',
+    //     name: 'WeChat Pay',
+    //     image: 'WeChat_Pay_Emblem_HorW238.png'
+    // }, {
+    //     code: 'pps',
+    //     name: 'PPS',
+    //     image: 'PPS_Logo.gif'
+    // // }, {
+    // //     code: 'vm',
+    // //     name: 'Visa / Master',
+    // // }, {
+    // //     code: 'paypal',
+    // //     name: 'PayPal',
+    // //     image: 'PayPal-Logo.wine.svg'
+    // // }, {
+    // //     code: 'stripe',
+    // //     name: 'Stripe',
+    // //     image: 'Stripe_(company)-Logo.wine.svg'
     }];
 
     readonly dateFormat = 'dd/mm/yy';

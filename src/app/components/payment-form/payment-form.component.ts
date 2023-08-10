@@ -21,6 +21,11 @@ export class PaymentFormComponent implements OnInit {
         const appointmentInformation = this.appointmentService.getAppointmentInformation();
         this.paymentInformation = appointmentInformation.paymentInformation;
         this.timeInformation = appointmentInformation.timeInformation;
+        // set default payment gateway if paymentMethods has 1 option only.
+        if (this.lemonade.paymentMethods.length == 1) {
+            this.paymentInformation.method = this.lemonade.paymentMethods[0].code;
+            this.nextPage();
+        }
     }
 
     selectPayment(selectPaymentMethod) {
