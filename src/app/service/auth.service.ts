@@ -18,6 +18,9 @@ export class AuthService {
     static readonly PID = 'lemonade-pid';   //push notification
     static readonly APPOINTMENT_BTN = 'lemonade-show-apt-btn';
 
+    // it is a bit confusing to use true or false with Capacitor Storage, so make it use string all the time.
+    static readonly YES = 'yes';
+
     private loginComplete = new Subject<any>();
     private logoutComplete = new Subject<any>();
 
@@ -116,7 +119,7 @@ export class AuthService {
         set(AuthService.EMAIL, res.email);
         set(AuthService.AVATAR, res.avatar);
         set(AuthService.AVATAR_COLOR, res.color);
-        set(AuthService.APPOINTMENT_BTN, res.appointment_btn);
+        set(AuthService.APPOINTMENT_BTN, res.appointment_btn == true ? AuthService.YES : '');
     }
 
     async logOut() {

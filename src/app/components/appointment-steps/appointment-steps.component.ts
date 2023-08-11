@@ -4,6 +4,7 @@ import {AppointmentService} from "../../service/appointmentservice";
 import {Subscription} from "rxjs";
 import {Router} from "@angular/router";
 import {TranslateService} from "@ngx-translate/core";
+import {Lemonade} from "../../service/lemonade.service";
 
 @Component({
     selector: 'app-appointment-steps',
@@ -16,12 +17,12 @@ export class AppointmentStepsComponent implements OnInit {
     activeIndex = 0;
     subscription: Subscription;
 
-    constructor(public messageService: MessageService, public appointmentService: AppointmentService, private router: Router, private translateService: TranslateService) {
+    constructor(public messageService: MessageService, public appointmentService: AppointmentService, private lemonade: Lemonade, private router: Router, private translateService: TranslateService) {
     }
 
     ngOnInit(): void {
         const serviceSelection = this.appointmentService.serviceSelection;
-        const paymentSelection = this.appointmentService.paymentSelection;
+        const paymentSelection = this.appointmentService.hasValidPayment();
         this.translateService.get(['Service', 'Duration', 'Date & Time', 'Payment', 'Confirmation']).subscribe( res => {
             console.log('res.Confirmation=', res, serviceSelection);
             this.items = [];

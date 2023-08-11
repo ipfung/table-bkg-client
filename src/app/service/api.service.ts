@@ -8,6 +8,7 @@ import { environment } from '../../environments/environment';
 })
 export class ApiService {
   url = environment.url;
+  isApp = environment.isApp;
     // url = 'http://localhost:8001/';
 
   constructor(private http: HttpClient) {
@@ -32,10 +33,21 @@ export class ApiService {
         reqOpts.params = reqOpts.params.set(k, params[k]);
       }
     }
+    if (this.isApp) {
+        reqOpts.params = reqOpts.params.set('_via', 'app');
+    }
     return this.http.get(this.url + endpoint, reqOpts);
   }
 
   post(endpoint: string, params: object): Observable<any> {
+    if (this.isApp) {
+        if (!params) {
+            params = {};
+        }
+        params = {...params, ...{
+            '_via': 'app'
+        }};
+    }
     return this.http.post(this.url + endpoint, params);
   }
 

@@ -8,6 +8,7 @@ import {Lemonade} from "./lemonade.service";
 import {AuthService} from "./auth.service";
 import {environment} from "../../environments/environment";
 import {isSameDay} from "date-fns";
+import {DeviceDetectorService} from "ngx-device-detector";
 
 @Injectable()
 export class AppointmentService {
@@ -98,7 +99,17 @@ export class AppointmentService {
 
     paymentComplete$ = this.paymentComplete.asObservable();
 
-    constructor(public api: ApiService, private translateService: TranslateService, private lemonade: Lemonade, private authService: AuthService) {
+    deviceInfo = null;
+
+    constructor(public api: ApiService, private translateService: TranslateService, private lemonade: Lemonade, private authService: AuthService, private deviceService: DeviceDetectorService) {
+        this.deviceInfo = this.deviceService.getDeviceInfo();
+        // const isMobile = this.deviceService.isMobile();
+        // const isTablet = this.deviceService.isTablet();
+        // const isDesktopDevice = this.deviceService.isDesktop();
+        // console.log(this.deviceInfo);
+        // console.log(isMobile);  // returns if the device is a mobile device (android / iPhone / windows-phone etc)
+        // console.log(isTablet);  // returns if the device us a tablet (iPad etc)
+        // console.log(isDesktopDevice); // returns if the app is running on a Desktop browser.
         this.lang = this.translateService.getDefaultLang() === 'zh' ? zhHK : enUS;
         // cleanup when logout.
         this.subscription = this.authService.logoutComplete$.subscribe(obj => {
@@ -110,6 +121,10 @@ export class AppointmentService {
 
     private prepareDefaultAppointment() {
         this.appointmentInformation = { ...this.defaultAppointment };
+    }
+
+    hasValidPayment() {
+        return this.paymentSelection && this.lemonade.paymentMethods.length > 1;
     }
 
     formatPostDate(d) {
@@ -367,9 +382,13 @@ export class AppointmentService {
         });
     }
 
+    private isMobile() {
+        return this.deviceService.isMobile() || this.deviceService.isMobile() || this.isApp;
+    }
+
     checkout(orderNo) {
         if (this.paymentSelection) {
-            return this.api.url + 'checkout/' + orderNo + (this.isApp ? '?urlType=app' : '');
+            return this.api.url + 'checkout/' + orderNo + (this.isMobile() ? '?urlType=app' : '');
         } else {
             console.log('not support payment.');
             return null;
@@ -378,7 +397,7 @@ export class AppointmentService {
 
     makePayment(orderNo) {
         if (this.paymentSelection) {
-            return this.api.url + 'pay/' + orderNo + (this.isApp ? '?urlType=app' : '');
+            return this.api.url + 'pay/' + orderNo + (this.isMobile() ? '?urlType=app' : '');
         } else {
             console.log('not support payment.');
             return null;
@@ -514,7 +533,7 @@ export class AppointmentService {
     getPaymentMethodName(code) {
         if (this.lemonade.paymentMethods.length > 0) {
             let paymentMethod = this.lemonade.paymentMethods.find(el => el.code == code);
-            return paymentMethod.name;
+            return paymentMethod ? paymentMethod.name : '-';
         }
         return '';
     }
@@ -527,7 +546,7 @@ export class AppointmentStepsGuardService implements CanActivate {
     canActivate(route: ActivatedRouteSnapshot): Promise<boolean>|boolean {
         return new Promise((resolve, reject) => {
             this.authService.appointmentButton().then(res => {
-                const canAccess = (res === 'true');
+                const canAccess = (res === AuthService.YES);
                 if (!canAccess) {
                     this.router.navigate(['/appointment-list']);
                     resolve(false);

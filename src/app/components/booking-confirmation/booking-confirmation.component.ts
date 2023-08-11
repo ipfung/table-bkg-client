@@ -17,7 +17,7 @@ export class BookingConfirmationComponent implements OnInit {
 
     ngOnInit(): void {
         this.appointmentInformation = this.appointmentService.getAppointmentInformation();
-        this.paymentSelection = this.appointmentService.paymentSelection;
+        this.paymentSelection = this.appointmentService.hasValidPayment();
     }
 
     selectedPreviousDescription() {
@@ -25,13 +25,13 @@ export class BookingConfirmationComponent implements OnInit {
     }
 
     selectedDescription() {
-        if (!this.paymentSelection)
+        if (!this.appointmentService.paymentSelection)
             return 'Save & complete booking';
         return 'To a payment gateway';
     }
 
     getCompleteButtonText() {
-        if (!this.paymentSelection)
+        if (!this.appointmentService.paymentSelection)
             return 'Complete';
         return 'Pay Now';
     }

@@ -34,7 +34,7 @@ export class AppMenuComponent implements OnInit {
 
     async ngOnInit() {
         const btn = await this.authService.appointmentButton();
-        this.showAppointmentButton = (btn === 'true');
+        this.showAppointmentButton = (btn === AuthService.YES);
         this.api.get('api/menu').subscribe( resp => {
             this.model = [
                 {

@@ -3,6 +3,7 @@ import {Component, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
 import {AppointmentService} from "../../service/appointmentservice";
 import {AuthService} from "../../service/auth.service";
+import {Lemonade} from "../../service/lemonade.service";
 
 @Component({
     selector: 'app-booking-form',
@@ -31,14 +32,14 @@ export class BookingFormComponent implements OnInit {
     nonWorkingDates: Date[];
     trainerTsLoading: boolean;
 
-    constructor(public appointmentService: AppointmentService, private authService: AuthService, private router: Router) {
+    constructor(public appointmentService: AppointmentService, private lemonade: Lemonade, private authService: AuthService, private router: Router) {
     }
 
     ngOnInit(): void {
         const appointmentInformation = this.appointmentService.getAppointmentInformation();
         this.timeInformation = appointmentInformation.timeInformation;
         this.paymentInformation = appointmentInformation.paymentInformation;
-        this.paymentSelection = this.appointmentService.paymentSelection;
+        this.paymentSelection = this.appointmentService.hasValidPayment();
         if (this.appointmentService.selectedService)
             this.timeslotSetting = this.appointmentService.selectedService.timeslotSetting;
         else {
@@ -121,12 +122,18 @@ export class BookingFormComponent implements OnInit {
                 email: await this.authService.email()
             };
             this.timeInformation.timeslotSetting = this.timeslotSetting;  // in case user refresh this page.
+            const paymethods = this.lemonade.paymentMethods.length;
+            if (1 == paymethods) {
+                // set default payment gateway if paymentMethods has 1 option only.
+                this.paymentInformation.method = this.lemonade.paymentMethods[0].code;
+            }
             appointmentInfo.timeInformation = this.timeInformation;
             appointmentInfo.paymentInformation = this.paymentInformation;
             this.appointmentService.updateUserSelection();
-            if (this.paymentSelection)
+            if (this.paymentSelection) {
+                // go to payment selection page if paymethods more than 1.
                 this.router.navigate(['appointment/payment']);
-            else {
+            } else {
                 this.router.navigate(['appointment/confirmation']);
             }
 

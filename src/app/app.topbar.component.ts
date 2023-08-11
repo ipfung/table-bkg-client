@@ -32,7 +32,7 @@ export class AppTopBarComponent implements OnInit {
         this.userName = await this.authService.userName();
         this.userNameBg = await this.authService.avatarColor();
         const btn = await this.authService.appointmentButton();
-        this.showAppointmentButton = (btn === 'true');
+        this.showAppointmentButton = (btn == AuthService.YES);
         this.subscription = this.dashboardService.notifications$.subscribe(counter => {
             this.notificationsBadge = counter;
         });
