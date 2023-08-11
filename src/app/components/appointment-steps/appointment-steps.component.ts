@@ -53,7 +53,7 @@ export class AppointmentStepsComponent implements OnInit {
 
         this.subscription = this.appointmentService.paymentComplete$.subscribe((data) => {
             if (data.success === true) {
-                if (paymentSelection && data.pay_status == 'pending') {
+                if (this.appointmentService.paymentSelection && data.pay_status == 'pending') {
                     this.messageService.add({
                         severity: 'success',
                         summary: 'Appointment reserved',
