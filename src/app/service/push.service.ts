@@ -82,7 +82,7 @@ export class PushService {
                 osVersion: info.osVersion,
                 webViewVersion: info.webViewVersion
             }),
-            uuid: uuid.uuid,
+            uuid: uuid.identifier,
             reg_id: token
         }).subscribe(res => {
             if (res.success == true) {
