@@ -173,6 +173,8 @@ import {PushService} from "./service/push.service";
 import { SubmitModalComponent } from './components/submit-modal/submit-modal.component';
 import { TrainerCommissionComponent } from './components/trainer-commission/trainer-commission.component';
 import { ServiceListComponent } from './components/service-list/service-list.component';
+import { PaymentSuccessfulComponent } from './components/payment-successful/payment-successful.component';
+import { PaymentFailComponent } from './components/payment-fail/payment-fail.component';
 import { ClassCheckinComponent } from './components/class-checkin/class-checkin.component';
 import { PackageListComponent } from './components/package-list/package-list.component';
 import {DashboardService} from "./service/dashboard.service";
@@ -345,6 +347,8 @@ export function createTranslateLoader(http: HttpClient) {
         TrainerCommissionComponent,
         ServiceListComponent,
         PackageListComponent,
+        PaymentSuccessfulComponent,
+        PaymentFailComponent,
         ClassCheckinComponent,
         AppointmentCalendarComponent,
     ],

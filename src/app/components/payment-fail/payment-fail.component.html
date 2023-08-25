@@ -1,0 +1,12 @@
+<h4>{{ 'Payment Failed' | translate }}</h4>
+<p-card [style]="{'padding': '2em'}">
+    <ng-template pTemplate="header">
+        <h2 class="text-purple-500">{{ 'Sorry' | translate }}</h2>
+    </ng-template>
+
+    <h4>{{ gateway_msg | translate }}</h4>
+
+    <ng-template pTemplate="footer">
+        <a href="#/finance">{{ 'Back to finance page' | translate }}</a>
+    </ng-template>
+</p-card>

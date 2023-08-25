@@ -1,0 +1,13 @@
+<h4>{{ 'Payment Successful' | translate }}</h4>
+<p-card [style]="{'padding': '2em'}">
+    <ng-template pTemplate="header">
+        <h2 class="text-primary">{{ 'Thank you' | translate }}</h2>
+    </ng-template>
+
+    <h4>{{ 'Confirmation email has been sent to your email' | translate }}</h4>
+    {{ gateway_msg | translate }}
+
+    <ng-template pTemplate="footer">
+        <a href="#/finance">{{ 'Back to finance page' | translate }}</a>
+    </ng-template>
+</p-card>

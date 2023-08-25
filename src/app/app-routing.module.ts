@@ -49,6 +49,8 @@ import {AppointmentCalendarComponent} from "./components/appointment-calendar/ap
 import {ServiceSelectionComponent} from "./components/service-selection/service-selection.component";
 import {TrainerCommissionComponent} from "./components/trainer-commission/trainer-commission.component";
 import {PackageListComponent} from "./components/package-list/package-list.component";
+import {PaymentSuccessfulComponent} from "./components/payment-successful/payment-successful.component";
+import {PaymentFailComponent} from "./components/payment-fail/payment-fail.component";
 import {ClassCheckinComponent} from "./components/class-checkin/class-checkin.component";
 import {ServiceListComponent} from "./components/service-list/service-list.component";
 @NgModule({
@@ -69,6 +71,8 @@ import {ServiceListComponent} from "./components/service-list/service-list.compo
                         {path: 'payment', component: PaymentFormComponent, canActivate: [ AuthGuardService, AppointmentStepsGuardService ]},
                         {path: 'confirmation', component: BookingConfirmationComponent, canActivate: [ AuthGuardService, AppointmentStepsGuardService ]}
                     ]},
+                    {path: 'payment-successful/:id', component: PaymentSuccessfulComponent, canActivate: [ AuthGuardService ]},
+                    {path: 'payment-fail/:id', component: PaymentFailComponent, canActivate: [ AuthGuardService ]},
                     {path: 'trainer-student-list', component: TrainerStudentListComponent, canActivate: [ AuthGuardService ]},
                     {path: 'finance', component: FinanceStatusComponent, canActivate: [ AuthGuardService ]},
                     {path: 'trainer-commission', component: TrainerCommissionComponent, canActivate: [ AuthGuardService ]},
