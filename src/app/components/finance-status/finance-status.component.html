@@ -81,6 +81,7 @@
                         {{ payment.payment_status + ' payment' | translate }}
                     </span>
                     <button *ngIf="supportPaymentGateway && payment.payment_status !== 'paid'" pButton type="button" pTooltip="{{ 'Pay Now' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-credit-card" (click)="payNow(payment)"></button>
+                    <div *ngIf="payment.payment.gateway_msg" class="pt-1 text-sm">{{ payment.payment.gateway_msg | translate }}</div>
                 </td>
                 <td style="min-width:20px">
                     <span class="p-column-title">{{ 'Actions' | translate }}</span>
