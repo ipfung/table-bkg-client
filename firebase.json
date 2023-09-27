@@ -14,6 +14,34 @@
           }
       ]
   }, {
+      "target": "victory-prod",
+      "public": "dist/victory",
+      "ignore": [
+          "firebase.json",
+          "**/.*",
+          "**/node_modules/**"
+      ],
+      "rewrites": [
+          {
+              "source": "**",
+              "destination": "/index.html"
+          }
+      ]
+  }, {
+      "target": "victory-uat",
+      "public": "dist/victory-uat",
+      "ignore": [
+          "firebase.json",
+          "**/.*",
+          "**/node_modules/**"
+      ],
+      "rewrites": [
+          {
+              "source": "**",
+              "destination": "/index.html"
+          }
+      ]
+  }, {
       "target": "hksts",
       "public": "dist/driving-hksts",
       "ignore": [
@@ -30,6 +58,34 @@
   }, {
       "target": "driving-demo",
       "public": "dist/driving-demo",
+      "ignore": [
+          "firebase.json",
+          "**/.*",
+          "**/node_modules/**"
+      ],
+      "rewrites": [
+          {
+              "source": "**",
+              "destination": "/index.html"
+          }
+      ]
+  }, {
+      "target": "tutorial-demo",
+      "public": "dist/tutorial-demo",
+      "ignore": [
+          "firebase.json",
+          "**/.*",
+          "**/node_modules/**"
+      ],
+      "rewrites": [
+          {
+              "source": "**",
+              "destination": "/index.html"
+          }
+      ]
+  }, {
+      "target": "playgroup-demo",
+      "public": "dist/playgroup-demo",
       "ignore": [
           "firebase.json",
           "**/.*",

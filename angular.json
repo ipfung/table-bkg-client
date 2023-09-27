@@ -94,6 +94,37 @@
                             ],
                             "outputHashing": "all"
                         },
+                        "victory-uat": {
+                            "outputPath": "dist/victory-uat",
+                            "budgets": [
+                                {
+                                    "type": "initial",
+                                    "maximumWarning": "4mb",
+                                    "maximumError": "5mb"
+                                },
+                                {
+                                    "type": "anyComponentStyle",
+                                    "maximumWarning": "6kb",
+                                    "maximumError": "10kb"
+                                }
+                            ],
+                            "fileReplacements": [
+                                {
+                                    "replace": "src/environments/environment.ts",
+                                    "with": "src/environments/environment.victory.uat.ts"
+                                }
+                            ],
+                            "assets": [
+                                "src/favicon.ico",
+                                "src/assets",
+                                {
+                                    "glob": "**/*",
+                                    "input": "src/environments/victory/.well-known",
+                                    "output": ".well-known/"
+                                }
+                            ],
+                            "outputHashing": "all"
+                        },
                         "victory-app-prod": {
                             "outputPath": "dist/victory",
                             "budgets": [

@@ -13,6 +13,18 @@
         ],
         "driving-demo": [
           "lemonade-driving-demo"
+        ],
+        "tutorial-demo": [
+          "lemonade-tutorial-demo"
+        ],
+        "playgroup-demo": [
+          "lemonade-playgroup-demo"
+        ],
+        "victory-prod": [
+          "lemonade-victory-prod"
+        ],
+        "victory-uat": [
+          "lemonade-victory-uat"
         ]
       }
     }
