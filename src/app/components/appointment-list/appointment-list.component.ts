@@ -352,7 +352,7 @@ export class AppointmentListComponent implements OnInit {
         }
     }
 
-    openNew() {
+    openNew () {
         this.formHeader = "Create Form";
         this.submitted = false;
         this.formDialog = true;
