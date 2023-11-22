@@ -196,7 +196,7 @@
                     </p-dropdown>
                 </div>
 
-                <div class="field">
+                <div *ngIf="false" class="field">
                     <label for="room"><span class="required" *ngIf="requiredRoom">*</span> {{ 'Room' | translate }}</label>
                     <p-dropdown id="room" [options]="rooms" [(ngModel)]="partner.settings.room" optionLabel="name" optionValue="id" [showClear]="true" placeholder="{{'Select field' | translate: {field: 'Room' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : requiredRoom && submitted && !partner.settings.room}">
                         <ng-template let-item pTemplate="item">
@@ -207,7 +207,7 @@
                     <small class="ng-dirty ng-invalid" *ngIf="requiredRoom && submitted && !partner.settings.room">{{ 'Field is required' | translate: {field: 'Room' | translate} }}</small>
                 </div>
 
-                <div class="field">
+                <div *ngIf="false" class="field">
                     <label for="trainer"><span class="required" *ngIf="requiredTrainer">*</span> {{ 'Trainer' | translate }}</label>
                     <p-dropdown id="trainer" [options]="trainers" [(ngModel)]="partner.settings.trainer" optionLabel="name" optionValue="id" [showClear]="true" placeholder="{{'Select field' | translate: {field: 'Trainer' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : requiredTrainer && submitted && !partner.settings.trainer}">
                         <ng-template pTemplate="selectedItem">
@@ -221,7 +221,7 @@
                     <small class="ng-dirty ng-invalid" *ngIf="requiredTrainer && submitted && !partner.settings.trainer">{{ 'Field is required' | translate: {field: 'Room' | translate} }}</small>
                 </div>
 
-                <div class="grid">
+                <div *ngIf="false" class="grid">
                     <div class="field col-12 md:col-6">
                         <label for="trainer_charge">{{ 'Charge' | translate }}</label>
                         <p-inputNumber id="trainer_charge" [(ngModel)]="partner.settings.trainer_charge" mode="currency" currency="HKD" locale="zh-HK" (onInput)="updateCommission($event)"></p-inputNumber>
@@ -316,20 +316,7 @@
                         <label for="trainer_charge">{{ 'Charge' | translate }}</label>
                         <p-inputNumber id="tr_trainer_charge" [(ngModel)]="tr_trainer_charge"   locale="zh-HK" (onInput)="updateTrainerCharge($event)"></p-inputNumber>
                     </div>
-                    <!-- <div class="field col-12 md:col-2">
-                        <label for="duration">{{ 'Per' | translate }}</label>
-                        <p-dropdown id="duration" [options]="sessions" [(ngModel)]="partner.settings.no_of_session" optionValue="code" placeholder="{{ 'Select field' | translate:{field: 'Duration' | translate } }}" [ngClass]="{'ng-invalid ng-dirty' : submitted && !partner.settings.no_of_session}">
-                            <ng-template pTemplate="selectedItem">
-                                {{ appointmentService.getSessionName(partner.settings.no_of_session, sessions) }}
-                            </ng-template>
-                            <ng-template let-time pTemplate="item">
-                                <div *ngIf="time.hour > 0 && time.minute != 30 && time.minute != 0" [translate]="'hour Minutes'" [translateParams]="{hour: time.hour, s: time.hour > 1 ? 's' : '', minute: time.minute, ms: time.minute > 1 ? 's' : ''}"></div>
-                                <div *ngIf="time.hour > 0 && (time.minute == 30 || time.minute == 0)" [translate]="'hour Hours'" [translateParams]="{hour: time.hour, s: time.hour > 1 ? 's' : ''}"></div>
-                                <div *ngIf="time.hour == 0" [translate]="'N minutes'" [translateParams]="{minute: time.minute, s: time.minute > 1 ? 's' : ''}"></div>
-                            </ng-template>
-                        </p-dropdown>
-
-                    </div> -->
+                   
 
                     <div class="field col-12 md:col-2">
                         <label for="trainer_commission">{{ 'Trainer Commission' | translate }}</label>
@@ -355,34 +342,41 @@
                        <p-table [value]="trainerrates"  dataKey="id" editMode="row"  [paginator]="false" [rows]="rows" [loading]="loading" [totalRecords]="totalRecords" sortField="id"  responsiveLayout="stack">
                             <ng-template pTemplate="header">
                                 <tr>
-                                    <th style="min-width:80px">{{ 'Trainer' | translate }}</th>
-                                    <th style="min-width:60px">{{ 'Rate type' | translate }}</th>
-                                    <th style="min-width:90px">{{ 'Charge/Hour' | translate }}</th>
-                                    <th style="min-width:50px">{{ 'Trainer Commission/Hour' | translate }}</th>
-                                    <th style="min-width:50px">{{ 'Company Income/Hour' | translate }}</th>
+                                    <th style="min-width:120px">{{ 'Trainer' | translate }}</th>
+                                    <th style="min-width:100px">{{ 'Rate type' | translate }}</th>
+                                    <th style="max-width:80px">{{ 'Charge/ Hour' | translate }}</th>
+                                    <th style="max-width:80px">{{ 'Trainer Commission/ Hour' | translate }}</th>
+                                    <th style="max-width:80px">{{ 'Company Income/ Hour' | translate }}</th>
                                     <th style="min-width:100px"></th>
                                 </tr>
                             </ng-template>
                             <ng-template pTemplate="body" let-trainer_rates let-editing="editing" let-ri="rowIndex">
                                 <tr [pEditableRow]="trainer_rates">
-                                    <td style="min-width:80px">                                        
-                                        {{ trainer_rates.users.name }}                                      
+                                    <td style="min-width:120px">  
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <p-dropdown [options]="trainers" [(ngModel)]="trainer_rates.trainer" optionLabel="name" optionValue="id" ></p-dropdown>
+
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                {{ trainer_rates.users.name }}   
+                                            </ng-template>
+                                        </p-cellEditor>                                   
                                     </td>
-                                    <td style="min-width:80px">         
+                                    <td style="min-width:100px">         
                                         <p-cellEditor>
                                             <ng-template pTemplate="input">
                                                 <p-dropdown [options]="ratetypes" [(ngModel)]="trainer_rates.rate_type" ></p-dropdown>
 
                                             </ng-template>
-                                            <ng-template let-item pTemplate="output">
-                                              
-                                               <div *ngIf ="trainer_rates.rate_type " >{{ '1 on 1' }}</div> 
-                                               <div *ngIf ="!trainer_rates.rate_type " >{{ 'Group' }}</div> 
+                                            <ng-template let-item pTemplate="output">                                              
+                                               <div *ngIf ="trainer_rates.rate_type==1" >{{ '1 on 1' }}</div> 
+                                               <div *ngIf ="trainer_rates.rate_type!=1" >{{ 'Group' }}</div> 
                                             </ng-template>
                                         </p-cellEditor>                              
                                        
                                     </td>
-                                    <td style="min-width:50px">
+                                    <td style="max-width:80px">
                                         <p-cellEditor>
                                             <ng-template pTemplate="input">
                                                 <input pInputText type="text" [(ngModel)]="trainer_rates.trainer_charge">
@@ -392,7 +386,7 @@
                                             </ng-template>
                                         </p-cellEditor>
                                     </td>                                  
-                                    <td style="min-width:50px">                                      
+                                    <td style="max-width:80px">                                      
                                         
                                         <p-cellEditor>
                                             <ng-template pTemplate="input">
@@ -403,11 +397,12 @@
                                             </ng-template>
                                         </p-cellEditor>
                                     </td>
-                                    <td style="min-width:50px">                                       
+                                    <td style="max-width:80px">                                       
                                         
                                         <p-cellEditor>
                                             <ng-template pTemplate="input">
-                                                <input pInputText type="text" [(ngModel)]="trainer_rates.company_income">
+                                              <!--   <input pInputText type="text" [(ngModel)]="trainer_rates.company_income"> -->
+                                                {{trainer_rates.company_income}}
                                             </ng-template>
                                             <ng-template pTemplate="output">
                                                 {{trainer_rates.company_income}}
