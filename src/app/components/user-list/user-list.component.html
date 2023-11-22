@@ -304,17 +304,17 @@
                 <!-- trainer price input section-->
                 <div class="grid">
                     <div class="field col-12 md:col-2">
-                        <label for="trainer">{{ 'Trainer' | translate }}</label>
-                        <p-inputNumber id="tr_trainer" [(ngModel)]="tr_trainer" locale="zh-HK" ></p-inputNumber>
+                        <label for="trainer">{{ 'Trainer' | translate }}</label>                        
+                        <p-dropdown [options]="trainers" [(ngModel)]="tr_trainer" optionLabel="label" optionLabel="name" optionValue="id" ></p-dropdown>
                     </div>
                     <div class="field col-12 md:col-2">
                         <label for="type">{{ 'Type' | translate }}</label>
-                        <p-dropdown [options]="ratetypes" [(ngModel)]="selectedRateType" optionLabel="label" optionValue="id"></p-dropdown>
+                        <p-dropdown [options]="ratetypes" [(ngModel)]="tr_rate_type" optionLabel="label" optionValue="value"></p-dropdown>
 
                     </div>
                     <div class="field col-12 md:col-2">
                         <label for="trainer_charge">{{ 'Charge' | translate }}</label>
-                        <p-inputNumber id="tr_trainer_charge" [(ngModel)]="tr_trainer_charge" mode="currency" currency="HKD" locale="zh-HK" (onInput)="updateTrainerCharge($event)"></p-inputNumber>
+                        <p-inputNumber id="tr_trainer_charge" [(ngModel)]="tr_trainer_charge"   locale="zh-HK" (onInput)="updateTrainerCharge($event)"></p-inputNumber>
                     </div>
                     <!-- <div class="field col-12 md:col-2">
                         <label for="duration">{{ 'Per' | translate }}</label>
@@ -333,18 +333,18 @@
 
                     <div class="field col-12 md:col-2">
                         <label for="trainer_commission">{{ 'Trainer Commission' | translate }}</label>
-                        <p-inputNumber id="tr_trainer_commission" [(ngModel)]="tr_trainer_commission" mode="currency" currency="HKD" locale="zh-HK" [max]="partner.settings.trainer_charge" (onInput)="updateTrainerCommission2($event)" [ngClass]="{'ng-invalid ng-dirty' : submitted && !commission_bal}"></p-inputNumber>
+                        <p-inputNumber id="tr_trainer_commission" [(ngModel)]="tr_trainer_commission" locale="zh-HK" [max]="partner.settings.trainer_charge" (onInput)="updateTrainerCommission2($event)" [ngClass]="{'ng-invalid ng-dirty' : submitted && !commission_bal}"></p-inputNumber>
                         <small class="ng-dirty ng-invalid" *ngIf="submitted && !commission_bal">{{ 'The equation is not correct' | translate }}</small>
                     </div>
 
                     <div class="field col-12 md:col-2">
                         <label for="company_income">{{ 'Company Income' | translate }}</label>
-                        <p-inputNumber id="tr_company_income" [(ngModel)]="tr_company_income" mode="currency" currency="HKD" locale="zh-HK" [max]="partner.settings.trainer_charge" (onInput)="updateCompanyIncome($event)" [ngClass]="{'ng-invalid ng-dirty' : submitted && !commission_bal}" [readonly]="true"></p-inputNumber>
+                        <p-inputNumber id="tr_company_income" [(ngModel)]="tr_company_income"  locale="zh-HK" [max]="partner.settings.trainer_charge" (onInput)="updateCompanyIncome($event)" [ngClass]="{'ng-invalid ng-dirty' : submitted && !commission_bal}" [readonly]="true"></p-inputNumber>
                         <small class="ng-dirty ng-invalid" *ngIf="submitted && !commission_bal">{{ 'The equation is not correct' | translate }}</small>
                     </div>
                     <div class="field col-12 md:col-2">
                         <label for="add_new">{{ 'Add New' | translate }}</label><br/>
-                        <button class="btn" (click)="doAddTrainerRate()" >+</button>
+                        <button pButton pRipple type="button" class="p-button-rounded p-button-text p-button-success mr-2" (click)="doAddTrainerRate()" icon="pi pi-plus" ></button>
                     </div>
                     
                 </div>
@@ -352,10 +352,10 @@
                 <!--  new trainer price table section -->
                 <div class="grid">                    
                     <div class="field col-12 md:col-6">
-                       <p-table [value]="trainerrates"  dataKey="id" editMode="row"  [lazy]="true" (onLazyLoad)="loadData($event)" [paginator]="true" [rows]="rows" [loading]="loading" [totalRecords]="totalRecords" sortField="id"  responsiveLayout="stack">
+                       <p-table [value]="trainerrates"  dataKey="id" editMode="row"  [paginator]="false" [rows]="rows" [loading]="loading" [totalRecords]="totalRecords" sortField="id"  responsiveLayout="stack">
                             <ng-template pTemplate="header">
                                 <tr>
-                                    <th style="min-width:80px">{{ 'Trainers' | translate }}</th>
+                                    <th style="min-width:80px">{{ 'Trainer' | translate }}</th>
                                     <th style="min-width:60px">{{ 'Rate type' | translate }}</th>
                                     <th style="min-width:90px">{{ 'Charge/Hour' | translate }}</th>
                                     <th style="min-width:50px">{{ 'Trainer Commission/Hour' | translate }}</th>
@@ -368,8 +368,19 @@
                                     <td style="min-width:80px">                                        
                                         {{ trainer_rates.users.name }}                                      
                                     </td>
-                                    <td style="min-width:60px">                                       
-                                        {{ trainer_rates.rate_type }}
+                                    <td style="min-width:80px">         
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <p-dropdown [options]="ratetypes" [(ngModel)]="trainer_rates.rate_type" ></p-dropdown>
+
+                                            </ng-template>
+                                            <ng-template let-item pTemplate="output">
+                                              
+                                               <div *ngIf ="trainer_rates.rate_type " >{{ '1 on 1' }}</div> 
+                                               <div *ngIf ="!trainer_rates.rate_type " >{{ 'Group' }}</div> 
+                                            </ng-template>
+                                        </p-cellEditor>                              
+                                       
                                     </td>
                                     <td style="min-width:50px">
                                         <p-cellEditor>

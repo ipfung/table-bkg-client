@@ -46,7 +46,9 @@ export class UserListComponent implements OnInit {
     sessions = [];
     statuses = [];
     
-    ratetypes=[{id:1, label:"1v1"},{id:2, label:"2v1"}];
+    ratetypes: SelectItem[];
+
+    
 
     formHeader = "Edit Form";
     // customer's notifications.
@@ -100,6 +102,8 @@ export class UserListComponent implements OnInit {
             this.trainers = res.data;
         });
 
+        
+
         this.api.get('api/rooms', {
             status: 1001
         }).subscribe( res => {
@@ -111,6 +115,7 @@ export class UserListComponent implements OnInit {
             this.roles = res.data;
         });
 
+        this.ratetypes = [{ label:"1 on 1",value :1 },{label:"Group", value:2}]; 
         //load trainer rates
        /*  this.api.get('api/trainerrate').subscribe( res => {
             this.trainerrates = res.data;
@@ -236,13 +241,17 @@ export class UserListComponent implements OnInit {
         this.formDialog = true;
         this.isNew = false;
 
-        this.trainerrates=[]; 
+        this.loadTrainerRates(user.id);
+
+        console.log("trainer=",this.trainers);
+       /*  this.trainerrates=[]; 
         this.api.get('api/trainerrates-bystudentid/'+ user.id).subscribe( res => {
-            this.trainerrates = res.data;
-            
+            this.trainerrates = res.data;            
         });
-        console.log("edit view trainerrates=",this.trainerrates);
+        console.log("edit view trainerrates=",this.trainerrates); */
     }
+
+    
 
     generateQr() {
         this.api.get('api/student-qr/' + this.partner.id).subscribe( res => {
@@ -371,7 +380,7 @@ export class UserListComponent implements OnInit {
     }
 
     doAddTrainerRate(){
-        console.log('*doAddTrainerRate*', this.tr_trainer +" ," + this.tr_trainer_commission + " ," + this.tr_company_income  +" ," +  this.tr_trainer_charge  );
+        console.log('*doAddTrainerRate*', this.tr_trainer +" ,"+  this.tr_rate_type + "," + this.tr_trainer_commission + " ," + this.tr_company_income  +" ," +  this.tr_trainer_charge  );
         const trainerrate = {
             trainer : this.tr_trainer ,
             rate_type : this.tr_rate_type,
@@ -395,14 +404,15 @@ export class UserListComponent implements OnInit {
             if (res.success === true) {
                // this.loadData(null);
                // this.hideDialog();
-               // this.lemonade.ok(this.messageService);
+               this.loadTrainerRates(res.data.student_id);
+               this.lemonade.ok(this.messageService);
                
             } else {
                 // error.
-               // this.lemonade.error(this.messageService, res);
+                this.lemonade.error(this.messageService, res);
             }
         }, error => {
-            //this.lemonade.validateError(this.messageService, error);
+            this.lemonade.validateError(this.messageService, error);
         });
     }
 
@@ -417,26 +427,46 @@ export class UserListComponent implements OnInit {
 
     doDelTrainerRate(trainerrate)
     {
-        console.log("del=", trainerrate);
+        let student_id = trainerrate.student_id;
+        this.translateService.get(['Are you sure to delete?']).subscribe( msg => {
+            this.confirmationService.confirm({
+                message: msg['Are you sure to delete?'],
+                accept: () => {
+                    this.api.delete('api/trainerrates/' +  trainerrate.id ).subscribe(res => {
+                        if (res.success == true) {
+                            this.loadTrainerRates(student_id);
+                            
+                            this.lemonade.ok(this.messageService, 'The record is deleted successfully.');
+                        } else {
+                            this.lemonade.error(this.messageService, res);
+                        }
+                    });
+                }
+            });
+        });
+
+        /* console.log("del=", trainerrate);
+        let student_id = trainerrate.student_id;
         let call;
         if (trainerrate.id > 0) {
             // del
             call = this.api.delete('api/trainerrates/' +  trainerrate.id );
         }
         call.subscribe( res => {
-            console.log('Del trainer rate res=', res);
+            console.log('Del trainer rate res=', student_id );
             if (res.success === true) {
                // this.loadData(null);
                // this.hideDialog();
-               // this.lemonade.ok(this.messageService);
+                this.loadTrainerRates(student_id);
+                this.lemonade.ok(this.messageService);
                
             } else {
                 // error.
-               // this.lemonade.error(this.messageService, res);
+                this.lemonade.error(this.messageService, res);
             }
         }, error => {
-            //this.lemonade.validateError(this.messageService, error);
-        });
+            this.lemonade.validateError(this.messageService, error);
+        }); */
         
     }
 
@@ -445,30 +475,38 @@ export class UserListComponent implements OnInit {
     }
 
     onRowEditSave(trainerrate){
-        console.log("RoweditSave");
+        console.log("RoweditSave", trainerrate);
         let call;
         if (trainerrate.id > 0) {
             // del
             call = this.api.update('api/trainerrates/'+ trainerrate.id, trainerrate );
         }
         call.subscribe( res => {
-            console.log('Del trainer rate res=', res);
+            console.log('edit trainer rate res=', res);
             if (res.success === true) {
-               // this.loadData(null);
-               // this.hideDialog();
-               // this.lemonade.ok(this.messageService);
+               this.loadTrainerRates(res.data.student_id);
+               this.lemonade.ok(this.messageService);
                
             } else {
                 // error.
-               // this.lemonade.error(this.messageService, res);
+                this.lemonade.error(this.messageService, res);
             }
         }, error => {
-            //this.lemonade.validateError(this.messageService, error);
+            this.lemonade.validateError(this.messageService, error);
         });
     }
 
     onRowEditCancel(trainerrate, index: number){
         console.log("RoweditCancel");
+    }
+
+    loadTrainerRates(user_id)
+    {
+        //this.trainerrates=[]; 
+        this.api.get('api/trainerrates-bystudentid/'+ user_id).subscribe( res => {
+            this.trainerrates = res.data;           
+            console.log("loadTrainerRate=", res.data) ;
+        });
     }
 
 
