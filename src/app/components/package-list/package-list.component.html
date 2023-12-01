@@ -126,7 +126,7 @@
 
         <div class="field">
             <label for="name"><span class="required">*</span> {{ 'Package Name' | translate }}</label>
-            <input type="text" pInputText id="name" [(ngModel)]="pkg.name" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !pkg.name}"/>
+            <input type="text" pInputText id="name" [(ngModel)]="pkg.name" required autofocus [disabled]="pkg.id > 0" [ngClass]="{'ng-invalid ng-dirty' : submitted && !pkg.name}"/>
             <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.name">{{ 'Field is required' | translate: {field: 'Package Name' | translate} }}</small>
         </div>
         <div class="field">
@@ -134,32 +134,56 @@
             <input type="text" pInputText id="description" [(ngModel)]="pkg.description" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !pkg.description}"/>
             <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.description">{{ 'Field is required' | translate: {field: 'Description' | translate} }}</small>
         </div>
+
         <div class="field">
             <label for="service"><span class="required">*</span> {{ 'Service' | translate }}</label>
             <p-dropdown id="service" [options]="services" [(ngModel)]="pkg.service_id" optionLabel="name" optionValue="id" [ngClass]="{'ng-invalid ng-dirty' : submitted && !pkg.service_id}"></p-dropdown>
             <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.service_id">{{ 'Field is required' | translate: {field: 'Service' | translate} }}</small>
         </div>
 
+        <div class="field">
+            <label for="recurring_type">{{ 'Package Type' | translate }}</label>
+            <p-selectButton id="recurring_type" [options]="recurring_types" [(ngModel)]="pkg.recurring.cycle" optionLabel="name" optionValue="code">
+                <ng-template let-item>
+<!--                    <i [class]="item.icon"></i>-->
+                    <div class="line-break">{{ item.name }}</div>
+                    <span class="text-xs">&#160; - {{ item.description }}</span>
+                </ng-template>
+            </p-selectButton>
+        </div>
+
         <div class="grid">
             <div class="field col-12 md:col-6">
-                <label for="location"><span class="required">*</span>  {{ 'Room' | translate }}</label>
-                <p-dropdown id="location" [options]="rooms" [(ngModel)]="pkg.room_id" optionLabel="name" optionValue="id" [showClear]="true" placeholder="{{'Select field' | translate: {field: 'Room' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : submitted && !pkg.room_id}">
+                <label for="lesson_number"><span class="required">*</span> {{ 'No. of Appointments' | translate }}</label>
+                <p-inputNumber id="lesson_number" [(ngModel)]="pkg.quantity" mode="decimal" [showButtons]="true" inputId="minmax-buttons" [min]="1" [max]="30"></p-inputNumber>
+                <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.quantity">{{ 'Field is required' | translate: {field: 'No. of Appointments' | translate} }}</small>
+            </div>
+            <div class="field col-12 md:col-6">
+                <label for="price"><span class="required">*</span> <b> {{ 'Price' | translate }}</b></label>
+                <p-inputNumber id="price" [disabled]="true === pkg.free_of_charge" [(ngModel)]="pkg.price" mode="currency" currency="HKD" locale="zh-HK" [ngClass]="{'ng-invalid ng-dirty' : submitted && (!pkg.price || pkg.price <= 0)}"></p-inputNumber>
+                <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.price">{{ 'Field is required' | translate: {field: 'Price' | translate} }}</small>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="field col-12 md:col-6">
+                <label for="location"><span *ngIf="isWeekly(pkg)" class="required">*</span>  {{ 'Room' | translate }}</label>
+                <p-dropdown id="location" [options]="rooms" [(ngModel)]="pkg.room_id" optionLabel="name" optionValue="id" [showClear]="true" placeholder="{{'Select field' | translate: {field: 'Room' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : isWeekly(pkg) && submitted && !pkg.room_id}">
                     <ng-template let-item pTemplate="item">
                         <p-avatar [label]="lemonade.getInitial(item.name)" shape="circle" [style]="{'background-color': item.color, 'color': '#fff'}"></p-avatar>
                         {{ item.name | translate }}
                     </ng-template>
                 </p-dropdown>
-                <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.room_id">{{ 'Field is required' | translate: {field: 'Room' | translate} }}</small>
+                <small class="ng-dirty ng-invalid" *ngIf="isWeekly(pkg) && submitted && !pkg.room_id">{{ 'Field is required' | translate: {field: 'Room' | translate} }}</small>
             </div>
             <div class="field col-12 md:col-6">
-                <label for="total_space"><span class="required">*</span> <b>{{ 'Capacity' | translate }}</b></label>
+                <label for="total_space"><b>{{ 'Capacity' | translate }}</b></label>
                 <p-inputNumber id="total_space" [(ngModel)]="pkg.total_space" mode="decimal" [showButtons]="true" inputId="minmax-buttons" [min]="1" [max]="300"></p-inputNumber>
-                <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.price">{{ 'Field is required' | translate: {field: 'Capacity' | translate} }}</small>
             </div>
         </div>
         <div class="field">
-            <label for="trainer"><span class="required">*</span> {{ 'Trainer' | translate }}</label>
-            <p-dropdown id="trainer" [options]="trainers" [(ngModel)]="pkg.trainer_id" optionLabel="name" optionValue="id" [showClear]="true" placeholder="{{'Select field' | translate: {field: 'Trainer' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : submitted && !pkg.trainer_id}">
+            <label for="trainer"><span *ngIf="isWeekly(pkg)" class="required">*</span> {{ 'Trainer' | translate }}</label>
+            <p-dropdown id="trainer" [options]="trainers" [(ngModel)]="pkg.trainer_id" optionLabel="name" optionValue="id" [showClear]="true" placeholder="{{'Select field' | translate: {field: 'Trainer' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : isWeekly(pkg) && submitted && !pkg.trainer_id}">
                 <!--                <ng-template pTemplate="selectedItem">-->
                 <!--                    <i class="pi pi-circle-fill" [style]="{color: (appointment.role_color_name)}"></i>-->
                 <!--                    {{ appointment.user_id }}-->
@@ -169,7 +193,7 @@
                     {{ item.name }}
                 </ng-template>
             </p-dropdown>
-            <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.trainer_id">{{ 'Field is required' | translate: {field: 'Trainer' | translate} }}</small>
+            <small class="ng-dirty ng-invalid" *ngIf="isWeekly(pkg) && submitted && !pkg.trainer_id">{{ 'Field is required' | translate: {field: 'Trainer' | translate} }}</small>
         </div>
 
         <p-divider align="center">
@@ -177,13 +201,13 @@
         </p-divider>
 
         <div class="field">
-            <label for="dow"><span class="required">*</span> {{ 'Day of Week' | translate }}</label>
-            <p-selectButton id="dow" [disabled]="pkg.id > 0" [options]="day_of_weeks" [(ngModel)]="pkg.recurring.repeat" optionLabel="name" optionValue="code" [multiple]="true" [ngClass]="{'ng-invalid ng-dirty' : submitted && pkg.recurring.repeat.length == 0}">
+            <label for="dow"><span *ngIf="isWeekly(pkg)" class="required">*</span> {{ 'Day of Week' | translate }}</label>
+            <p-selectButton id="dow" [disabled]="pkg.id > 0" [options]="day_of_weeks" [(ngModel)]="pkg.recurring.repeat" optionLabel="name" optionValue="code" [multiple]="true" [ngClass]="{'ng-invalid ng-dirty' : isWeekly(pkg) && submitted && pkg.recurring.repeat.length == 0}">
                 <ng-template let-item>
                     <span class="w-full text-center">{{ item.name | translate }}</span>
                 </ng-template>
             </p-selectButton>
-            <small class="ng-dirty ng-invalid" *ngIf="submitted && pkg.recurring.repeat.length == 0">{{ 'Field is required' | translate: {field: 'Day of Week' | translate} }}</small>
+            <small class="ng-dirty ng-invalid" *ngIf="isWeekly(pkg) && submitted && pkg.recurring.repeat.length == 0">{{ 'Field is required' | translate: {field: 'Day of Week' | translate} }}</small>
         </div>
         <div class="field">
             <label for="duration"><span class="required">*</span> {{ 'Duration' | translate }}</label>
@@ -201,14 +225,14 @@
         </div>
         <div class="grid">
             <div class="field col-12 md:col-6">
-                <label for="date"><span class="required">*</span> {{ 'Start Date' | translate }}</label>
-                <p-calendar id="date" [disabled]="pkg.id > 0" [(ngModel)]="pkg.start_date" (onSelect)="loadTime()" placeholder="{{'Select field' | translate: {field: 'Start Date' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : submitted && !pkg.start_date}" [dateFormat]="lemonade.dateFormat"></p-calendar>
-                <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.start_date">{{ 'Field is required' | translate: {field: 'Start Date' | translate} }}</small>
+                <label for="date"><span *ngIf="isWeekly(pkg)" class="required">*</span> {{ 'Start Date' | translate }}</label>
+                <p-calendar id="date" [disabled]="pkg.id > 0" [(ngModel)]="pkg.start_date" (onSelect)="loadTime()" placeholder="{{'Select field' | translate: {field: 'Start Date' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : isWeekly(pkg) && submitted && !pkg.start_date}" [dateFormat]="lemonade.dateFormat"></p-calendar>
+                <small class="ng-dirty ng-invalid" *ngIf="isWeekly(pkg) && submitted && !pkg.start_date">{{ 'Field is required' | translate: {field: 'Start Date' | translate} }}</small>
             </div>
 
             <div class="field col-12 md:col-6">
-                <label for="time"><span class="required">*</span> {{ 'Start Time' | translate }}</label>
-                <p-dropdown id="time" [disabled]="times.length == 0 || pkg.id > 0" [options]="times" [(ngModel)]="pkg.start_time" optionValue="time" (onClick)="loadLessonDates()" placeholder="{{'Select field' | translate: {field: 'Time' | translate} }}" [showClear]="true" [ngClass]="{'ng-invalid ng-dirty' : submitted && !pkg.start_time}">
+                <label for="time"><span *ngIf="isWeekly(pkg)" class="required">*</span> {{ 'Start Time' | translate }}</label>
+                <p-dropdown id="time" [disabled]="times.length == 0 || pkg.id > 0" [options]="times" [(ngModel)]="pkg.start_time" optionValue="time" (onClick)="loadLessonDates()" placeholder="{{'Select field' | translate: {field: 'Time' | translate} }}" [showClear]="true" [ngClass]="{'ng-invalid ng-dirty' : isWeekly(pkg) && submitted && !pkg.start_time}">
                     <ng-template pTemplate="selectedItem">
                         {{ pkg.start_time ? this.appointmentService.formatTime(pkg.start_time) : '' }}
                     </ng-template>
@@ -216,7 +240,7 @@
                         {{ this.appointmentService.formatTime(item.time) }}
                     </ng-template>
                 </p-dropdown>
-                <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.start_time">{{ 'Field is required' | translate: {field: 'Start Time' | translate} }}</small>
+                <small class="ng-dirty ng-invalid" *ngIf="isWeekly(pkg) && submitted && !pkg.start_time">{{ 'Field is required' | translate: {field: 'Start Time' | translate} }}</small>
             </div>
         </div>
 
@@ -235,19 +259,6 @@
                 <label for="time">{{ 'End Time' | translate }}</label>
                 <input type="text" pInputText [disabled]="true" value="{{ pkg.start_time && sessionInterval ? lemonade.formatTime(pkg.start_time + (pkg.no_of_session * sessionInterval)) : '' }}"/>
                 <small class="jws-tips">{{ 'Generated by Start Time' | translate }}</small>
-            </div>
-        </div>
-
-        <div class="grid">
-            <div class="field col-12 md:col-6">
-                <label for="lesson_number"><span class="required">*</span> {{ 'No. of Appointments' | translate }}</label>
-                <p-inputNumber id="lesson_number" [(ngModel)]="pkg.quantity" mode="decimal" [showButtons]="true" inputId="minmax-buttons" [min]="1" [max]="30"></p-inputNumber>
-                <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.quantity">{{ 'Field is required' | translate: {field: 'No. of Appointments' | translate} }}</small>
-            </div>
-            <div class="field col-12 md:col-6">
-                <label for="price"><span class="required">*</span> <b>{{ 'Price' | translate }}</b></label>
-                <p-inputNumber id="price" [disabled]="true === pkg.free_of_charge" [(ngModel)]="pkg.price" mode="currency" currency="HKD" locale="zh-HK" [ngClass]="{'ng-invalid ng-dirty' : submitted && (!pkg.price || pkg.price <= 0)}"></p-inputNumber>
-                <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.price">{{ 'Field is required' | translate: {field: 'Price' | translate} }}</small>
             </div>
         </div>
 
