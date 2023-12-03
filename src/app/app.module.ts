@@ -154,6 +154,7 @@ import {AuthService} from "./service/auth.service";
 import { ApiService } from './service/api.service';
 import { BookingTimeRangeComponent } from './components/booking-time-range/booking-time-range.component';
 import {AppointmentService} from "./service/appointmentservice";
+import {OrderService} from "./service/order.service";
 import {Lemonade} from "./service/lemonade.service";
 import {AuthInterceptor} from "./interceptors/auth-interceptor";
 import { AppointmentListComponent } from './components/appointment-list/appointment-list.component';
@@ -354,7 +355,7 @@ export function createTranslateLoader(http: HttpClient) {
     ],
     providers: [
         {provide: LocationStrategy, useClass: HashLocationStrategy},
-        ApiService, AuthService, AppointmentService, Lemonade, DashboardService, {
+        ApiService, AuthService, AppointmentService, OrderService, Lemonade, DashboardService, {
             provide: HTTP_INTERCEPTORS,
             useClass: AuthInterceptor,
             multi: true

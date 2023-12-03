@@ -1,4 +1,12 @@
-<h4>{{ 'Finance' | translate }}</h4>
+<div class="flex justify-content-between">
+    <div class="flex align-items-center justify-content-center p-2 border-round mr-1 text-2xl font-bold">
+        {{ 'Finance' | translate }}
+    </div>
+    <div class="flex align-items-center justify-content-center py-2 border-round">
+        <button *ngIf="editable" pButton pRipple label="{{ 'New' | translate }}" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
+    </div>
+</div>
+
 <div class="card">
     <!-- Search fields -->
     <div class="p-fluid grid">
@@ -234,5 +242,257 @@
                 <button pButton pRipple *ngIf="showCustomer" label="{{ 'Save' | translate }}" icon="pi pi-check" class="p-button-outlined" (click)="save()"></button>
             </div>
         </div>
+    </ng-template>
+</p-dialog>
+
+<p-toast></p-toast>
+
+<p-dialog [(visible)]="orderFormDialog" [style]="{width:'50em', height: '100vh'}" header="{{ formHeader | translate:{name: 'Orders' | translate } }}" position="right" [modal]="true" class="p-fluid">
+    <ng-template pTemplate="content">
+        <div class="field">
+            <label for="order_pkg">{{ 'Packages' | translate }}</label>
+            <p-dropdown id="order_pkg" [options]="packages" [(ngModel)]="selectedPackage" [showClear]="true" (onClick)="loadPackage()" (onClear)="clearPackage()" placeholder="{{'Select field' | translate: {field: 'Package' | translate} }}">
+                <ng-template pTemplate="selectedItem">
+                    {{ selectedPackage.name }} <span class="text-xs booking-badge bg-pink-50 text-pink-400">{{ lemonade.getRecurringCycle(selectedPackage.recurring) | translate }}: {{ lemonade.displayRecurring(selectedPackage.recurring) }}</span>
+                    <span class="text-xs" *ngIf="selectedPackage.start_date"> {{ lemonade.formatDate(selectedPackage.start_date) }}</span><span class="text-xs" *ngIf="selectedPackage.end_date"> {{ 'to' | translate }} {{ lemonade.formatDate(selectedPackage.end_date) }}</span><span class="text-xs booking-badge bg-purple-50 text-purple-400" *ngIf="selectedPackage.start_time"> {{ lemonade.formatTime(selectedPackage.start_time) }} - {{ lemonade.formatTime(selectedPackage.end_time) }}</span>
+                    <span class="text-xs text-blue-500"> {{ selectedPackage.price | currency: 'HK$'}}</span>
+                </ng-template>
+                <ng-template let-item pTemplate="item">
+                    {{ item.name | translate }} - <span class="text-xs">{{ item.description }}</span> <span class="text-xs booking-badge bg-pink-50 text-pink-400">{{ lemonade.getRecurringCycle(item.recurring) | translate }}: {{ lemonade.displayRecurring(item.recurring) }}</span>
+                    <br />
+                    <span class="text-xs" *ngIf="item.start_date"> {{ lemonade.formatDate(item.start_date) }}</span><span class="text-xs" *ngIf="item.end_date"> {{ 'to' | translate }} {{ lemonade.formatDate(item.end_date) }}</span><span class="text-xs booking-badge bg-purple-50 text-purple-400" *ngIf="item.start_time"> {{ lemonade.formatTime(item.start_time) }} - {{ lemonade.formatTime(item.end_time) }}</span>
+                    <span class="text-base text-blue-500"> {{ item.price | currency: 'HK$'}}</span>
+                </ng-template>
+            </p-dropdown>
+        </div>
+
+        <div class="grid" *ngIf="order.id > 0">
+            <div class="field col-12 md:col-6">
+                <label>{{ 'Order No.' | translate }}</label>
+                <input type="text" pInputText [disabled]="true" [(ngModel)]="order.order_number" />
+            </div>
+
+            <div class="field col-12 md:col-6">
+                <label>{{ 'Order Date' | translate }}</label>
+                <p-calendar [disabled]="true" [(ngModel)]="order.order_date"></p-calendar>
+            </div>
+        </div>
+
+        <div class="field">
+            <label for="order_customer"><span class="required">*</span> {{ 'Customer' | translate }}</label>
+            <p-autoComplete id="order_customer" [(ngModel)]="customer" [forceSelection]="true" [suggestions]="customers" (completeMethod)="searchCustomers($event)" field="name" placeholder="{{'Select field' | translate: {field: 'Customer' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : submitted && !customer}">
+                <!--                <ng-template pTemplate="selectedItem">-->
+                <!--                    <i class="pi pi-circle-fill" [style]="{color: (order.role_color_name)}"></i>-->
+                <!--                    {{ order.user_id }}-->
+                <!--                </ng-template>-->
+                <ng-template let-item pTemplate="item">
+                    <i class="pi pi-circle-fill" [style]="{color: item.role.color_name}"></i>
+                    {{ item.name }} / M: {{ item.mobile_no}} / E: {{ item.email}}
+                </ng-template>
+            </p-autoComplete>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !customer">{{ 'Field is required' | translate: {field: 'Customer' | translate} }}</small>
+        </div>
+
+        <div class="field">
+            <label for="order_service"><span class="required">*</span> {{ 'Service' | translate }}</label>
+            <p-dropdown id="order_service" [options]="services" [(ngModel)]="order.serviceId" [disabled]="selectedPackage && selectedPackage.service_id" optionLabel="name" optionValue="id" (onClick)="loadSessions($event)" [ngClass]="{'ng-invalid ng-dirty' : submitted && order.serviceId <= 0}">
+            </p-dropdown>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && order.serviceId <= 0">{{ 'Field is required' | translate: {field: 'Service' | translate} }}</small>
+        </div>
+
+        <div class="grid">
+            <div class="field col-12 md:col-6">
+                <label for="order_start_date"><span class="required">*</span> {{ 'Start Date' | translate }}</label>
+                <p-calendar id="order_start_date" [(ngModel)]="order.recurring.start_date" [minDate]="minDate" [maxDate]="maxDate"  (onSelect)="calEndDate()" required [ngClass]="{'ng-invalid ng-dirty' : submitted && !order.recurring.start_date}"></p-calendar>
+                <small class="ng-dirty ng-invalid" *ngIf="submitted && !order.recurring.start_date">{{ 'Field is required' | translate: {field: 'Date' | translate} }}</small>
+            </div>
+            <div class="field col-12 md:col-6">
+                <label for="order_end_date"> {{ 'End Date' | translate }}</label>
+                <p-calendar id="order_end_date" [(ngModel)]="order.recurring.end_date" [disabled]="true"></p-calendar>
+            </div>
+
+        <!--            <div class="field col-12 md:col-6">-->
+        <!--                <label for="time"><span class="required">*</span> {{ 'Time' | translate }}</label>-->
+        <!--                <p-dropdown id="order_time" [disabled]="times.length == 0 || (selectedPackage && selectedPackage.start_time)" [options]="times" (onClick)="setPriceByTime($event)" required [(ngModel)]="order.time" optionValue="time" [ngClass]="{'ng-invalid ng-dirty' : submitted && !order.time}">-->
+        <!--                    <ng-template pTemplate="selectedItem">-->
+        <!--                        {{ order.time ? this.appointmentService.formatTime(order.time) : '' }}-->
+        <!--                    </ng-template>-->
+        <!--                    <ng-template let-item pTemplate="item">-->
+        <!--                        <div class="flex align-items-center justify-content-between">-->
+        <!--                            <div>{{ this.appointmentService.formatTime(item.time) }}</div>-->
+        <!--                            <div *ngIf="!selectedPackage && !order.useTrainerData">{{ item.price | currency:'HK$' }}</div>-->
+        <!--                        </div>-->
+        <!--                    </ng-template>-->
+        <!--                </p-dropdown>-->
+        <!--                <small class="ng-dirty ng-invalid" *ngIf="submitted && !order.time">{{ 'Field is required' | translate: {field: 'Time' | translate} }}</small>-->
+        <!--            </div>-->
+        <!--        </div>-->
+
+        <!--        <div class="grid" *ngIf="supportFinance">-->
+        <!--            <div class="field col-12 md:col-6" *ngIf="!selectedPackage">-->
+        <!--                <label>{{ 'Unit Price' | translate }}</label>-->
+        <!--                <p><b>{{ order.paymentInformation.price | currency:'HK$' }} <span *ngIf="order.dftNoOfSession">/ {{ appointmentService.getSessionName(order.dftNoOfSession, sessions) }}</span></b></p>-->
+        <!--            </div>-->
+
+        <!--            <div class="field col-12 md:col-6" *ngIf="order.paymentInformation.commission > 0">-->
+        <!--                <label for="time">{{ 'Trainer Charge' | translate }}</label>-->
+        <!--                <p><b>{{ order.paymentInformation.commission | currency:'HK$' }}</b></p>-->
+        <!--            </div>-->
+        <!--        </div>-->
+
+        <!--        <div class="field">-->
+        <!--            <label for="order_status">{{ 'approval' | translate }}?</label>-->
+        <!--            <p-dropdown id="order_status" [options]="statuses" optionValue="code" [(ngModel)]="order.status" placeholder="{{'Select field' | translate: {field: 'Status' | translate} }}">-->
+        <!--                <ng-template pTemplate="selectedItem">-->
+        <!--                    {{ lemonade.comboRenderer(statuses, order.status) | translate }}-->
+        <!--                </ng-template>-->
+        <!--                <ng-template let-item pTemplate="item">-->
+        <!--                    {{ item.name | translate }}-->
+        <!--                </ng-template>-->
+        <!--            </p-dropdown>-->
+        </div>
+
+        <div>
+            <!--            <p-divider align="center">-->
+            <!--                <span class="p-tag">{{ 'Packages Information' | translate }}</span>-->
+            <!--            </p-divider>-->
+
+            <!--            <div class="field">-->
+            <!--                <label>{{ 'Packages' | translate }}?</label>-->
+            <!--                <p-toggleButton [disabled]="selectedPackage" onLabel="{{ 'Yes' | translate }}" offLabel="{{ 'No' | translate }}"-->
+            <!--                                onIcon="pi pi-check" offIcon="pi pi-times" [(ngModel)]="order.isPackage"></p-toggleButton>-->
+            <!--            </div>-->
+
+            <!--                <div class="grid">-->
+            <!--                    <div class="field col-12 md:col-6">-->
+            <!--                        <label for="order_end_date">{{ 'Expiry Date' | translate }}</label>-->
+            <!--                        <p-calendar id="order_end_date" [(ngModel)]="order.recurring.end_date" [minDate]="minExpiryDate" [dateFormat]="lemonade.dateFormat"></p-calendar>-->
+            <!--                    </div>-->
+
+            <!--                    <div class="field col-12 md:col-6">-->
+            <!--                        <label for="order_time">{{ 'End Time' | translate }}</label>-->
+            <!--                        <input type="text" pInputText [disabled]="true" value="{{ selectedPackage && selectedPackage.start_time && order.sessionInterval ? lemonade.formatTime(selectedPackage.start_time + (selectedPackage.no_of_session * order.sessionInterval)) : '' }}"/>-->
+            <!--                    </div>-->
+            <!--                </div>-->
+
+            <!--                <div class="field">-->
+            <!--                    <label for="order_dow"> {{ 'Day of Week' | translate }}</label>-->
+            <!--                    <p-selectButton id="order_dow" [options]="day_of_weeks" [(ngModel)]="order.recurring.recurring" [disabled]="selectedPackage" optionLabel="name" optionValue="code" [multiple]="true">-->
+            <!--                        <ng-template let-item>-->
+            <!--                            <span class="w-full text-center">{{ item.name | translate }}</span>-->
+            <!--                        </ng-template>-->
+            <!--                    </p-selectButton>-->
+            <!--                </div>-->
+
+
+            <div class="grid">
+                <div class="field col-12 md:col-6">
+                    <label for="order_lesson_number"><span class="required">*</span> {{ 'No. of Appointments' | translate }}</label>
+                    <p-inputNumber id="order_lesson_number" [(ngModel)]="order.recurring.quantity" [disabled]="selectedPackage" mode="decimal" [showButtons]="true" inputId="minmax-buttons" [min]="1" [max]="30"></p-inputNumber>
+                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !order.recurring.quantity">{{ 'Field is required' | translate: {field: 'No. of Appointments' | translate} }}</small>
+                </div>
+
+                <div class="field col-12 md:col-6">
+                    <label for="order_duration"><span class="required">*</span> {{ 'Duration' | translate }}</label>
+                    <p-dropdown id="order_duration" [options]="sessions" [disabled]="selectedPackage && selectedPackage.no_of_session" [(ngModel)]="order.noOfSession" optionValue="code">
+                        <ng-template pTemplate="selectedItem">
+                            {{ appointmentService.getSessionName(order.noOfSession, sessions) }}
+                        </ng-template>
+                        <ng-template let-time pTemplate="item">
+                            <div *ngIf="time.hour > 0 && time.minute != 30 && time.minute != 0" [translate]="'hour Minutes'" [translateParams]="{hour: time.hour, s: time.hour > 1 ? 's' : '', minute: time.minute, ms: time.minute > 1 ? 's' : ''}"></div>
+                            <div *ngIf="time.hour > 0 && (time.minute == 30 || time.minute == 0)" [translate]="'hour Hours'" [translateParams]="{hour: time.hour, s: time.hour > 1 ? 's' : ''}"></div>
+                            <div *ngIf="time.hour == 0" [translate]="'N minutes'" [translateParams]="{minute: time.minute, s: time.minute > 1 ? 's' : ''}"></div>
+                        </ng-template>
+                    </p-dropdown>
+                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !order.noOfSession">{{ 'Field is required' | translate: {field: 'Duration' | translate} }}</small>
+                </div>
+            </div>
+
+            <div class="grid" *ngIf="selectedPackage && order.recurring.free">
+                <div class="field col-12 md:col-6">
+                    <label for="order_free_lesson_number">{{ 'No. of Free Lesson' | translate }}</label>
+                    <p-inputNumber id="order_free_lesson_number" [(ngModel)]="order.recurring.free.quantity" [disabled]="selectedPackage" mode="decimal" [showButtons]="true" inputId="minmax-buttons" [min]="0" [max]="10"></p-inputNumber>
+                </div>
+
+                <div class="field col-12 md:col-6">
+                    <label for="order_free_duration">{{ 'Duration of Free Lesson' | translate }}</label>
+                    <p-dropdown id="order_free_duration" [options]="sessions" [disabled]="selectedPackage && order.recurring.free.no_of_session" [(ngModel)]="order.recurring.free.noOfSession" optionValue="code">
+                        <ng-template pTemplate="selectedItem">
+                            {{ appointmentService.getSessionName(order.recurring.free.no_of_session, sessions) }}
+                        </ng-template>
+                        <ng-template let-time pTemplate="item">
+                            <div *ngIf="time.hour > 0 && time.minute != 30 && time.minute != 0" [translate]="'hour Minutes'" [translateParams]="{hour: time.hour, s: time.hour > 1 ? 's' : '', minute: time.minute, ms: time.minute > 1 ? 's' : ''}"></div>
+                            <div *ngIf="time.hour > 0 && (time.minute == 30 || time.minute == 0)" [translate]="'hour Hours'" [translateParams]="{hour: time.hour, s: time.hour > 1 ? 's' : ''}"></div>
+                            <div *ngIf="time.hour == 0" [translate]="'N minutes'" [translateParams]="{minute: time.minute, s: time.minute > 1 ? 's' : ''}"></div>
+                        </ng-template>
+                    </p-dropdown>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="order_order_total">{{ 'Total Amount' | translate }}</label>
+                <p-inputNumber id="order_order_total" [(ngModel)]="order.order_total" [disabled]="true" mode="currency" currency="HKD" locale="zh-HK" [ngClass]="{'ng-invalid ng-dirty' : submitted && !order.order_total}"></p-inputNumber>
+                <small class="ng-dirty ng-invalid" *ngIf="submitted && !order.order_total">{{ 'Field is required' | translate: {field: 'Total Amount' | translate} }}</small>
+            </div>
+
+            <div class="field">
+                <label for="order_remark">{{ 'Remark' | translate }}</label>
+                <textarea id="order_remark" pInputTextarea [rows]="5" [(ngModel)]="order.internal_remark"></textarea>
+            </div>
+
+            <div class="field">
+                <p-checkbox name="package_repeatable" [binary]="true" label="{{ 'Recurring Billing' | translate }}" [(ngModel)]="order.repeatable"></p-checkbox>
+            </div>
+        </div>
+
+        <p-divider align="center">
+            <span class="p-tag">{{ 'Payment Information' | translate }}</span>
+        </p-divider>
+
+        <div class="field">
+            <label for="order_payment_amount"><span class="required">*</span> {{ 'Payment Amount' | translate }}</label>
+            <div class="p-inputgroup">
+                <p-inputNumber id="order_payment_amount" [(ngModel)]="order.payment_amount" mode="currency" currency="HKD" locale="zh-HK" [ngClass]="{'ng-invalid ng-dirty' : submitted && !order.payment_amount}"></p-inputNumber>
+                <div class="p-1"></div>
+                <button pButton pRipple (click)="copyOrderAmount()">{{ 'Copy Total Amount' | translate }}</button>
+            </div>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !order.payment_amount">{{ 'Field is required' | translate: {field: 'Payment Amount' | translate} }}</small>
+        </div>
+
+<!--        <div class="field" *ngIf="order.trainer_id > 0">-->
+<!--            <label>{{ 'Total Trainer Commission' | translate }}</label>-->
+<!--            <p-inputNumber [(ngModel)]="order.paymentInformation.total_commission" mode="currency" currency="HKD" locale="zh-HK"></p-inputNumber>-->
+<!--        </div>-->
+
+        <div class="field">
+            <label for="order_paymentStatus">{{ 'Payment Status' | translate }}</label>
+            <p-dropdown id="order_paymentStatus" [options]="payment_statuses" [(ngModel)]="order.payment_status" optionValue="code">
+                <ng-template pTemplate="selectedItem">
+                    {{ lemonade.comboRenderer(payment_statuses, order.payment_status) | translate }}
+                </ng-template>
+                <ng-template let-item pTemplate="item">
+                    {{ item.name | translate }}
+                </ng-template>
+            </p-dropdown>
+        </div>
+
+        <div class="field">
+            <label for="order_paymentGw">{{ 'Payment Method' | translate }}</label>
+            <p-dropdown id="order_paymentGw" [disabled]="order.payment_status == payment_statuses[0].code" [options]="payment_methods" [(ngModel)]="order.payment_gateway" placeholder="{{ 'Search F' | translate:{field: 'Payment Method' | translate } }}" [showClear]="true" optionValue="code" [ngClass]="{'ng-invalid ng-dirty' : submitted && order.payment_status == payment_statuses[1].code && !order.payment_gateway}">
+                <ng-template pTemplate="selectedItem">
+                    {{ lemonade.comboRenderer(payment_methods, order.payment_gateway) }}
+                </ng-template>
+                <ng-template let-item pTemplate="item">
+                    {{ item.name | translate }}
+                </ng-template>
+            </p-dropdown>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && order.payment_status == payment_statuses[1].code && !order.payment_gateway">{{ 'Field is required' | translate: {field: 'Payment Method' | translate} }}</small>
+        </div>
+
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="{{ 'Cancel' | translate }}" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="{{ 'Save' | translate }}" icon="pi pi-check" class="p-button-text" (click)="saveOrder()"></button>
     </ng-template>
 </p-dialog>

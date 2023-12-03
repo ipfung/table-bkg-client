@@ -53,7 +53,7 @@ export class AppointmentListComponent implements OnInit {
     supportPackages = false;
     supportFinance = false;
     supportPaymentGateway = false;
-    submitting: boolean;
+    submittingModal: boolean;
     selectedCustomerId = 0;
 
     isManager = false;
@@ -352,11 +352,16 @@ export class AppointmentListComponent implements OnInit {
         }
     }
 
-    openNew () {
+    openNew() {
         this.formHeader = "Create Form";
         this.submitted = false;
         this.formDialog = true;
         this.prepareForForm();
+        this.appointmentService.getActivePackages({
+            package_type: 'weekly'
+        }).subscribe(res => {
+            this.packages = res.data;
+        });
         // make a new appointment information if it is empty.
         this.selectedPackage = null;
         this.selectedCustomerId = 0;
@@ -377,9 +382,6 @@ export class AppointmentListComponent implements OnInit {
         // for form, this wastes memory if user doesn't open the form.
         this.appointmentService.getRooms().subscribe( res => {
             this.rooms = res.data;
-        });
-        this.appointmentService.getActivePackages().subscribe(res => {
-            this.packages = res.data;
         });
         this.appointmentService.getServices().subscribe(res => {
             this.services = res.data;
@@ -432,6 +434,7 @@ export class AppointmentListComponent implements OnInit {
                 }
             };
             this.appointment.packageInfo = {...pkg};
+            const recurring = JSON.parse(pkg.recurring);
             this.appointment.paymentInformation.order_total = pkg.price;
             this.appointment.packageInfo.recurring = JSON.parse(pkg.recurring).repeat;
             this.appointment.isPackage = true;
@@ -629,10 +632,11 @@ export class AppointmentListComponent implements OnInit {
             const lessonDates = this.lessons.map(function (obj) {
                 return obj.date;
             });
+            const recurring = JSON.parse(this.selectedPackage.recurring);
             data = {...data, ...{
                     is_package: true,
                     recurring: {
-                        cycle: 'weekly',
+                        cycle: recurring.cycle,
                         start_date: this.lemonade.formatPostDate(timeInfo.date),
                         // end_date = package expiry date, nullable.
                         end_date: (packageInfo.end_date && packageInfo.end_date instanceof Date) ? this.lemonade.formatPostDate(packageInfo.end_date) : null,
@@ -647,7 +651,7 @@ export class AppointmentListComponent implements OnInit {
             };
         }
         const me = this;
-        this.submitting = true;   // show submitting modal after validation.
+        this.submittingModal = true;   // show submitting modal after validation.
 
         this.appointmentService.submit(data, function(res) {
             if (res.success == true) {
@@ -672,7 +676,7 @@ export class AppointmentListComponent implements OnInit {
                     detail: res.error
                 });
             }
-            me.submitting = false;   // hide modal.
+            me.submittingModal = false;   // hide modal.
         });
     }
 

@@ -142,14 +142,9 @@
         </div>
 
         <div class="field">
-            <label for="recurring_type">{{ 'Package Type' | translate }}</label>
-            <p-selectButton id="recurring_type" [options]="recurring_types" [(ngModel)]="pkg.recurring.cycle" optionLabel="name" optionValue="code">
-                <ng-template let-item>
-<!--                    <i [class]="item.icon"></i>-->
-                    <div class="line-break">{{ item.name }}</div>
-                    <span class="text-xs">&#160; - {{ item.description }}</span>
-                </ng-template>
-            </p-selectButton>
+            <label for="recurring_type"><span class="required">*</span> {{ 'Package Type' | translate }}</label>
+            <p-selectButton id="recurring_type" [options]="recurring_types" [(ngModel)]="pkg.recurring.cycle" optionLabel="name" optionValue="code"></p-selectButton>
+            <small class="jws-tips">{{ 'All type will be renewed every month automatically' | translate }}</small>
         </div>
 
         <div class="grid">
@@ -159,9 +154,38 @@
                 <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.quantity">{{ 'Field is required' | translate: {field: 'No. of Appointments' | translate} }}</small>
             </div>
             <div class="field col-12 md:col-6">
-                <label for="price"><span class="required">*</span> <b> {{ 'Price' | translate }}</b></label>
-                <p-inputNumber id="price" [disabled]="true === pkg.free_of_charge" [(ngModel)]="pkg.price" mode="currency" currency="HKD" locale="zh-HK" [ngClass]="{'ng-invalid ng-dirty' : submitted && (!pkg.price || pkg.price <= 0)}"></p-inputNumber>
-                <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.price">{{ 'Field is required' | translate: {field: 'Price' | translate} }}</small>
+                <label for="duration"><span class="required">*</span> {{ 'Duration' | translate }}</label>
+                <p-dropdown id="duration" [disabled]="pkg.id > 0" [options]="sessions" (onClick)="loadTime()" [(ngModel)]="pkg.no_of_session" optionValue="code" [ngClass]="{'ng-invalid ng-dirty' : submitted && !pkg.no_of_session}">
+                    <ng-template pTemplate="selectedItem">
+                        {{ appointmentService.getSessionName(pkg.no_of_session, sessions) }}
+                    </ng-template>
+                    <ng-template let-time pTemplate="item">
+                        <div *ngIf="time.hour > 0 && time.minute != 30 && time.minute != 0" [translate]="'hour Minutes'" [translateParams]="{hour: time.hour, s: time.hour > 1 ? 's' : '', minute: time.minute, ms: time.minute > 1 ? 's' : ''}"></div>
+                        <div *ngIf="time.hour > 0 && (time.minute == 30 || time.minute == 0)" [translate]="'hour Hours'" [translateParams]="{hour: time.hour, s: time.hour > 1 ? 's' : ''}"></div>
+                        <div *ngIf="time.hour == 0" [translate]="'N minutes'" [translateParams]="{minute: time.minute, s: time.minute > 1 ? 's' : ''}"></div>
+                    </ng-template>
+                </p-dropdown>
+                <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.no_of_session">{{ 'Field is required' | translate: {field: 'Duration' | translate} }}</small>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="field col-12 md:col-6">
+                <label for="free_lesson_number">{{ 'No. of Free Lesson' | translate }}</label>
+                <p-inputNumber id="free_lesson_number" [(ngModel)]="pkg.recurring.free.quantity" mode="decimal" [showButtons]="true" inputId="minmax-buttons" [min]="0" [max]="10"></p-inputNumber>
+            </div>
+            <div class="field col-12 md:col-6">
+                <label for="free_duration">{{ 'Duration of Free Lesson' | translate }}</label>
+                <p-dropdown id="free_duration" [disabled]="pkg.id > 0" [options]="sessions" (onClick)="loadTime()" [(ngModel)]="pkg.recurring.free.no_of_session" optionValue="code">
+                    <ng-template pTemplate="selectedItem">
+                        {{ appointmentService.getSessionName(pkg.recurring.free.no_of_session, sessions) }}
+                    </ng-template>
+                    <ng-template let-time pTemplate="item">
+                        <div *ngIf="time.hour > 0 && time.minute != 30 && time.minute != 0" [translate]="'hour Minutes'" [translateParams]="{hour: time.hour, s: time.hour > 1 ? 's' : '', minute: time.minute, ms: time.minute > 1 ? 's' : ''}"></div>
+                        <div *ngIf="time.hour > 0 && (time.minute == 30 || time.minute == 0)" [translate]="'hour Hours'" [translateParams]="{hour: time.hour, s: time.hour > 1 ? 's' : ''}"></div>
+                        <div *ngIf="time.hour == 0" [translate]="'N minutes'" [translateParams]="{minute: time.minute, s: time.minute > 1 ? 's' : ''}"></div>
+                    </ng-template>
+                </p-dropdown>
             </div>
         </div>
 
@@ -177,23 +201,31 @@
                 <small class="ng-dirty ng-invalid" *ngIf="isWeekly(pkg) && submitted && !pkg.room_id">{{ 'Field is required' | translate: {field: 'Room' | translate} }}</small>
             </div>
             <div class="field col-12 md:col-6">
-                <label for="total_space"><b>{{ 'Capacity' | translate }}</b></label>
-                <p-inputNumber id="total_space" [(ngModel)]="pkg.total_space" mode="decimal" [showButtons]="true" inputId="minmax-buttons" [min]="1" [max]="300"></p-inputNumber>
+                <label for="trainer"><span *ngIf="isWeekly(pkg)" class="required">*</span> {{ 'Trainer' | translate }}</label>
+                <p-dropdown id="trainer" [options]="trainers" [(ngModel)]="pkg.trainer_id" optionLabel="name" optionValue="id" [showClear]="true" placeholder="{{'Select field' | translate: {field: 'Trainer' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : isWeekly(pkg) && submitted && !pkg.trainer_id}">
+                    <!--                <ng-template pTemplate="selectedItem">-->
+                    <!--                    <i class="pi pi-circle-fill" [style]="{color: (appointment.role_color_name)}"></i>-->
+                    <!--                    {{ appointment.user_id }}-->
+                    <!--                </ng-template>-->
+                    <ng-template let-item pTemplate="item">
+                        <i class="pi pi-circle-fill" [style]="{color: item.role.color_name}"></i>
+                        {{ item.name }}
+                    </ng-template>
+                </p-dropdown>
+                <small class="ng-dirty ng-invalid" *ngIf="isWeekly(pkg) && submitted && !pkg.trainer_id">{{ 'Field is required' | translate: {field: 'Trainer' | translate} }}</small>
             </div>
         </div>
-        <div class="field">
-            <label for="trainer"><span *ngIf="isWeekly(pkg)" class="required">*</span> {{ 'Trainer' | translate }}</label>
-            <p-dropdown id="trainer" [options]="trainers" [(ngModel)]="pkg.trainer_id" optionLabel="name" optionValue="id" [showClear]="true" placeholder="{{'Select field' | translate: {field: 'Trainer' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : isWeekly(pkg) && submitted && !pkg.trainer_id}">
-                <!--                <ng-template pTemplate="selectedItem">-->
-                <!--                    <i class="pi pi-circle-fill" [style]="{color: (appointment.role_color_name)}"></i>-->
-                <!--                    {{ appointment.user_id }}-->
-                <!--                </ng-template>-->
-                <ng-template let-item pTemplate="item">
-                    <i class="pi pi-circle-fill" [style]="{color: item.role.color_name}"></i>
-                    {{ item.name }}
-                </ng-template>
-            </p-dropdown>
-            <small class="ng-dirty ng-invalid" *ngIf="isWeekly(pkg) && submitted && !pkg.trainer_id">{{ 'Field is required' | translate: {field: 'Trainer' | translate} }}</small>
+
+        <div class="grid">
+            <div class="field col-12 md:col-6">
+                <label for="total_space">{{ 'Capacity' | translate }}</label>
+                <p-inputNumber id="total_space" [(ngModel)]="pkg.total_space" mode="decimal" [showButtons]="true" inputId="minmax-buttons" [min]="1" [max]="300"></p-inputNumber>
+            </div>
+            <div class="field col-12 md:col-6">
+                <label for="price"><span class="required">*</span> <b> {{ 'Price' | translate }}</b></label>
+                <p-inputNumber id="price" [disabled]="true === pkg.free_of_charge" [(ngModel)]="pkg.price" mode="currency" currency="HKD" locale="zh-HK" [ngClass]="{'ng-invalid ng-dirty' : submitted && (!pkg.price || pkg.price <= 0)}"></p-inputNumber>
+                <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.price">{{ 'Field is required' | translate: {field: 'Price' | translate} }}</small>
+            </div>
         </div>
 
         <p-divider align="center">
@@ -208,20 +240,6 @@
                 </ng-template>
             </p-selectButton>
             <small class="ng-dirty ng-invalid" *ngIf="isWeekly(pkg) && submitted && pkg.recurring.repeat.length == 0">{{ 'Field is required' | translate: {field: 'Day of Week' | translate} }}</small>
-        </div>
-        <div class="field">
-            <label for="duration"><span class="required">*</span> {{ 'Duration' | translate }}</label>
-            <p-dropdown id="duration" [disabled]="pkg.id > 0" [options]="sessions" (onClick)="loadTime()" [(ngModel)]="pkg.no_of_session" optionValue="code" [ngClass]="{'ng-invalid ng-dirty' : submitted && !pkg.no_of_session}">
-                <ng-template pTemplate="selectedItem">
-                    {{ appointmentService.getSessionName(pkg.no_of_session, sessions) }}
-                </ng-template>
-                <ng-template let-time pTemplate="item">
-                    <div *ngIf="time.hour > 0 && time.minute != 30 && time.minute != 0" [translate]="'hour Minutes'" [translateParams]="{hour: time.hour, s: time.hour > 1 ? 's' : '', minute: time.minute, ms: time.minute > 1 ? 's' : ''}"></div>
-                    <div *ngIf="time.hour > 0 && (time.minute == 30 || time.minute == 0)" [translate]="'hour Hours'" [translateParams]="{hour: time.hour, s: time.hour > 1 ? 's' : ''}"></div>
-                    <div *ngIf="time.hour == 0" [translate]="'N minutes'" [translateParams]="{minute: time.minute, s: time.minute > 1 ? 's' : ''}"></div>
-                </ng-template>
-            </p-dropdown>
-            <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.no_of_session">{{ 'Field is required' | translate: {field: 'Duration' | translate} }}</small>
         </div>
         <div class="grid">
             <div class="field col-12 md:col-6">

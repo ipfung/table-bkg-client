@@ -71,11 +71,11 @@ export class PackageListComponent implements OnInit {
         this.recurring_types = [
             {
                 description: 'Renew every month',
-                name: 'Per Month',
+                name: 'Package per month',
                 code: 'monthly'
             }, {
                 description: 'Renew every month',
-                name: 'Per Week',
+                name: 'Package per week',
                 code: 'weekly'
             }
         ];
@@ -168,7 +168,8 @@ export class PackageListComponent implements OnInit {
             total_space: 1,
             recurring: {
                 cycle: 'weekly',
-                repeat: []
+                repeat: [],
+                free: {}
             }
         };
         if (this.services.length > 0) {
@@ -335,6 +336,9 @@ export class PackageListComponent implements OnInit {
             const filteredArray = recurring.repeat.filter(e => ([1,2,3,4,5,6,7].includes(e)));
             recurring.repeat = filteredArray;
         }
+        if (!recurring.free) {
+            recurring.free = {};
+        }
 
         this.pkg = {...pkg, ...{
                 recurring: recurring,
@@ -401,8 +405,9 @@ export class PackageListComponent implements OnInit {
         const lessonDates = this.lessons.map(function (obj) {
             return obj.date;
         });
+        const recurring = {...{quantity: this.pkg.quantity, repeat: this.pkg.recurring.repeat.sort()}, ...this.pkg.recurring};
         let data = {...this.pkg, ...{
-                recurring: {cycle: this.pkg.recurring.cycle, quantity: this.pkg.quantity, repeat: this.pkg.recurring.repeat.sort()},
+                recurring: recurring,
                 start_date: this.lemonade.formatPostDate(this.pkg.start_date),
                 sessionInterval: this.sessionInterval,
                 lesson_dates: lessonDates,
