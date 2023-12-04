@@ -2,13 +2,15 @@ import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {addDays, subDays} from "date-fns";
 import {ApiService} from "../../service/api.service";
 import {Lemonade} from "../../service/lemonade.service";
-import {LazyLoadEvent} from "primeng/api";
+import {LazyLoadEvent, MessageService} from "primeng/api";
 import {TranslateService} from "@ngx-translate/core";
 import {AppointmentService} from "../../service/appointmentservice";
 import {ActivatedRoute} from "@angular/router";
+import {OrderService} from "../../service/order.service";
 
 @Component({
     selector: 'app-finance-status',
+    providers: [MessageService],
     templateUrl: './finance-status.component.html',
     styleUrls: ['./finance-status.component.scss']
 })
@@ -20,6 +22,7 @@ export class FinanceStatusComponent implements OnInit {
 
     bookings: any;
     showCustomer = false;
+    editable = false;
 
     // search fields
     rangeDates: Date[];
@@ -33,15 +36,26 @@ export class FinanceStatusComponent implements OnInit {
     @ViewChild('iframe') iframe: ElementRef;
     printDialog = false;
 
+    orderFormDialog = false;
     //form
+    customer: any;
+    submittingModal: boolean;
+    submitted = false;
     formDialog = false;
+    formHeader = 'Create Form';
+    minDate: Date;
+    maxDate: Date;
     order: any;
+    services = [];
+    sessions = [];
+    packages: any[];
+    selectedPackage: any;
     editingPayment = false;
     payment_statuses = [];
     payment_methods = [];
     new_payment: any;
 
-    constructor(private api: ApiService, public appointmentService: AppointmentService, private translateService: TranslateService, public lemonade: Lemonade, private route: ActivatedRoute) {
+    constructor(private api: ApiService, public appointmentService: AppointmentService, private orderService: OrderService, private translateService: TranslateService, private messageService: MessageService, public lemonade: Lemonade, private route: ActivatedRoute) {
     }
 
     ngOnInit(): void {
@@ -95,6 +109,7 @@ export class FinanceStatusComponent implements OnInit {
             this.api.get('api/finance', params).subscribe(res => {
                 this.bookings = res.data;
                 this.showCustomer = res.showCustomer;
+                this.editable = res.showCustomer;
                 this.supportPaymentGateway = res.paymentGateway;
                 this.loading = false;
                 this.rows = res.per_page;
@@ -104,11 +119,42 @@ export class FinanceStatusComponent implements OnInit {
     }
 
     displayOrderDetail(detail) {
-        if (detail && detail.order_description) {
-            const description = JSON.parse(detail.order_description);
-            return this.lemonade.formatDate(description.start_time, true) + ' ' + this.lemonade.formatDateTime(description.start_time) + ' - ' + this.lemonade.formatDateTime(description.end_time);
+        if (detail) {
+            if (detail.order_description) {
+                const description = JSON.parse(detail.order_description);
+                if (detail.order_type == 'token') {
+                    let str = 'Monthly ' + description.quantity + (description.free ? ' + ' + description.free.quantity : '');
+                    str += '\n' + this.lemonade.formatDate(description.start_date, true) + ' - ' + this.lemonade.formatDate(description.end_date, true);
+                    return str;
+                }
+                return this.lemonade.formatDate(description.start_time, true) + ' ' + this.lemonade.formatDateTime(description.start_time) + ' - ' + this.lemonade.formatDateTime(description.end_time);
+            }
+            return '';
         }
         return '';
+    }
+
+    openNew() {
+        this.formHeader = "Create Form";
+        this.submitted = false;
+        this.orderFormDialog = true;
+        const today = new Date();
+        this.minDate = subDays(today, 14);
+        this.maxDate = addDays(today, 60);
+        this.appointmentService.getActivePackages({
+            package_type: 'monthly'
+        }).subscribe(res => {
+            this.packages = res.data;
+        });
+        this.appointmentService.getServices().subscribe(res => {
+            this.services = res.data;
+            this.order.serviceId = this.services[0].id;
+            this.loadSessions(null);
+        });
+        // make a new appointment information if it is empty.
+        this.selectedPackage = null;
+        // use JSON.parse(JSON.stringify()) to create a brand new object.
+        this.order = this.orderService.order;
     }
 
     edit(order) {
@@ -119,6 +165,72 @@ export class FinanceStatusComponent implements OnInit {
             gateway: order.payment.gateway
         };
         this.formDialog = true;
+    }
+
+    loadSessions(e) {
+        if (this.services.length > 0) {
+            let service = this.services.find(el => el.id == this.order.serviceId);
+            this.sessions = service.sessions;
+        } else {
+            this.sessions = [];
+        }
+    }
+
+    loadPackage() {
+        const pkg = this.selectedPackage;
+        if (pkg && this.order.recurring.package_id != pkg.id) {
+            let pkgStartDate = null;
+            if (pkg.start_date) {
+                // use package start date as min, in-case for back date.
+                this.minDate = new Date(pkg.start_date);
+            } else {
+                // default minDate was defined above.
+            }
+            const recurring = JSON.parse(pkg.recurring);
+console.log('recurring===', recurring);
+            this.order.order_total = pkg.price;
+            this.order.recurring = recurring;
+            this.order.recurring.price = pkg.price;
+            this.order.recurring.start_date = new Date();
+            this.calEndDate();
+            this.order.recurring.package_id = pkg.id;
+        }
+    }
+
+    saveOrder() {
+        const me = this;
+        this.submitted = true;
+        const order = this.order;
+        if (!me.customer)
+            return;
+        if (order.serviceId <= 0)
+            return;
+        if (order.noOfSession <= 0)
+            return;
+        if (!order.recurring.start_date)
+            return;
+        if (!order.order_total)
+            return;
+        if (order.recurring.quantity <= 0)
+            return;
+        me.order.customer_id = me.customer.id;
+        this.submittingModal = true;   // show submitting modal after validation.
+
+        this.orderService.submitOrder(order, function(res) {
+            if (res.success == true) {
+                me.lemonade.ok(me.messageService);
+                me.loadData(null);
+                me.orderFormDialog = false;
+                // clean up
+                me.order = null;
+                me.selectedPackage = undefined;
+                me.printInvoice(res.order_id, 'invoice');
+            } else {
+                // error.
+                this.lemonade.error(this.messageService, res);
+            }
+            me.submittingModal = false;   // hide modal.
+        });
     }
 
     payNow(order) {
@@ -166,5 +278,14 @@ export class FinanceStatusComponent implements OnInit {
                 this.printDialog = true;
             });
         }
+    }
+
+    copyOrderAmount() {
+        this.order.payment_amount = this.order.order_total;
+        this.order.payment_status = 'paid';
+    }
+
+    calEndDate() {
+        this.order.recurring.end_date = this.orderService.calMonthEndDate(this.order.recurring.start_date);
     }
 }

@@ -36,6 +36,7 @@ export class PackageListComponent implements OnInit {
     formDialog = false;
     submitted = false;
     pkg: any;
+    recurring_types = [];
     lessons: any[] = [];
     holidays: any[];
     sessions = [];
@@ -67,6 +68,17 @@ export class PackageListComponent implements OnInit {
             }
         ];
         this.day_of_weeks = this.lemonade.weeks;
+        this.recurring_types = [
+            {
+                description: 'Renew every month',
+                name: 'Package per month',
+                code: 'monthly'
+            }, {
+                description: 'Renew every month',
+                name: 'Package per week',
+                code: 'weekly'
+            }
+        ];
 
         // support paymentStatus params.
         if (this.route.snapshot.paramMap.get('id')) {
@@ -151,10 +163,13 @@ export class PackageListComponent implements OnInit {
         this.formHeader = "Create Form";
         this.pkg = {
             quantity: 4,
+            free_of_charge: false,
             status: this.statuses[0].code,
             total_space: 1,
             recurring: {
-                repeat: []
+                cycle: 'weekly',
+                repeat: [],
+                free: {}
             }
         };
         if (this.services.length > 0) {
@@ -321,11 +336,15 @@ export class PackageListComponent implements OnInit {
             const filteredArray = recurring.repeat.filter(e => ([1,2,3,4,5,6,7].includes(e)));
             recurring.repeat = filteredArray;
         }
+        if (!recurring.free) {
+            recurring.free = {};
+        }
 
         this.pkg = {...pkg, ...{
                 recurring: recurring,
                 start_date: pkg.start_date ? new Date(pkg.start_date) : undefined,
-                end_date: pkg.end_date ? new Date(pkg.end_date) : undefined
+                end_date: pkg.end_date ? new Date(pkg.end_date) : undefined,
+                free_of_charge: !pkg.price
             }
         };
         this.loadTime();
@@ -339,6 +358,17 @@ export class PackageListComponent implements OnInit {
             });
         }
         this.formDialog = true;
+    }
+
+    freeOfCharge(evt) {
+        if (evt.checked) {
+            // free
+            this.pkg.old_price = this.pkg.price;
+            this.pkg.price = 0;
+        } else {
+            if (this.pkg.old_price)
+                this.pkg.price = this.pkg.old_price;
+        }
     }
 
     canAmend(pkg) {
@@ -357,20 +387,27 @@ export class PackageListComponent implements OnInit {
             return;
         if (this.pkg.description == undefined)
             return;
-        if (!this.pkg.service_id || !this.pkg.room_id || !this.pkg.trainer_id)
+        if (!this.pkg.service_id)
             return;
         if (this.pkg.quantity == undefined)
             return;
-        if (!this.pkg.start_date || !this.pkg.start_time)
+        if (!this.pkg.free_of_charge && (!this.pkg.price || this.pkg.price <= 0))
             return;
-        if (this.pkg.recurring.repeat == undefined || this.pkg.recurring.repeat.length == 0)
-            return;
+        if (this.isWeekly(this.pkg)) {
+            if (!this.pkg.room_id || !this.pkg.trainer_id)
+                return;
+            if (!this.pkg.start_date || !this.pkg.start_time)
+                return;
+            if (this.pkg.recurring.repeat == undefined || this.pkg.recurring.repeat.length == 0)
+                return;
+        }
 
         const lessonDates = this.lessons.map(function (obj) {
             return obj.date;
         });
+        const recurring = {...{quantity: this.pkg.quantity, repeat: this.pkg.recurring.repeat.sort()}, ...this.pkg.recurring};
         let data = {...this.pkg, ...{
-                recurring: {cycle: 'weekly', quantity: this.pkg.quantity, repeat: this.pkg.recurring.repeat.sort()},
+                recurring: recurring,
                 start_date: this.lemonade.formatPostDate(this.pkg.start_date),
                 sessionInterval: this.sessionInterval,
                 lesson_dates: lessonDates,
@@ -422,5 +459,9 @@ export class PackageListComponent implements OnInit {
                 }
             });
         });
+    }
+
+    isWeekly(pkg: any) {
+        return (pkg.recurring.cycle === 'weekly');
     }
 }

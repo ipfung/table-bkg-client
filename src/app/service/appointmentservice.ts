@@ -285,9 +285,12 @@ export class AppointmentService {
         return this.api.get('api/users', params);
     }
 
-    getActivePackages() {
+    getActivePackages(params?) {
         return this.api.get('api/packages', {
-            status: 1001
+            ...{
+                status: 1001,
+                'query_for': 'appointment'
+            }, ...params
         });
     }
 
