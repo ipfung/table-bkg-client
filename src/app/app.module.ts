@@ -178,6 +178,7 @@ import { PaymentFailComponent } from './components/payment-fail/payment-fail.com
 import { ClassCheckinComponent } from './components/class-checkin/class-checkin.component';
 import { PackageListComponent } from './components/package-list/package-list.component';
 import {DashboardService} from "./service/dashboard.service";
+import { ReportSalesComponent } from './components/report-sales/report-sales.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/lang/', '-' + environment.project + '.json');
@@ -351,6 +352,7 @@ export function createTranslateLoader(http: HttpClient) {
         PaymentFailComponent,
         ClassCheckinComponent,
         AppointmentCalendarComponent,
+        ReportSalesComponent,
     ],
     providers: [
         {provide: LocationStrategy, useClass: HashLocationStrategy},
