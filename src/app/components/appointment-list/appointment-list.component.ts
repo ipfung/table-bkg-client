@@ -144,6 +144,10 @@ export class AppointmentListComponent implements OnInit {
         return appointment.payment_status === 'paid';
     }
 
+    isTokenOrder(appointment) {
+        return appointment.entity == 'token';
+    }
+
     payNow(appointment) {
         window.location.href = this.appointmentService.makePayment(appointment.order_num);
     }
