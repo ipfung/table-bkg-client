@@ -127,6 +127,8 @@
     "Course Register": "Course punch in",
     "Reschedule": "Reschedule",
     "Student already in this lesson": "(Student already in this lesson)",
+    "Remaining Session": "Remaining Session",
+    "Deduct from orders": "Deduct from order: {{order}}",
     "New Package Date": "Select Package Date",
     "Original Date": "Original Date",
     "Custom Date": "Custom Date",

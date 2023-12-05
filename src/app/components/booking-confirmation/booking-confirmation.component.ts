@@ -25,15 +25,15 @@ export class BookingConfirmationComponent implements OnInit {
     }
 
     selectedDescription() {
-        if (!this.appointmentService.paymentSelection)
-            return 'Save & complete booking';
-        return 'To a payment gateway';
+        if (this.appointmentService.needPayment())   // cannot use hasValidPayment() because
+            return 'To a payment gateway';
+        return 'Save & complete booking';
     }
 
     getCompleteButtonText() {
-        if (!this.appointmentService.paymentSelection)
-            return 'Complete';
-        return 'Pay Now';
+        if (this.appointmentService.needPayment())
+            return 'Pay Now';
+        return 'Complete';
     }
 
     complete() {

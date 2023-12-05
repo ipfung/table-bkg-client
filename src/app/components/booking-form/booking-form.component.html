@@ -20,7 +20,7 @@
                             <span class="p-button-label ng-star-inserted">
                                 {{ this.appointmentService.formatTime(timeslot.time, item.date) }}
                             </span>
-                            <span class="text-right align-items-end align-content-end justify-content-end">{{ timeslot.price | currency:'HK$' }}</span>
+                            <span class="text-right align-items-end align-content-end justify-content-end" *ngIf="timeslot.price >= 0">{{ timeslot.price | currency:'HK$' }}</span>
                         </ng-template>
                     </p-button>
                 </div>

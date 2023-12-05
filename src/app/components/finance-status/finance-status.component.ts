@@ -118,20 +118,52 @@ export class FinanceStatusComponent implements OnInit {
         }
     }
 
-    displayOrderDetail(detail) {
-        if (detail) {
-            if (detail.order_description) {
-                const description = JSON.parse(detail.order_description);
-                if (detail.order_type == 'token') {
-                    let str = 'Monthly ' + description.quantity + (description.free ? ' + ' + description.free.quantity : '');
-                    str += '\n' + this.lemonade.formatDate(description.start_date, true) + ' - ' + this.lemonade.formatDate(description.end_date, true);
-                    return str;
-                }
-                return this.lemonade.formatDate(description.start_time, true) + ' ' + this.lemonade.formatDateTime(description.start_time) + ' - ' + this.lemonade.formatDateTime(description.end_time);
+    displayOrderDetail(order) {
+        const order_recurring = JSON.parse(order.recurring);
+        if (order_recurring && order_recurring.cycle == 'monthly') {
+            let str = order_recurring.package.name + '\n' + this.lemonade.formatDate(order_recurring.start_date, true) + ' - ' + this.lemonade.formatDate(order_recurring.end_date, true);
+            return str;
+        } else {
+            for (let detail of order.details) {
+                return this.displayDetailDescription(detail);
             }
-            return '';
         }
         return '';
+    }
+
+    displayDetailDescription(detail, showMoreDetail = false) {
+        if (detail.order_description) {
+            const description = JSON.parse(detail.order_description);
+            if (detail.order_type == 'token' && !description.start_time) {
+                return 'Pending';
+            }
+            let str = this.lemonade.formatDate(description.start_time, true) + ' ' + this.lemonade.formatDateTime(description.start_time) + ' - ' + this.lemonade.formatDateTime(description.end_time);
+            if (showMoreDetail && detail.booking && detail.booking.appointment) {
+                const apt = detail.booking.appointment;
+                if (apt.user)
+                    str += " / " + apt.user.name;
+            }
+            return str;
+        }
+        return '';
+    }
+
+    displayDetailTrainer(detail) {
+        if (detail.booking && detail.booking.appointment) {
+            const apt = detail.booking.appointment;
+            if (apt.user)
+                return apt.user.name;
+        }
+        return '';
+    }
+
+    displayOrderQty(order: any) {
+        const order_recurring = JSON.parse(order.recurring);
+        if (order_recurring.cycle == 'monthly') {
+            let str = order_recurring.quantity + (order_recurring.free ? ' + ' + order_recurring.free.quantity + ' FREE' : '');
+            return str;
+        }
+        return order.details.length;
     }
 
     openNew() {
@@ -155,6 +187,7 @@ export class FinanceStatusComponent implements OnInit {
         this.selectedPackage = null;
         // use JSON.parse(JSON.stringify()) to create a brand new object.
         this.order = this.orderService.order;
+        this.customer = null;
     }
 
     edit(order) {
@@ -178,6 +211,7 @@ export class FinanceStatusComponent implements OnInit {
 
     loadPackage() {
         const pkg = this.selectedPackage;
+console.log('loadPackage===', pkg);
         if (pkg && this.order.recurring.package_id != pkg.id) {
             let pkgStartDate = null;
             if (pkg.start_date) {
@@ -191,7 +225,7 @@ console.log('recurring===', recurring);
             this.order.order_total = pkg.price;
             this.order.recurring = recurring;
             this.order.recurring.price = pkg.price;
-            this.order.recurring.start_date = new Date();
+            this.order.start_date = new Date();
             this.calEndDate();
             this.order.recurring.package_id = pkg.id;
         }
@@ -205,15 +239,23 @@ console.log('recurring===', recurring);
             return;
         if (order.serviceId <= 0)
             return;
-        if (order.noOfSession <= 0)
+        if (order.recurring.no_of_session <= 0)
             return;
-        if (!order.recurring.start_date)
+        if (!order.start_date)
             return;
         if (!order.order_total)
             return;
         if (order.recurring.quantity <= 0)
             return;
         me.order.customer_id = me.customer.id;
+        order.recurring.start_date = this.lemonade.formatPostDate(order.start_date);
+        order.recurring.end_date = this.lemonade.formatPostDate(order.end_date);
+console.log('this.selectedPackage333===', this.selectedPackage);
+        order.recurring.package = {
+            id: this.selectedPackage.id,
+            name: this.selectedPackage.name,
+            description: this.selectedPackage.description
+        };
         this.submittingModal = true;   // show submitting modal after validation.
 
         this.orderService.submitOrder(order, function(res) {
@@ -224,10 +266,11 @@ console.log('recurring===', recurring);
                 // clean up
                 me.order = null;
                 me.selectedPackage = undefined;
-                me.printInvoice(res.order_id, 'invoice');
+                me.printInvoice(res.id, 'invoice');
             } else {
                 // error.
                 this.lemonade.error(this.messageService, res);
+
             }
             me.submittingModal = false;   // hide modal.
         });
@@ -286,6 +329,6 @@ console.log('recurring===', recurring);
     }
 
     calEndDate() {
-        this.order.recurring.end_date = this.orderService.calMonthEndDate(this.order.recurring.start_date);
+        this.order.end_date = this.orderService.calMonthEndDate(this.order.start_date);
     }
 }

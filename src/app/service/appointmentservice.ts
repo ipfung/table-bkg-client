@@ -42,6 +42,7 @@ export class AppointmentService {
 
     readonly isApp = environment.isApp;
 
+    validOrder: any;
     /**
      * service object that contains service's name, price...etc
      * it may also contain trainer object in it.
@@ -64,6 +65,7 @@ export class AppointmentService {
             time: ''
         },
         personalInformation: {
+            trainers: null,
             firstname: '',
             lastname: '',
             email: ''
@@ -124,7 +126,13 @@ export class AppointmentService {
     }
 
     hasValidPayment() {
-        return this.paymentSelection && this.lemonade.paymentMethods.length > 1;
+        // if paymentMethods.length is 1, just go to payment gateway directly.
+        return (this.needPayment() && this.lemonade.paymentMethods.length > 1);
+    }
+
+    needPayment() {
+        // if paymentMethods.length is 1, just go to payment gateway directly.
+        return (this.paymentSelection && !this.validOrder);
     }
 
     formatPostDate(d) {
@@ -205,20 +213,49 @@ export class AppointmentService {
             // get from storage. FIXME how to prevent localStorage being removed issue?
             this.appointmentInformation = JSON.parse(sessionStorage.getItem(AppointmentService.APPOINTMENT_SESSION));
         }
-        if (this.appointmentInformation == undefined)
+        if (this.appointmentInformation == undefined) {
             this.prepareDefaultAppointment();
+        }
         if (!this.tableSessions || !this.selectedService) {
             this.api.get('api/user-service').subscribe(resp => {
                 this.selectedService = resp;
                 this.appointmentInformation.timeInformation.serviceId = resp.id;
-                if (resp.trainer) {
+                if (resp.trainers) {
+                    this.validOrder = {
+                        trainers: resp.trainers,
+                        orderNo: resp.order_number,
+                        availableTokenQty: resp.token_quantity
+                    };
+                    this.appointmentInformation.timeInformation.orderNo = this.validOrder.orderNo;
+                    this.appointmentInformation.timeInformation.availableTokenQty = this.validOrder.availableTokenQty;
+                    this.appointmentInformation.personalInformation.trainers = this.validOrder.trainers;
+                } else if (resp.trainer) {
                     this.appointmentInformation.timeInformation.trainerId = resp.trainer.id;
                 }
                 if (resp.room) {
                     this.appointmentInformation.timeInformation.roomId = resp.room.id;
                 }
-                this.tableSessions = resp.sessions;
+                if (resp.trainers) {
+                    let sessions = [],
+                        min_session = resp.no_of_session * resp.session_min;
+                    if (resp.token_quantity > 0) {
+                        for (const key of resp.sessions) {
+                            if ((key.duration - min_session) == 0) {   // change minus symbol(-) to mod(%) can support more than min_session.
+                                sessions.push(key);
+                            }
+                        }
+                    }
+                    this.tableSessions = sessions;
+                } else {
+                    this.tableSessions = resp.sessions;
+                }
             });
+        } else {
+            if (this.validOrder && !this.appointmentInformation.personalInformation.trainers) {
+                this.appointmentInformation.timeInformation.orderNo = this.validOrder.orderNo;
+                this.appointmentInformation.timeInformation.availableTokenQty = this.validOrder.availableTokenQty;
+                this.appointmentInformation.personalInformation.trainers = this.validOrder.trainers;
+            }
         }
         return this.appointmentInformation;
     }
@@ -319,23 +356,24 @@ export class AppointmentService {
      * for end user book real time appointments only, as it checks requiredTrainer.
      */
     getTimeslots() {
+        const timeInfo = this.appointmentInformation.timeInformation;
         let params = {
-            noOfSession: this.appointmentInformation.timeInformation.noOfSession,
-            service_id: this.appointmentInformation.timeInformation.serviceId,
+            noOfSession: timeInfo.noOfSession,
+            service_id: timeInfo.serviceId,
         };
-        if (this.selectedService.requiredTrainer && this.appointmentInformation.timeInformation.trainerId > 0) {
+        if (this.selectedService.requiredTrainer && timeInfo.trainerId > 0) {
             params = {...params, ...{
-                trainer_id: this.appointmentInformation.timeInformation.trainerId
+                trainer_id: timeInfo.trainerId
             }};
-            if (this.appointmentInformation.timeInformation.trainerDate) {
+            if (timeInfo.trainerDate) {
                 params = {...params, ...{
-                    the_date: this.lemonade.formatPostDate(this.appointmentInformation.timeInformation.trainerDate)
+                    the_date: this.lemonade.formatPostDate(timeInfo.trainerDate)
                 }};
             }
         }
-        if (this.selectedService.requiredRoom && this.appointmentInformation.timeInformation.roomId) {
+        if (this.selectedService.requiredRoom && timeInfo.roomId) {
             params = {...params, ...{
-                room_id: this.appointmentInformation.timeInformation.roomId
+                room_id: timeInfo.roomId
             }};
         }
         return this.api.get('api/appointment', params);
@@ -390,7 +428,7 @@ export class AppointmentService {
     }
 
     checkout(orderNo) {
-        if (this.paymentSelection) {
+        if (this.needPayment()) {
             return this.api.url + 'checkout/' + orderNo + (this.isMobile() ? '?urlType=app' : '');
         } else {
             console.log('not support payment.');
@@ -399,7 +437,7 @@ export class AppointmentService {
     }
 
     makePayment(orderNo) {
-        if (this.paymentSelection) {
+        if (this.needPayment()) {
             return this.api.url + 'pay/' + orderNo + (this.isMobile() ? '?urlType=app' : '');
         } else {
             console.log('not support payment.');

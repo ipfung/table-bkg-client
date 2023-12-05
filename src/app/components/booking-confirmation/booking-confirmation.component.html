@@ -32,7 +32,7 @@
         </div>
         <div class="field col-12">
             <label>{{ 'Amount' | translate }}</label>
-            <b>HK${{ appointmentInformation.paymentInformation.price }}</b>
+            <b>{{ appointmentInformation.paymentInformation.price >= 0 ? (appointmentInformation.paymentInformation.price | currency:'HK$') : (-1 == appointmentInformation.paymentInformation.price ? ( 'Deduct from orders' | translate: {order: appointmentInformation.timeInformation.orderNo} ) : '-' ) }}</b>
         </div>
         <div class="field col-12" *ngIf="paymentSelection">
             <label>{{ 'Payment Method' | translate }}</label>

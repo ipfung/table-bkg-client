@@ -17,16 +17,17 @@ export class OrderService {
         payment_status: 'pending',
         payment_amount: 0,
         repeatable: true,
+        start_date: new Date(),
+        end_date: this.calMonthEndDate(new Date()),
         recurring: {
             cycle: 'monthly',
             package_id: 0,
+            package: null,
             quantity: 12,
-            noOfSession: 2,  // min 2 session = 1 hour.
-            start_date: new Date(),
-            end_date: this.calMonthEndDate(new Date()),
+            no_of_session: 2,  // min 2 session = 1 hour.
             free: {
                 quantity: 4,
-                noOfSession: 4  // see above
+                no_of_session: 4  // see above
             }
         },
         paymentInformation: {

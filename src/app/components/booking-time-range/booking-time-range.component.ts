@@ -11,6 +11,7 @@ export class BookingTimeRangeComponent implements OnInit {
 
     serviceSelection: boolean;
     timeInformation: any;
+    personalInformation: any;
     submitted = false;
 
     constructor(public appointmentService: AppointmentService, private router: Router) {
@@ -20,6 +21,7 @@ export class BookingTimeRangeComponent implements OnInit {
         const appointmentInfo = this.appointmentService.getAppointmentInformation();
         this.serviceSelection = this.appointmentService.serviceSelection;
         this.timeInformation = appointmentInfo.timeInformation;
+        this.personalInformation = appointmentInfo.personalInformation;
     }
 
     /**
