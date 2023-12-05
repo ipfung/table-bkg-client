@@ -53,6 +53,7 @@ import {PaymentSuccessfulComponent} from "./components/payment-successful/paymen
 import {PaymentFailComponent} from "./components/payment-fail/payment-fail.component";
 import {ClassCheckinComponent} from "./components/class-checkin/class-checkin.component";
 import {ServiceListComponent} from "./components/service-list/service-list.component";
+import { ReportSalesComponent } from './components/report-sales/report-sales.component';
 @NgModule({
     imports: [
         RouterModule.forRoot([
@@ -107,6 +108,8 @@ import {ServiceListComponent} from "./components/service-list/service-list.compo
                     {path:'reschedule-package/:id', component: ReschedulePackageComponent, canActivate: [ AuthGuardService ]},
                     {path:'appointment-list', component: AppointmentListComponent, canActivate: [ AuthGuardService ]},
                     {path:'checkin/:id', component: ClassCheckinComponent, canActivate: [ AuthGuardService ]},
+
+                    {path: 'report-sales', component: ReportSalesComponent, canActivate: [ AuthGuardService ]},
                 ],
             },
             {path:'index', component: LandingComponent},
