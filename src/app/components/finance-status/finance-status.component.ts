@@ -131,13 +131,22 @@ export class FinanceStatusComponent implements OnInit {
         return '';
     }
 
+    showOrderDetail(detail: any) {
+        return (detail.order_type == 'token' || detail.booking_id > 0);
+    }
+
     displayDetailDescription(detail, showMoreDetail = false) {
         if (detail.order_description) {
+            let str;
             const description = JSON.parse(detail.order_description);
             if (detail.order_type == 'token' && !description.start_time) {
-                return 'Pending';
+                str = 'Ordered: ' + description.quantity + ' * ' + this.appointmentService.getHourBySession(description.no_of_session);
+                if (description.free) {
+                    str += " + Free: " + description.free.quantity + ' * ' + this.appointmentService.getHourBySession(description.free.no_of_session);
+                }
+                return str;
             }
-            let str = this.lemonade.formatDate(description.start_time, true) + ' ' + this.lemonade.formatDateTime(description.start_time) + ' - ' + this.lemonade.formatDateTime(description.end_time);
+            str = this.lemonade.formatDate(description.start_time, true) + ' ' + this.lemonade.formatDateTime(description.start_time) + ' - ' + this.lemonade.formatDateTime(description.end_time);
             if (showMoreDetail && detail.booking && detail.booking.appointment) {
                 const apt = detail.booking.appointment;
                 if (apt.user)
@@ -184,13 +193,54 @@ export class FinanceStatusComponent implements OnInit {
             this.loadSessions(null);
         });
         // make a new appointment information if it is empty.
-        this.selectedPackage = null;
         // use JSON.parse(JSON.stringify()) to create a brand new object.
         this.order = this.orderService.order;
+        this.selectedPackage = null;
         this.customer = null;
     }
 
+    editOrder(order) {
+        this.formHeader = "Edit Form";
+        this.submitted = false;
+        this.orderFormDialog = true;
+        // use JSON.parse(JSON.stringify()) to create a brand new object.
+        const order_recurring = JSON.parse(order.recurring);
+        this.order = {...order};
+
+        const today = new Date();
+        this.minDate = subDays(today, 14);
+        this.maxDate = addDays(today, 60);
+        this.appointmentService.getActivePackages({
+            package_type: 'monthly'
+        }).subscribe(res => {
+            this.packages = res.data;
+            for (let pkg of res.data) {
+                if (pkg.id == order_recurring.package_id) {
+                    this.selectedPackage = pkg;
+                    // make a new appointment information if it is empty.
+                    break;
+                }
+            }
+        });
+        // this.appointmentService.getServices().subscribe(res => {
+        //     this.services = res.data;
+        //     this.loadSessions(null);
+        // });
+        this.customer = order.customer;
+
+        this.order.order_date = new Date(order.order_date);
+        this.order.start_date = new Date(order_recurring.start_date);
+        this.order.end_date = new Date(order_recurring.end_date);
+        this.order.recurring = order_recurring;
+        this.orderFormDialog = true;
+    }
+
     edit(order) {
+        const order_recurring = JSON.parse(order.recurring);
+        if (order_recurring && order_recurring.cycle == 'monthly') {
+            this.editOrder(order);
+            return;
+        }
         this.order = {...order};
         this.new_payment = {
             amount: order.paid_amount,

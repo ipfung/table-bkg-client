@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {ApiService} from "../../service/api.service";
 import {Lemonade} from "../../service/lemonade.service";
 import {AppointmentService} from "../../service/appointmentservice";
-import {ConfirmationService, LazyLoadEvent, MessageService} from "primeng/api";
+import {ConfirmationService, LazyLoadEvent, MenuItem, MessageService} from "primeng/api";
 import {TranslateService} from "@ngx-translate/core";
 import {ActivatedRoute} from "@angular/router";
 
@@ -29,11 +29,14 @@ export class PackageListComponent implements OnInit {
     openForm: boolean;
     disableLoadMore: boolean;
 
+    newActions: MenuItem[];
+
     packages = [];
     editable = false;
 
     // form variables.
     formDialog = false;
+    formGroupEventDialog = false;
     submitted = false;
     pkg: any;
     recurring_types = [];
@@ -68,6 +71,24 @@ export class PackageListComponent implements OnInit {
             }
         ];
         this.day_of_weeks = this.lemonade.weeks;
+        this.translateService.get(['Packages', 'Group Event']).subscribe( msg => {
+            this.newActions = [{
+                label: msg['Packages'],
+                icon: 'pi pi-plus',
+                command: () => {
+                    this.openNew();
+                }
+                // }, {
+                //     separator: true
+            }, {
+                label: msg['Group Event'],
+                icon: 'pi pi-plus',
+                command: () => {
+                    this.openNewGroupEvent();
+                }
+                // label: 'Tokens', icon: 'pi pi-cog', routerLink: ['/setup']
+            }];
+        });
         this.recurring_types = [
             {
                 description: 'Renew every month',
@@ -178,6 +199,26 @@ export class PackageListComponent implements OnInit {
         }
         this.submitted = false;
         this.formDialog = true;
+    }
+
+    openNewGroupEvent() {
+        this.formHeader = "Create Form";
+        this.pkg = {
+            quantity: 4,
+            free_of_charge: false,
+            status: this.statuses[0].code,
+            total_space: 10,
+            recurring: {
+                cycle: 'group_event',
+                repeat: []
+            }
+        };
+        if (this.services.length > 0) {
+            this.pkg.service_id = this.services[0].id;
+            this.pkg.noOfSession = this.services[0].sessions[0].code;
+        }
+        this.submitted = false;
+        this.formGroupEventDialog = true;
     }
 
     /**
@@ -357,7 +398,9 @@ export class PackageListComponent implements OnInit {
                 total_booked: apt.customer_bookings ? apt.customer_bookings.length : 0
             });
         }
-        this.formDialog = true;
+        if (recurring.cycle == 'group_event')
+            this.formGroupEventDialog = true;
+        else this.formDialog = true;
     }
 
     freeOfCharge(evt) {
@@ -378,6 +421,7 @@ export class PackageListComponent implements OnInit {
 
     hideDialog() {
         this.formDialog = false;
+        this.formGroupEventDialog = false;
     }
 
     save() {

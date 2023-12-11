@@ -4,6 +4,8 @@ import {Router} from "@angular/router";
 import {AppointmentService} from "../../service/appointmentservice";
 import {AuthService} from "../../service/auth.service";
 import {Lemonade} from "../../service/lemonade.service";
+import {endOfMonth, isAfter, isBefore, isSameDay} from "date-fns";
+import {addDays} from "@fullcalendar/core/internal";
 
 @Component({
     selector: 'app-booking-form',
@@ -23,6 +25,7 @@ export class BookingFormComponent implements OnInit {
 
     loading = true;
     timeSlots: any[];   // ngIf the tabView is the trick to show. ref: https://stackblitz.com/edit/github-s9uwhf-yy9nq2?file=src%2Fapp%2Fapp.component.ts
+    freeTimeSlots: any[];
 
     multipleYear: boolean;
 
@@ -32,6 +35,10 @@ export class BookingFormComponent implements OnInit {
     nonWorkingDates: Date[];
     trainerTsLoading: boolean;
 
+    // group event
+    minDate: Date;
+    maxDate: Date;
+
     constructor(public appointmentService: AppointmentService, private lemonade: Lemonade, private authService: AuthService, private router: Router) {
     }
 
@@ -40,31 +47,101 @@ export class BookingFormComponent implements OnInit {
         this.timeInformation = appointmentInformation.timeInformation;
         this.paymentInformation = appointmentInformation.paymentInformation;
         this.paymentSelection = this.appointmentService.hasValidPayment();
-        if (this.appointmentService.selectedService)
-            this.timeslotSetting = this.appointmentService.selectedService.timeslotSetting;
-        else {
-            this.timeslotSetting = this.timeInformation.timeslotSetting;
-        }
-        if (this.timeslotSetting == 'week') {
-            // below should be retrieved from service.
-            this.appointmentService.getTimeslots().subscribe(res => {
-                this.today = res['minDate'];
-                this.maxBookDate = res['maxDate'];
-                this.timeSlots = res['data'];
-                this.timeInformation.sessionInterval = res['sessionInterval'];
-                this.multipleYear = (this.today !== this.maxBookDate);
-                this.loading = false;
+        if (this.timeInformation.isFreeSession === true) {
+            this.appointmentService.getTimeslotsForGroupEvent().subscribe(res => {
+                this.freeTimeSlots = res['data'];
+                this.minDate = new Date();
+                this.maxDate = new Date();
+                for (const t of this.freeTimeSlots) {
+                    const sd = new Date(t.start_time),
+                        ed = new Date(t.start_time);
+                    if (this.selectedDate == null)
+                        this.selectedDate = sd;
+                    if (isBefore(sd, this.minDate)) {
+                        this.minDate = sd;
+                    }
+                    if (isAfter(ed, this.maxDate)) {
+                        this.maxDate = ed;
+                    }
+                }
+                this.timeInformation.sessionInterval = 1;   // fake number to pass nextPage()
+                this.loadFreeTimeslotByDate(this.selectedDate);
+                this.loadFreeNonWorkDates({year: this.selectedDate.getFullYear(), month: this.selectedDate.getMonth()});
             });
         } else {
-            // load current year+month
-            let d = new Date();
-            if (this.timeInformation.date && this.timeInformation.time) {
-                d = new Date(this.timeInformation.date);
-                this.selectedDate = d;
-                this.loadTrainerTimeslotByDate(d);
+            if (this.appointmentService.selectedService)
+                this.timeslotSetting = this.appointmentService.selectedService.timeslotSetting;
+            else {
+                this.timeslotSetting = this.timeInformation.timeslotSetting;
             }
-            this.loadTrainerNonWorkDates({year: d.getFullYear(), month: d.getMonth() + 1});
+            if (this.timeslotSetting == 'week') {
+                // below should be retrieved from service.
+                this.appointmentService.getTimeslots().subscribe(res => {
+                    this.today = res['minDate'];
+                    this.maxBookDate = res['maxDate'];
+                    this.timeSlots = res['data'];
+                    this.timeInformation.sessionInterval = res['sessionInterval'];
+                    this.multipleYear = (this.today !== this.maxBookDate);
+                    this.loading = false;
+                });
+            } else {
+                // load current year+month
+                let d = new Date();
+                if (this.timeInformation.date && this.timeInformation.time) {
+                    d = new Date(this.timeInformation.date);
+                    this.selectedDate = d;
+                    this.loadTrainerTimeslotByDate(d);
+                }
+                this.loadTrainerNonWorkDates({year: d.getFullYear(), month: d.getMonth() + 1});
+            }
         }
+    }
+
+    loadFreeTimeslotByDate(d) {
+        this.trainerTsLoading = true;
+        this.timeSlots = [];
+        for (const t of this.freeTimeSlots) {
+            const sd = new Date(t.start_time);
+            if (isSameDay(d, sd)) {
+                this.timeSlots.push(t);
+            }
+        };
+        this.trainerTsLoading = false;
+    }
+
+    loadFreeNonWorkDates(e) {
+        this.loading = true;
+        this.nonWorkingDates = [];
+        let sDateOfMonth = new Date(e.year, e.month, 1);
+        let disableDate = true;
+        const eDateOfMonth = endOfMonth(sDateOfMonth);
+        while (isBefore(sDateOfMonth, eDateOfMonth)) {
+            disableDate = true;
+            for (const t of this.freeTimeSlots) {
+                if (isSameDay(sDateOfMonth, new Date(t.start_time))) {
+                    // found event, enable.
+                    disableDate = false;
+                    break;
+                }
+            }
+            if (disableDate) {
+                this.nonWorkingDates.push(sDateOfMonth);
+            }
+            sDateOfMonth = addDays(sDateOfMonth, 1);
+        }
+        this.loading = false;
+    }
+
+    selectFreeTime(obj) {
+        this.timeInformation.appointment_id = obj.id;
+        this.timeInformation.start_time = obj.start_time;
+        this.timeInformation.end_time = obj.end_time;
+        this.timeInformation.date = this.lemonade.formatPostDate(new Date(obj.start_time));  // for nextPage()
+        this.paymentInformation.apt = obj;  // for confirmation page display only.
+    }
+
+    getFreeBtnCls(obj) {
+        return 'p-button-text timeslot-btn' + (this.timeInformation.appointment_id == obj.id ? ' bg-primary' : '');
     }
 
     loadTrainerTimeslotByDate(d) {
@@ -91,11 +168,19 @@ export class BookingFormComponent implements OnInit {
     }
 
     selectedPreviousDescription() {
+        if (this.timeInformation.isFreeSession == true) {
+            return 'Free Session';
+        }
         return this.appointmentService.getSessionName(this.timeInformation.noOfSession);
     }
 
     selectedDescription() {
         // console.log('this.timeInformation.time=', this.timeInformation.time, this.timeInformation.noOfSession, this.timeInformation.sessionInterval, (this.timeInformation.noOfSession * this.timeInformation.sessionInterval), (this.timeInformation.time + (this.timeInformation.noOfSession * this.timeInformation.sessionInterval)));
+        if (this.timeInformation.isFreeSession == true) {
+            if (this.timeInformation.start_time) {
+                return this.lemonade.formatDate(this.timeInformation.start_time, true) + ' ' + this.lemonade.formatDateTime(this.timeInformation.start_time) + ' - ' + this.lemonade.formatDateTime(this.timeInformation.end_time);
+            }
+        }
         if (this.timeInformation.time) {
             return this.appointmentService.getBookedDateTime(this.timeInformation.date, this.timeInformation.time, this.timeInformation.sessionInterval, this.timeInformation.noOfSession);
         }

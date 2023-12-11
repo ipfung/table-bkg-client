@@ -96,7 +96,7 @@
                 <td style="min-width:20px">
                     <span class="p-column-title">{{ 'Actions' | translate }}</span>
                     <div>
-                        <button pButton type="button" pTooltip="{{ 'Payment Info' | translate }}" tooltipPosition="bottom" class="p-0 p-button-text" icon="pi pi-pencil" (click)="edit(payment)"></button>
+                        <button *ngIf="showCustomer" pButton type="button" pTooltip="{{ 'Payment Info' | translate }}" tooltipPosition="bottom" class="p-0 p-button-text" icon="pi pi-pencil" (click)="edit(payment)"></button>
                         <button *ngIf="appointmentService.paymentSelection" pButton type="button" pTooltip="{{ 'Invoice' | translate }}" tooltipPosition="bottom" class="p-0 p-button-text" icon="pi pi-print" (click)="printInvoice(payment, 'invoice')"></button>
                         <button *ngIf="appointmentService.paymentSelection" pButton [disabled]="payment.payment_status !== 'paid'" type="button" pTooltip="{{ 'Receipt' | translate }}" tooltipPosition="bottom" class="p-0 p-button-text" icon="pi pi-ticket" (click)="printInvoice(payment, 'receipt')"></button>
                         <button *ngIf="showCustomer && payment.payment_status !== 'paid'" [disabled]="payment.reminder" pButton type="button" pTooltip="{{ 'Payment Reminder' | translate }}" tooltipPosition="bottom" class="p-0 p-button-text" icon="pi {{ payment.reminder === 9 ? 'pi-spin pi-spinner' : 'pi-envelope' }}" (click)="paymentReminder(payment)"></button>
@@ -113,15 +113,15 @@
                             <ng-template pTemplate="header">
                                 <tr>
                                     <th pSortableColumn="date">{{ 'Date & Time' | translate }} </th>
-                                    <th pSortableColumn="date">{{ 'Trainer' | translate }} </th>
+                                    <th pSortableColumn="trainer">{{ 'Trainer' | translate }} </th>
                                     <th style="width: 4rem"></th>
                                 </tr>
                             </ng-template>
                             <ng-template pTemplate="body" let-detail>
-                                <tr>
-                                    <td>{{ displayDetailDescription(detail, true) }}</td>
+                                <tr *ngIf="showOrderDetail(detail)">
+                                    <td>{{ displayDetailDescription(detail, false) }}</td>
                                     <td>{{ displayDetailTrainer(detail) }}</td>
-                                    <td><p-button type="button" icon="pi pi-search"></p-button></td>
+                                    <td><p-button *ngIf="detail.booking_id > 0" type="button" icon="pi pi-search"></p-button></td>
                                 </tr>
                             </ng-template>
                             <ng-template pTemplate="emptymessage">
@@ -283,7 +283,7 @@
     <ng-template pTemplate="content">
         <div class="field">
             <label for="order_pkg">{{ 'Packages' | translate }}</label>
-            <p-dropdown id="order_pkg" [options]="packages" [(ngModel)]="selectedPackage" [showClear]="true" (onClick)="loadPackage()" placeholder="{{'Select field' | translate: {field: 'Package' | translate} }}">
+            <p-dropdown id="order_pkg" [options]="packages" [(ngModel)]="selectedPackage" [showClear]="true" (onClick)="loadPackage()" placeholder="{{'Select field' | translate: {field: 'Packages' | translate} }}">
                 <ng-template pTemplate="selectedItem">
                     {{ selectedPackage.name }} <span class="text-xs booking-badge bg-pink-50 text-pink-400">{{ lemonade.getRecurringCycle(selectedPackage.recurring) | translate }}: {{ lemonade.displayRecurring(selectedPackage.recurring) }}</span>
                     <span class="text-xs" *ngIf="selectedPackage.start_date"> {{ lemonade.formatDate(selectedPackage.start_date) }}</span><span class="text-xs" *ngIf="selectedPackage.end_date"> {{ 'to' | translate }} {{ lemonade.formatDate(selectedPackage.end_date) }}</span><span class="text-xs booking-badge bg-purple-50 text-purple-400" *ngIf="selectedPackage.start_time"> {{ lemonade.formatTime(selectedPackage.start_time) }} - {{ lemonade.formatTime(selectedPackage.end_time) }}</span>

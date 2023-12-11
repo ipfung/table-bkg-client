@@ -26,7 +26,7 @@
                 </div>
             </p-tabPanel>
         </p-tabView>
-        <div class="grid" *ngIf="timeslotSetting == 'trainer_date'">
+        <div class="grid" *ngIf="timeslotSetting === 'trainer_date'">
             <div class="col">
                 <p-calendar [(ngModel)]="selectedDate" [disabledDates]="nonWorkingDates" (onMonthChange)="loadTrainerNonWorkDates($event)" (onSelect)="loadTrainerTimeslotByDate($event)" [inline]="true"></p-calendar>
             </div>
@@ -50,6 +50,26 @@
                 </p-panel>
             </div>
         </div>
+        <div class="grid" *ngIf="timeInformation.isFreeSession">
+            <div class="col">
+                <p-calendar [minDate]="minDate" [maxDate]="maxDate" [(ngModel)]="selectedDate" [disabledDates]="nonWorkingDates" (onMonthChange)="loadFreeNonWorkDates($event)" (onSelect)="loadFreeTimeslotByDate($event)" [inline]="true"></p-calendar>
+            </div>
+            <div class="col">
+                <p-progressSpinner *ngIf="trainerTsLoading === true" class="row-spinner"></p-progressSpinner>
+                <p-panel [header]="appointmentService.formatDate(selectedDate, true)">
+                    <p-button *ngFor="let item of timeSlots;" [styleClass]="getFreeBtnCls(item)" (click)="selectFreeTime(item)">
+                        <ng-template pTemplate="content">
+                            <span class="pi pi-angle-right p-button-icon p-button-icon-right ng-star-inserted"></span>
+                            <span class="p-button-label ng-star-inserted">
+                                {{ this.lemonade.formatDateTime(item.start_time) }} - {{ this.lemonade.formatDateTime(item.end_time) }}
+<!--                                {{ this.lemonade.formatFullDateTime(item.start_time, true) }}-->
+                            </span>
+                        </ng-template>
+                    </p-button>
+<!--                    <h5 *ngIf="item.freeslots.length == 0 && !item.dayoff">{{ 'Fully booked' | translate }}</h5>-->
+                </p-panel>
+            </div>
+        </div>
     </ng-template>
     <ng-template pTemplate="footer">
         <div class="grid grid-nogutter justify-content-between ng-star-inserted">
@@ -57,7 +77,7 @@
             <p-button label="{{ (paymentSelection ? 'Payment Method' : 'Confirmation') | translate }}" (onClick)="nextPage()" icon="pi pi-angle-right" iconPos="right"></p-button>
         </div>
         <div class="grid grid-nogutter justify-content-between ng-star-inserted">
-            <div class="flex align-items-center justify-content-center p-2 border-round mr-1">{{ 'Selected' | translate }}: {{ selectedPreviousDescription() }}</div>
+            <div class="flex align-items-center justify-content-center p-2 border-round mr-1">{{ 'Selected' | translate }}: {{ selectedPreviousDescription() | translate }}</div>
             <div class="flex align-items-center justify-content-center p-2 border-round mr-1">{{ 'Selected' | translate }}: {{ selectedDescription() }}</div>
         </div>
     </ng-template>

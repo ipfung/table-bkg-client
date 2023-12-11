@@ -49,6 +49,7 @@ export class BookingTimeRangeComponent implements OnInit {
 
     nextPage() {
         if (this.timeInformation.noOfSession > 0) {
+            this.timeInformation.isFreeSession = false;
             this.appointmentService.getAppointmentInformation().timeInformation = this.timeInformation;
             this.appointmentService.updateUserSelection();
             this.router.navigate(['appointment/datetime']);
@@ -57,5 +58,13 @@ export class BookingTimeRangeComponent implements OnInit {
         }
 
         this.submitted = true;
+    }
+
+    bookFreeSession() {
+        this.timeInformation.noOfSession = this.personalInformation.freeSession;
+        this.timeInformation.isFreeSession = true;
+        this.appointmentService.getAppointmentInformation().timeInformation = this.timeInformation;
+        this.appointmentService.updateUserSelection();
+        this.router.navigate(['appointment/datetime']);
     }
 }

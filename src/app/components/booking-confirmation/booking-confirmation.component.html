@@ -18,25 +18,41 @@
             <label>{{ 'Service' | translate }}</label>
             <b>{{ appointmentService.selectedService ? appointmentService.selectedService.name : '' }}</b>
         </div>
-        <div class="field col-12" *ngIf="appointmentService.selectedService && appointmentService.selectedService.trainer">
-            <label>{{ 'Trainer' | translate }}</label>
-            <b>{{ appointmentService.selectedService.trainer.name }}</b>
+        <div *ngIf="appointmentInformation.timeInformation.appointment_id > 0">
+            <div class="field col-12" *ngIf="appointmentInformation.paymentInformation.apt">
+                <label>{{ 'Trainer' | translate }}</label>
+                <b>{{ appointmentInformation.paymentInformation.apt.user.name }}</b>
+            </div>
+            <div class="field col-12">
+                <label>{{ 'Date & Time' | translate }}</label>
+                <b>{{ appointmentService.formatDate(appointmentInformation.timeInformation.start_time, true) + ' ' + appointmentService.formatDateTime(appointmentInformation.timeInformation.start_time) + ' - ' + appointmentService.formatDateTime(appointmentInformation.timeInformation.end_time) }} </b>
+            </div>
+            <div class="field col-12">
+                <label>{{ 'Amount' | translate }}</label>
+                <b>{{ 'Deduct from orders' | translate: {order: appointmentInformation.timeInformation.orderNo} }}</b>
+            </div>
         </div>
-        <div class="field col-12">
-            <label>{{ 'Duration' | translate }}</label>
-            <b>{{ appointmentService.getSessionName(appointmentInformation.timeInformation.noOfSession) }}</b>
-        </div>
-        <div class="field col-12">
-            <label>{{ 'Date & Time' | translate }}</label>
-            <b>{{ appointmentService.getBookedDateTime(appointmentInformation.timeInformation.date, appointmentInformation.timeInformation.time, appointmentInformation.timeInformation.sessionInterval, appointmentInformation.timeInformation.noOfSession) }} </b>
-        </div>
-        <div class="field col-12">
-            <label>{{ 'Amount' | translate }}</label>
-            <b>{{ appointmentInformation.paymentInformation.price >= 0 ? (appointmentInformation.paymentInformation.price | currency:'HK$') : (-1 == appointmentInformation.paymentInformation.price ? ( 'Deduct from orders' | translate: {order: appointmentInformation.timeInformation.orderNo} ) : '-' ) }}</b>
-        </div>
-        <div class="field col-12" *ngIf="paymentSelection">
-            <label>{{ 'Payment Method' | translate }}</label>
-            <b>{{ appointmentService.getPaymentMethodName(appointmentInformation.paymentInformation.method) }}</b>
+        <div *ngIf="!appointmentInformation.timeInformation.appointment_id">
+            <div class="field col-12" *ngIf="appointmentService.selectedService && appointmentService.selectedService.trainer">
+                <label>{{ 'Trainer' | translate }}</label>
+                <b>{{ appointmentService.selectedService.trainer.name }}</b>
+            </div>
+            <div class="field col-12">
+                <label>{{ 'Duration' | translate }}</label>
+                <b>{{ appointmentService.getSessionName(appointmentInformation.timeInformation.noOfSession) }}</b>
+            </div>
+            <div class="field col-12">
+                <label>{{ 'Date & Time' | translate }}</label>
+                <b>{{ appointmentService.getBookedDateTime(appointmentInformation.timeInformation.date, appointmentInformation.timeInformation.time, appointmentInformation.timeInformation.sessionInterval, appointmentInformation.timeInformation.noOfSession) }} </b>
+            </div>
+            <div class="field col-12">
+                <label>{{ 'Amount' | translate }}</label>
+                <b>{{ appointmentInformation.paymentInformation.price >= 0 ? (appointmentInformation.paymentInformation.price | currency:'HK$') : (-1 == appointmentInformation.paymentInformation.price ? ( 'Deduct from orders' | translate: {order: appointmentInformation.timeInformation.orderNo} ) : '-' ) }}</b>
+            </div>
+            <div class="field col-12" *ngIf="paymentSelection">
+                <label>{{ 'Payment Method' | translate }}</label>
+                <b>{{ appointmentService.getPaymentMethodName(appointmentInformation.paymentInformation.method) }}</b>
+            </div>
         </div>
     </ng-template>
     <ng-template pTemplate="footer">

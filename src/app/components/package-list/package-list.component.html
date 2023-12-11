@@ -3,7 +3,7 @@
         {{ 'Packages' | translate }}
     </div>
     <div class="flex align-items-center justify-content-center py-2 border-round">
-        <button *ngIf="editable" pButton pRipple label="{{ 'New' | translate }}" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
+        <p-splitButton #ua *ngIf="editable" label="{{ 'New' | translate }}" icon="pi pi-plus" class="p-button-success mr-2" (onClick)="ua.onDropdownButtonClick(null)" [model]="newActions"></p-splitButton>
     </div>
 </div>
 <div class="card">
@@ -340,6 +340,235 @@
                             <div *ngIf="!lesson.total_booked || lesson.total_booked <= 0">
 <!--                                <button pButton type="button" *ngIf="lesson.action != 'delete'" pTooltip="{{ 'Delete' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-times" (click)="deactivateLessonDate(lesson, rowIndex)"></button>-->
 <!--                                <button pButton type="button" *ngIf="lesson.action == 'delete'" pTooltip="{{ 'Alive' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-check" (click)="activateLessonDate(lesson, rowIndex)"></button>-->
+                                <button pButton type="button" *ngIf="editable && lesson.action !== 'delete'" pTooltip="{{ 'Edit' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-pencil" (click)="editLessonDate(lesson, rowIndex)"></button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+            <div class="mt-2 text-xs" *ngIf="holidays">{{ 'Skipped holidays' | translate:{ days: holidays.length } }}: <span class="booking-badge bg-pink-50 text-pink-400 mr-2" *ngFor="let holiday of holidays">{{ lemonade.formatDate(holiday.date, true) }}</span></div>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <div class="grid grid-nogutter justify-content-between ng-star-inserted">
+            <div>
+                <button *ngIf="pkg.id > 0 && this.editable && !lessonDateDialog" pButton pRipple pTooltip="{{ 'Delete' | translate }}" icon="pi pi-trash" class="p-button-text" (click)="delete()"></button>
+            </div>
+            <div>
+                <button pButton pRipple label="{{ 'Cancel' | translate }}" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+                <button pButton pRipple [disabled]="lessonDateDialog" label="{{ 'Save' | translate }}" icon="pi pi-check" (click)="save()"></button>
+            </div>
+        </div>
+    </ng-template>
+</p-dialog>
+
+<p-dialog [(visible)]="formGroupEventDialog" [style]="{width:'50em', height: '100vh'}" header="{{ formHeader | translate:{name: 'Group Event' | translate} }}" position="right" [modal]="true" class="p-fluid">
+    <p-confirmDialog header="{{ 'Confirmation' | translate }}" icon="pi pi-clock"></p-confirmDialog>
+    <ng-template pTemplate="content">
+
+        <div class="field">
+            <label for="gp_status">{{ 'Status' | translate }}</label>
+            <p-dropdown id="gp_status" [options]="statuses" optionValue="code" [(ngModel)]="pkg.status" placeholder="{{'Select field' | translate: {field: 'Status' | translate} }}">
+                <ng-template pTemplate="selectedItem">
+                    {{ lemonade.comboRenderer(statuses, pkg.status) | translate }}
+                </ng-template>
+                <ng-template let-item pTemplate="item">
+                    {{ item.name | translate }}
+                </ng-template>
+            </p-dropdown>
+        </div>
+
+        <div class="field">
+            <label for="gp_name"><span class="required">*</span> {{ 'Package Name' | translate }}</label>
+            <input type="text" pInputText id="gp_name" [(ngModel)]="pkg.name" required autofocus [disabled]="pkg.id > 0" [ngClass]="{'ng-invalid ng-dirty' : submitted && !pkg.name}"/>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.name">{{ 'Field is required' | translate: {field: 'Package Name' | translate} }}</small>
+        </div>
+        <div class="field">
+            <label for="gp_description"><span class="required">*</span> {{ 'Description' | translate }}</label>
+            <input type="text" pInputText id="gp_description" [(ngModel)]="pkg.description" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !pkg.description}"/>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.description">{{ 'Field is required' | translate: {field: 'Description' | translate} }}</small>
+        </div>
+
+        <div class="field">
+            <label for="gp_service"><span class="required">*</span> {{ 'Service' | translate }}</label>
+            <p-dropdown id="gp_service" [options]="services" [(ngModel)]="pkg.service_id" optionLabel="name" optionValue="id" [ngClass]="{'ng-invalid ng-dirty' : submitted && !pkg.service_id}"></p-dropdown>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.service_id">{{ 'Field is required' | translate: {field: 'Service' | translate} }}</small>
+        </div>
+
+        <div class="grid">
+            <div class="field col-12 md:col-6">
+                <label for="gp_lesson_number"><span class="required">*</span> {{ 'No. of Appointments' | translate }}</label>
+                <p-inputNumber id="gp_lesson_number" [(ngModel)]="pkg.quantity" mode="decimal" [showButtons]="true" inputId="minmax-buttons" [min]="1" [max]="30"></p-inputNumber>
+                <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.quantity">{{ 'Field is required' | translate: {field: 'No. of Appointments' | translate} }}</small>
+            </div>
+            <div class="field col-12 md:col-6">
+                <label for="gp_duration"><span class="required">*</span> {{ 'Duration' | translate }}</label>
+                <p-dropdown id="gp_duration" [disabled]="pkg.id > 0" [options]="sessions" (onClick)="loadTime()" [(ngModel)]="pkg.no_of_session" optionValue="code" [ngClass]="{'ng-invalid ng-dirty' : submitted && !pkg.no_of_session}">
+                    <ng-template pTemplate="selectedItem">
+                        {{ appointmentService.getSessionName(pkg.no_of_session, sessions) }}
+                    </ng-template>
+                    <ng-template let-time pTemplate="item">
+                        <div *ngIf="time.hour > 0 && time.minute != 30 && time.minute != 0" [translate]="'hour Minutes'" [translateParams]="{hour: time.hour, s: time.hour > 1 ? 's' : '', minute: time.minute, ms: time.minute > 1 ? 's' : ''}"></div>
+                        <div *ngIf="time.hour > 0 && (time.minute == 30 || time.minute == 0)" [translate]="'hour Hours'" [translateParams]="{hour: time.hour, s: time.hour > 1 ? 's' : ''}"></div>
+                        <div *ngIf="time.hour == 0" [translate]="'N minutes'" [translateParams]="{minute: time.minute, s: time.minute > 1 ? 's' : ''}"></div>
+                    </ng-template>
+                </p-dropdown>
+                <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.no_of_session">{{ 'Field is required' | translate: {field: 'Duration' | translate} }}</small>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="field col-12 md:col-6">
+                <label for="gp_location"><span class="required">*</span>  {{ 'Room' | translate }}</label>
+                <p-dropdown id="gp_location" [options]="rooms" [(ngModel)]="pkg.room_id" optionLabel="name" optionValue="id" [showClear]="true" placeholder="{{'Select field' | translate: {field: 'Room' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : isWeekly(pkg) && submitted && !pkg.room_id}">
+                    <ng-template let-item pTemplate="item">
+                        <p-avatar [label]="lemonade.getInitial(item.name)" shape="circle" [style]="{'background-color': item.color, 'color': '#fff'}"></p-avatar>
+                        {{ item.name | translate }}
+                    </ng-template>
+                </p-dropdown>
+                <small class="ng-dirty ng-invalid" *ngIf="isWeekly(pkg) && submitted && !pkg.room_id">{{ 'Field is required' | translate: {field: 'Room' | translate} }}</small>
+            </div>
+            <div class="field col-12 md:col-6">
+                <label for="gp_trainer"><span *ngIf="isWeekly(pkg)" class="required">*</span> {{ 'Trainer' | translate }}</label>
+                <p-dropdown id="gp_trainer" [options]="trainers" [(ngModel)]="pkg.trainer_id" optionLabel="name" optionValue="id" [showClear]="true" placeholder="{{'Select field' | translate: {field: 'Trainer' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : isWeekly(pkg) && submitted && !pkg.trainer_id}">
+                    <!--                <ng-template pTemplate="selectedItem">-->
+                    <!--                    <i class="pi pi-circle-fill" [style]="{color: (appointment.role_color_name)}"></i>-->
+                    <!--                    {{ appointment.user_id }}-->
+                    <!--                </ng-template>-->
+                    <ng-template let-item pTemplate="item">
+                        <i class="pi pi-circle-fill" [style]="{color: item.role.color_name}"></i>
+                        {{ item.name }}
+                    </ng-template>
+                </p-dropdown>
+                <small class="ng-dirty ng-invalid" *ngIf="isWeekly(pkg) && submitted && !pkg.trainer_id">{{ 'Field is required' | translate: {field: 'Trainer' | translate} }}</small>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="field col-12 md:col-6">
+                <label for="gp_total_space">{{ 'Capacity' | translate }}</label>
+                <p-inputNumber id="gp_total_space" [(ngModel)]="pkg.total_space" mode="decimal" [showButtons]="true" inputId="minmax-buttons" [min]="1" [max]="300"></p-inputNumber>
+            </div>
+            <div class="field col-12 md:col-6">
+                <label for="gp_price"><span class="required">*</span> <b> {{ 'Price' | translate }}</b></label>
+                <p-inputNumber id="gp_price" [disabled]="true === pkg.free_of_charge" [(ngModel)]="pkg.price" mode="currency" currency="HKD" locale="zh-HK" [ngClass]="{'ng-invalid ng-dirty' : submitted && (!pkg.price || pkg.price <= 0)}"></p-inputNumber>
+                <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.price">{{ 'Field is required' | translate: {field: 'Price' | translate} }}</small>
+            </div>
+        </div>
+
+        <p-divider align="center">
+            <span class="p-tag">{{ 'Below fields will be disabled once saved.' | translate }}</span>
+        </p-divider>
+
+        <div class="field">
+            <label for="gp_dow"><span *ngIf="isWeekly(pkg)" class="required">*</span> {{ 'Day of Week' | translate }}</label>
+            <p-selectButton id="gp_dow" [disabled]="pkg.id > 0" [options]="day_of_weeks" [(ngModel)]="pkg.recurring.repeat" optionLabel="name" optionValue="code" [multiple]="true" [ngClass]="{'ng-invalid ng-dirty' : isWeekly(pkg) && submitted && pkg.recurring.repeat.length == 0}">
+                <ng-template let-item>
+                    <span class="w-full text-center">{{ item.name | translate }}</span>
+                </ng-template>
+            </p-selectButton>
+            <small class="ng-dirty ng-invalid" *ngIf="isWeekly(pkg) && submitted && pkg.recurring.repeat.length == 0">{{ 'Field is required' | translate: {field: 'Day of Week' | translate} }}</small>
+        </div>
+        <div class="grid">
+            <div class="field col-12 md:col-6">
+                <label for="gp_date"><span *ngIf="isWeekly(pkg)" class="required">*</span> {{ 'Start Date' | translate }}</label>
+                <p-calendar id="gp_date" [disabled]="pkg.id > 0" [(ngModel)]="pkg.start_date" (onSelect)="loadTime()" placeholder="{{'Select field' | translate: {field: 'Start Date' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : isWeekly(pkg) && submitted && !pkg.start_date}" [dateFormat]="lemonade.dateFormat"></p-calendar>
+                <small class="ng-dirty ng-invalid" *ngIf="isWeekly(pkg) && submitted && !pkg.start_date">{{ 'Field is required' | translate: {field: 'Start Date' | translate} }}</small>
+            </div>
+
+            <div class="field col-12 md:col-6">
+                <label for="gp_time"><span *ngIf="isWeekly(pkg)" class="required">*</span> {{ 'Start Time' | translate }}</label>
+                <p-dropdown id="gp_time" [disabled]="times.length == 0 || pkg.id > 0" [options]="times" [(ngModel)]="pkg.start_time" optionValue="time" (onClick)="loadLessonDates()" placeholder="{{'Select field' | translate: {field: 'Time' | translate} }}" [showClear]="true" [ngClass]="{'ng-invalid ng-dirty' : isWeekly(pkg) && submitted && !pkg.start_time}">
+                    <ng-template pTemplate="selectedItem">
+                        {{ pkg.start_time ? this.appointmentService.formatTime(pkg.start_time) : '' }}
+                    </ng-template>
+                    <ng-template let-item pTemplate="item">
+                        {{ this.appointmentService.formatTime(item.time) }}
+                    </ng-template>
+                </p-dropdown>
+                <small class="ng-dirty ng-invalid" *ngIf="isWeekly(pkg) && submitted && !pkg.start_time">{{ 'Field is required' | translate: {field: 'Start Time' | translate} }}</small>
+            </div>
+        </div>
+
+        <p-divider align="center">
+            <span class="p-tag">{{ 'Above fields will be disabled once saved.' | translate }}</span>
+        </p-divider>
+
+        <div class="grid">
+            <div class="field col-12 md:col-6">
+                <label for="gp_end_date">{{ 'End Repeat' | translate }}</label>
+                <p-calendar id="gp_end_date" [(ngModel)]="pkg.end_date" [minDate]="pkg.start_date" [dateFormat]="lemonade.dateFormat"></p-calendar>
+                <small class="jws-tips">{{ 'Leave Empty = Never End Repeat' | translate }}</small>
+            </div>
+
+            <div class="field col-12 md:col-6" style="display: none;">
+                <label for="time">{{ 'End Time' | translate }}</label>
+                <input type="text" pInputText [disabled]="true" value="{{ pkg.start_time && sessionInterval ? lemonade.formatTime(pkg.start_time + (pkg.no_of_session * sessionInterval)) : '' }}"/>
+                <small class="jws-tips">{{ 'Generated by Start Time' | translate }}</small>
+            </div>
+        </div>
+
+        <div class="field" *ngIf="pkg.start_date && pkg.start_time">
+            <p-divider></p-divider>
+
+            <div *ngIf="lessonDateDialog" class="mb-3 p-2 surface-50">
+                <h6>{{ lessonDateFormHeader | translate:{ name: 'Custom Date' | translate } }}</h6>
+                <div class="field col-12" *ngIf="lesson.date">
+                    <label for="gp_do-old">{{ 'Original Date' | translate }}</label>
+                    <p-calendar id="gp_do-old" [disabled]="true" [(ngModel)]="lesson.date" selectionMode="single" required [readonlyInput]="true" [dateFormat]="lemonade.dateFormat" inputId="do-old"></p-calendar>
+                </div>
+                <div class="field col-12">
+                    <label for="gp_do-dates">{{ 'New Custom Date' | translate }}</label>
+                    <p-calendar id="gp_do-dates" [(ngModel)]="lesson.new_date" selectionMode="single" required [ngClass]="{'ng-invalid ng-dirty' : lessonDateSubmitted && !lesson.new_date}" [readonlyInput]="true" [dateFormat]="lemonade.dateFormat" inputId="do-dates"></p-calendar>
+                </div>
+                <div class="col-12">
+                    <div class="lemonade-edit-footer grid grid-nogutter justify-content-between ng-star-inserted">
+                        <div>
+                            <button *ngIf="lesson.idx > 0" pButton pRipple pTooltip="{{ 'Delete' | translate }}" icon="pi pi-trash" class="p-button-text" (click)="deactivateLessonDate()"></button>
+                        </div>
+                        <div>
+                            <button pButton pRipple label="{{ 'Close' | translate }}" icon="pi pi-times" class="p-button-text" (click)="hideLessonDateDialog()"></button>
+                            <button pButton pRipple label="{{ lesson.idx > 0 ? 'Update' : 'Add' | translate }}" icon="pi pi-check" (click)="saveLessonDate()"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <p-table [value]="lessons" [scrollable]="true" scrollHeight="400px">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="max-width:35px"></th>
+                        <th style="min-width:170px"><div>{{ 'Lesson Date & Time' | translate }}</div><div><small class="jws-tips text-xs">{{ 'Auto Generate Appointments ASAP' | translate }}</small></div></th>
+                        <th style="max-width:90px">{{ 'Registered' | translate }}</th>
+                        <th style="max-width:100px">
+                            <button *ngIf="pkg.id > 0 && editable" pButton pRipple pTooltip="{{ 'Create Form' | translate:{ name: 'Custom Date' | translate } }}" icon="pi pi-plus" class="p-button-sm p-button-text" (click)="addCustomDate()"></button>
+                            <button pButton *ngIf="pkg.id > 0 && editable" [disabled]="disableLoadMore" pTooltip="{{ 'Generate More Lesson Dates' | translate }}" icon="pi pi-spin pi-cog" class="p-button-sm p-button-text" (click)="generateLessonDates()"></button>
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage" let-lesson>
+                    <tr>
+                        <td colspan="3">
+                            <span class=" ml-2" [innerHTML]="'Field is required' | translate: {field: 'Lesson Date & Time' | translate}"></span>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-lesson let-rowIndex="rowIndex" let-expanded="expanded">
+                    <tr class="lemonade-row-edit-{{ isEditingLessonDate(lesson) }}">
+                        <td style="max-width:35px">{{ 1+rowIndex }}.</td>
+                        <td style="min-width:170px">
+                            <span class="p-column-title">{{ 'Date & Time' | translate }}</span>
+                            <span [class]="'booking-badge bg-purple-50 text-purple-400 jws-' + lesson.action ">{{ appointmentService.getBookedDateTime(lesson.date, pkg.start_time, sessionInterval, pkg.no_of_session) }}</span>
+                        </td>
+                        <td style="max-width:90px">
+                            <span class="p-column-title">{{ 'Registered' | translate }}</span>
+                            {{ lesson.total_booked ? lesson.total_booked : 0 }}
+                        </td>
+                        <td style="max-width:100px">
+                            <div *ngIf="!lesson.total_booked || lesson.total_booked <= 0">
+                                <!--                                <button pButton type="button" *ngIf="lesson.action != 'delete'" pTooltip="{{ 'Delete' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-times" (click)="deactivateLessonDate(lesson, rowIndex)"></button>-->
+                                <!--                                <button pButton type="button" *ngIf="lesson.action == 'delete'" pTooltip="{{ 'Alive' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-check" (click)="activateLessonDate(lesson, rowIndex)"></button>-->
                                 <button pButton type="button" *ngIf="editable && lesson.action !== 'delete'" pTooltip="{{ 'Edit' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-pencil" (click)="editLessonDate(lesson, rowIndex)"></button>
                             </div>
                         </td>

@@ -268,7 +268,7 @@ export class Lemonade {
 
     displayRecurring(recurringStr) {
         const recurring = JSON.parse(recurringStr);
-        if ('weekly' == recurring.cycle) {
+        if ('weekly' == recurring.cycle || 'group_event' == recurring.cycle) {
             const WEEK_NAMES = ['', "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
             return recurring.repeat.map(e => WEEK_NAMES[e]);
         }
@@ -293,7 +293,7 @@ export class Lemonade {
         this.translateService.get(['Succeed', message]).subscribe( msg => {
             messageService.add({
                 severity: 'success',
-                summary: msg['Success'],
+                summary: msg['Succeed'],
                 detail: msg[message]
             });
         });

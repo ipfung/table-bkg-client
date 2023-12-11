@@ -46,6 +46,8 @@ export class BookingConfirmationComponent implements OnInit {
     }
 
     selectedPreviousDateTimeDescription() {
+        if (this.appointmentInformation.timeInformation.appointment_id > 0)
+            return this.appointmentService.formatDate(this.appointmentInformation.timeInformation.start_time, true) + ' ' + this.appointmentService.formatDateTime(this.appointmentInformation.timeInformation.start_time) + ' - ' + this.appointmentService.formatDateTime(this.appointmentInformation.timeInformation.end_time)
         return this.appointmentService.getBookedDateTime(this.appointmentInformation.timeInformation.date, this.appointmentInformation.timeInformation.time, this.appointmentInformation.timeInformation.sessionInterval, this.appointmentInformation.timeInformation.noOfSession);
     }
 

@@ -14,26 +14,38 @@
                     <b>{{ appointmentService.selectedService ? appointmentService.selectedService.name : '' }}</b>
                 </div>
             </div>
-            <div class="grid">
-                <div class="field col-12" *ngIf="timeInformation.availableTokenQty">
-                    <label>{{ 'Order No.' | translate }} & {{ 'Remaining Session' | translate }}</label>
-                    <b>{{ timeInformation.orderNo }}: {{ timeInformation.availableTokenQty }} {{ 'session' | translate }}</b>
+            <div class="grid" *ngIf="timeInformation.availableTokenQty">
+                <div class="field col-12">
+                    <label>{{ 'Order No.' | translate }}</label>
+                    <b>{{ timeInformation.orderNo }}</b>
                 </div>
             </div>
-            <div class="grid">
-                <div class="field col-12 md:col-6" *ngIf="timeInformation.availableTokenQty">
+            <div class="grid" *ngIf="timeInformation.availableTokenQty">
+                <div class="field col-12">
+                    <label>{{ 'Remaining Session' | translate }}</label>
+                    <b>{{ timeInformation.availableTokenQty }} {{ 'session' | translate }}</b>
+                </div>
+            </div>
+            <div class="grid" *ngIf="personalInformation.freeQty">
+                <div class="field col-12">
+                    <label>{{ 'No. of Free Lesson' | translate }}</label>
+                    <b>{{ personalInformation.freeQty }} x {{ appointmentService.getSessionName(personalInformation.freeSession) }} <a (click)="bookFreeSession()">{{ 'Book free session now' | translate }}</a></b>
+                </div>
+            </div>
+            <div class="grid" *ngIf="timeInformation.availableTokenQty">
+                <div class="field col-12 md:col-6">
                     <label for="trainer">{{ 'My Trainer' | translate }}</label>
                     <p-dropdown id="trainer" [(ngModel)]="timeInformation.trainerId" [options]="personalInformation.trainers" optionValue="id" optionLabel="name"></p-dropdown>
                 </div>
             </div>
-            <div class="grid">
-                <div class="field col-12" *ngIf="!timeInformation.availableTokenQty && appointmentService.selectedService && appointmentService.selectedService.trainer">
+            <div class="grid" *ngIf="!timeInformation.availableTokenQty && appointmentService.selectedService && appointmentService.selectedService.trainer">
+                <div class="field col-12">
                     <label>{{ 'Trainer' | translate }}</label>
                     <b>{{ appointmentService.selectedService.trainer.name }}</b>
                 </div>
             </div>
-            <div class="grid">
-                <div class="field col-12" *ngIf="appointmentService.selectedService && appointmentService.selectedService.room">
+            <div class="grid" *ngIf="appointmentService.selectedService && appointmentService.selectedService.room">
+                <div class="field col-12">
                     <label>{{ 'Room' | translate }}</label>
                     <b>{{ appointmentService.selectedService.room.name }}</b>
                 </div>

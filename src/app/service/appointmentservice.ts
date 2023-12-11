@@ -102,6 +102,7 @@ export class AppointmentService {
     paymentComplete$ = this.paymentComplete.asObservable();
 
     deviceInfo = null;
+    private needRefresh: boolean;
 
     constructor(public api: ApiService, private translateService: TranslateService, private lemonade: Lemonade, private authService: AuthService, private deviceService: DeviceDetectorService) {
         this.deviceInfo = this.deviceService.getDeviceInfo();
@@ -216,19 +217,22 @@ export class AppointmentService {
         if (this.appointmentInformation == undefined) {
             this.prepareDefaultAppointment();
         }
-        if (!this.tableSessions || !this.selectedService) {
+        if (!this.tableSessions || !this.selectedService || this.needRefresh) {
             this.api.get('api/user-service').subscribe(resp => {
+                this.needRefresh = false;
                 this.selectedService = resp;
                 this.appointmentInformation.timeInformation.serviceId = resp.id;
                 if (resp.trainers) {
                     this.validOrder = {
                         trainers: resp.trainers,
                         orderNo: resp.order_number,
-                        availableTokenQty: resp.token_quantity
+                        availableTokenQty: resp.token_quantity,
+                        perSession: resp.no_of_session * resp.session_min,
+                        freeQty: resp.free_quantity,
+                        freeSession: resp.free_no_of_session
                     };
-                    this.appointmentInformation.timeInformation.orderNo = this.validOrder.orderNo;
-                    this.appointmentInformation.timeInformation.availableTokenQty = this.validOrder.availableTokenQty;
-                    this.appointmentInformation.personalInformation.trainers = this.validOrder.trainers;
+                    this.setValidOrder();
+                    this.selectedService.requiredTrainer = true;
                 } else if (resp.trainer) {
                     this.appointmentInformation.timeInformation.trainerId = resp.trainer.id;
                 }
@@ -236,11 +240,13 @@ export class AppointmentService {
                     this.appointmentInformation.timeInformation.roomId = resp.room.id;
                 }
                 if (resp.trainers) {
-                    let sessions = [],
-                        min_session = resp.no_of_session * resp.session_min;
+                    let sessions = [],   // create a new array to store max session.
+                        cus_max_order_duration = this.validOrder.availableTokenQty * this.validOrder.perSession;
                     if (resp.token_quantity > 0) {
+                        // resp.sessions contains 'all' available
                         for (const key of resp.sessions) {
-                            if ((key.duration - min_session) == 0) {   // change minus symbol(-) to mod(%) can support more than min_session.
+                            // check if customer remaining hour still can book which duration.
+                            if (cus_max_order_duration >= key.duration) {
                                 sessions.push(key);
                             }
                         }
@@ -252,12 +258,18 @@ export class AppointmentService {
             });
         } else {
             if (this.validOrder && !this.appointmentInformation.personalInformation.trainers) {
-                this.appointmentInformation.timeInformation.orderNo = this.validOrder.orderNo;
-                this.appointmentInformation.timeInformation.availableTokenQty = this.validOrder.availableTokenQty;
-                this.appointmentInformation.personalInformation.trainers = this.validOrder.trainers;
+                this.setValidOrder();
             }
         }
         return this.appointmentInformation;
+    }
+
+    setValidOrder() {
+        this.appointmentInformation.timeInformation.orderNo = this.validOrder.orderNo;
+        this.appointmentInformation.timeInformation.availableTokenQty = this.validOrder.availableTokenQty;
+        this.appointmentInformation.personalInformation.trainers = this.validOrder.trainers;
+        this.appointmentInformation.personalInformation.freeQty = this.validOrder.freeQty;
+        this.appointmentInformation.personalInformation.freeSession = this.validOrder.freeSession;
     }
 
     getRescheduleTimeslots(trainerDate?) {
@@ -379,6 +391,17 @@ export class AppointmentService {
         return this.api.get('api/appointment', params);
     }
 
+    /**
+     * for end user book real time appointments only, as it checks requiredTrainer.
+     */
+    getTimeslotsForGroupEvent() {
+        const timeInfo = this.appointmentInformation.timeInformation;
+        return this.api.get('api/group-event-packages', {
+            noOfSession: timeInfo.noOfSession,
+            service_id: timeInfo.serviceId,
+        });
+    }
+
     getTrainerNonWorkDates(trainerId, year, month) {
         return this.api.get('api/trainer-non-workdate/' + trainerId, {
             y: year,
@@ -417,6 +440,7 @@ export class AppointmentService {
                     }, ...me.appointmentInformation});
                 // clear after payment complete.
                 me.clearUserSelection();
+                this.needRefresh = true;
             } else {
                 me.paymentComplete.next(res);
             }
@@ -578,6 +602,12 @@ export class AppointmentService {
         }
         return '';
     }
+
+    getHourBySession(no_of_session) {
+        const MIN_SESSION = 2;
+        const session = (no_of_session  / MIN_SESSION);
+        return session + ' Hour' + (session > 1 ? 's' : '');
+    }
 }
 
 @Injectable()
@@ -593,6 +623,12 @@ export class AppointmentStepsGuardService implements CanActivate {
                     resolve(false);
                 }
             });
+            const rpath = route.routeConfig.path,
+                srv = this.appointmentService.selectedService;
+            if (!srv && (rpath === 'confirmation' || rpath === 'payment' || rpath === 'datetime')) {
+                this.router.navigate(['/appointment/']);
+                resolve(false);
+            }
             if (!this.appointmentService.serviceSelection) {
                 const isValid = this.appointmentService.isAppointmentValid();
 // console.log('AppointmentStepsGuardService isvalid=', isValid, route.routeConfig.path);
