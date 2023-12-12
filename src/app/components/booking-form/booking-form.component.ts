@@ -50,10 +50,11 @@ export class BookingFormComponent implements OnInit {
         this.paymentSelection = this.appointmentService.hasValidPayment();
         if (this.timeInformation.isFreeSession === true) {
             this.appointmentService.getTimeslotsForGroupEvent().subscribe(res => {
+                this.loading = false;
                 this.freeTimeSlots = res['data'];
                 this.timeSlots = [];
-                this.noFreeSessionAvailable = false;
-                if (this.freeTimeSlots.length > 0) {
+                if (this.freeTimeSlots && this.freeTimeSlots.length > 0) {
+                    this.noFreeSessionAvailable = false;
                     this.minDate = new Date();
                     this.maxDate = new Date();
                     for (const t of this.freeTimeSlots) {
@@ -76,6 +77,8 @@ export class BookingFormComponent implements OnInit {
                     });
                 } else {
                     this.noFreeSessionAvailable = true;
+                    this.timeInformation.sessionInterval = 0;   // fake number to not allow to nextPage()
+                    this.timeInformation.date = null;
                 }
             });
         } else {
@@ -120,7 +123,6 @@ export class BookingFormComponent implements OnInit {
     }
 
     loadFreeNonWorkDates(e) {
-        this.loading = true;
         this.nonWorkingDates = [];
         let sDateOfMonth = new Date(e.year, e.month, 1);
         let disableDate = true;
@@ -139,7 +141,6 @@ export class BookingFormComponent implements OnInit {
             }
             sDateOfMonth = addDays(sDateOfMonth, 1);
         }
-        this.loading = false;
     }
 
     selectFreeTime(obj) {
