@@ -397,7 +397,7 @@ export class AppointmentService {
     getTimeslotsForGroupEvent() {
         const timeInfo = this.appointmentInformation.timeInformation;
         return this.api.get('api/group-event-packages', {
-            noOfSession: timeInfo.noOfSession,
+            no_of_session: timeInfo.noOfSession,
             service_id: timeInfo.serviceId,
         });
     }

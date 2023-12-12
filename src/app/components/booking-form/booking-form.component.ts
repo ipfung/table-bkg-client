@@ -38,6 +38,7 @@ export class BookingFormComponent implements OnInit {
     // group event
     minDate: Date;
     maxDate: Date;
+    noFreeSessionAvailable: boolean;
 
     constructor(public appointmentService: AppointmentService, private lemonade: Lemonade, private authService: AuthService, private router: Router) {
     }
@@ -50,23 +51,32 @@ export class BookingFormComponent implements OnInit {
         if (this.timeInformation.isFreeSession === true) {
             this.appointmentService.getTimeslotsForGroupEvent().subscribe(res => {
                 this.freeTimeSlots = res['data'];
-                this.minDate = new Date();
-                this.maxDate = new Date();
-                for (const t of this.freeTimeSlots) {
-                    const sd = new Date(t.start_time),
-                        ed = new Date(t.start_time);
-                    if (this.selectedDate == null)
-                        this.selectedDate = sd;
-                    if (isBefore(sd, this.minDate)) {
-                        this.minDate = sd;
+                this.timeSlots = [];
+                this.noFreeSessionAvailable = false;
+                if (this.freeTimeSlots.length > 0) {
+                    this.minDate = new Date();
+                    this.maxDate = new Date();
+                    for (const t of this.freeTimeSlots) {
+                        const sd = new Date(t.start_time),
+                            ed = new Date(t.start_time);
+                        if (this.selectedDate == null)
+                            this.selectedDate = sd;
+                        if (isBefore(sd, this.minDate)) {
+                            this.minDate = sd;
+                        }
+                        if (isAfter(ed, this.maxDate)) {
+                            this.maxDate = ed;
+                        }
                     }
-                    if (isAfter(ed, this.maxDate)) {
-                        this.maxDate = ed;
-                    }
+                    this.timeInformation.sessionInterval = 1;   // fake number to pass nextPage()
+                    this.loadFreeTimeslotByDate(this.selectedDate);
+                    this.loadFreeNonWorkDates({
+                        year: this.selectedDate.getFullYear(),
+                        month: this.selectedDate.getMonth()
+                    });
+                } else {
+                    this.noFreeSessionAvailable = true;
                 }
-                this.timeInformation.sessionInterval = 1;   // fake number to pass nextPage()
-                this.loadFreeTimeslotByDate(this.selectedDate);
-                this.loadFreeNonWorkDates({year: this.selectedDate.getFullYear(), month: this.selectedDate.getMonth()});
             });
         } else {
             if (this.appointmentService.selectedService)
@@ -133,6 +143,9 @@ export class BookingFormComponent implements OnInit {
     }
 
     selectFreeTime(obj) {
+        if (obj.package.total_space - obj.no_of_booked <= 0) {
+            return;
+        }
         this.timeInformation.appointment_id = obj.id;
         this.timeInformation.start_time = obj.start_time;
         this.timeInformation.end_time = obj.end_time;
@@ -230,5 +243,9 @@ export class BookingFormComponent implements OnInit {
 
     prevPage() {
         this.router.navigate(['appointment/time-range']);
+    }
+
+    isOutOfSpace(obj) {
+        return (obj.package.total_space - obj.no_of_booked <= 0);
     }
 }

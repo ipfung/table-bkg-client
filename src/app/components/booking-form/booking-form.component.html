@@ -51,19 +51,21 @@
             </div>
         </div>
         <div class="grid" *ngIf="timeInformation.isFreeSession">
+            <h4 *ngIf="noFreeSessionAvailable">{{ 'There is no group lesson available' | translate }}</h4>
             <div class="col">
-                <p-calendar [minDate]="minDate" [maxDate]="maxDate" [(ngModel)]="selectedDate" [disabledDates]="nonWorkingDates" (onMonthChange)="loadFreeNonWorkDates($event)" (onSelect)="loadFreeTimeslotByDate($event)" [inline]="true"></p-calendar>
+                <p-calendar [disabled]="timeSlots.length == 0" [minDate]="minDate" [maxDate]="maxDate" [(ngModel)]="selectedDate" [disabledDates]="nonWorkingDates" (onMonthChange)="loadFreeNonWorkDates($event)" (onSelect)="loadFreeTimeslotByDate($event)" [inline]="true"></p-calendar>
             </div>
-            <div class="col">
+            <div class="col" *ngIf="timeSlots.length > 0">
                 <p-progressSpinner *ngIf="trainerTsLoading === true" class="row-spinner"></p-progressSpinner>
                 <p-panel [header]="appointmentService.formatDate(selectedDate, true)">
-                    <p-button *ngFor="let item of timeSlots;" [styleClass]="getFreeBtnCls(item)" (click)="selectFreeTime(item)">
+                    <p-button *ngFor="let item of timeSlots;" [disabled]="isOutOfSpace(item)" [styleClass]="getFreeBtnCls(item)" (click)="selectFreeTime(item)">
                         <ng-template pTemplate="content">
                             <span class="pi pi-angle-right p-button-icon p-button-icon-right ng-star-inserted"></span>
                             <span class="p-button-label ng-star-inserted">
                                 {{ this.lemonade.formatDateTime(item.start_time) }} - {{ this.lemonade.formatDateTime(item.end_time) }}
 <!--                                {{ this.lemonade.formatFullDateTime(item.start_time, true) }}-->
                             </span>
+                            <span class="text-right align-items-end align-content-end justify-content-end">{{ 'Remaining space' | translate: {number: (item.package.total_space - item.no_of_booked)} }}</span>
                         </ng-template>
                     </p-button>
 <!--                    <h5 *ngIf="item.freeslots.length == 0 && !item.dayoff">{{ 'Fully booked' | translate }}</h5>-->
