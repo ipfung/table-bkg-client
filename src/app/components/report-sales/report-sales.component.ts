@@ -64,7 +64,7 @@ export class ReportSalesComponent implements OnInit {
 
 loadSalesReport()
 {
-  this.api.get('api/finance').subscribe(res => {
+  this.api.get('api/report-sales').subscribe(res => {
      
     this.bookings = res.data;  
             
@@ -153,6 +153,10 @@ exportExcel2()
 
     // STEP 4: Write Excel file to browser
     xlsx.writeFile(wb, "xlsx-js-style-demo.xlsx");
+}
+
+exportExcel3(){
+  //export-report-sales-xlsx
 }
 
 exportPdf() {
