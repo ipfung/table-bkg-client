@@ -252,7 +252,7 @@
                         <p-inputNumber id="company_income" [(ngModel)]="partner.settings.company_income" mode="currency" currency="HKD" locale="zh-HK" [max]="partner.settings.trainer_charge" (onInput)="updateCompanyIncome($event)" [ngClass]="{'ng-invalid ng-dirty' : submitted && !commission_bal}"></p-inputNumber>
                         <small class="ng-dirty ng-invalid" *ngIf="submitted && !commission_bal">{{ 'The equation is not correct' | translate }}</small>
                     </div>
-                    
+
                 </div>
                <!-- trainer price input section-->
 <!--                 <div class="grid">
@@ -299,12 +299,12 @@
                         <label for="company_income">{{ 'Add New' | translate }}</label><br/>
                         <button class="btn" (click)="doAddTrainerRate()" >+</button>
                     </div>
-                    
+
                 </div> -->
                 <!-- trainer price input section-->
                 <div class="grid">
                     <div class="field col-12 md:col-2">
-                        <label for="trainer">{{ 'Trainer' | translate }}</label>                        
+                        <label for="trainer">{{ 'Trainer' | translate }}</label>
                         <p-dropdown [options]="trainers" [(ngModel)]="tr_trainer" optionLabel="label" optionLabel="name" optionValue="id" ></p-dropdown>
                     </div>
                     <div class="field col-12 md:col-2">
@@ -316,7 +316,7 @@
                         <label for="trainer_charge">{{ 'Charge' | translate }}</label>
                         <p-inputNumber id="tr_trainer_charge" [(ngModel)]="tr_trainer_charge"   locale="zh-HK" (onInput)="updateTrainerCharge($event)"></p-inputNumber>
                     </div>
-                   
+
 
                     <div class="field col-12 md:col-2">
                         <label for="trainer_commission">{{ 'Trainer Commission' | translate }}</label>
@@ -333,11 +333,11 @@
                         <label for="add_new">{{ 'Add New' | translate }}</label><br/>
                         <button pButton pRipple type="button" class="p-button-rounded p-button-text p-button-success mr-2" (click)="doAddTrainerRate()" icon="pi pi-plus" ></button>
                     </div>
-                    
+
                 </div>
                 <!-- End trainer price input section-->
                 <!--  new trainer price table section -->
-                <div class="grid">                    
+                <div class="grid">
                     <div class="field col-12 md:col-6">
                        <p-table [value]="trainerrates"  dataKey="id" editMode="row"  [paginator]="false" [rows]="rows" [loading]="loading" [totalRecords]="totalRecords" sortField="id"  responsiveLayout="stack">
                             <ng-template pTemplate="header">
@@ -352,29 +352,29 @@
                             </ng-template>
                             <ng-template pTemplate="body" let-trainer_rates let-editing="editing" let-ri="rowIndex">
                                 <tr [pEditableRow]="trainer_rates">
-                                    <td style="min-width:120px">  
+                                    <td style="min-width:120px">
                                         <p-cellEditor>
                                             <ng-template pTemplate="input">
                                                 <p-dropdown [options]="trainers" [(ngModel)]="trainer_rates.trainer" optionLabel="name" optionValue="id" ></p-dropdown>
 
                                             </ng-template>
                                             <ng-template pTemplate="output">
-                                                {{ trainer_rates.users.name }}   
+                                                {{ trainer_rates.users.name }}
                                             </ng-template>
-                                        </p-cellEditor>                                   
+                                        </p-cellEditor>
                                     </td>
-                                    <td style="min-width:100px">         
+                                    <td style="min-width:100px">
                                         <p-cellEditor>
                                             <ng-template pTemplate="input">
                                                 <p-dropdown [options]="ratetypes" [(ngModel)]="trainer_rates.rate_type" ></p-dropdown>
 
                                             </ng-template>
-                                            <ng-template let-item pTemplate="output">                                              
-                                               <div *ngIf ="trainer_rates.rate_type==1" >{{ '1 on 1' }}</div> 
-                                               <div *ngIf ="trainer_rates.rate_type!=1" >{{ 'Group' }}</div> 
+                                            <ng-template let-item pTemplate="output">
+                                               <div *ngIf ="trainer_rates.rate_type==1" >{{ '1 on 1' }}</div>
+                                               <div *ngIf ="trainer_rates.rate_type!=1" >{{ 'Group' }}</div>
                                             </ng-template>
-                                        </p-cellEditor>                              
-                                       
+                                        </p-cellEditor>
+
                                     </td>
                                     <td style="max-width:80px">
                                         <p-cellEditor>
@@ -385,9 +385,9 @@
                                                 {{trainer_rates.trainer_charge}}
                                             </ng-template>
                                         </p-cellEditor>
-                                    </td>                                  
-                                    <td style="max-width:80px">                                      
-                                        
+                                    </td>
+                                    <td style="max-width:80px">
+
                                         <p-cellEditor>
                                             <ng-template pTemplate="input">
                                                 <input pInputText type="text" [(ngModel)]="trainer_rates.trainer_commission ">
@@ -397,8 +397,8 @@
                                             </ng-template>
                                         </p-cellEditor>
                                     </td>
-                                    <td style="max-width:80px">                                       
-                                        
+                                    <td style="max-width:80px">
+
                                         <p-cellEditor>
                                             <ng-template pTemplate="input">
                                               <!--   <input pInputText type="text" [(ngModel)]="trainer_rates.company_income"> -->
@@ -408,9 +408,9 @@
                                                 {{trainer_rates.company_income}}
                                             </ng-template>
                                         </p-cellEditor>
-                                    </td>                                    
+                                    </td>
                                     <td style="min-width:100px">
-                                        
+
                                         <div class="flex align-items-center justify-content-center gap-2">
                                             <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(trainer_rates)" class="p-button-rounded p-button-text"></button>
                                             <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave(trainer_rates)" class="p-button-rounded p-button-text p-button-success mr-2"></button>
@@ -422,9 +422,100 @@
                             </ng-template>
                         </p-table>
                     </div>
-                </div> 
-               
+                </div>
+
                 <!-- end new trainer price table section -->
+            </p-tabPanel>
+
+            <p-tabPanel [disabled]="!(partner.id > 0)" header="{{ 'Finance' | translate }}">
+                <div id="customer-order" class="grid">
+                    <div class="col">
+                        <h4>{{ 'Monthly Summary' | translate }}</h4>
+                        <div class="grid surface-500 text-white">
+                            <div class="col-6">
+                                {{ 'One to one' | translate }}
+                            </div>
+                            <div class="col-6">
+                                {{ getPkg(selectedOrder, 'qty') }}
+                            </div>
+                            <div class="col-6">
+                                {{ 'Group session' | translate }}
+                            </div>
+                            <div class="col-6">
+                                {{ getPkg(selectedOrder, 'free_qty') }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <h5>{{ 'Month' | translate }}</h5>
+                        <p-dropdown [options]="customer_orders" [(ngModel)]="selectedOrder" optionLabel="order_date"></p-dropdown>
+                        <div class="mt-2">
+                            <p-button class="p-button-sm p-button-rounded" label="{{ 'New Booking' | translate }}" routerLink="/appointment"></p-button>
+                        </div>
+                    </div>
+                </div>
+                <div id="customer-order-month" class="grid mt-3">
+                    <div class="col bg-primary">
+                        {{ getPkg(selectedOrder, 'date_range') }}
+                    </div>
+                </div>
+
+                <div class="mt-3" *ngIf="selectedOrder && selectedOrder.details">
+                    <p-table [value]="selectedOrder.details" styleClass="p-datatable-sm p-datatable-gridlines" dataKey="id">
+                        <ng-template pTemplate="caption">
+                            <div class="table-header">
+                                {{ '1 to 1 training' | translate }}
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th pSortableColumn="date">{{ 'Date & Time' | translate }} </th>
+                                <th pSortableColumn="trainer">{{ 'Trainer' | translate }} </th>
+                                <th style="width: 4rem"></th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-detail>
+                            <tr *ngIf="showOrderDetail(detail, 'used_token')">
+                                <td>{{ displayDetailDescription(detail, 'used_token', false) }}</td>
+                                <td>{{ displayDetailTrainer(detail, 'used_token') }}</td>
+                                <td><p-button *ngIf="detail.booking_id > 0" type="button" icon="pi pi-search"></p-button></td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="6">There are no details for this order yet.</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+
+                    <div class="mt-3"></div>
+                    <p-table [value]="selectedOrder.details" styleClass="p-datatable-sm p-datatable-gridlines" dataKey="id">
+                        <ng-template pTemplate="caption">
+                            <div class="table-header">
+                                {{ 'Group Event' | translate }}
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th pSortableColumn="date">{{ 'Date & Time' | translate }} </th>
+                                <th pSortableColumn="trainer">{{ 'Trainer' | translate }} </th>
+                                <th style="width: 4rem"></th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-detail>
+                            <tr *ngIf="showOrderDetail(detail, 'free_token')">
+                                <td>{{ displayDetailDescription(detail, 'free_token', false) }}</td>
+                                <td>{{ displayDetailTrainer(detail, 'free_token') }}</td>
+                                <td><p-button *ngIf="detail.booking_id > 0" type="button" icon="pi pi-search"></p-button></td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="6">There are no details for this order yet.</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
             </p-tabPanel>
 
             <p-tabPanel *ngIf="this.showQr" [disabled]="!(partner.id > 0)" header="{{ 'Student Card' | translate }}">

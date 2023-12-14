@@ -45,10 +45,12 @@ export class UserListComponent implements OnInit {
     services = [];
     sessions = [];
     statuses = [];
-    
+    customer_orders = [];
+    selectedOrder: any;
+
     ratetypes: SelectItem[];
 
-    
+
 
     formHeader = "Edit Form";
     // customer's notifications.
@@ -75,6 +77,9 @@ export class UserListComponent implements OnInit {
     tr_trainer_charge = 0;
     IsUpdate :boolean = false;
 
+    // search + open form
+    paramCustId: any;
+
     // end by Jeffrey
     private subscription;
 
@@ -82,6 +87,7 @@ export class UserListComponent implements OnInit {
         this.route.params.subscribe(params => {
             this.paramRole = params['role'] || 'Student';
         });
+        this.paramCustId = this.route.snapshot.paramMap.get('id');
     }
 
     async ngOnInit() {
@@ -102,20 +108,20 @@ export class UserListComponent implements OnInit {
             this.trainers = res.data;
         });
 
-        
+
 
         this.api.get('api/rooms', {
             status: 1001
         }).subscribe( res => {
             this.rooms = res.data;
         });
-        
+
         // load student roles only.
         this.api.get('api/get-roles').subscribe( res => {
             this.roles = res.data;
         });
 
-        this.ratetypes = [{ label:"1 on 1",value :1 },{label:"Group", value:2}]; 
+        this.ratetypes = [{ label:"1 on 1",value :1 },{label:"Group", value:2}];
         //load trainer rates
        /*  this.api.get('api/trainerrate').subscribe( res => {
             this.trainerrates = res.data;
@@ -153,6 +159,9 @@ export class UserListComponent implements OnInit {
         if (this.userStatus) {
             params = {...params, ...{status: this.userStatus}};
         }
+        if (this.paramCustId) {
+            params = {...params, ...{id: this.paramCustId}};
+        }
         console.log('hiuser selectedRole=', this.selectedRole);
         if (this.selectedRole && this.selectedRole.length > 0) {
             const roles = this.selectedRole.map(a => a.id);
@@ -170,6 +179,10 @@ export class UserListComponent implements OnInit {
             this.loading = false;
             this.rows = res.per_page;
             this.totalRecords = res.total;
+            if (this.paramCustId) {
+                // open form
+                this.edit(this.users[0]);
+            }
         });
     }
 
@@ -242,16 +255,26 @@ export class UserListComponent implements OnInit {
         this.isNew = false;
 
         this.loadTrainerRates(user.id);
+        this.loadOrder();
 
         console.log("trainer=",this.trainers);
-       /*  this.trainerrates=[]; 
+       /*  this.trainerrates=[];
         this.api.get('api/trainerrates-bystudentid/'+ user.id).subscribe( res => {
-            this.trainerrates = res.data;            
+            this.trainerrates = res.data;
         });
         console.log("edit view trainerrates=",this.trainerrates); */
     }
 
-    
+    loadOrder() {
+        this.api.get('api/finance', {
+            customer_id: this.partner.id,
+            order_type: 'token',
+            from_date: '2023-01-01'
+        }).subscribe(res => {
+            this.customer_orders = res.data;
+            this.selectedOrder = res.data[0];
+        });
+    }
 
     generateQr() {
         this.api.get('api/student-qr/' + this.partner.id).subscribe( res => {
@@ -332,7 +355,7 @@ export class UserListComponent implements OnInit {
         this.tr_company_income = e.value - this.tr_trainer_commission;
     }
 
-    updateTrainerCommission2(e) {        
+    updateTrainerCommission2(e) {
         this.tr_company_income =  this.tr_trainer_charge - e.value;
     }
 
@@ -406,7 +429,7 @@ export class UserListComponent implements OnInit {
                // this.hideDialog();
                this.loadTrainerRates(res.data.student_id);
                this.lemonade.ok(this.messageService);
-               
+
             } else {
                 // error.
                 this.lemonade.error(this.messageService, res);
@@ -424,7 +447,6 @@ export class UserListComponent implements OnInit {
     doUpdateTrainerRate(trainerrate){
         trainerrate.IsUpdate = false;
     } */
-
     doDelTrainerRate(trainerrate)
     {
         let student_id = trainerrate.student_id;
@@ -435,7 +457,7 @@ export class UserListComponent implements OnInit {
                     this.api.delete('api/trainerrates/' +  trainerrate.id ).subscribe(res => {
                         if (res.success == true) {
                             this.loadTrainerRates(student_id);
-                            
+
                             this.lemonade.ok(this.messageService, 'The record is deleted successfully.');
                         } else {
                             this.lemonade.error(this.messageService, res);
@@ -459,7 +481,7 @@ export class UserListComponent implements OnInit {
                // this.hideDialog();
                 this.loadTrainerRates(student_id);
                 this.lemonade.ok(this.messageService);
-               
+
             } else {
                 // error.
                 this.lemonade.error(this.messageService, res);
@@ -467,7 +489,7 @@ export class UserListComponent implements OnInit {
         }, error => {
             this.lemonade.validateError(this.messageService, error);
         }); */
-        
+
     }
 
     onRowEditInit(trainerrate ){
@@ -486,7 +508,7 @@ export class UserListComponent implements OnInit {
             if (res.success === true) {
                this.loadTrainerRates(res.data.student_id);
                this.lemonade.ok(this.messageService);
-               
+
             } else {
                 // error.
                 this.lemonade.error(this.messageService, res);
@@ -502,12 +524,60 @@ export class UserListComponent implements OnInit {
 
     loadTrainerRates(user_id)
     {
-        //this.trainerrates=[]; 
+        //this.trainerrates=[];
         this.api.get('api/trainerrates-bystudentid/'+ user_id).subscribe( res => {
-            this.trainerrates = res.data;           
+            this.trainerrates = res.data;
             console.log("loadTrainerRate=", res.data) ;
         });
     }
 
+    displayDetailDescription(detail, type: string, showMoreDetail = false) {
+        if (detail.order_type == type && detail.order_description) {
+            let str;
+            const description = JSON.parse(detail.order_description);
+            if (detail.order_type == 'token' && !description.start_time) {
+                str = 'Ordered: ' + description.quantity + ' * ' + this.appointmentService.getHourBySession(description.no_of_session);
+                if (description.free) {
+                    str += " + Free: " + description.free.quantity + ' * ' + this.appointmentService.getHourBySession(description.free.no_of_session);
+                }
+                return str;
+            }
+            str = this.lemonade.formatDate(description.start_time, true) + ' ' + this.lemonade.formatDateTime(description.start_time) + ' - ' + this.lemonade.formatDateTime(description.end_time);
+            if (showMoreDetail && detail.booking && detail.booking.appointment) {
+                const apt = detail.booking.appointment;
+                if (apt.user)
+                    str += " / " + apt.user.name;
+            }
+            return str;
+        }
+        return '';
+    }
 
+    displayDetailTrainer(detail: any, type: string) {
+        if (detail.order_type == type && detail.booking && detail.booking.appointment) {
+            const apt = detail.booking.appointment;
+            if (apt.user)
+                return apt.user.name;
+        }
+        return '';
+    }
+
+    showOrderDetail(detail: any, type: string) {
+        return (detail.order_type == type && detail.booking_id > 0);
+    }
+
+    getPkg(selectedOrder: any, name: string) {
+        if (selectedOrder && selectedOrder.recurring) {
+            const recurring = JSON.parse(selectedOrder.recurring);
+            switch (name) {
+                case 'qty':
+                    return recurring.quantity + ' x ' + this.appointmentService.getHourBySession(recurring.no_of_session);
+                case 'free_qty':
+                    return recurring.free.quantity + ' x ' + this.appointmentService.getHourBySession(recurring.free.no_of_session);
+                case 'date_range':
+                    return recurring.start_date + ' to ' + recurring.end_date;
+            }
+        }
+        return '-';
+    }
 }
