@@ -83,9 +83,7 @@ export class FinanceStatusComponent implements OnInit {
     }
 
     searchCustomers(e) {
-        this.api.get('api/users', {
-            name: e.query
-        }).subscribe(res => {
+        this.appointmentService.getActiveCustomers(e.query).subscribe( res => {
             this.customers = res.data;
         });
     }
