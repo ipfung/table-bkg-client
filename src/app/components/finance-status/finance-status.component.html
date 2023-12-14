@@ -63,8 +63,8 @@
                 <td *ngIf="showCustomer" style="min-width:120px">
                     <span class="p-column-title">{{ 'Customer' | translate }}</span>
                     <div>
-                        <p-avatar [label]="lemonade.getInitial(payment.customer.name)" shape="circle" class="lemonade-avatar" [style]="{background: payment.customer.role.color_name}"></p-avatar>
-                        {{ payment.customer.name }}<br />
+                        <p-avatar [label]="lemonade.getInitial(payment.customer.name)" shape="circle" class="lemonade-avatar mr-1" [style]="{background: payment.customer.role.color_name}"></p-avatar>
+                        <a [routerLink]="['/partner-list/Student', {id: payment.customer.id}]">{{ payment.customer.name }}</a><br />
                         <span class="text-sm text-gray-500">{{ payment.customer.email }}</span>
                     </div>
                 </td>
