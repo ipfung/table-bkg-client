@@ -17,8 +17,9 @@ import *  as xlsx from 'xlsx-js-style';
   styleUrls: ['./report-sales.component.scss']
 })
 export class ReportSalesComponent implements OnInit {
+    private EXCEL_EXTENSION = '.xlsx';
 
-  
+
 
   sales = [];
   cols: any[];
@@ -27,12 +28,12 @@ export class ReportSalesComponent implements OnInit {
   exportColumns: any[];
 
   constructor(private api: ApiService, public appointmentService: AppointmentService, private translateService: TranslateService, public lemonade: Lemonade, private route: ActivatedRoute) { }
-  
 
-  ngOnInit(): void {   
+
+  ngOnInit(): void {
     this.loadSalesReport();
 
-    
+
   }
 
   /* loadData(event: LazyLoadEvent) {
@@ -65,9 +66,9 @@ export class ReportSalesComponent implements OnInit {
 loadSalesReport()
 {
   this.api.get('api/report-sales').subscribe(res => {
-     
-    this.bookings = res.data;  
-            
+
+    this.bookings = res.data;
+
     console.log("loadPaymentReport=", res.data) ;
   });
 }
@@ -82,7 +83,7 @@ exportExcel() {
     amount: '$'  + row.order_total,
     payment_status: row.payment_status,
     //payment_gateway:row.payment_gateway
-    
+
   }));
   import("xlsx").then(xlsx => {
     /*
@@ -97,7 +98,7 @@ exportExcel() {
       this.saveAsExcelFile(excelBuffer, "Sales");
 */
 
-        
+
 
         let pageheader = [["Victory Table Tennis Limited" ]];
         let Heading = [["Order Date", "Order No.", "Student", "Amount", "Payment Status"]];
@@ -105,24 +106,24 @@ exportExcel() {
         const wb = xlsx.utils.book_new();
         const WorkSheet = xlsx.utils.json_to_sheet([]);
 
-        
+
 
         xlsx.utils.sheet_add_aoa(WorkSheet, pageheader, { origin: "A1" });
 
         WorkSheet["A1"].s = {
           font: {
-            
+
             bold: true,
             color: { rgb: "FFFFAA00" },
           },
         };
         xlsx.utils.sheet_add_aoa(WorkSheet, Heading, { origin: "A5" });
-        
+
         //Starting in the second row to avoid overriding and skipping headers
         xlsx.utils.sheet_add_json(WorkSheet, rows, { origin: 'A6', skipHeader: true });
         WorkSheet["A5"].s = {font: { bold:true,color:"#f2f2f2" }};
 
-       
+
         xlsx.utils.book_append_sheet(wb, WorkSheet, 'Sheet1');
         WorkSheet["!cols"] = [{width:20},{width:20},{width:20},{width:20},{width:18}]
         //xlsx.utils.sheet_add_aoa(WorkSheet, [[{total:"1000"}]], { origin: 'A25' });
@@ -155,8 +156,27 @@ exportExcel2()
     xlsx.writeFile(wb, "xlsx-js-style-demo.xlsx");
 }
 
-exportExcel3(){
-  //export-report-sales-xlsx
+exportExcel3() {
+    console.log('export-report-sales-xlsx===');
+    this.downloadfile().subscribe((resp: any) => {
+        // const fileSaver: any = new FileSaver();
+        // fileSaver.responseData = resp.body;
+        // fileSaver.strFileName = 'testdata.xls';
+        // fileSaver.strMimeType = 'application/vnd.ms-excel;charset=utf-8';
+        // fileSaver.initSaveFile();
+        FileSaver.saveAs(resp.body, '_export_' + new Date().getTime() + this.EXCEL_EXTENSION);
+    });
+}
+
+downloadfile() {
+    const formDataForExport: FormData = new FormData();
+    formDataForExport.append('export', 'ALL');
+
+    return this.api.post('api/export-report-sales-xlsx', formDataForExport, {
+        headers: { 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9' },
+        responseType: 'blob',
+        observe: 'response'
+    });
 }
 
 exportPdf() {
@@ -171,11 +191,10 @@ exportPdf() {
 
 saveAsExcelFile(buffer: any, fileName: string): void {
   let EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-  let EXCEL_EXTENSION = '.xlsx';
   const data: Blob = new Blob([buffer], {
       type: EXCEL_TYPE
   });
-  FileSaver.saveAs(data, fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION);
+  FileSaver.saveAs(data, fileName + '_export_' + new Date().getTime() + this.EXCEL_EXTENSION);
 }
 
 }
