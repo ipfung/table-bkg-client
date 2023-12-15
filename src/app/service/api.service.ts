@@ -39,7 +39,7 @@ export class ApiService {
     return this.http.get(this.url + endpoint, reqOpts);
   }
 
-  post(endpoint: string, params: object): Observable<any> {
+  post(endpoint: string, params: object, options?: object): Observable<any> {
     if (this.isApp) {
         if (!params) {
             params = {};
@@ -48,7 +48,7 @@ export class ApiService {
             '_via': 'app'
         }};
     }
-    return this.http.post(this.url + endpoint, params);
+    return this.http.post(this.url + endpoint, params, options);
   }
 
   update(endpoint: string, params: object): Observable<any> {
