@@ -1,8 +1,34 @@
-<p-table #dt [columns]="cols" [value]="bookings"  responsiveLayout="scroll" [exportHeader]="'customExportHeader'">
-    <ng-template pTemplate="caption">
+<div class="flex justify-content-between">
+    <div class="flex align-items-center justify-content-center p-2 border-round mr-1 text-2xl font-bold">
+        {{ 'Finance' | translate }}
+    </div>
+</div>
+
+<div class="card">
+    <!-- Search fields -->
+    <div class="p-fluid grid">
+        <div class="field col-12 md:col-4">
+            <p-calendar [(ngModel)]="rangeDates" selectionMode="range" placeholder="{{ 'Search F' | translate:{field: 'Payment Date' | translate } }}" [readonlyInput]="true" inputId="range" (onSelect)="loadSalesData($event)" [dateFormat]="lemonade.dateFormat"></p-calendar>
+        </div>
+        <div *ngIf="showCustomer" class="field col-12 md:col-4">
+            <p-autoComplete [(ngModel)]="searchCustomer" [forceSelection]="true" [suggestions]="customers" (completeMethod)="searchCustomers($event)" (onSelect)="loadData($event)" field="name" placeholder="{{ 'Search F' | translate:{field: 'Customer' | translate} }}"></p-autoComplete>
+        </div>
+        <div class="field col-12 md:col-4">
+            <p-dropdown [options]="paymentStatusList" [(ngModel)]="searchPaymentStatus" optionLabel="name" optionValue="code" [showClear]="true" (onChange)="loadSalesData($event)" placeholder="{{ 'Search F' | translate:{field: 'Payment Status' | translate } }}">
+                <ng-template let-pay pTemplate="item">
+                    <div class="payment-item">
+                        <div [style]="{color: pay.color, 'font-weight': 'bold'}">{{pay.name}}</div>
+                    </div>
+                </ng-template>
+            </p-dropdown>
+        </div>
+    </div>
+    
+    <p-table [value]="bookings" [lazy]="true" (onLazyLoad)="loadSalesData($event)" [paginator]="true" [rows]="rows" [loading]="loading" [totalRecords]="totalRecords" dataKey="id" sortField="order_date" sortMode="single" responsiveLayout="stack">
+        <ng-template pTemplate="caption">
         <div class="flex">
              <button type="button" pButton pRipple icon="pi pi-file" (click)="exportExcel3()" class="mr-2" pTooltip="CSV" tooltipPosition="bottom"></button> 
-            <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcel()" class="p-button-success mr-2"  pTooltip="XLS" tooltipPosition="bottom"></button>
+            <!-- <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcel()" class="p-button-success mr-2"  pTooltip="XLS" tooltipPosition="bottom"></button> -->
             <!-- <button type="button" pButton pRipple icon="pi pi-file-pdf" (click)="exportPdf()" class="p-button-warning mr-2" pTooltip="PDF" tooltipPosition="bottom"></button>            -->
         </div>
     </ng-template>
@@ -34,7 +60,6 @@
             </td>            
         </tr>
     </ng-template>
-</p-table>
-<a href="/export-report-order" >
-    <i class="fa fa-file-excel-o"></i> Export to Excel
- </a>
+    </p-table>
+</div>
+
