@@ -73,7 +73,7 @@ export class BookingFormComponent implements OnInit {
                     this.loadFreeTimeslotByDate(this.selectedDate);
                     this.loadFreeNonWorkDates({
                         year: this.selectedDate.getFullYear(),
-                        month: this.selectedDate.getMonth()
+                        month: 1+this.selectedDate.getMonth()
                     });
                 } else {
                     this.noFreeSessionAvailable = true;
@@ -122,9 +122,13 @@ export class BookingFormComponent implements OnInit {
         this.trainerTsLoading = false;
     }
 
+    /**
+     * note params month is 1-12 based, need to use 0-11 based when converting to Date object.
+     * @param e with year & month properties.
+     */
     loadFreeNonWorkDates(e) {
         this.nonWorkingDates = [];
-        let sDateOfMonth = new Date(e.year, e.month, 1);
+        let sDateOfMonth = new Date(e.year, e.month-1, 1);
         let disableDate = true;
         const eDateOfMonth = endOfMonth(sDateOfMonth);
         while (isBefore(sDateOfMonth, eDateOfMonth)) {
