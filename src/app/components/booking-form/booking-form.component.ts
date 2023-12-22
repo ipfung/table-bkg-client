@@ -49,7 +49,7 @@ export class BookingFormComponent implements OnInit {
         this.paymentInformation = appointmentInformation.paymentInformation;
         this.paymentSelection = this.appointmentService.hasValidPayment();
         if (this.timeInformation.isFreeSession === true) {
-            this.appointmentService.getTimeslotsForGroupEvent().subscribe(res => {
+            this.appointmentService.getTimeslotsForGroupEvent(this.timeInformation.noOfSession, this.timeInformation.serviceId).subscribe(res => {
                 this.loading = false;
                 this.freeTimeSlots = res['data'];
                 this.timeSlots = [];

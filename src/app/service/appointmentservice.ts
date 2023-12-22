@@ -394,11 +394,10 @@ export class AppointmentService {
     /**
      * for end user book real time appointments only, as it checks requiredTrainer.
      */
-    getTimeslotsForGroupEvent() {
-        const timeInfo = this.appointmentInformation.timeInformation;
+    getTimeslotsForGroupEvent(noOfSession, serviceId) {
         return this.api.get('api/group-event-packages', {
-            no_of_session: timeInfo.noOfSession,
-            service_id: timeInfo.serviceId,
+            no_of_session: noOfSession,
+            service_id: serviceId,
         });
     }
 
