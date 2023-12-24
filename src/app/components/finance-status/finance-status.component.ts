@@ -1,5 +1,5 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {addDays, subDays} from "date-fns";
+import {addDays, addYears, isBefore, subDays} from "date-fns";
 import {ApiService} from "../../service/api.service";
 import {Lemonade} from "../../service/lemonade.service";
 import {LazyLoadEvent, MessageService} from "primeng/api";
@@ -373,5 +373,22 @@ console.log('this.selectedPackage333===', this.selectedPackage);
 
     calEndDate() {
         this.order.end_date = this.orderService.calMonthEndDate(this.order.start_date);
+    }
+
+    loadBookings(payment: any) {
+        if (!payment.bookings) {
+            // loading appointments from server.
+            this.appointmentService.getBookings({
+                from_date: '2000-01-01',
+                to_date: this.lemonade.formatPostDate(addYears(new Date(), 1)),
+                orderId: payment.id
+            }).subscribe(res => {
+                payment.bookings = res.data;
+            });
+        }
+    }
+
+    canReschedule(appointment) {
+        return (appointment.take_leave_at == null && appointment.checkin == null && isBefore(new Date(), new Date(appointment.start_time)));
     }
 }
