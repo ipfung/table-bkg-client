@@ -74,6 +74,11 @@ export class FinanceStatusComponent implements OnInit {
             this.rangeDates = [subDays(new Date(), 365), addDays(new Date(), 7)];
         }
         this.payment_statuses = this.lemonade.paymentStatuses;
+        this.appointmentService.getActivePackages({
+            package_type: 'monthly'
+        }).subscribe(res => {
+            this.packages = res.data;
+        });
         // addition payment methods.
         const methods = [{
             code: 'cash',
@@ -180,11 +185,6 @@ export class FinanceStatusComponent implements OnInit {
         const today = new Date();
         this.minDate = subDays(today, 14);
         this.maxDate = addDays(today, 60);
-        this.appointmentService.getActivePackages({
-            package_type: 'monthly'
-        }).subscribe(res => {
-            this.packages = res.data;
-        });
         this.appointmentService.getServices().subscribe(res => {
             this.services = res.data;
             this.order.serviceId = this.services[0].id;
@@ -208,18 +208,13 @@ export class FinanceStatusComponent implements OnInit {
         const today = new Date();
         this.minDate = subDays(today, 14);
         this.maxDate = addDays(today, 60);
-        this.appointmentService.getActivePackages({
-            package_type: 'monthly'
-        }).subscribe(res => {
-            this.packages = res.data;
-            for (let pkg of res.data) {
-                if (pkg.id == order_recurring.package_id) {
-                    this.selectedPackage = pkg;
-                    // make a new appointment information if it is empty.
-                    break;
-                }
+        for (let pkg of this.packages) {   // this.package has to be retrieved in ngOnInit, ajax here won't display to combo correctly.
+            if (pkg.id == order_recurring.package_id) {
+                this.selectedPackage = pkg;
+                // make a new appointment information if it is empty.
+                break;
             }
-        });
+        }
         // this.appointmentService.getServices().subscribe(res => {
         //     this.services = res.data;
         //     this.loadSessions(null);
