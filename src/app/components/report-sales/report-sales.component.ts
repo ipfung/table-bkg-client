@@ -164,7 +164,7 @@ export class ReportSalesComponent implements OnInit {
             // fileSaver.strFileName = 'testdata.xls';
             // fileSaver.strMimeType = 'application/vnd.ms-excel;charset=utf-8';
             // fileSaver.initSaveFile();
-            FileSaver.saveAs(resp.body, '_export_' + new Date().getTime() + this.EXCEL_EXTENSION);
+            FileSaver.saveAs(resp.body, 'Sales Report_' + new Date().getTime() + this.EXCEL_EXTENSION);
         });
     }
 
