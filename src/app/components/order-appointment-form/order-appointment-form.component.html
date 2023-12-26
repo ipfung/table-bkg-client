@@ -1,0 +1,102 @@
+<p-toast></p-toast>
+
+<p-dialog [(visible)]="showDialog" [style]="{width:'50em', height: '100vh'}" header="{{ 'New Booking' | translate }} - {{ appointment.timeInformation.orderNo }}" position="right" [modal]="true" class="p-fluid">
+    <ng-template pTemplate="content">
+        <div class="field">
+            <label for="customer">{{ 'Customer' | translate }}</label>
+            <br />
+            <b id="customer">{{ order.customer.name }}</b>
+        </div>
+
+        <div class="field-radiobutton">
+            <p-radioButton name="order_type" value="token" [disabled]="order.token_quantity <= 0" [(ngModel)]="order_type" (onClick)="loadCalendar()" inputId="to1"></p-radioButton>
+            <label for="to1">{{ '1 to 1 training' | translate }} ({{ order.token_quantity }} {{ 'session' | translate }})</label>
+        </div>
+        <div class="field-radiobutton">
+            <p-radioButton name="order_type" value="free_token" [disabled]="order.free_quantity <= 0" [(ngModel)]="order_type" (onClick)="loadCalendar()" inputId="group1"></p-radioButton>
+            <label for="group1">{{ 'Group Event' | translate }} ({{ order.free_quantity }} x {{ appointmentService.getSessionName(order.free_no_of_session, sessions) }})</label>
+        </div>
+
+        <div class="field" *ngIf="!isGroupSession()">
+            <label for="trainer"><span class="required">*</span> {{ 'Trainer' | translate }}</label>
+            <p-dropdown id="trainer" [options]="trainers" [(ngModel)]="appointment.timeInformation.trainerId" optionLabel="name" optionValue="id" (onClick)="loadTime($event)" placeholder="{{'Select field' | translate: {field: 'Trainer' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : submitted && !isGroupSession() && appointment.timeInformation.trainerId <= 0}">
+                <ng-template let-item pTemplate="item">
+                    <i class="pi pi-circle-fill" [style]="{color: item.role.color_name}"></i>
+                    {{ item.name }}
+                </ng-template>
+            </p-dropdown>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !isGroupSession() && appointment.timeInformation.trainerId <= 0">{{ 'Field is required' | translate: {field: 'Trainer' | translate} }}</small>
+        </div>
+
+        <div class="field" *ngIf="!isGroupSession()">
+            <label for="room"><span class="required">*</span> {{ 'Room' | translate }}</label>
+            <p-dropdown id="room" [options]="rooms" [(ngModel)]="appointment.timeInformation.roomId" optionLabel="name" optionValue="id" [showClear]="true" placeholder="{{'Select field' | translate: {field: 'Room' | translate} }}" (onClick)="loadTime($event)" [ngClass]="{'ng-invalid ng-dirty' : submitted && !isGroupSession() && appointment.timeInformation.roomId <= 0}">
+                <ng-template let-item pTemplate="item">
+                    <p-avatar [label]="lemonade.getInitial(item.name)" shape="circle" [style]="{'background-color': item.color, 'color': '#fff'}"></p-avatar>
+                    {{ item.name | translate }}
+                </ng-template>
+            </p-dropdown>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !isGroupSession() && appointment.timeInformation.roomId <= 0">{{ 'Field is required' | translate: {field: 'Room' | translate} }}</small>
+        </div>
+
+        <div class="field">
+            <label for="duration"><span class="required">*</span> {{ 'Duration' | translate }}</label>
+            <p-dropdown id="duration" [disabled]="isGroupSession()" [options]="sessions" [(ngModel)]="appointment.timeInformation.noOfSession" optionValue="code" (onClick)="loadTime($event)">
+                <ng-template pTemplate="selectedItem">
+                    {{ appointmentService.getSessionName(appointment.timeInformation.noOfSession, sessions) }}
+                </ng-template>
+                <ng-template let-time pTemplate="item">
+                    <div *ngIf="time.hour > 0 && time.minute != 30 && time.minute != 0" [translate]="'hour Minutes'" [translateParams]="{hour: time.hour, s: time.hour > 1 ? 's' : '', minute: time.minute, ms: time.minute > 1 ? 's' : ''}"></div>
+                    <div *ngIf="time.hour > 0 && (time.minute == 30 || time.minute == 0)" [translate]="'hour Hours'" [translateParams]="{hour: time.hour, s: time.hour > 1 ? 's' : ''}"></div>
+                    <div *ngIf="time.hour == 0" [translate]="'N minutes'" [translateParams]="{minute: time.minute, s: time.minute > 1 ? 's' : ''}"></div>
+                </ng-template>
+            </p-dropdown>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !appointment.timeInformation.noOfSession">{{ 'Field is required' | translate: {field: 'Duration' | translate} }}</small>
+        </div>
+
+        <div class="field">
+            <label for="appointment_date"><span class="required">*</span> {{ 'Date' | translate }}</label>
+            <p-calendar id="appointment_date" [(ngModel)]="appointment.timeInformation.date" [minDate]="minDate" [maxDate]="maxDate" [disabledDates]="nonWorkingDates" (onSelect)="loadTime($event)" (onMonthChange)="loadNonWorkDates($event)" required [ngClass]="{'ng-invalid ng-dirty' : submitted && !appointment.timeInformation.date}"></p-calendar>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !appointment.timeInformation.date">{{ 'Field is required' | translate: {field: 'Date' | translate} }}</small>
+        </div>
+
+        <div class="field" *ngIf="isGroupSession()">
+            <label for="group_time"><span class="required">*</span> {{ 'Group Time' | translate }}</label>
+            <p-dropdown id="group_time" [disabled]="freeTimes.length == 0" [options]="freeTimes" required [(ngModel)]="groupLesson" (onClick)="selectFreeTime()" [ngClass]="{'ng-invalid ng-dirty' : submitted && isGroupSession() && !appointment.timeInformation.appointment_id}">
+                <ng-template pTemplate="selectedItem">
+                    {{ this.lemonade.formatDateTime(groupLesson.start_time) }} - {{ this.lemonade.formatDateTime(groupLesson.end_time) }}
+                </ng-template>
+                <ng-template let-item pTemplate="item">
+                    <div class="flex align-items-center justify-content-between">
+                        {{ this.lemonade.formatDateTime(item.start_time) }} - {{ this.lemonade.formatDateTime(item.end_time) }}
+                        <span class="text-sm">{{ 'Remaining space' | translate: {number: (item.package.total_space - item.no_of_booked)} }}</span>
+                    </div>
+                    <span class="text-sm booking-badge bg-pink-50 text-pink-400"> {{ item.package.name | translate }} - <span class="text-xs">{{ item.package.description }}</span></span>
+                </ng-template>
+            </p-dropdown>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && isGroupSession() && !appointment.timeInformation.appointment_id">{{ 'Field is required' | translate: {field: 'Group Time' | translate} }}</small>
+        </div>
+
+        <div class="field" *ngIf="!isGroupSession()">
+            <label for="appointment_time"><span class="required">*</span> {{ 'Time' | translate }}</label>
+            <p-dropdown id="appointment_time" [disabled]="times.length == 0" [options]="times" required [(ngModel)]="appointment.timeInformation.time" optionValue="time" [ngClass]="{'ng-invalid ng-dirty' : submitted && !isGroupSession() && !appointment.timeInformation.time}">
+                <ng-template pTemplate="selectedItem">
+                    {{ appointment.timeInformation.time ? this.appointmentService.formatTime(appointment.timeInformation.time) : '' }}
+                </ng-template>
+                <ng-template let-item pTemplate="item">
+                    <div class="flex align-items-center justify-content-between">
+                        <div>{{ this.appointmentService.formatTime(item.time) }}</div>
+                    </div>
+                </ng-template>
+            </p-dropdown>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !isGroupSession() && !appointment.timeInformation.time">{{ 'Field is required' | translate: {field: 'Time' | translate} }}</small>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="{{ 'Cancel' | translate }}" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="{{ 'Save' | translate }}" icon="pi pi-check" class="p-button-text" (click)="saveOrderAppointment()"></button>
+    </ng-template>
+</p-dialog>
+
+<app-submit-modal [visible]="submittingModal"></app-submit-modal>

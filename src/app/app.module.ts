@@ -179,6 +179,8 @@ import { PaymentFailComponent } from './components/payment-fail/payment-fail.com
 import { ClassCheckinComponent } from './components/class-checkin/class-checkin.component';
 import { PackageListComponent } from './components/package-list/package-list.component';
 import {DashboardService} from "./service/dashboard.service";
+import { OrderAppointmentFormComponent } from './components/order-appointment-form/order-appointment-form.component';
+import { OrderAppointmentListComponent } from './components/order-appointment-list/order-appointment-list.component';
 import { ReportSalesComponent } from './components/report-sales/report-sales.component';
 import { ReportTrainerCommissionsComponent } from './components/report-trainer-commissions/report-trainer-commissions.component';
 import { AppointmentBlocksComponent } from './components/appointment-blocks/appointment-blocks.component';
@@ -356,6 +358,8 @@ export function createTranslateLoader(http: HttpClient) {
         PaymentFailComponent,
         ClassCheckinComponent,
         AppointmentCalendarComponent,
+        OrderAppointmentFormComponent,
+        OrderAppointmentListComponent,
         ReportSalesComponent,
         ReportTrainerCommissionsComponent,
         AppointmentBlocksComponent,

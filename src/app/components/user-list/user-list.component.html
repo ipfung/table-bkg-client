@@ -427,94 +427,50 @@
                 <!-- end new trainer price table section -->
             </p-tabPanel>
 
-            <p-tabPanel [disabled]="!(partner.id > 0)" header="{{ 'Finance' | translate }}">
+            <p-tabPanel *ngIf="selectedOrder" [disabled]="!(partner.id > 0)" header="{{ 'Finance' | translate }}">
                 <div id="customer-order" class="grid">
-                    <div class="col">
-                        <h4>{{ 'Monthly Summary' | translate }}</h4>
+                    <div class="col-12 md:col-8">
+                        <h4>{{ 'Order Summary' | translate }}</h4>
                         <div class="grid surface-500 text-white">
-                            <div class="col-6">
-                                {{ 'One to one' | translate }}
+                            <div class="col-5">
+                                {{ 'Order No.' | translate }}
                             </div>
-                            <div class="col-6">
-                                {{ getPkg(selectedOrder, 'qty') }}
+                            <div class="col-7 font-bold">
+                                {{ selectedOrder.order_number }}
                             </div>
-                            <div class="col-6">
-                                {{ 'Group session' | translate }}
+                            <div class="col-5">
+                                {{ '1 to 1 training' | translate }}
                             </div>
-                            <div class="col-6">
-                                {{ getPkg(selectedOrder, 'free_qty') }}
+                            <div class="col-7 font-bold">
+                                {{ getPkg('qty') }} {{ getPkg('remain_qty') }}
+                            </div>
+                            <div class="col-5">
+                                {{ 'Group Event' | translate }}
+                            </div>
+                            <div class="col-7 font-bold">
+                                {{ getPkg('free_qty') }} {{ getPkg('remain_free_qty') }}
                             </div>
                         </div>
                     </div>
-                    <div class="col">
+                    <div class="col-12 md:col-4">
                         <h5>{{ 'Month' | translate }}</h5>
-                        <p-dropdown [options]="customer_orders" [(ngModel)]="selectedOrder" optionLabel="order_date"></p-dropdown>
+                        <p-dropdown [options]="customer_orders" [(ngModel)]="selectedOrder" optionLabel="order_date" (select)="loadOrderRemaining()"></p-dropdown>
                         <div class="mt-2">
-                            <p-button class="p-button-sm p-button-rounded" label="{{ 'New Booking' | translate }}" routerLink="/appointment"></p-button>
+                            <p-button *ngIf="canBook()" class="p-button-sm p-button-rounded" label="{{ 'New Booking' | translate }}" (onClick)="newAppointmentOrder()"></p-button>
                         </div>
                     </div>
                 </div>
                 <div id="customer-order-month" class="grid mt-3">
                     <div class="col bg-primary">
-                        {{ getPkg(selectedOrder, 'date_range') }}
+                        {{ getPkg('date_range') }}
                     </div>
                 </div>
 
                 <div class="mt-3" *ngIf="selectedOrder && selectedOrder.details">
-                    <p-table [value]="selectedOrder.details" styleClass="p-datatable-sm p-datatable-gridlines" dataKey="id">
-                        <ng-template pTemplate="caption">
-                            <div class="table-header">
-                                {{ '1 to 1 training' | translate }}
-                            </div>
-                        </ng-template>
-                        <ng-template pTemplate="header">
-                            <tr>
-                                <th pSortableColumn="date">{{ 'Date & Time' | translate }} </th>
-                                <th pSortableColumn="trainer">{{ 'Trainer' | translate }} </th>
-                                <th style="width: 4rem"></th>
-                            </tr>
-                        </ng-template>
-                        <ng-template pTemplate="body" let-detail>
-                            <tr *ngIf="showOrderDetail(detail, 'used_token')">
-                                <td>{{ displayDetailDescription(detail, 'used_token', false) }}</td>
-                                <td>{{ displayDetailTrainer(detail, 'used_token') }}</td>
-                                <td><p-button *ngIf="detail.booking_id > 0" type="button" icon="pi pi-search"></p-button></td>
-                            </tr>
-                        </ng-template>
-                        <ng-template pTemplate="emptymessage">
-                            <tr>
-                                <td colspan="6">There are no details for this order yet.</td>
-                            </tr>
-                        </ng-template>
-                    </p-table>
+                    <app-order-appointment-list appointmentType="token" title="{{ '1 to 1 training' | translate }}" [bookings]="selectedOrder.bookings"></app-order-appointment-list>
 
                     <div class="mt-3"></div>
-                    <p-table [value]="selectedOrder.details" styleClass="p-datatable-sm p-datatable-gridlines" dataKey="id">
-                        <ng-template pTemplate="caption">
-                            <div class="table-header">
-                                {{ 'Group Event' | translate }}
-                            </div>
-                        </ng-template>
-                        <ng-template pTemplate="header">
-                            <tr>
-                                <th pSortableColumn="date">{{ 'Date & Time' | translate }} </th>
-                                <th pSortableColumn="trainer">{{ 'Trainer' | translate }} </th>
-                                <th style="width: 4rem"></th>
-                            </tr>
-                        </ng-template>
-                        <ng-template pTemplate="body" let-detail>
-                            <tr *ngIf="showOrderDetail(detail, 'free_token')">
-                                <td>{{ displayDetailDescription(detail, 'free_token', false) }}</td>
-                                <td>{{ displayDetailTrainer(detail, 'free_token') }}</td>
-                                <td><p-button *ngIf="detail.booking_id > 0" type="button" icon="pi pi-search"></p-button></td>
-                            </tr>
-                        </ng-template>
-                        <ng-template pTemplate="emptymessage">
-                            <tr>
-                                <td colspan="6">There are no details for this order yet.</td>
-                            </tr>
-                        </ng-template>
-                    </p-table>
+                    <app-order-appointment-list appointmentType="appointment" title="{{ 'Group Event' | translate }}" [bookings]="selectedOrder.bookings"></app-order-appointment-list>
                 </div>
             </p-tabPanel>
 
@@ -573,3 +529,5 @@
         </div>
     </ng-template>
 </p-dialog>
+
+<app-order-appointment-form *ngIf="remainingOrder" [(showDialog)]="showNewAppointmentOrder" (orderChange)="loadOrder()" [(order)]="remainingOrder"></app-order-appointment-form>

@@ -6,6 +6,7 @@ import {ActivatedRoute} from "@angular/router";
 import {ConfirmationService, LazyLoadEvent, MessageService, SelectItem} from "primeng/api";
 import {TranslateService} from "@ngx-translate/core";
 import {AppointmentService} from "../../service/appointmentservice";
+import {addYears} from "date-fns";
 
 @Component({
     selector: 'app-user-list',
@@ -47,6 +48,7 @@ export class UserListComponent implements OnInit {
     statuses = [];
     customer_orders = [];
     selectedOrder: any;
+    remainingOrder: any;
 
     ratetypes: SelectItem[];
 
@@ -79,6 +81,8 @@ export class UserListComponent implements OnInit {
 
     // search + open form
     paramCustId: any;
+    showNewAppointmentOrder: boolean = false;
+    messages = [];
 
     // end by Jeffrey
     private subscription;
@@ -93,6 +97,9 @@ export class UserListComponent implements OnInit {
     async ngOnInit() {
         this.loginId = await this.authService.loginId();
         this.statuses = this.lemonade.userStatus;
+        this.translateService.get(['Remaining', 'session', 'Lesson']).subscribe(msg => {
+            this.messages = msg;
+        });
 
         this.api.get('api/services', {
             status: 1001
@@ -273,13 +280,34 @@ export class UserListComponent implements OnInit {
         }).subscribe(res => {
             this.customer_orders = res.data;
             this.selectedOrder = res.data[0];
+            this.loadOrderRemaining();
+        });
+    }
+
+    loadOrderRemaining() {
+        if (!this.selectedOrder.bookings) {
+            // loading appointments from server.
+            this.appointmentService.getBookings({
+                from_date: '2000-01-01',
+                to_date: this.lemonade.formatPostDate(addYears(new Date(), 1)),
+                orderId: this.selectedOrder.id
+            }).subscribe(res => {
+                this.selectedOrder.bookings = res.data;
+            });
+        }
+        this.appointmentService.getCourse(this.selectedOrder.id).subscribe(res => {
+            this.remainingOrder = res.data;
+            if (res.data.customer_id == this.selectedOrder.customer_id) {
+                // copy the customer object.
+                this.remainingOrder.customer = this.selectedOrder.customer;
+            }
         });
     }
 
     generateQr() {
         this.api.get('api/student-qr/' + this.partner.id).subscribe( res => {
             // console.log('qr=', res);
-            console.log('qr2=', atob(res['data']['content']));
+            // console.log('qr2=', atob(res['data']['content']));
             this.qrCode = atob(res['data']['content']);
         });
     }
@@ -289,6 +317,7 @@ export class UserListComponent implements OnInit {
     }
 
     hideDialog() {
+        this.showNewAppointmentOrder = false;
         this.formDialog = false;
         this.submitted = false;
     }
@@ -553,6 +582,14 @@ export class UserListComponent implements OnInit {
         return '';
     }
 
+    displayDetailDuration(detail: any, type: string) {
+        if (detail.order_type == type && detail.order_description) {
+            const description = JSON.parse(detail.order_description);
+            return this.lemonade.duration(description.start_time, description.end_time);
+        }
+        return '';
+    }
+
     displayDetailTrainer(detail: any, type: string) {
         if (detail.order_type == type && detail.booking && detail.booking.appointment) {
             const apt = detail.booking.appointment;
@@ -562,13 +599,26 @@ export class UserListComponent implements OnInit {
         return '';
     }
 
+    displayDetailRoom(detail: any, type: string) {
+        if (detail.order_type == type && detail.booking && detail.booking.appointment) {
+            const apt = detail.booking.appointment;
+            if (apt.room)
+                return apt.room.name;
+        }
+        return '';
+    }
+
+    showAppointmentType(detail: any, type: string) {
+        return (detail.entity == type);
+    }
+
     showOrderDetail(detail: any, type: string) {
         return (detail.order_type == type && detail.booking_id > 0);
     }
 
-    getPkg(selectedOrder: any, name: string) {
-        if (selectedOrder && selectedOrder.recurring) {
-            const recurring = JSON.parse(selectedOrder.recurring);
+    getPkg(name: string) {
+        if (this.selectedOrder && this.selectedOrder.recurring) {
+            const recurring = JSON.parse(this.selectedOrder.recurring);
             switch (name) {
                 case 'qty':
                     return recurring.quantity + ' x ' + this.appointmentService.getHourBySession(recurring.no_of_session);
@@ -576,8 +626,24 @@ export class UserListComponent implements OnInit {
                     return recurring.free.quantity + ' x ' + this.appointmentService.getHourBySession(recurring.free.no_of_session);
                 case 'date_range':
                     return recurring.start_date + ' to ' + recurring.end_date;
+                case 'remain_qty':
+                    if (this.remainingOrder)
+                        return "(" + this.messages['Remaining'] + ": " + this.remainingOrder.token_quantity + " " + this.messages['session'] + ")";
+                    return "";
+                case 'remain_free_qty':
+                    if (this.remainingOrder)
+                        return "(" + this.messages['Remaining'] + ": " + this.remainingOrder.free_quantity + " " + this.messages['Lesson'] + ")";
+                    return "2";
             }
         }
         return '-';
+    }
+
+    newAppointmentOrder() {
+        this.showNewAppointmentOrder = true;
+    }
+
+    canBook() {
+        return (this.remainingOrder && (this.remainingOrder.token_quantity > 0 || this.remainingOrder.free_quantity > 0));
     }
 }

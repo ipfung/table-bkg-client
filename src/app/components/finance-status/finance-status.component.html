@@ -109,68 +109,7 @@
             <tr>
                 <td colspan="7">
                     <div class="p-3">
-                        <p-table [value]="payment.bookings" dataKey="id">
-                            <ng-template pTemplate="header">
-                                <tr>
-                                    <th pSortableColumn="date">{{ 'Date & Time' | translate }} </th>
-                                    <th pSortableColumn="trainer">{{ 'Trainer' | translate }} </th>
-                                    <th pSortableColumn="room">{{ 'Table' | translate }} / {{ 'Duration' | translate }}</th>
-                                    <th pSortableColumn="status">{{ 'Status' | translate }}</th>
-                                    <th pSortableColumn="att_status">{{ 'Attendance Status' | translate }}</th>
-                                    <th style="width: 4rem"></th>
-                                </tr>
-                            </ng-template>
-                            <ng-template pTemplate="body" let-appointment>
-                                <tr>
-                                    <td style="min-width:180px">
-                                        <span class="p-column-title">{{ 'Date & Time' | translate }}</span>
-                                        <div>
-                                            {{ appointmentService.formatDate(appointment.start_time, true) }}
-                                            <div><span class="booking-badge bg-purple-50 text-purple-400">{{ appointmentService.formatDateTime(appointment.start_time) }} - {{ appointmentService.formatDateTime(appointment.end_time) }}</span></div>
-                                        </div>
-                                    </td>
-                                    <td style="min-width:150px">
-                                        <span class="p-column-title">{{ 'Trainer' | translate }}</span>
-                                        <div>
-                                            {{ appointment.user_name }}
-                                            <div><span class="booking-badge bg-blue-50 text-blue-400" *ngIf="appointment.package_name">{{ appointment.package_name }}</span></div>
-                                        </div>
-                                    </td>
-                                    <td style="min-width:150px">
-                                        <span class="p-column-title">{{ 'Table' | translate }} / {{ 'Duration' | translate }}</span>
-                                        <div class="flex">
-                                            <p-avatar [label]="lemonade.getInitial(appointment.name)" shape="circle" [style]="{'background-color': appointment.color, 'color': '#fff'}"></p-avatar>
-                                            <span class="pl-2"> {{appointment.name}}<br/><span class="booking-badge bg-green-50 text-green-400 pl-2">{{ this.lemonade.duration(appointment.start_time, appointment.end_time) }}</span></span>
-                                        </div>
-                                    </td>
-                                    <td style="min-width:120px">
-                                        <span class="p-column-title">{{ 'Status' | translate }}</span>
-                                        <span [class]="'booking-badge status-' + appointment.status">{{ appointment.status | translate }}</span>
-                                    </td>
-                                    <td style="min-width:100px">
-                                        <span class="p-column-title">{{ 'Attendance Status' | translate }}</span>
-                                        <span *ngIf="appointment.checkin">{{ 'Attended' | translate }}</span>
-                                        <span *ngIf="!appointment.checkin">{{ 'Appointed' | translate }}</span>
-                                    </td>
-                                    <td style="min-width:80px" nowrap="nowrap">
-                                        <span *ngIf="appointment.checkin">{{ appointmentService.formatPunchInTime(appointment.start_time, appointment.checkin) }}</span>
-                                        <button pButton type="button" *ngIf="canReschedule(appointment)" pTooltip="{{ 'Reschedule' | translate }}" tooltipPosition="bottom" class="p-button-text" label="{{ 'Reschedule' | translate }}" icon="pi pi-replay" (click)="reschedule($event, appointment)"></button>
-                                        <!--                                    <button pButton type="button" *ngIf="canTakeLeave(appointment)" pTooltip="{{ 'Take Leave' | translate }}" tooltipPosition="bottom" class="p-button-text" label="{{ 'Take Leave' | translate }}" icon="pi pi-shield" (click)="takeLeave(appointment)"></button>-->
-                                        <!--                                    <div *ngIf="appointment.take_leave_at" class="booking-badge bg-pink-50 text-pink-400">{{ 'Taken Leave' | translate }}</div>-->
-                                    </td>
-                                </tr>
-<!--                                <tr *ngIf="showOrderDetail(detail)">-->
-<!--                                    <td>{{ displayDetailDescription(detail, false) }}</td>-->
-<!--                                    <td>{{ displayDetailTrainer(detail) }}</td>-->
-<!--                                    <td><a *ngIf="detail.booking_id > 0" [routerLink]="['/appointment-list', {id: detail.booking_id}]"><i class="pi pi-search"></i></a></td>-->
-<!--                                </tr>-->
-                            </ng-template>
-                            <ng-template pTemplate="emptymessage">
-                                <tr>
-                                    <td colspan="6">There are no details for this order yet.</td>
-                                </tr>
-                            </ng-template>
-                        </p-table>
+                        <app-order-appointment-list [bookings]="payment.bookings"></app-order-appointment-list>
                     </div>
                 </td>
             </tr>

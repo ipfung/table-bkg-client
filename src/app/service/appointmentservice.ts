@@ -408,6 +408,10 @@ export class AppointmentService {
         });
     }
 
+    getCourse(orderId) {
+        return this.api.get('api/course/' + orderId);
+    }
+
     getTimeslotsByDate(appointment) {
         return this.api.get('api/appointment', {
             the_date: this.lemonade.formatPostDate(appointment.date),
