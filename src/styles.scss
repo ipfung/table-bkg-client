@@ -112,3 +112,10 @@ body{
 .lemonade-avatar {
     color: #fff;
 }
+
+//20231226, sometimes the calendar can't scroll down.
+.p-datepicker table {
+    td, th {
+        padding: 0;
+    }
+}
