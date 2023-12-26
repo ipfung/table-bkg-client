@@ -1,0 +1,12 @@
+    <div class="text-left p-1 border-round-sm " >       
+        <div>Time:<br>{{lessontime}}</div>
+        <div>Trainer:{{appointment.title}}</div>
+        <div>{{appointment.room_name}}</div>
+        <div>Student:{{appointment.user_id}}<br>
+            <div *ngFor="let customer_booking of appointment.customer_bookings">
+                {{ customer_booking.cusomter_id}}
+                {{ apple }}
+            </div>
+        </div>
+        <!-- <div>{{appointment.start}}-{{appointment.end}}</div> -->
+    </div>

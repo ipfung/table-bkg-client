@@ -180,6 +180,9 @@ import { ClassCheckinComponent } from './components/class-checkin/class-checkin.
 import { PackageListComponent } from './components/package-list/package-list.component';
 import {DashboardService} from "./service/dashboard.service";
 import { ReportSalesComponent } from './components/report-sales/report-sales.component';
+import { ReportTrainerCommissionsComponent } from './components/report-trainer-commissions/report-trainer-commissions.component';
+import { AppointmentBlocksComponent } from './components/appointment-blocks/appointment-blocks.component';
+import { AppointmentBlockItemsComponent } from './components/appointment-block-items/appointment-block-items.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/lang/', '-' + environment.project + '.json');
@@ -354,6 +357,9 @@ export function createTranslateLoader(http: HttpClient) {
         ClassCheckinComponent,
         AppointmentCalendarComponent,
         ReportSalesComponent,
+        ReportTrainerCommissionsComponent,
+        AppointmentBlocksComponent,
+        AppointmentBlockItemsComponent,
     ],
     providers: [
         {provide: LocationStrategy, useClass: HashLocationStrategy},

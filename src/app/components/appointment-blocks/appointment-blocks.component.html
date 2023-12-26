@@ -1,0 +1,49 @@
+
+<h4>{{ 'Weekly' | translate }}</h4>
+<div class="card">
+    <div class="grid grid-nogutter">
+        <div class="col">
+            <p-panel header="M">
+                <div  *ngFor="let appointmentMon of appointmentsMon">
+
+                    <div class="text-center p-3 border-round-sm bg-primary font-bold" >
+                        <h3>{{appointmentMon.title}} 
+                       
+                        </h3>
+                        <p>{{appointmentMon.start}}-{{appointmentMon.end}}</p>
+                        <p>{{appointmentMon.room_name}}</p>
+
+                        <div  *ngFor="let customer_booking of appointmentsMon.customer_bookings">
+                            1
+                            {{customer_booking.cusomter_id}}
+                        </div>
+                        {{appointmentMon.package.id}}
+                        <br>
+                        {{appointmentsMon.customer_bookings.customer_id}}
+                    </div>
+                </div>
+            </p-panel>
+        </div>
+        <div class="col">
+            <p-card header="Title">
+                <app-appointment-block-items *ngFor="let appointmentTue of appointmentsTue" [appointment]="appointmentTue" ></app-appointment-block-items>
+            </p-card>
+            
+        </div>
+        <div class="col">
+            <div class="text-center p-3 border-round-sm bg-primary font-bold ">3</div>
+        </div>
+        <div class="col">
+            <div class="text-center p-3 border-round-sm bg-primary font-bold ">3</div>
+        </div>
+        <div class="col">
+            <div class="text-center p-3 border-round-sm bg-primary font-bold ">3</div>
+        </div>
+        <div class="col">
+            <div class="text-center p-3 border-round-sm bg-primary font-bold ">3</div>
+        </div>
+        <div class="col">
+            <div class="text-center p-3 border-round-sm bg-primary font-bold ">3</div>
+        </div>
+    </div>
+</div>
