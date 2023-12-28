@@ -56,13 +56,13 @@
 
         <div class="field">
             <label for="appointment_date"><span class="required">*</span> {{ 'Date' | translate }}</label>
-            <p-calendar id="appointment_date" [(ngModel)]="appointment.timeInformation.date" [minDate]="minDate" [maxDate]="maxDate" [disabledDates]="nonWorkingDates" (onSelect)="loadTime($event)" (onMonthChange)="loadNonWorkDates($event)" required [ngClass]="{'ng-invalid ng-dirty' : submitted && !appointment.timeInformation.date}"></p-calendar>
+            <p-calendar appendTo="body" id="appointment_date" [(ngModel)]="appointment.timeInformation.date" [minDate]="minDate" [maxDate]="maxDate" [disabledDates]="nonWorkingDates" (onSelect)="loadTime($event)" (onMonthChange)="loadNonWorkDates($event)" required [ngClass]="{'ng-invalid ng-dirty' : submitted && !appointment.timeInformation.date}"></p-calendar>
             <small class="ng-dirty ng-invalid" *ngIf="submitted && !appointment.timeInformation.date">{{ 'Field is required' | translate: {field: 'Date' | translate} }}</small>
         </div>
 
         <div class="field" *ngIf="isGroupSession()">
             <label for="group_time"><span class="required">*</span> {{ 'Group Time' | translate }}</label>
-            <p-dropdown id="group_time" [disabled]="freeTimes.length == 0" [options]="freeTimes" required [(ngModel)]="groupLesson" (onClick)="selectFreeTime()" [ngClass]="{'ng-invalid ng-dirty' : submitted && isGroupSession() && !appointment.timeInformation.appointment_id}">
+            <p-dropdown appendTo="body" id="group_time" [disabled]="freeTimes.length == 0" [options]="freeTimes" required [(ngModel)]="groupLesson" (onClick)="selectFreeTime()" [ngClass]="{'ng-invalid ng-dirty' : submitted && isGroupSession() && !appointment.timeInformation.appointment_id}">
                 <ng-template pTemplate="selectedItem">
                     {{ this.lemonade.formatDateTime(groupLesson.start_time) }} - {{ this.lemonade.formatDateTime(groupLesson.end_time) }}
                 </ng-template>
