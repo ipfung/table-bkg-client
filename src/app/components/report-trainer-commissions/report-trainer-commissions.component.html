@@ -1,0 +1,80 @@
+<div class="flex justify-content-between">
+    <div class="flex align-items-center justify-content-center p-2 border-round mr-1 text-2xl font-bold">
+        {{ 'Trainer Commission Report' | translate }}
+    </div>
+</div>
+
+<div class="card">
+    <!-- Search fields -->
+    <div class="p-fluid grid">
+        <div class="field col-12 md:col-4">
+            <p-calendar [(ngModel)]="rangeDates" selectionMode="range" placeholder="{{ 'Search F' | translate:{field: 'Payment Date' | translate } }}" [readonlyInput]="true" inputId="range" (onSelect)="loadTrainerCommissionsData($event)" [dateFormat]="lemonade.dateFormat"></p-calendar>
+        </div>
+        <div *ngIf="showTrainer" class="field col-12 md:col-4">
+            <p-dropdown [(ngModel)]="trainerObj" [options]="trainers" optionValue="id" optionLabel="name" (onChange)="loadTrainerCommissionsData($event)" placeholder="{{'Search F' | translate:{field: 'Trainer' | translate } }}" showClear="true" >
+                <ng-template let-item pTemplate="item">
+                    <i class="pi pi-circle-fill" [style]="{color: item.role.color_name}"></i>
+                    {{ item.name }}
+                </ng-template>
+            </p-dropdown>
+           
+        </div>        
+    </div>
+    
+    <p-table [value]="commissions" [lazy]="true" (onLazyLoad)="loadTrainerCommissionsData($event)" [paginator]="true" [rows]="rows" [loading]="loading" [totalRecords]="totalRecords" dataKey="id" sortField="order_date" sortMode="single" responsiveLayout="stack">
+        <ng-template pTemplate="caption">
+        <div class="flex">
+             <button type="button" pButton pRipple icon="pi pi-file" (click)="exportExcel3()" class="mr-2" pTooltip="CSV" tooltipPosition="bottom"></button> 
+            <!-- <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcel()" class="p-button-success mr-2"  pTooltip="XLS" tooltipPosition="bottom"></button> -->
+            <!-- <button type="button" pButton pRipple icon="pi pi-file-pdf" (click)="exportPdf()" class="p-button-warning mr-2" pTooltip="PDF" tooltipPosition="bottom"></button>            -->
+        </div>
+    </ng-template>
+    <ng-template pTemplate="header" let-columns>
+        <tr>
+            <th style="min-width:100px">{{ 'Trainer' | translate }}</th>
+            <th style="min-width:100px">{{ 'Lesson Date' | translate }}</th>
+            <th style="min-width:120px">{{ 'Duration' | translate }}</th>
+            <th>{{ 'Student' | translate }}</th>
+            <th>{{ 'Commission' | translate }}</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-trainercommission let-rowIndex="rowIndex" let-columns="columns">
+        <tr style="vertical-align: top;">
+            <td style="min-width:100px">                
+                {{ trainercommission.name }}
+            </td>
+            <td style="min-width:100px">                
+                {{ lemonade.formatDate(trainercommission.start_time, true) }}
+            </td>
+            <td style="min-width:100px">               
+               {{trainercommission.simpleduration + "mins"}}
+            </td>  
+            <td >
+                <table>
+                   
+                    <tr *ngFor="let customer_booking of trainercommission.customer_bookings" >
+                        <td style="min-width:100px">                
+                            {{ customer_booking.customer.name }}
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td>
+                <table>                   
+                    <tr *ngFor="let customer_booking of trainercommission.customer_bookings" >
+                        <td *ngIf="trainercommission.simpleduration>0 ; then thenBlock else elseBlock"></td>
+                            <ng-template #thenBlock><td>${{ (trainercommission.simpleduration/60) * customer_booking.trainer_commission }}</td> </ng-template>
+                            <ng-template #elseBlock><td>$0</td></ng-template>              
+                        
+                           
+                        
+                    </tr>
+
+                </table>
+            </td>
+                
+           
+        </tr>
+    </ng-template>
+    </p-table>
+</div>
