@@ -53,7 +53,7 @@ export class OrderAppointmentFormComponent implements OnInit {
         this.appointment.timeInformation.customerId = this.order.customer_id;
         this.appointment.timeInformation.orderNo = this.order.order_number;
         this.appointment.timeInformation.price = 0;
-        this.trainers = this.order.trainers;
+        this.trainers = this.order.trainers.filter((obj) => obj.rate_type == 3);   // 3=ONE_TO_ONE_MONTHLY
         if (this.order.token_quantity <= 0) {
             // no more hours, select group.
             this.order_type = 'free_token';
