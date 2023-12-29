@@ -466,27 +466,31 @@ export class AppointmentListComponent implements OnInit {
     loadTime(e) {
         const customer = this.appointment.customer;
         if (customer && this.selectedCustomerId !== customer.id) {   // fire when change customer.
-            if (customer.settings && customer.settings.trainer && !this.selectedPackage) {
-                const settings = customer.settings;
-                this.translateService.get(['Is it a trainer course?', 'Error']).subscribe( res => {
-                    this.confirmationService.confirm({
-                        message: res['Is it a trainer course?'],
-                        accept: () => {
-                            this.appointment.timeInformation.useTrainerData = true;
-                            this.appointment.timeInformation.trainerId = settings.trainer;
-                            this.appointment.timeInformation.dftNoOfSession = settings.no_of_session;  // readonly
-                            this.appointment.timeInformation.noOfSession = settings.no_of_session;
-                            this.appointment.paymentInformation = {
-                                price: settings.trainer_charge,
-                                commission: settings.trainer_commission,
-                                order_total: settings.trainer_charge,
-                                total_commission: settings.trainer_commission
-                            };
-                            if (settings.room)
-                                this.appointment.timeInformation.roomId = settings.room;
-                        }
+            if (customer.trainer_rates && customer.trainer_rates && !this.selectedPackage) {
+                const settings = customer.trainer_rates.find(el => el.rate_type == 1);
+                if (settings) {
+                    this.translateService.get(['Is it a trainer course?', 'Error']).subscribe(res => {
+                        this.confirmationService.confirm({
+                            message: res['Is it a trainer course?'],
+                            accept: () => {
+                                this.appointment.timeInformation.useTrainerData = true;
+                                this.appointment.timeInformation.trainerId = settings.trainer;
+                                // commented 20231229 since trainer_rates where no 'no_of_session', use Service's.
+                                // this.appointment.timeInformation.dftNoOfSession = settings.no_of_session;  // readonly
+                                // this.appointment.timeInformation.noOfSession = settings.no_of_session;
+                                this.appointment.timeInformation.dftNoOfSession = this.appointment.timeInformation.noOfSession;  // readonly
+                                this.appointment.paymentInformation = {
+                                    price: settings.trainer_charge,
+                                    commission: settings.trainer_commission,
+                                    order_total: settings.trainer_charge,
+                                    total_commission: settings.trainer_commission
+                                };
+                                if (settings.room)
+                                    this.appointment.timeInformation.roomId = settings.room;
+                            }
+                        });
                     });
-                });
+                }
             } else if (this.selectedPackage) {
             } else {
                 this.appointment.paymentInformation = {

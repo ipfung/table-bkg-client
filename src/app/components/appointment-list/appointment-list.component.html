@@ -154,7 +154,7 @@
     <ng-template pTemplate="content">
         <div class="field" *ngIf="supportPackages">
             <label for="pkg">{{ 'Packages' | translate }}</label>
-            <p-dropdown id="pkg" [options]="packages" [(ngModel)]="selectedPackage" [showClear]="true" (onClick)="loadPackage()" (onClear)="clearPackage()" placeholder="{{'Select field' | translate: {field: 'Package' | translate} }}">
+            <p-dropdown id="pkg" [options]="packages" [(ngModel)]="selectedPackage" [showClear]="true" (onClick)="loadPackage()" (onClear)="clearPackage()" placeholder="{{'Select field' | translate: {field: 'Packages' | translate} }}">
                 <ng-template pTemplate="selectedItem">
                     {{ selectedPackage.name }} <span class="text-xs booking-badge bg-pink-50 text-pink-400">{{ lemonade.getRecurringCycle(selectedPackage.recurring) | translate }}: {{ lemonade.displayRecurring(selectedPackage.recurring) }}</span>
                     <span class="text-xs" *ngIf="selectedPackage.start_date"> {{ lemonade.formatDate(selectedPackage.start_date) }}</span><span class="text-xs" *ngIf="selectedPackage.end_date"> {{ 'to' | translate }} {{ lemonade.formatDate(selectedPackage.end_date) }}</span><span class="text-xs booking-badge bg-purple-50 text-purple-400" *ngIf="selectedPackage.start_time"> {{ lemonade.formatTime(selectedPackage.start_time) }} - {{ lemonade.formatTime(selectedPackage.end_time) }}</span>
@@ -389,7 +389,7 @@
 
             <div class="field" *ngIf="showTrainer && appointment.timeInformation.trainerId > 0">
                 <label>{{ 'Total Trainer Commission' | translate }}</label>
-                <p-inputNumber [(ngModel)]="appointment.paymentInformation.total_commission" mode="currency" currency="HKD" locale="zh-HK"></p-inputNumber>
+                <p-inputNumber [(ngModel)]="appointment.paymentInformation.total_commission" [disabled]="true" mode="currency" currency="HKD" locale="zh-HK"></p-inputNumber>
             </div>
 
             <div class="field">
