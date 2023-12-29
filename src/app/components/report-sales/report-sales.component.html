@@ -11,7 +11,7 @@
             <p-calendar [(ngModel)]="rangeDates" selectionMode="range" placeholder="{{ 'Search F' | translate:{field: 'Payment Date' | translate } }}" [readonlyInput]="true" inputId="range" (onSelect)="loadSalesData($event)" [dateFormat]="lemonade.dateFormat"></p-calendar>
         </div>
         <div *ngIf="showCustomer" class="field col-12 md:col-4">
-            <p-autoComplete [(ngModel)]="searchCustomer" [forceSelection]="true" [suggestions]="customers" (completeMethod)="searchCustomers($event)" (onSelect)="loadData($event)" field="name" placeholder="{{ 'Search F' | translate:{field: 'Customer' | translate} }}"></p-autoComplete>
+            <p-autoComplete [(ngModel)]="searchCustomer" [forceSelection]="true" [suggestions]="customers" (completeMethod)="searchCustomers($event)" (onSelect)="loadSalesData($event)" field="name" placeholder="{{ 'Search F' | translate:{field: 'Customer' | translate} }}"></p-autoComplete>
         </div>
         <div class="field col-12 md:col-4">
             <p-dropdown [options]="paymentStatusList" [(ngModel)]="searchPaymentStatus" optionLabel="name" optionValue="code" [showClear]="true" (onChange)="loadSalesData($event)" placeholder="{{ 'Search F' | translate:{field: 'Payment Status' | translate } }}">
