@@ -70,7 +70,6 @@ export class UserListComponent implements OnInit {
     qrCode: string;
 
     //by Jeffrey
-    trainerrates=[]; //list
     //trainerrate:[]; //single row
     tr_trainer : any;
     tr_rate_type = 0 ;
@@ -128,12 +127,7 @@ export class UserListComponent implements OnInit {
             this.roles = res.data;
         });
 
-        this.ratetypes = [{ label:"1 on 1",value :1 },{label:"Group", value:2}];
-        //load trainer rates
-       /*  this.api.get('api/trainerrate').subscribe( res => {
-            this.trainerrates = res.data;
-        });
-        console.log("trainerrates=",this.trainerrates); */
+        this.ratetypes = [{ label: "1 to 1 training", value: 1 },{label: "Group", value: 2},{label: "1 to 1 training (Monthly)", value: 3}];
     }
 
     ngOnDestroy() {
@@ -235,7 +229,8 @@ export class UserListComponent implements OnInit {
             status: this.statuses[0].code,
             settings: {
                 notifications: {}
-            }
+            },
+            trainerrates: null
         };
         this.submitted = false;
         this.formDialog = true;
@@ -261,15 +256,10 @@ export class UserListComponent implements OnInit {
         this.formDialog = true;
         this.isNew = false;
 
-        this.loadTrainerRates(user.id);
+        this.loadTrainerRates(user.id, false);
         this.loadOrder();
 
         console.log("trainer=",this.trainers);
-       /*  this.trainerrates=[];
-        this.api.get('api/trainerrates-bystudentid/'+ user.id).subscribe( res => {
-            this.trainerrates = res.data;
-        });
-        console.log("edit view trainerrates=",this.trainerrates); */
     }
 
     loadOrder() {
@@ -456,7 +446,7 @@ export class UserListComponent implements OnInit {
             if (res.success === true) {
                // this.loadData(null);
                // this.hideDialog();
-               this.loadTrainerRates(res.data.student_id);
+               this.loadTrainerRates(res.data.student_id, true);
                this.lemonade.ok(this.messageService);
 
             } else {
@@ -485,7 +475,7 @@ export class UserListComponent implements OnInit {
                 accept: () => {
                     this.api.delete('api/trainerrates/' +  trainerrate.id ).subscribe(res => {
                         if (res.success == true) {
-                            this.loadTrainerRates(student_id);
+                            this.loadTrainerRates(student_id, true);
 
                             this.lemonade.ok(this.messageService, 'The record is deleted successfully.');
                         } else {
@@ -535,7 +525,7 @@ export class UserListComponent implements OnInit {
         call.subscribe( res => {
             console.log('edit trainer rate res=', res);
             if (res.success === true) {
-               this.loadTrainerRates(res.data.student_id);
+               this.loadTrainerRates(res.data.student_id, true);
                this.lemonade.ok(this.messageService);
 
             } else {
@@ -551,13 +541,14 @@ export class UserListComponent implements OnInit {
         console.log("RoweditCancel");
     }
 
-    loadTrainerRates(user_id)
+    loadTrainerRates(user_id, forceRefresh)
     {
-        //this.trainerrates=[];
-        this.api.get('api/trainerrates-bystudentid/'+ user_id).subscribe( res => {
-            this.trainerrates = res.data;
-            console.log("loadTrainerRate=", res.data) ;
-        });
+        if (!this.partner.trainerrates || forceRefresh) {
+            this.api.get('api/trainerrates-bystudentid/' + user_id).subscribe(res => {
+                this.partner.trainerrates = res.data;
+                console.log("loadTrainerRate=", res.data);
+            });
+        }
     }
 
     displayDetailDescription(detail, type: string, showMoreDetail = false) {
