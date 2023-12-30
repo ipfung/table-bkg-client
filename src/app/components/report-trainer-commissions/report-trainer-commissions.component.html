@@ -24,7 +24,7 @@
     <p-table [value]="commissions" [lazy]="true" (onLazyLoad)="loadTrainerCommissionsData($event)" [paginator]="true" [rows]="rows" [loading]="loading" [totalRecords]="totalRecords" dataKey="id" sortField="order_date" sortMode="single" responsiveLayout="stack">
         <ng-template pTemplate="caption">
         <div class="flex">
-             <button type="button" pButton pRipple icon="pi pi-file" (click)="exportExcel3()" class="mr-2" pTooltip="CSV" tooltipPosition="bottom"></button> 
+             <button type="button" pButton pRipple icon="pi pi-file" (click)="exportExcel3()" class="mr-2" pTooltip="Export to Excel" tooltipPosition="bottom"></button> 
             <!-- <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcel()" class="p-button-success mr-2"  pTooltip="XLS" tooltipPosition="bottom"></button> -->
             <!-- <button type="button" pButton pRipple icon="pi pi-file-pdf" (click)="exportPdf()" class="p-button-warning mr-2" pTooltip="PDF" tooltipPosition="bottom"></button>            -->
         </div>
@@ -33,6 +33,7 @@
         <tr>
             <th style="min-width:100px">{{ 'Trainer' | translate }}</th>
             <th style="min-width:100px">{{ 'Lesson Date' | translate }}</th>
+            <th style="min-width:100px">{{ 'Lesson Time' | translate }}</th>
             <th style="min-width:120px">{{ 'Duration' | translate }}</th>
             <th>{{ 'Student' | translate }}</th>
             <th>{{ 'Commission' | translate }}</th>
@@ -45,6 +46,9 @@
             </td>
             <td style="min-width:100px">                
                 {{ lemonade.formatDate(trainercommission.start_time, true) }}
+            </td>
+            <td style="min-width:100px">                
+                {{ trainercommission.lessontime }}
             </td>
             <td style="min-width:100px">               
                {{trainercommission.simpleduration + "mins"}}
