@@ -42,6 +42,8 @@ export class ReportSalesComponent implements OnInit {
     payment_statuses = [];
     payment_methods = [];
     new_payment: any;
+    reportPaidTotal : any;
+    reportUnpaidTotal : any;
 
     constructor(private api: ApiService, public appointmentService: AppointmentService, private translateService: TranslateService, public lemonade: Lemonade, private route: ActivatedRoute) {
 
@@ -96,6 +98,7 @@ export class ReportSalesComponent implements OnInit {
               this.loading = false;
               this.rows = res.per_page;
               this.totalRecords = res.total;
+              
           });
       }
     }
@@ -132,6 +135,8 @@ export class ReportSalesComponent implements OnInit {
             this.loading = false;
             this.rows = res.per_page;
             this.totalRecords = res.total;
+            this.reportPaidTotal = res.reportPaidTotal;
+            this.reportUnpaidTotal = res.reportUnpaidTotal;
             console.log("inside loadPaymentReport=", res.data) ;
         });
     }
