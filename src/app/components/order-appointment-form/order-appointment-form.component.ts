@@ -78,6 +78,7 @@ export class OrderAppointmentFormComponent implements OnInit {
         if (this.services.length > 0) {
             let service = this.services.find(el => el.id == this.appointment.timeInformation.serviceId);
 
+// console.log('cus_max_order_duration333 token_quantity=', this.order.token_quantity, this.order.no_of_session)
             let sessions = [],   // create a new array to store max session.
                 cus_max_order_duration = this.order.token_quantity * this.order.no_of_session * service.session_min;
 // console.log('cus_max_order_duration333=', cus_max_order_duration, service.sessions[service.sessions.length - 1].duration)
@@ -217,7 +218,7 @@ export class OrderAppointmentFormComponent implements OnInit {
                 me.hideDialog();
                 // clean up after hide dialog.
                 me.orderChange.emit(1);
-                me.newAppointment();
+                this.submitted = false;
             } else {
                 me.lemonade.error(me.messageService, res);
             }

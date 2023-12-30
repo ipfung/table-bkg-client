@@ -1,6 +1,6 @@
 <p-toast></p-toast>
 
-<p-dialog [(visible)]="showDialog" [style]="{width:'50em', height: '100vh'}" header="{{ 'New Booking' | translate }} - {{ appointment.timeInformation.orderNo }}" position="right" [modal]="true" class="p-fluid">
+<p-dialog [(visible)]="showDialog" (onHide)="hideDialog()" (onShow)="newAppointment()" [style]="{width:'50em', height: '100vh'}" header="{{ 'New Booking' | translate }} - {{ appointment.timeInformation.orderNo }}" position="right" [modal]="true" class="p-fluid">
     <ng-template pTemplate="content">
         <div class="field">
             <label for="customer">{{ 'Customer' | translate }}</label>
@@ -23,6 +23,8 @@
                 <ng-template let-item pTemplate="item">
                     <i class="pi pi-circle-fill" [style]="{color: item.role.color_name}"></i>
                     {{ item.name }}
+                    <br />
+                    <span class="text-xs" *ngIf="item.trainer_charge">{{ 'Charge' | translate }}: {{ item.trainer_charge | currency: 'HK$' }}</span> / <span class="text-xs" *ngIf="item.trainer_commission"> {{ 'Trainer Commission' | translate }}: {{ item.trainer_commission | currency: 'HK$' }}</span>
                 </ng-template>
             </p-dropdown>
             <small class="ng-dirty ng-invalid" *ngIf="submitted && !isGroupSession() && appointment.timeInformation.trainerId <= 0">{{ 'Field is required' | translate: {field: 'Trainer' | translate} }}</small>
