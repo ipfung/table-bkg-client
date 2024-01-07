@@ -4,6 +4,14 @@ export interface Appointment {
     start :string;
     end: string;
     user_id: number;
-    customer_bookings: [];
+    customer_bookings: 
+        { 
+            customername: string;
+            customer : {
+                name: string;
+            } 
+        }
+    ;
     room_name: string;
+    color:string;
 }

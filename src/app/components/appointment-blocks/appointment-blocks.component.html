@@ -1,10 +1,26 @@
 
 <h4>{{ 'Weekly' | translate }}</h4>
 <div class="card">
+    <div class="p-fluid grid">
+        <div class="field col-12 md:col-4">
+            <p-calendar [(ngModel)]="date" [selectionMode]="calselectmode" placeholder="{{ 'Search F' | translate:{field: 'Payment Date' | translate } }}" [readonlyInput]="true" (onSelect)="loadData($event)" [dateFormat]="lemonade.dateFormat"></p-calendar>
+        </div>
+        <div class="field col-12 md:col-4">            
+            <p-dropdown [(hidden)]=showRooms [options]="rooms" [(ngModel)]="selectedRoom" optionLabel="name" [showClear]="true" placeholder="Select a Table" (onChange)="SelectedTable()" optionValue="id" optionLabel="name"   ></p-dropdown>
+          
+        </div>
+        <div class="field col-12 md:col-4">
+            <p-toggleButton [(ngModel)]="TableChecked" onLabel="波枱優先" offLabel="日曆優先" onIcon="pi pi-clock" offIcon="pi pi-calendar" [style]="{ width: '10em' }" (onChange)="ToggleTableCalendar()" ></p-toggleButton>
+        </div>
+    </div>
+    <div *ngIf="norecord ; then thenBlock else elseBlock"></div>
+    <ng-template #thenBlock><center><h3>No Record Found !! </h3></center></ng-template>
+    <ng-template #elseBlock>
     <div class="grid grid-nogutter">
-        <div class="col">
-            <p-panel header="M">
-                <div  *ngFor="let appointmentMon of appointmentsMon">
+         <div class="col">
+            <div class="text-center p-2 border-round-sm font-bold">{{cardtitle[0]}}</div>
+           
+              <!--  <div  *ngFor="let appointmentMon of appointments1">
 
                     <div class="text-center p-3 border-round-sm bg-primary font-bold" >
                         <h3>{{appointmentMon.title}}
@@ -14,35 +30,43 @@
                         <p>{{appointmentMon.room_name}}</p>
 
                         <div *ngFor="let cusbkg of appointmentMon.customer_bookings">
-                            123-
-                            {{cusbkg.customer_id}}
+                            
+                            <p>{{cusbkg.customer.name}}</p>
+                            
                         </div>
-                        {{appointmentMon.package ? appointmentMon.package.id : '000'}}
+                         {{appointmentMon.package ? appointmentMon.package.id : '000'}}
                         <br>
                     </div>
-                </div>
-            </p-panel>
+                </div> -->
+                
+                <app-appointment-block-items *ngFor="let appointment1 of appointments1" [appointment]="appointment1" ></app-appointment-block-items>
+        
+        </div>
+        
+        <div class="col">  
+            <div class="text-center p-2 border-round-sm font-bold">{{cardtitle[1]}}</div>          
+            <app-appointment-block-items *ngFor="let appointment2 of appointments2" [appointment]="appointment2" ></app-appointment-block-items>
         </div>
         <div class="col">
-            <p-card header="Title">
-                <app-appointment-block-items *ngFor="let appointmentTue of appointmentsTue" [appointment]="appointmentTue" ></app-appointment-block-items>
-            </p-card>
-
+            <div class="text-center p-2 border-round-sm font-bold">{{cardtitle[2]}}</div>
+            <app-appointment-block-items *ngFor="let appointment3 of appointments3" [appointment]="appointment3" ></app-appointment-block-items>
         </div>
         <div class="col">
-            <div class="text-center p-3 border-round-sm bg-primary font-bold ">3</div>
+            <div class="text-center p-2 border-round-sm font-bold">{{cardtitle[3]}}</div>
+            <app-appointment-block-items *ngFor="let appointment4 of appointments4" [appointment]="appointment4" ></app-appointment-block-items>
         </div>
         <div class="col">
-            <div class="text-center p-3 border-round-sm bg-primary font-bold ">3</div>
+            <div class="text-center p-2 border-round-sm font-bold">{{cardtitle[4]}}</div>
+            <app-appointment-block-items *ngFor="let appointment5 of appointments5" [appointment]="appointment5" ></app-appointment-block-items>
         </div>
         <div class="col">
-            <div class="text-center p-3 border-round-sm bg-primary font-bold ">3</div>
+            <div class="text-center p-2 border-round-sm font-bold">{{cardtitle[5]}}</div>
+            <app-appointment-block-items *ngFor="let appointment6 of appointments6" [appointment]="appointment6" ></app-appointment-block-items>
         </div>
         <div class="col">
-            <div class="text-center p-3 border-round-sm bg-primary font-bold ">3</div>
-        </div>
-        <div class="col">
-            <div class="text-center p-3 border-round-sm bg-primary font-bold ">3</div>
+            <div class="text-center p-2 border-round-sm font-bold">{{cardtitle[6]}}</div>
+            <app-appointment-block-items *ngFor="let appointment7 of appointments7" [appointment]="appointment7" ></app-appointment-block-items>
         </div>
     </div>
+</ng-template>      
 </div>
