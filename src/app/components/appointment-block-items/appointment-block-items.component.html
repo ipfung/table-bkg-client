@@ -1,6 +1,6 @@
-    <div class="text-left p-1 border-round-sm border-solid border-2 border-sky-500 m-1" >    
+    <div class="text-left p-1 border-round-sm border-solid border-2 border-sky-500 m-1" >
 
-        <div>{{appointment.start}}<b>{{lessontime}}</b></div>
+        <div>{{lemonade.formatDate(appointment.start)}} {{lemonade.formatDateTime(appointment.start)}} - {{lemonade.formatDateTime(appointment.end)}}</div>
         <div><b>Trainer:</b><br>{{appointment.title}}</div>
         <div [ngStyle]="{'color':'#fff', 'background-color':appointment.color}" >{{appointment.room_name}}</div>
         <div><b>Student:</b>{{appointment.user_id}}<br>
@@ -11,5 +11,3 @@
         </div>
         <!-- <div>{{appointment.start}}-{{appointment.end}}</div> -->
     </div>
-    
-    
