@@ -1,5 +1,5 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {addDays, addYears, isBefore, subDays} from "date-fns";
+import {addDays, addYears, endOfMonth, isBefore, startOfMonth, subDays} from "date-fns";
 import {ApiService} from "../../service/api.service";
 import {Lemonade} from "../../service/lemonade.service";
 import {LazyLoadEvent, MessageService} from "primeng/api";
@@ -59,7 +59,8 @@ export class FinanceStatusComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.rangeDates = [subDays(new Date(), 7), addDays(new Date(), 7)];
+        const today = new Date();
+        this.rangeDates = [startOfMonth(today), endOfMonth(today)];
         // this.loadData();
         this.translateService.get(['All', 'pending payment', 'paid payment', 'partially payment']).subscribe( res => {
             this.paymentStatusList = [
@@ -390,5 +391,22 @@ console.log('this.selectedPackage333===', this.selectedPackage);
 
     canReschedule(appointment) {
         return (appointment.take_leave_at == null && appointment.checkin == null && isBefore(new Date(), new Date(appointment.start_time)));
+    }
+
+    renewOrder(order) {
+        this.api.post('api/renew-order', {order_id: order.id}).subscribe(res => {
+            if (res.success == false) {
+                this.lemonade.error(this.messageService, res);
+            } else {   // success
+                if (res.data.id) {    // single order
+                    this.lemonade.ok(this.messageService, res);
+                    const today = new Date(res.data.order_date);
+                    this.rangeDates = [startOfMonth(today), endOfMonth(today)];
+                    this.loadData(null);
+                } else {
+                    // multiple renew orders?
+                }
+            }
+        });
     }
 }

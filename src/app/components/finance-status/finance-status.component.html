@@ -100,6 +100,7 @@
                         <button *ngIf="appointmentService.paymentSelection" pButton type="button" pTooltip="{{ 'Invoice' | translate }}" tooltipPosition="bottom" class="p-0 p-button-text" icon="pi pi-print" (click)="printInvoice(payment, 'invoice')"></button>
                         <button *ngIf="appointmentService.paymentSelection" pButton [disabled]="payment.payment_status !== 'paid'" type="button" pTooltip="{{ 'Receipt' | translate }}" tooltipPosition="bottom" class="p-0 p-button-text" icon="pi pi-ticket" (click)="printInvoice(payment, 'receipt')"></button>
                         <button *ngIf="showCustomer && payment.payment_status !== 'paid'" [disabled]="payment.reminder" pButton type="button" pTooltip="{{ 'Payment Reminder' | translate }}" tooltipPosition="bottom" class="p-0 p-button-text" icon="pi {{ payment.reminder === 9 ? 'pi-spin pi-spinner' : 'pi-envelope' }}" (click)="paymentReminder(payment)"></button>
+                        <button *ngIf="showCustomer && payment.payment_status === 'paid' && payment.repeatable == 1" pButton type="button" pTooltip="{{ 'Renew order' | translate }}" tooltipPosition="bottom" class="p-0 p-button-text" icon="pi pi-copy" (click)="renewOrder(payment)"></button>
                     </div>
                 </td>
             </tr>
