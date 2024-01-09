@@ -303,7 +303,7 @@ export class Lemonade {
         messageService.add({
             severity: 'error',
             summary: 'Error',
-            detail: err.error
+            detail: err.error||err.message
         });
     }
 
