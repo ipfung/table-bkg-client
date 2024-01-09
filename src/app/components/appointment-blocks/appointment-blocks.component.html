@@ -1,5 +1,5 @@
 
-<h4>{{ 'Weekly' | translate }}</h4>
+<h4>{{ 'Focus' | translate }}</h4>
 <div class="card">
     <div class="p-fluid grid">
         <div class="field col-12 md:col-4">
@@ -14,11 +14,11 @@
         </div>
     </div>
     <div *ngIf="norecord ; then thenBlock else elseBlock"></div>
-    <ng-template #thenBlock><center><h3>No Record Found !! </h3></center></ng-template>
+    <ng-template #thenBlock><center><h3>{{ 'No record found.' | translate }}</h3></center></ng-template>
     <ng-template #elseBlock>
     <div class="grid grid-nogutter">
          <div class="col" *ngFor="let title of cardtitle; let i = index ">
-            <div class="text-center p-2 border-round-sm font-bold">{{title}}</div>
+            <div class="text-center p-2 border-solid border-round-sm font-bold m-1">{{title}}</div>
 
               <!--  <div  *ngFor="let appointmentMon of appointments1">
 

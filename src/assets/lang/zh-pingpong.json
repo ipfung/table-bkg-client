@@ -354,6 +354,10 @@
     "You do not have the necessary permissions. Please contact admins.": "您沒有必要的權限，請聯繫管理員。",
     "The record is deleted successfully.": "記錄刪除成功。",
     "Succeed": "已成功",
+    "Focus": "重點",
+    "Report": "報告",
+    "Sales Report": "銷售報告",
+    "Trainer Commission Report": "教練分成報告",    
     "primeng": {
         "startsWith": "Starts with",
         "contains": "Contains",

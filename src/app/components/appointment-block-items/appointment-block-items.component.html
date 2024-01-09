@@ -1,9 +1,9 @@
     <div class="text-left p-1 border-round-sm border-solid border-2 border-sky-500 m-1" >
 
         <div>{{lemonade.formatDate(appointment.start)}} {{lemonade.formatDateTime(appointment.start)}} - {{lemonade.formatDateTime(appointment.end)}}</div>
-        <div><b>Trainer:</b><br>{{appointment.title}}</div>
+        <div><b>{{ 'Trainer' | translate }}:</b><br>{{appointment.title}}</div>
         <div [ngStyle]="{'color':'#fff', 'background-color':appointment.color}" >{{appointment.room_name}}</div>
-        <div><b>Student:</b>{{appointment.user_id}}<br>
+        <div><b>{{ 'Student' | translate }}:</b>{{appointment.user_id}}<br>
             <div *ngFor="let cusbkg of appointment.customer_bookings; index as i ">
                 <!-- {{ cusbkg.trainer_charge}} -->
                 {{i+1}} {{ cusbkg.customer.name}}
