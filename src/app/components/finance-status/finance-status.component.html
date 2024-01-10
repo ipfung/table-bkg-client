@@ -252,7 +252,7 @@
             <p-toggleButton *ngIf="showCustomer" [(ngModel)]="editingPayment" onLabel="{{ 'Edit' | translate }}" onIcon="pi pi-pencil" offLabel="{{ 'Edit' | translate }}" offIcon="pi pi-pencil"></p-toggleButton>
             <div>
                 <button pButton pRipple label="{{ 'Cancel' | translate }}" icon="pi pi-times" class="p-button-outlined" (click)="hideDialog()"></button>
-                <button pButton pRipple *ngIf="showCustomer" label="{{ 'Save' | translate }}" icon="pi pi-check" class="p-button-outlined" (click)="save()"></button>
+                <button pButton pRipple *ngIf="showCustomer" label="{{ 'Save' | translate }}" icon="pi pi-check" [disabled]="order.payment_status == 'paid'" class="p-button-outlined" (click)="save()"></button>
             </div>
         </div>
     </ng-template>
@@ -505,6 +505,6 @@
 
     <ng-template pTemplate="footer">
         <button pButton pRipple label="{{ 'Cancel' | translate }}" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
-        <button pButton pRipple label="{{ 'Save' | translate }}" icon="pi pi-check" class="p-button-text" (click)="saveOrder()"></button>
+        <button pButton pRipple label="{{ 'Save' | translate }}" icon="pi pi-check" class="p-button-text" [disabled]="order.payment_status == 'paid'" (click)="saveOrder()"></button>
     </ng-template>
 </p-dialog>
