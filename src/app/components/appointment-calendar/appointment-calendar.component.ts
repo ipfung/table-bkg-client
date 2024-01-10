@@ -6,6 +6,7 @@ import {CalendarOptions} from "@fullcalendar/core";
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import {AppointmentService} from "../../service/appointmentservice";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
     selector: 'app-appointment-calendar',
@@ -37,7 +38,7 @@ export class AppointmentCalendarComponent implements OnInit {
     bookings: any;
     supportFinance = false;
 
-    constructor(private api: ApiService, private appointmentService: AppointmentService, public lemonade: Lemonade) {
+    constructor(private api: ApiService, private appointmentService: AppointmentService, private translateService: TranslateService, public lemonade: Lemonade) {
     }
 
     ngOnInit(): void {
@@ -65,60 +66,68 @@ export class AppointmentCalendarComponent implements OnInit {
                 right: 'next'
             };
         }
-        this.options = {
-            initialView: initialView,
-            initialDate : this.lemonade.formatPostDate(new Date()),
-            plugins: [dayGridPlugin, timeGridPlugin],
-            headerToolbar: headerToolbar,
+        this.translateService.get(['Today', 'Day', 'Week', 'Month']).subscribe( msg => {
+            this.options = {
+                initialView: initialView,
+                initialDate: this.lemonade.formatPostDate(new Date()),
+                plugins: [dayGridPlugin, timeGridPlugin],
+                headerToolbar: headerToolbar,
+                buttonText: {
+                    today: msg['Today'],
+                    day: msg['Day'],
+                    week: msg['Week'],
+                    month: msg['Month']
+                },
 
-            editable: false,
-            selectable: true,
-            selectMirror: true,
-            dayMaxEvents: true,
-            eventDidMount: function(info) {
-                // console.log("cal extendedProps=", info.event.extendedProps);
-                console.log("cal  info=", info);
-            },
-            eventClick: function(info) {
-                var eventObj = info.event;
-                me.showStudentList = false;
+                editable: false,
+                selectable: true,
+                selectMirror: true,
+                dayMaxEvents: true,
+                eventDidMount: function (info) {
+                    // console.log("cal extendedProps=", info.event.extendedProps);
+                    console.log("cal  info=", info);
+                },
+                eventClick: function (info) {
+                    var eventObj = info.event;
+                    me.showStudentList = false;
 
-                if (eventObj.extendedProps.package) {
-                    srv.getBookings({
-                        appointmentId: eventObj.extendedProps.appointment_id
-                    }).subscribe(res => {
-                        me.bookings = res.data;
-                        me.showCustomer = res.showCustomer;
-                        me.showTrainer = res.showTrainer;
-                        me.supportFinance = res.supportFinance;
-                        me.showStudentList = true;
-                    });
+                    if (eventObj.extendedProps.package) {
+                        srv.getBookings({
+                            appointmentId: eventObj.extendedProps.appointment_id
+                        }).subscribe(res => {
+                            me.bookings = res.data;
+                            me.showCustomer = res.showCustomer;
+                            me.showTrainer = res.showTrainer;
+                            me.supportFinance = res.supportFinance;
+                            me.showStudentList = true;
+                        });
+                    }
+
+                    // if (eventObj.url) {
+                    //     alert(
+                    //         'Clicked ' + eventObj.title + '.\n' +
+                    //         'Will open ' + eventObj.url + ' in a new tab'
+                    //     );
+                    //
+                    //     window.open(eventObj.url);
+                    //
+                    //     info.jsEvent.preventDefault(); // prevents browser from following link in current tab.
+                    // } else {
+                    //     alert('Clicked ' + eventObj.title);
+                    // }
                 }
-
-                // if (eventObj.url) {
-                //     alert(
-                //         'Clicked ' + eventObj.title + '.\n' +
-                //         'Will open ' + eventObj.url + ' in a new tab'
-                //     );
-                //
-                //     window.open(eventObj.url);
-                //
-                //     info.jsEvent.preventDefault(); // prevents browser from following link in current tab.
-                // } else {
-                //     alert('Clicked ' + eventObj.title);
+                // events: {   // below causes 2 issues, (1) can't pass token, (2) can't pass content-type json.
+                //     url: this.api.url + 'api/appointments',
+                //     startParam: 'start_time',
+                //     endParam: 'end_time',
+                //     failure: function() {
+                //         alert('there was an error while fetching events!');
+                //     },
+                //     color: 'yellow',   // a non-ajax option
+                //     textColor: 'black' // a non-ajax option
                 // }
-            }
-            // events: {   // below causes 2 issues, (1) can't pass token, (2) can't pass content-type json.
-            //     url: this.api.url + 'api/appointments',
-            //     startParam: 'start_time',
-            //     endParam: 'end_time',
-            //     failure: function() {
-            //         alert('there was an error while fetching events!');
-            //     },
-            //     color: 'yellow',   // a non-ajax option
-            //     textColor: 'black' // a non-ajax option
-            // }
-        };
+            };
+        });
     }
 
     // debugMe(arg) {

@@ -30,11 +30,11 @@
 <!--        </div>-->
     </div>
 
-    <full-calendar [options]="options">
+    <full-calendar *ngIf="options" [options]="options">
         <ng-template #eventContent let-arg>
                 <div *ngIf="arg.view.type == 'dayGridMonth'" class="month fc-daygrid-event-dot" style="border-color: {{ arg.event.borderColor }};"></div>
                 <div *ngIf="arg.view.type == 'dayGridMonth'" class="month fc-event-time">{{ lemonade.format(arg.event.start, lemonade.timeFormat) }}</div>
-                <div *ngIf="arg.view.type == 'dayGridMonth'" class="month fc-event-title" style="color: {{ arg.event.extendedProps.role_color_name }};"><b>{{ arg.event.extendedProps.package ? arg.event.extendedProps.package.name : arg.event.title }}</b></div>
+                <div *ngIf="arg.view.type == 'dayGridMonth'" class="month fc-event-title" style="color: {{ arg.event.extendedProps.role_color_name }};"><b>{{ arg.event.extendedProps.package ? arg.event.extendedProps.package.name : arg.event.title }}<i>&#160;&#160;{{ arg.event.extendedProps.total_booked }}</i></b></div>
             <div *ngIf="arg.view.type == 'timeGridWeek'">
                 <div class="week fc-event-time">{{ lemonade.format(arg.event.start, lemonade.timeFormat) }} - {{ lemonade.format(arg.event.end, lemonade.endTimeFormat) }} / {{ arg.event.extendedProps.room_name }}</div>
                 <div *ngIf="arg.event.extendedProps.package" class="week fc-event-title"><b>{{ arg.event.extendedProps.package.name }}</b> <i>&#160;&#160;{{ arg.event.extendedProps.total_booked + '/' + arg.event.extendedProps.package.total_space }}</i></div>
