@@ -1,0 +1,91 @@
+<div class="flex justify-content-between">
+    <div class="flex align-items-center justify-content-center p-2 border-round mr-1 text-2xl font-bold">
+        {{ 'Notification Templates' | translate }}
+    </div>
+</div>
+<div class="card">
+    <p-tabView>
+        <p-tabPanel header="{{ 'Email' | translate}}">
+            <div class="grid p-fluid">
+                <div class="col-12 md:col-4">
+                    <p-tabView>
+                        <p-tabPanel header="{{ 'Customer' | translate}}">
+                            <div *ngFor="let mail of customer_email_templates" class="field-checkbox">
+                                <p-radioButton [inputId]="mail.name" name="email_tpl" [(ngModel)]="etpl" [value]="mail"></p-radioButton>
+                                <label [for]="mail.name">{{ mail.name | translate }}</label>
+                            </div>
+                        </p-tabPanel>
+                        <p-tabPanel header="{{ 'Trainer' | translate}}">
+                            <div *ngFor="let mail of trainer_email_templates" class="field-checkbox">
+                                <p-radioButton [inputId]="mail.name" name="email_tpl" [(ngModel)]="etpl" [value]="mail"></p-radioButton>
+                                <label [for]="mail.name">{{ mail.name | translate }}</label>
+                            </div>
+                        </p-tabPanel>
+                    </p-tabView>
+                </div>
+                <div class="col-12 md:col-8">
+                    <p-card *ngIf="etpl">
+                        <h5>{{ etpl.name | translate }}</h5>
+                        <div class="field">
+                            <label htmlFor="subject"><span class="required">*</span> {{ 'Subject' | translate }}</label>
+                            <input type="text" pInputText id="subject" [(ngModel)]="etpl.subject" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !etpl.subject}"/>
+                        </div>
+                        <div class="field">
+                            <label htmlFor="content"><span class="required">*</span> {{ 'Content' | translate }}</label>
+                            <p-editor id="content" [style]="{'height':'320px'}" [(ngModel)]="etpl.content" required></p-editor>
+                        </div>
+                        <div class="field">
+                            <label htmlFor="enabled"><span class="required">*</span> {{ 'Enabled' | translate }}</label>
+                            <p-checkbox id="enabled" name="enabled" [(ngModel)]="etpl.status" value="visible" label="{{ 'Yes' | translate }}"></p-checkbox>
+                        </div>
+                        <ng-template pTemplate="footer">
+                            <div class="grid grid-nogutter justify-content-between ng-star-inserted">
+                                <div class="col-8 md:col-10"></div>
+                                <div class="col text-right">
+                                    <button pButton pRipple label="{{ 'Save' | translate }}" icon="pi pi-check" (click)="saveEmail()"></button>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </p-card>
+                </div>
+            </div>
+        </p-tabPanel>
+        <p-tabPanel *ngIf="support_whatsapp" header="{{ 'WhatsApp' | translate}}">
+            <div class="grid p-fluid">
+                <div class="col-12 md:col-4">
+                    <p-tabView>
+                        <p-tabPanel header="{{ 'Customer' | translate}}">
+                            <div *ngFor="let wtap of customer_whatsapp_templates" class="field-checkbox">
+                                <p-radioButton [inputId]="wtap.name" name="whatsapp_tpl" [(ngModel)]="wtpl" [value]="wtap"></p-radioButton>
+                                <label [for]="wtap.name">{{ wtap.name | translate }}</label>
+                            </div>
+                        </p-tabPanel>
+                        <p-tabPanel header="{{ 'Trainer' | translate}}">
+                            <div *ngFor="let wtap of trainer_whatsapp_templates" class="field-checkbox">
+                                <p-radioButton [inputId]="wtap.name" name="whatsapp_tpl" [(ngModel)]="wtpl" [value]="wtap"></p-radioButton>
+                                <label [for]="wtap.name">{{ wtap.name | translate }}</label>
+                            </div>
+                        </p-tabPanel>
+                    </p-tabView>
+                </div>
+                <div class="col-12 md:col-8">
+                    <div class="card" *ngIf="wtpl">
+                        <h5>{{ wtpl.name | translate }}</h5>
+                        <div class="field">
+                            <label htmlFor="name1">{{ 'Header' | translate }}</label>
+                            <input type="text" pInputText id="name" [(ngModel)]="wtpl.subject" required />
+                        </div>
+                        <div class="field">
+                            <label htmlFor="remark"><span class="required">*</span> {{ 'Body' | translate }}</label>
+                            <textarea id="remark" pInputTextarea [rows]="8" [(ngModel)]="wtpl.content" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !wtpl.content}"></textarea>
+                        </div>
+                        <div class="field">
+                            <label htmlFor="footer1">{{ 'Footer' | translate }}</label>
+                            <input type="text" pInputText id="footer1" [(ngModel)]="wtpl.footer" required/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </p-tabPanel>
+    </p-tabView>
+</div>

@@ -53,6 +53,8 @@ import {PaymentSuccessfulComponent} from "./components/payment-successful/paymen
 import {PaymentFailComponent} from "./components/payment-fail/payment-fail.component";
 import {ClassCheckinComponent} from "./components/class-checkin/class-checkin.component";
 import {ServiceListComponent} from "./components/service-list/service-list.component";
+import {WhatsappTemplatesComponent} from "./components/whatsapp-templates/whatsapp-templates.component";
+import {NotificationTemplatesComponent} from "./components/notification-templates/notification-templates.component";
 import { ReportSalesComponent } from './components/report-sales/report-sales.component';
 import { ReportTrainerCommissionsComponent } from './components/report-trainer-commissions/report-trainer-commissions.component';
 import {AppointmentBlocksComponent} from './components/appointment-blocks/appointment-blocks.component';
@@ -85,6 +87,8 @@ import {AppointmentBlocksComponent} from './components/appointment-blocks/appoin
                     {path: 'settings/package-list', component: PackageListComponent, canActivate: [ AuthGuardService ]},
                     {path: 'settings/service-list', component: ServiceListComponent, canActivate: [ AuthGuardService ]},
                     {path: 'settings/working-hours-list', component: TimeslotListComponent, canActivate: [ AuthGuardService ]},
+                    {path: 'settings/notification-templates', component: NotificationTemplatesComponent, canActivate: [ AuthGuardService ]},
+                    {path: 'settings/whatsapp-templates', component: WhatsappTemplatesComponent, canActivate: [ AuthGuardService ]},
                     // {path: 'uikit/formlayout', component: FormLayoutComponent},
                     // {path: 'uikit/input', component: InputComponent},
                     // {path: 'uikit/floatlabel', component: FloatLabelComponent},
@@ -113,7 +117,7 @@ import {AppointmentBlocksComponent} from './components/appointment-blocks/appoin
                     {path:'checkin/:id', component: ClassCheckinComponent, canActivate: [ AuthGuardService ]},
 
                     {path:'appointment-blocks', component: AppointmentBlocksComponent, canActivate: [ AuthGuardService ]},
-                    //report 
+                    //report
                     {path: 'report-sales', component: ReportSalesComponent, canActivate: [ AuthGuardService ]},
                     {path: 'report-trainer-commissions', component: ReportTrainerCommissionsComponent, canActivate: [ AuthGuardService ]},
                 ],

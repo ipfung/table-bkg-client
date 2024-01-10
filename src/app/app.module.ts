@@ -179,12 +179,15 @@ import { PaymentFailComponent } from './components/payment-fail/payment-fail.com
 import { ClassCheckinComponent } from './components/class-checkin/class-checkin.component';
 import { PackageListComponent } from './components/package-list/package-list.component';
 import {DashboardService} from "./service/dashboard.service";
+import { NotificationTemplatesComponent } from './components/notification-templates/notification-templates.component';
+import { WhatsappTemplatesComponent } from './components/whatsapp-templates/whatsapp-templates.component';
 import { OrderAppointmentFormComponent } from './components/order-appointment-form/order-appointment-form.component';
 import { OrderAppointmentListComponent } from './components/order-appointment-list/order-appointment-list.component';
 import { ReportSalesComponent } from './components/report-sales/report-sales.component';
 import { ReportTrainerCommissionsComponent } from './components/report-trainer-commissions/report-trainer-commissions.component';
 import { AppointmentBlocksComponent } from './components/appointment-blocks/appointment-blocks.component';
 import { AppointmentBlockItemsComponent } from './components/appointment-block-items/appointment-block-items.component';
+import {EditorModule} from "primeng/editor";
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/lang/', '-' + environment.project + '.json');
@@ -290,6 +293,7 @@ export function createTranslateLoader(http: HttpClient) {
         AppCodeModule,
         StyleClassModule,
         FullCalendarModule,
+        EditorModule,
     ],
     declarations: [
         AppComponent,
@@ -358,6 +362,8 @@ export function createTranslateLoader(http: HttpClient) {
         PaymentFailComponent,
         ClassCheckinComponent,
         AppointmentCalendarComponent,
+        NotificationTemplatesComponent,
+        WhatsappTemplatesComponent,
         OrderAppointmentFormComponent,
         OrderAppointmentListComponent,
         ReportSalesComponent,

@@ -1,0 +1,76 @@
+<div class="flex justify-content-between">
+    <div class="flex align-items-center justify-content-center p-2 border-round mr-1 text-2xl font-bold">
+        {{ 'WhatsApp Message Templates' | translate }}
+    </div>
+    <div class="flex align-items-center justify-content-center py-2 border-round">
+        <button *ngIf="editable" pButton pRipple label="{{ 'New' | translate }}" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
+    </div>
+</div>
+<div class="card">
+
+    <p-table [value]="templates" [loading]="loading" dataKey="id" sortField="name" sortMode="single" responsiveLayout="stack">
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="min-width:150px">{{ 'Name' | translate }}</th>
+                <th style="min-width:110px">{{ 'Language' | translate }}</th>
+                <th style="min-width:120px">{{ 'Status' | translate }}</th>
+<!--                <th style="min-width:50px">{{ 'Messages sent' | translate }}</th>-->
+<!--                <th style="min-width:50px">{{ 'Messages opened' | translate }}</th>-->
+<!--                <th style="min-width:80px">{{ 'Top block reason' | translate }}</th>-->
+<!--                <th style="min-width:90px">{{ 'Last updated' | translate }}</th>-->
+                <th style="min-width:20px"></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-tpl let-rowIndex="rowIndex">
+            <tr>
+                <td style="min-width:150px">
+                    <span class="p-column-title">{{ 'Name' | translate }}</span>
+                        {{ tpl.name }}
+                </td>
+                <td style="min-width:110px">
+                    <span class="p-column-title">{{ 'Language' | translate }}</span>
+                    {{ tpl.language }}
+                </td>
+                <td style="min-width:120px">
+                    <span class="p-column-title">{{ 'Status' | translate }}</span>
+                    {{ tpl.status | translate }}
+                </td>
+                <td style="min-width:20px">
+                    <span class="p-column-title">{{ 'Actions' | translate }}</span>
+                    <div>
+                        <button *ngIf="editable" pButton type="button" [disabled]="!canAmend(tpl)" pTooltip="{{ 'Edit' | translate }}" tooltipPosition="bottom" class="p-0 p-button-text" icon="pi pi-pencil" (click)="edit(tpl)"></button>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-toast></p-toast>
+
+<p-dialog [(visible)]="formDialog" [style]="{width:'50em', height: '100vh'}" header="{{ formHeader | translate:{name: 'Name' | translate} }}" position="right" [modal]="true" class="p-fluid">
+    <ng-template pTemplate="content">
+        <div class="field">
+            <label for="name"><span class="required">*</span> {{ 'Name' | translate }}</label>
+            <input type="text" pInputText id="name" [(ngModel)]="tpl.name" [disabled]="tpl.id" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !tpl.name}"/>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !tpl.name">{{ 'Field is required' | translate: {field: 'Name' | translate} }}</small>
+        </div>
+
+        <div class="field">
+            <label for="lang"><span class="required">*</span> {{ 'Language' | translate }}</label>
+            <p-dropdown id="lang" [options]="languages" [(ngModel)]="tpl.language" [disabled]="tpl.id" optionLabel="name" optionValue="id" [ngClass]="{'ng-invalid ng-dirty' : submitted && !tpl.language}"></p-dropdown>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !tpl.language">{{ 'Field is required' | translate: {field: 'Language' | translate} }}</small>
+        </div>
+
+        <div class="field">
+            <label>{{ 'Status' | translate }}</label>
+            {{ tpl.status | translate }}
+        </div>
+
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="{{ 'Cancel' | translate }}" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="{{ 'Save' | translate }}" icon="pi pi-check" class="p-button-text" (click)="save()"></button>
+    </ng-template>
+</p-dialog>
