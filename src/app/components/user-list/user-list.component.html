@@ -454,7 +454,7 @@
                     </div>
                     <div class="col-12 md:col-4">
                         <h5>{{ 'Month' | translate }}</h5>
-                        <p-dropdown [options]="customer_orders" [(ngModel)]="selectedOrder" optionLabel="order_date" (select)="loadOrderRemaining()"></p-dropdown>
+                        <p-dropdown [options]="customer_orders" [(ngModel)]="selectedOrder" optionLabel="order_date" (onChange)="loadOrderRemaining()"></p-dropdown>
                         <div class="mt-2">
                             <p-button *ngIf="canBook()" class="p-button-sm p-button-rounded" label="{{ 'New Booking' | translate }}" (onClick)="newAppointmentOrder()"></p-button>
                         </div>

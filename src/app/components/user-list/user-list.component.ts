@@ -275,16 +275,14 @@ export class UserListComponent implements OnInit {
     }
 
     loadOrderRemaining() {
-        if (!this.selectedOrder.bookings) {
-            // loading appointments from server.
-            this.appointmentService.getBookings({
-                from_date: '2000-01-01',
-                to_date: this.lemonade.formatPostDate(addYears(new Date(), 1)),
-                orderId: this.selectedOrder.id
-            }).subscribe(res => {
-                this.selectedOrder.bookings = res.data;
-            });
-        }
+        // loading appointments from server.
+        this.appointmentService.getBookings({
+            from_date: '2000-01-01',
+            to_date: this.lemonade.formatPostDate(addYears(new Date(), 1)),
+            orderId: this.selectedOrder.id
+        }).subscribe(res => {
+            this.selectedOrder.bookings = res.data;
+        });
         this.appointmentService.getCourse(this.selectedOrder.id).subscribe(res => {
             this.remainingOrder = res.data;
             if (res.data.customer_id == this.selectedOrder.customer_id) {
@@ -548,6 +546,9 @@ export class UserListComponent implements OnInit {
                 this.partner.trainerrates = res.data;
                 console.log("loadTrainerRate=", res.data);
             });
+            if (forceRefresh) {
+                this.loadOrder();
+            }
         }
     }
 
