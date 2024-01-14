@@ -310,12 +310,14 @@
                     <div class="field col-12 md:col-2">
                         <label for="type">{{ 'Course Type' | translate }}</label>
                         <p-dropdown [options]="ratetypes" [(ngModel)]="tr_rate_type" optionLabel="label" optionValue="value">
-                            <!-- <ng-template pTemplate="selectedItem">
-                                {{  tr_rate_type  | translate  }}
-                            </ng-template> -->
-                           <!--  <ng-template let-item pTemplate="item">
+                            <ng-template pTemplate="selectedItem">
+                                <div *ngIf ="tr_rate_type==1" >{{ '1 to 1 training' | translate }}</div>
+                                <div *ngIf ="tr_rate_type==2" >{{ 'Group Event' | translate }}</div>
+                                <div *ngIf ="tr_rate_type==3" >{{ '1 to 1 training' | translate }}( {{ 'monthly' |translate }})</div>
+                            </ng-template>
+                            <ng-template let-item pTemplate="item">
                                 {{ item.label | translate }}
-                            </ng-template> -->
+                            </ng-template>
                         </p-dropdown>
 
                     </div>
@@ -362,7 +364,7 @@
                                     <td style="min-width:120px">
                                         <p-cellEditor>
                                             <ng-template pTemplate="input">
-                                                <p-dropdown [options]="trainers" [(ngModel)]="trainer_rates.trainer" optionLabel="name" optionValue="id" ></p-dropdown>
+                                                <p-dropdown appendTo="body" [options]="trainers" [(ngModel)]="trainer_rates.trainer" optionLabel="name" optionValue="id" ></p-dropdown>
 
                                             </ng-template>
                                             <ng-template pTemplate="output">
@@ -372,19 +374,28 @@
                                     </td>
                                     <td style="min-width:100px">
                                         <p-cellEditor>
-                                            <ng-template pTemplate="input">
-                                                <p-dropdown [options]="ratetypes" [(ngModel)]="trainer_rates.rate_type" ></p-dropdown>
+                                            <ng-template pTemplate="input" >
+                                                <p-dropdown appendTo="body" [options]="ratetypes" [(ngModel)]="trainer_rates.rate_type" >
+                                                    <ng-template pTemplate="selectedItem">
+                                                        <div *ngIf ="trainer_rates.rate_type==1" >{{ '1 to 1 training' | translate }}</div>
+                                                        <div *ngIf ="trainer_rates.rate_type==2" >{{ 'Group Event' | translate }}</div>
+                                                        <div *ngIf ="trainer_rates.rate_type==3" >{{ '1 to 1 training' | translate }}( {{ 'monthly' |translate }})</div>
+                                                    </ng-template>
+                                                    <ng-template let-item pTemplate="item">
+                                                        {{ item.label | translate }}
+                                                    </ng-template>
+                                                </p-dropdown>
 
                                             </ng-template>
                                             <ng-template let-item pTemplate="output">
-                                               <div *ngIf ="trainer_rates.rate_type==1" >{{ '1 to 1' }}</div>
-                                               <div *ngIf ="trainer_rates.rate_type==2" >{{ 'Group' }}</div>
-                                               <div *ngIf ="trainer_rates.rate_type==3" >{{ '1 to 1 (Monthly)' }}</div>
+                                               <div *ngIf ="trainer_rates.rate_type==1" >{{ '1 to 1 training'  | translate }}</div>
+                                               <div *ngIf ="trainer_rates.rate_type==2" >{{ 'Group Event' | translate }}</div>
+                                               <div *ngIf ="trainer_rates.rate_type==3" >{{ '1 to 1 training (Monthly)' | translate }}</div>
                                             </ng-template>
                                         </p-cellEditor>
 
                                     </td>
-                                    <td style="max-width:80px">
+                                    <td style="min-width:80px">
                                         <p-cellEditor>
                                             <ng-template pTemplate="input">
                                                 <input pInputText type="text" [(ngModel)]="trainer_rates.trainer_charge">
@@ -394,7 +405,7 @@
                                             </ng-template>
                                         </p-cellEditor>
                                     </td>
-                                    <td style="max-width:80px">
+                                    <td style="min-width:80px">
 
                                         <p-cellEditor>
                                             <ng-template pTemplate="input">

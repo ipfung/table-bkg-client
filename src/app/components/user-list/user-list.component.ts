@@ -127,7 +127,7 @@ export class UserListComponent implements OnInit {
             this.roles = res.data;
         });
 
-        this.ratetypes = [{ label: "1 to 1", value: 1 },{label: "Group", value: 2},{label: "1 to 1 (Monthly)", value: 3}];
+        this.ratetypes = [{ label: "1 to 1 training", value: 1 },{label: "Group Event", value: 2},{label: "1 to 1 training (Monthly)", value: 3}];
     }
 
     ngOnDestroy() {
@@ -510,7 +510,7 @@ export class UserListComponent implements OnInit {
     }
 
     onRowEditInit(trainerrate ){
-        console.log("RoweditInit");
+        console.log("RoweditInit", trainerrate);
     }
 
     onRowEditSave(trainerrate){
@@ -536,7 +536,7 @@ export class UserListComponent implements OnInit {
     }
 
     onRowEditCancel(trainerrate, index: number){
-        console.log("RoweditCancel");
+        console.log("RoweditCancel", trainerrate);
     }
 
     loadTrainerRates(user_id, forceRefresh)
