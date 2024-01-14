@@ -127,7 +127,7 @@ export class UserListComponent implements OnInit {
             this.roles = res.data;
         });
 
-        this.ratetypes = [{ label: "1 to 1 training", value: 1 },{label: "Group", value: 2},{label: "1 to 1 training (Monthly)", value: 3}];
+        this.ratetypes = [{ label: "1 to 1", value: 1 },{label: "Group", value: 2},{label: "1 to 1 (Monthly)", value: 3}];
     }
 
     ngOnDestroy() {

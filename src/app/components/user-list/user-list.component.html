@@ -308,8 +308,15 @@
                         <p-dropdown [options]="trainers" [(ngModel)]="tr_trainer" optionLabel="label" optionLabel="name" optionValue="id" ></p-dropdown>
                     </div>
                     <div class="field col-12 md:col-2">
-                        <label for="type">{{ 'Type' | translate }}</label>
-                        <p-dropdown [options]="ratetypes" [(ngModel)]="tr_rate_type" optionLabel="label" optionValue="value"></p-dropdown>
+                        <label for="type">{{ 'Course Type' | translate }}</label>
+                        <p-dropdown [options]="ratetypes" [(ngModel)]="tr_rate_type" optionLabel="label" optionValue="value">
+                            <!-- <ng-template pTemplate="selectedItem">
+                                {{  tr_rate_type  | translate  }}
+                            </ng-template> -->
+                           <!--  <ng-template let-item pTemplate="item">
+                                {{ item.label | translate }}
+                            </ng-template> -->
+                        </p-dropdown>
 
                     </div>
                     <div class="field col-12 md:col-2">
@@ -330,7 +337,7 @@
                         <small class="ng-dirty ng-invalid" *ngIf="submitted && !commission_bal">{{ 'The equation is not correct' | translate }}</small>
                     </div>
                     <div class="field col-12 md:col-2">
-                        <label for="add_new">{{ 'Add New' | translate }}</label><br/>
+                        <label for="add_new">{{ 'New' | translate }}</label><br/>
                         <button pButton pRipple type="button" class="p-button-rounded p-button-text p-button-success mr-2" (click)="doAddTrainerRate()" icon="pi pi-plus" ></button>
                     </div>
 
@@ -343,7 +350,7 @@
                             <ng-template pTemplate="header">
                                 <tr>
                                     <th style="min-width:120px">{{ 'Trainer' | translate }}</th>
-                                    <th style="min-width:100px">{{ 'Rate type' | translate }}</th>
+                                    <th style="min-width:100px">{{ 'Course Type' | translate }}</th>
                                     <th style="max-width:80px">{{ 'Charge/ Hour' | translate }}</th>
                                     <th style="max-width:80px">{{ 'Trainer Commission/ Hour' | translate }}</th>
                                     <th style="max-width:80px">{{ 'Company Income/ Hour' | translate }}</th>
@@ -370,8 +377,9 @@
 
                                             </ng-template>
                                             <ng-template let-item pTemplate="output">
-                                               <div *ngIf ="trainer_rates.rate_type==1" >{{ '1 on 1' }}</div>
-                                               <div *ngIf ="trainer_rates.rate_type!=1" >{{ 'Group' }}</div>
+                                               <div *ngIf ="trainer_rates.rate_type==1" >{{ '1 to 1' }}</div>
+                                               <div *ngIf ="trainer_rates.rate_type==2" >{{ 'Group' }}</div>
+                                               <div *ngIf ="trainer_rates.rate_type==3" >{{ '1 to 1 (Monthly)' }}</div>
                                             </ng-template>
                                         </p-cellEditor>
 
