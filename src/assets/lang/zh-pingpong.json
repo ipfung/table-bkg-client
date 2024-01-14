@@ -364,6 +364,13 @@
     "Report": "報告",
     "Sales Report": "銷售報告",
     "Trainer Commission Report": "教練分成報告",    
+    "1 to 1":"一對一",
+    "Group":"大班",
+    "Course Type":"上課模式",
+    "Charge/ Hour":"課堂每小時收費",
+    "Trainer Commission/ Hour":"教練每小時收費",
+    "Company Income/ Hour":"公司每小時收費",
+    "Unpaid Total":"未有付款總金額",
     "primeng": {
         "startsWith": "Starts with",
         "contains": "Contains",
