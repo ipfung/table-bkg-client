@@ -83,6 +83,7 @@ export class UserListComponent implements OnInit {
     showNewAppointmentOrder: boolean = false;
     messages = [];
 
+    clonedTrainerRate : any[]; 
     // end by Jeffrey
     private subscription;
 
@@ -509,8 +510,12 @@ export class UserListComponent implements OnInit {
 
     }
 
+    
+
     onRowEditInit(trainerrate ){
-        console.log("RoweditInit", trainerrate);
+        
+        this.clonedTrainerRate = {...trainerrate};
+        console.log("RoweditInit", this.clonedTrainerRate);
     }
 
     onRowEditSave(trainerrate){
@@ -536,7 +541,10 @@ export class UserListComponent implements OnInit {
     }
 
     onRowEditCancel(trainerrate, index: number){
-        console.log("RoweditCancel", trainerrate);
+        this.partner.trainerrates[index] = this.clonedTrainerRate;
+        console.log("RoweditCancel", this.partner.trainerrates[index]);
+        delete this.clonedTrainerRate;
+        
     }
 
     loadTrainerRates(user_id, forceRefresh)
