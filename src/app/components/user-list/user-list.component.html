@@ -359,27 +359,27 @@
                                     <th style="min-width:100px"></th>
                                 </tr>
                             </ng-template>
-                            <ng-template pTemplate="body" let-trainer_rates let-editing="editing" let-ri="rowIndex">
-                                <tr [pEditableRow]="trainer_rates">
+                            <ng-template pTemplate="body" let-trainerrate let-editing="editing" let-ri="rowIndex">
+                                <tr [pEditableRow]="trainerrate">
                                     <td style="min-width:120px">
                                         <p-cellEditor>
                                             <ng-template pTemplate="input">
-                                                <p-dropdown appendTo="body" [options]="trainers" [(ngModel)]="trainer_rates.trainer" optionLabel="name" optionValue="id" ></p-dropdown>
+                                                <p-dropdown appendTo="body" [options]="trainers" [(ngModel)]="trainerrate.trainer" optionLabel="name" optionValue="id" ></p-dropdown>
 
                                             </ng-template>
                                             <ng-template pTemplate="output">
-                                                {{ trainer_rates.users.name }}
+                                                {{ trainerrate.users.name }}
                                             </ng-template>
                                         </p-cellEditor>
                                     </td>
                                     <td style="min-width:100px">
                                         <p-cellEditor>
                                             <ng-template pTemplate="input" >
-                                                <p-dropdown appendTo="body" [options]="ratetypes" [(ngModel)]="trainer_rates.rate_type" >
+                                                <p-dropdown appendTo="body" [options]="ratetypes" [(ngModel)]="trainerrate.rate_type" >
                                                     <ng-template pTemplate="selectedItem">
-                                                        <div *ngIf ="trainer_rates.rate_type==1" >{{ '1 to 1 training' | translate }}</div>
-                                                        <div *ngIf ="trainer_rates.rate_type==2" >{{ 'Group Event' | translate }}</div>
-                                                        <div *ngIf ="trainer_rates.rate_type==3" >{{ '1 to 1 training' | translate }}( {{ 'monthly' |translate }})</div>
+                                                        <div *ngIf ="trainerrate.rate_type==1" >{{ '1 to 1 training' | translate }}</div>
+                                                        <div *ngIf ="trainerrate.rate_type==2" >{{ 'Group Event' | translate }}</div>
+                                                        <div *ngIf ="trainerrate.rate_type==3" >{{ '1 to 1 training' | translate }}( {{ 'monthly' |translate }})</div>
                                                     </ng-template>
                                                     <ng-template let-item pTemplate="item">
                                                         {{ item.label | translate }}
@@ -388,9 +388,9 @@
 
                                             </ng-template>
                                             <ng-template let-item pTemplate="output">
-                                               <div *ngIf ="trainer_rates.rate_type==1" >{{ '1 to 1 training'  | translate }}</div>
-                                               <div *ngIf ="trainer_rates.rate_type==2" >{{ 'Group Event' | translate }}</div>
-                                               <div *ngIf ="trainer_rates.rate_type==3" >{{ '1 to 1 training (Monthly)' | translate }}</div>
+                                               <div *ngIf ="trainerrate.rate_type==1" >{{ '1 to 1 training'  | translate }}</div>
+                                               <div *ngIf ="trainerrate.rate_type==2" >{{ 'Group Event' | translate }}</div>
+                                               <div *ngIf ="trainerrate.rate_type==3" >{{ '1 to 1 training (Monthly)' | translate }}</div>
                                             </ng-template>
                                         </p-cellEditor>
 
@@ -398,10 +398,10 @@
                                     <td style="min-width:80px">
                                         <p-cellEditor>
                                             <ng-template pTemplate="input">
-                                                <input pInputText type="text" [(ngModel)]="trainer_rates.trainer_charge">
+                                                <input pInputText type="text" [(ngModel)]="trainerrate.trainer_charge">
                                             </ng-template>
                                             <ng-template pTemplate="output">
-                                                {{trainer_rates.trainer_charge}}
+                                                {{trainerrate.trainer_charge}}
                                             </ng-template>
                                         </p-cellEditor>
                                     </td>
@@ -409,10 +409,10 @@
 
                                         <p-cellEditor>
                                             <ng-template pTemplate="input">
-                                                <input pInputText type="text" [(ngModel)]="trainer_rates.trainer_commission ">
+                                                <input pInputText type="text" [(ngModel)]="trainerrate.trainer_commission">
                                             </ng-template>
                                             <ng-template pTemplate="output">
-                                                {{ trainer_rates.trainer_commission }}
+                                                {{ trainerrate.trainer_commission }}
                                             </ng-template>
                                         </p-cellEditor>
                                     </td>
@@ -420,21 +420,20 @@
 
                                         <p-cellEditor>
                                             <ng-template pTemplate="input">
-                                              <!--   <input pInputText type="text" [(ngModel)]="trainer_rates.company_income"> -->
-                                                {{trainer_rates.company_income}}
+                                                 <input pInputText type="text" [(ngModel)]="trainerrate.company_income">
                                             </ng-template>
                                             <ng-template pTemplate="output">
-                                                {{trainer_rates.company_income}}
+                                                {{trainerrate.company_income}}
                                             </ng-template>
                                         </p-cellEditor>
                                     </td>
                                     <td style="min-width:100px">
 
                                         <div class="flex align-items-center justify-content-center gap-2">
-                                            <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(trainer_rates)" class="p-button-rounded p-button-text"></button>
-                                            <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave(trainer_rates)" class="p-button-rounded p-button-text p-button-success mr-2"></button>
-                                            <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel(trainer_rates, ri)" class="p-button-rounded p-button-text p-button-danger"></button>
-                                            <button pButton type="button" pTooltip="{{ 'Delete' | translate }}" tooltipPosition="bottom" class="p-0 p-button-text" icon="pi pi-trash" [ngStyle]="{'color':'red'}" (click)="doDelTrainerRate(trainer_rates)"></button>
+                                            <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(trainerrate)" class="p-button-rounded p-button-text"></button>
+                                            <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave(trainerrate)" class="p-button-rounded p-button-text p-button-success mr-2"></button>
+                                            <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel(trainerrate, ri)" class="p-button-rounded p-button-text p-button-danger"></button>
+                                            <button pButton type="button" pTooltip="{{ 'Delete' | translate }}" tooltipPosition="bottom" class="p-0 p-button-text" icon="pi pi-trash" [ngStyle]="{'color':'red'}" (click)="doDelTrainerRate(trainerrate)"></button>
                                         </div>
                                     </td>
                                 </tr>

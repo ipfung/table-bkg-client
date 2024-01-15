@@ -83,7 +83,7 @@ export class UserListComponent implements OnInit {
     showNewAppointmentOrder: boolean = false;
     messages = [];
 
-    clonedTrainerRate : any[]; 
+    clonedTrainerRate : any[];
     // end by Jeffrey
     private subscription;
 
@@ -286,7 +286,7 @@ export class UserListComponent implements OnInit {
         });
         this.appointmentService.getCourse(this.selectedOrder.id).subscribe(res => {
             this.remainingOrder = res.data;
-            if (res.data.customer_id == this.selectedOrder.customer_id) {
+            if (res.data && res.data.customer_id == this.selectedOrder.customer_id) {
                 // copy the customer object.
                 this.remainingOrder.customer = this.selectedOrder.customer;
             }
@@ -510,12 +510,11 @@ export class UserListComponent implements OnInit {
 
     }
 
-    
 
-    onRowEditInit(trainerrate ){
-        
-        this.clonedTrainerRate = {...trainerrate};
-        console.log("RoweditInit", this.clonedTrainerRate);
+
+    onRowEditInit(trainerrate){
+        // this.clonedTrainerRate[ri] = {...trainerrate};
+        // console.log("RoweditInit", this.clonedTrainerRate);
     }
 
     onRowEditSave(trainerrate){
@@ -541,10 +540,8 @@ export class UserListComponent implements OnInit {
     }
 
     onRowEditCancel(trainerrate, index: number){
-        this.partner.trainerrates[index] = this.clonedTrainerRate;
-        console.log("RoweditCancel", this.partner.trainerrates[index]);
-        delete this.clonedTrainerRate;
-        
+        // replace the whole array from clone one which seems working.
+        this.partner.trainerrates = JSON.parse(JSON.stringify(this.clonedTrainerRate));
     }
 
     loadTrainerRates(user_id, forceRefresh)
@@ -552,7 +549,8 @@ export class UserListComponent implements OnInit {
         if (!this.partner.trainerrates || forceRefresh) {
             this.api.get('api/trainerrates-bystudentid/' + user_id).subscribe(res => {
                 this.partner.trainerrates = res.data;
-                console.log("loadTrainerRate=", res.data);
+                this.clonedTrainerRate = JSON.parse(JSON.stringify(res.data));
+                console.log("loadTrainerRate2=", res.data, this.clonedTrainerRate);
             });
             if (forceRefresh) {
                 this.loadOrder();
