@@ -310,7 +310,7 @@ console.log('this.selectedPackage333===', this.selectedPackage);
                 // clean up
                 me.order = null;
                 me.selectedPackage = undefined;
-                me.printInvoice(res.id, 'invoice');
+                me.printInvoice(res.data, 'invoice');
             } else {
                 // error.
                 this.lemonade.error(this.messageService, res);
