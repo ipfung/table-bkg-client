@@ -1,12 +1,13 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {ApiService} from "../../service/api.service";
 import {Lemonade} from "../../service/lemonade.service";
 import {environment} from "../../../environments/environment";
-import {CalendarOptions} from "@fullcalendar/core";
+import {CalendarOptions, EventApi} from "@fullcalendar/core";
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import {AppointmentService} from "../../service/appointmentservice";
 import {TranslateService} from "@ngx-translate/core";
+import {FullCalendarComponent} from "@fullcalendar/angular";
 
 @Component({
     selector: 'app-appointment-calendar',
@@ -14,6 +15,8 @@ import {TranslateService} from "@ngx-translate/core";
     styleUrls: ['./appointment-calendar.component.scss']
 })
 export class AppointmentCalendarComponent implements OnInit {
+    @ViewChild('calendar') calendarComponent: FullCalendarComponent;
+
     loading = true;
 
     events: any;
@@ -37,6 +40,9 @@ export class AppointmentCalendarComponent implements OnInit {
     showTrainer = false;
     bookings: any;
     supportFinance = false;
+    viewType: string;
+    fromDate: Date;
+    toDate: Date;
 
     constructor(private api: ApiService, private appointmentService: AppointmentService, private translateService: TranslateService, public lemonade: Lemonade) {
     }
@@ -87,6 +93,7 @@ export class AppointmentCalendarComponent implements OnInit {
                     // console.log("cal extendedProps=", info.event.extendedProps);
                     console.log("cal  info=", info);
                 },
+                datesSet: this.handleEvents.bind(this),
                 eventClick: function (info) {
                     var eventObj = info.event;
                     me.showStudentList = false;
@@ -130,6 +137,21 @@ export class AppointmentCalendarComponent implements OnInit {
         });
     }
 
+    handleEvents(event: EventApi | any): void {
+        console.log("The calendarComponent is ", this.calendarComponent);
+        if (this.calendarComponent) {
+            const calendarApi = this.calendarComponent.getApi();
+            // console.log("The calendarComponent's calendarApi is ", calendarApi);
+            // console.log("The calendarComponent's calendarApi.getCurrentData is ", calendarApi.getCurrentData());
+            const currentData = calendarApi.getCurrentData();
+            this.viewType = currentData.currentViewType;
+            this.fromDate = currentData.currentDate;
+            // this.currentDate = dayjs(calendarApi.view.currentStart).startOf('day');
+            this.loadData();
+        }
+        // this.currentEvents = event;
+    }
+
     // debugMe(arg) {
     //     console.log(arg.event);
     // }
@@ -154,7 +176,9 @@ export class AppointmentCalendarComponent implements OnInit {
     }
 
     loadData() {
-        let params = {};
+        let params = {
+            viewType: this.viewType
+        };
         console.log('hi selectedRoom=', this.selectedRoom);
         if (this.selectedRole && this.selectedRole.length > 0) {
             const roles = this.selectedRole.map(a => a.id);
@@ -168,6 +192,12 @@ export class AppointmentCalendarComponent implements OnInit {
         }
         if (this.trainer && this.trainer.id) {
             params = {...params, ...{user_id: this.trainer.id}};
+        }
+        if (this.fromDate) {
+            params = {...params, ...{from_date: this.lemonade.formatPostDate(this.fromDate)}};
+        }
+        if (this.toDate) {
+            params = {...params, ...{from_date: this.lemonade.formatPostDate(this.toDate)}};
         }
         // const roles = this.selectedRole.map(a => a.foo);
         this.api.get('api/appointments', params).subscribe( res => {

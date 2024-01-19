@@ -30,7 +30,7 @@
 <!--        </div>-->
     </div>
 
-    <full-calendar *ngIf="options" [options]="options">
+    <full-calendar #calendar *ngIf="options" [options]="options">
         <ng-template #eventContent let-arg>
                 <div *ngIf="arg.view.type == 'dayGridMonth'" class="month fc-daygrid-event-dot" style="border-color: {{ arg.event.borderColor }};"></div>
                 <div *ngIf="arg.view.type == 'dayGridMonth'" class="month fc-event-time">{{ lemonade.format(arg.event.start, lemonade.timeFormat) }}</div>
