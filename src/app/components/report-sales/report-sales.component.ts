@@ -45,7 +45,6 @@ export class ReportSalesComponent implements OnInit {
     reportPaidTotal : any;
     reportUnpaidTotal : any;
 
-    
     constructor(private api: ApiService, public appointmentService: AppointmentService, private translateService: TranslateService, public lemonade: Lemonade, private route: ActivatedRoute) {
 
     }
@@ -126,9 +125,8 @@ export class ReportSalesComponent implements OnInit {
       if (this.showCustomer && this.searchCustomer && this.searchCustomer.id) {
           params = {...params, ...{customer_id: this.searchCustomer.id}};
       }
-      console.log('finance loaddata event===', params);
+      console.log('finance loaddata event===', event);
       if (this.rangeDates.length == 2 && this.rangeDates[1]) {
-       
         this.api.get('api/report-sales', params).subscribe(res => {
             this.bookings = res.data;
             this.showCustomer = res.showCustomer;
