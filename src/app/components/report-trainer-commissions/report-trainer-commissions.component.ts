@@ -61,7 +61,7 @@ export class ReportTrainerCommissionsComponent implements OnInit {
       }
     console.log('trainer commission loaddata event===', event);
     console.log('trainer params', params   );
-    //if (this.rangeDates.length == 2 && this.rangeDates[1]) {
+    if (this.rangeDates.length == 2 && this.rangeDates[1]) {
         this.api.get('api/report-trainer-commission', params).subscribe(res => {
              this.commissions = res.data;
            /* this.showCustomer = res.showCustomer;
@@ -72,7 +72,7 @@ export class ReportTrainerCommissionsComponent implements OnInit {
             this.rows = res.per_page;
             this.totalRecords = res.total;
         });
-    //}
+    }
 
      this.appointmentService.getActiveTrainers().subscribe( res => {
             this.trainers = res.data;
