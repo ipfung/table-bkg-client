@@ -10,7 +10,7 @@
 
         </div>
         <div class="field col-12 md:col-4">
-            <p-toggleButton [(ngModel)]="showRooms" offLabel="波枱優先" onLabel="日曆優先" onIcon="pi pi-clock" offIcon="pi pi-calendar" [style]="{ width: '10em' }" (onChange)="toggleTableCalendar()" ></p-toggleButton>
+            <p-toggleButton [(ngModel)]="showRooms" offLabel="{{ 'Room first' | translate }}" onLabel="{{ 'Calendar first' | translate }}" onIcon="pi pi-clock" offIcon="pi pi-calendar" [style]="{ width: '10em' }" (onChange)="toggleTableCalendar()" ></p-toggleButton>
         </div>
     </div>
     <div *ngIf="norecord ; then thenBlock else elseBlock"></div>
