@@ -329,13 +329,13 @@
 
                     <div class="field col-12 md:col-2">
                         <label for="trainer_commission">{{ 'Trainer Commission' | translate }}</label>
-                        <p-inputNumber id="tr_trainer_commission" [(ngModel)]="tr_trainer_commission" locale="zh-HK" [max]="partner.settings.trainer_charge" (onInput)="updateTrainerCommission2($event)" [ngClass]="{'ng-invalid ng-dirty' : submitted && !commission_bal}"></p-inputNumber>
+                        <p-inputNumber id="tr_trainer_commission" [(ngModel)]="tr_trainer_commission" locale="zh-HK"  (onInput)="updateTrainerCommission2($event)" [ngClass]="{'ng-invalid ng-dirty' : submitted && !commission_bal}"></p-inputNumber>
                         <small class="ng-dirty ng-invalid" *ngIf="submitted && !commission_bal">{{ 'The equation is not correct' | translate }}</small>
                     </div>
 
                     <div class="field col-12 md:col-2">
                         <label for="company_income">{{ 'Company Income' | translate }}</label>
-                        <p-inputNumber id="tr_company_income" [(ngModel)]="tr_company_income"  locale="zh-HK" [max]="partner.settings.trainer_charge" (onInput)="updateCompanyIncome($event)" [ngClass]="{'ng-invalid ng-dirty' : submitted && !commission_bal}" [readonly]="true"></p-inputNumber>
+                        <p-inputNumber id="tr_company_income" [(ngModel)]="tr_company_income"  locale="zh-HK" (onInput)="updateCompanyIncome($event)" [ngClass]="{'ng-invalid ng-dirty' : submitted && !commission_bal}" [readonly]="true"></p-inputNumber>
                         <small class="ng-dirty ng-invalid" *ngIf="submitted && !commission_bal">{{ 'The equation is not correct' | translate }}</small>
                     </div>
                     <div class="field col-12 md:col-2">
