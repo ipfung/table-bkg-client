@@ -1,0 +1,43 @@
+
+
+
+
+<p-table [value]="trainerRates" dataKey="id" editMode="row" [paginator]="false"
+         sortField="id" responsiveLayout="stack">
+    <ng-template pTemplate="header">
+        <tr>
+            <th style="min-width:120px">{{ 'Trainer' | translate }}</th>
+            <th style="min-width:100px">{{ 'Course Type' | translate }}</th>
+            <th style="max-width:80px">{{ 'Charge/ Hour' | translate }}</th>
+            <th style="max-width:80px">{{ 'Trainer Commission/ Hour' | translate }}</th>
+            <th style="max-width:80px">{{ 'Company Income/ Hour' | translate }}</th>
+            <th style="min-width:100px"></th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-trainerrate let-editing="editing" let-ri="rowIndex">
+        <tr>
+            <td style="min-width:120px">
+                {{ trainerrate.users.name }}
+            </td>
+            <td style="min-width:100px">
+                <div *ngIf="trainerrate.rate_type==1">{{ '1 to 1 training'  | translate }}</div>
+                <div *ngIf="trainerrate.rate_type==2">{{ 'Group Event' | translate }}</div>
+                <div *ngIf="trainerrate.rate_type==3">{{ '1 to 1 training (Monthly)' | translate }}</div>
+            </td>
+            <td style="min-width:80px">
+                {{trainerrate.trainer_charge}}
+            </td>
+            <td style="min-width:80px">
+                {{ trainerrate.trainer_commission }}
+            </td>
+            <td style="max-width:80px">
+                {{trainerrate.company_income}}
+            </td>
+            <td style="min-width:100px">
+                <button pButton type="button" pTooltip="{{ 'Select' | translate }}" tooltipPosition="bottom"
+                        class="p-button-text" icon="pi pi-plus" (click)="selectTrainer(trainerrate)"
+                        ></button>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>

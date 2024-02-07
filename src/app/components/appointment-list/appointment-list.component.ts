@@ -1,14 +1,16 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {AppointmentService} from "../../service/appointmentservice";
 import {addDays, addMinutes, isAfter, isWithinInterval, subHours, subMinutes} from "date-fns";
 import {ConfirmationService, MessageService} from "primeng/api";
 import {TranslateService} from "@ngx-translate/core";
 import {Lemonade} from "../../service/lemonade.service";
+import {DialogService, DynamicDialogRef} from "primeng/dynamicdialog";
+import {TrainerRateListComponent} from "../trainer-rate-list/trainer-rate-list.component";
 
 @Component({
     selector: 'app-appointment-list',
-    providers: [MessageService, ConfirmationService],
+    providers: [DialogService, MessageService, ConfirmationService],
     templateUrl: './appointment-list.component.html',
     styleUrls: ['./appointment-list.component.scss']
 })
@@ -70,8 +72,12 @@ export class AppointmentListComponent implements OnInit {
     payment_methods: any[];
     payment_statuses: any[];
     paymentGateway: any = '';
+    paramBookId: string;
 
-    constructor(public appointmentService: AppointmentService, private router: Router, private confirmationService: ConfirmationService, public messageService: MessageService, private translateService: TranslateService, public lemonade: Lemonade) {
+    trainerRateRef: DynamicDialogRef;
+
+    constructor(private route: ActivatedRoute, public appointmentService: AppointmentService, private router: Router, private confirmationService: ConfirmationService, public dialogService: DialogService, public messageService: MessageService, private translateService: TranslateService, public lemonade: Lemonade) {
+        this.paramBookId = this.route.snapshot.paramMap.get('id');
     }
 
     ngOnInit(): void {
@@ -103,6 +109,9 @@ export class AppointmentListComponent implements OnInit {
             }
             if (this.aptStatus) {
                 params = {...params, ...{status: this.aptStatus}};
+            }
+            if (this.paramBookId) {
+                params = {...params, ...{bookId: this.paramBookId}};
             }
 
             this.appointmentService.getBookings(params).subscribe(res => {
@@ -467,28 +476,52 @@ export class AppointmentListComponent implements OnInit {
         const customer = this.appointment.customer;
         if (customer && this.selectedCustomerId !== customer.id) {   // fire when change customer.
             if (customer.trainer_rates && customer.trainer_rates && !this.selectedPackage) {
-                const settings = customer.trainer_rates.find(el => el.rate_type == 1);
+                const settings = customer.trainer_rates.filter(el => el.rate_type == 1);
                 if (settings) {
-                    this.translateService.get(['Is it a trainer course?', 'Error']).subscribe(res => {
-                        this.confirmationService.confirm({
-                            message: res['Is it a trainer course?'],
-                            accept: () => {
+                    this.translateService.get(['Is it a trainer course?', 'Choose trainer', 'Error']).subscribe(res => {
+                        const ref = this.dialogService.open(TrainerRateListComponent, {
+                            header: res['Choose trainer'],
+                            data: {
+                                list: settings
+                            },
+                            width: '70%',
+                            contentStyle: {"max-height": "500px", "overflow": "auto"},
+                            baseZIndex: 10000
+                        });
+                        ref.onClose.subscribe((rate) => {
+                            if (rate) {
                                 this.appointment.timeInformation.useTrainerData = true;
-                                this.appointment.timeInformation.trainerId = settings.trainer;
-                                // commented 20231229 since trainer_rates where no 'no_of_session', use Service's.
-                                // this.appointment.timeInformation.dftNoOfSession = settings.no_of_session;  // readonly
-                                // this.appointment.timeInformation.noOfSession = settings.no_of_session;
+                                this.appointment.timeInformation.trainerId = rate.trainer;
                                 this.appointment.timeInformation.dftNoOfSession = this.appointment.timeInformation.noOfSession;  // readonly
                                 this.appointment.paymentInformation = {
-                                    price: settings.trainer_charge,
-                                    commission: settings.trainer_commission,
-                                    order_total: settings.trainer_charge,
-                                    total_commission: settings.trainer_commission
+                                    price: rate.trainer_charge,
+                                    commission: rate.trainer_commission,
+                                    order_total: rate.trainer_charge,
+                                    total_commission: rate.trainer_commission
                                 };
-                                if (settings.room)
-                                    this.appointment.timeInformation.roomId = settings.room;
+                                if (rate.room)
+                                    this.appointment.timeInformation.roomId = rate.room;
                             }
                         });
+                        // this.confirmationService.confirm({
+                        //     message: res['Is it a trainer course?'],
+                        //     accept: () => {
+                        //         this.appointment.timeInformation.useTrainerData = true;
+                        //         this.appointment.timeInformation.trainerId = settings.trainer;
+                        //         // commented 20231229 since trainer_rates where no 'no_of_session', use Service's.
+                        //         // this.appointment.timeInformation.dftNoOfSession = settings.no_of_session;  // readonly
+                        //         // this.appointment.timeInformation.noOfSession = settings.no_of_session;
+                        //         this.appointment.timeInformation.dftNoOfSession = this.appointment.timeInformation.noOfSession;  // readonly
+                        //         this.appointment.paymentInformation = {
+                        //             price: settings.trainer_charge,
+                        //             commission: settings.trainer_commission,
+                        //             order_total: settings.trainer_charge,
+                        //             total_commission: settings.trainer_commission
+                        //         };
+                        //         if (settings.room)
+                        //             this.appointment.timeInformation.roomId = settings.room;
+                        //     }
+                        // });
                     });
                 }
             } else if (this.selectedPackage) {
