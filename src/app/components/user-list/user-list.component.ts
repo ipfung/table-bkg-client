@@ -277,20 +277,22 @@ export class UserListComponent implements OnInit {
 
     loadOrderRemaining() {
         // loading appointments from server.
-        this.appointmentService.getBookings({
-            from_date: '2000-01-01',
-            to_date: this.lemonade.formatPostDate(addYears(new Date(), 1)),
-            orderId: this.selectedOrder.id
-        }).subscribe(res => {
-            this.selectedOrder.bookings = res.data;
-        });
-        this.appointmentService.getCourse(this.selectedOrder.id).subscribe(res => {
-            this.remainingOrder = res.data;
-            if (res.data && res.data.customer_id == this.selectedOrder.customer_id) {
-                // copy the customer object.
-                this.remainingOrder.customer = this.selectedOrder.customer;
-            }
-        });
+        if (this.selectedOrder) {
+            this.appointmentService.getBookings({
+                from_date: '2000-01-01',
+                to_date: this.lemonade.formatPostDate(addYears(new Date(), 1)),
+                orderId: this.selectedOrder.id
+            }).subscribe(res => {
+                this.selectedOrder.bookings = res.data;
+            });
+            this.appointmentService.getCourse(this.selectedOrder.id).subscribe(res => {
+                this.remainingOrder = res.data;
+                if (res.data && res.data.customer_id == this.selectedOrder.customer_id) {
+                    // copy the customer object.
+                    this.remainingOrder.customer = this.selectedOrder.customer;
+                }
+            });
+        }
     }
 
     generateQr() {
