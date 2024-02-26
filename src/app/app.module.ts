@@ -188,6 +188,8 @@ import { ReportTrainerCommissionsComponent } from './components/report-trainer-c
 import { AppointmentBlocksComponent } from './components/appointment-blocks/appointment-blocks.component';
 import { AppointmentBlockItemsComponent } from './components/appointment-block-items/appointment-block-items.component';
 import {EditorModule} from "primeng/editor";
+import { TrainerRateListComponent } from './components/trainer-rate-list/trainer-rate-list.component';
+import {DynamicDialogModule} from "primeng/dynamicdialog";
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/lang/', '-' + environment.project + '.json');
@@ -225,6 +227,7 @@ export function createTranslateLoader(http: HttpClient) {
         ChipsModule,
         ChipModule,
         CodeHighlighterModule,
+        DynamicDialogModule,
         ConfirmDialogModule,
         ConfirmPopupModule,
         ColorPickerModule,
@@ -370,6 +373,7 @@ export function createTranslateLoader(http: HttpClient) {
         ReportTrainerCommissionsComponent,
         AppointmentBlocksComponent,
         AppointmentBlockItemsComponent,
+        TrainerRateListComponent,
     ],
     providers: [
         {provide: LocationStrategy, useClass: HashLocationStrategy},
