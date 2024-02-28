@@ -84,6 +84,9 @@ export class FinanceStatusComponent implements OnInit {
         const methods = [{
             code: 'cash',
             name: 'Cash'
+        }, {
+            code: 'cheque',
+            name: 'Cheque'
         }];
         this.payment_methods = methods.concat(this.lemonade.paymentMethods);
     }
