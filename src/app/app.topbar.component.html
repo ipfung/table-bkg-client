@@ -1,7 +1,7 @@
 <div class="layout-topbar">
     <a class="layout-topbar-logo" routerLink="/">
         <img src="assets/layout/images/{{appMain.config.dark ? 'logo-white' : 'logo-dark'}}.svg" alt="logo">
-        <div class="appname">{{ lemonade.getAppName() }}<div>Lemonade</div></div>
+        <div class="appname">{{ lemonade.getAppName() | translate }}<div>Lemonade</div></div>
     </a>
 
     <a class="p-link layout-menu-button layout-topbar-button" href="#" (click)="appMain.toggleMenu($event)">
