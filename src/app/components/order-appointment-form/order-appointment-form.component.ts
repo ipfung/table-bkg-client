@@ -25,7 +25,7 @@ export class OrderAppointmentFormComponent implements OnInit {
     maxDate: Date;
     nonWorkingDates: Date[];
 
-    appointment: any;
+    timeInformation: any;
     sessions = [];
     services = [];
     rooms = [];
@@ -39,6 +39,7 @@ export class OrderAppointmentFormComponent implements OnInit {
     freeTimes: any[] = [];
     groupLesson: any;
     submittingModal: boolean;
+    noOfSession: number;
 
     constructor(private appointmentService: AppointmentService, public messageService: MessageService, public lemonade: Lemonade) {
     }
@@ -48,54 +49,69 @@ export class OrderAppointmentFormComponent implements OnInit {
     }
 
     newAppointment() {
-        this.order_type = 'token';
-        this.appointment = JSON.parse(JSON.stringify(this.appointmentService.defaultAppointment));
-        this.appointment.timeInformation.customerId = this.order.customer_id;
-        this.appointment.timeInformation.orderNo = this.order.order_number;
-        this.appointment.timeInformation.price = 0;
-        this.trainers = this.order.trainers.filter((obj) => obj.rate_type == 3);   // 3=ONE_TO_ONE_MONTHLY
-        if (this.order.token_quantity <= 0) {
-            // no more hours, select group.
-            this.order_type = 'free_token';
+// console.log('newAppointment123=', this.showDialog);
+        if (!this.showDialog) {
+            this.order_type = 'free_token';    // free_token = 大班
+            this.timeInformation = {...{}, ...this.appointmentService.defaultAppointment.timeInformation};
+            this.timeInformation.customerId = this.order.customer_id;
+            this.timeInformation.orderNo = this.order.order_number;
+            this.timeInformation.price = 0;
+            this.trainers = this.order.trainers.filter((obj) => obj.rate_type == 3);   // 3=ONE_TO_ONE_MONTHLY
+            if (this.order.token_quantity <= 0) {
+                // no more hours, select group.
+                this.order_type = 'free_token';
+            }
+            const start_date = new Date(this.order.start_date),
+                today = new Date();
+            this.minDate = isBefore(today, start_date) ? start_date : today;
+            this.maxDate = new Date(this.order.end_date);
+            // for form, this wastes memory if user doesn't open the form.
+            this.appointmentService.getRooms().subscribe(res => {
+                this.rooms = res.data;
+            });
+            this.appointmentService.getServices().subscribe(res => {
+                this.services = res.data;
+                console.log('appointmentService this.services=', this.services);
+                this.loadSessions(null);
+                this.loadCalendar(null);
+            });
         }
-        const start_date = new Date(this.order.start_date),
-            today = new Date();
-        this.minDate = isBefore(today, start_date) ? start_date : today;
-        this.maxDate = new Date(this.order.end_date);
-        // for form, this wastes memory if user doesn't open the form.
-        this.appointmentService.getRooms().subscribe( res => {
-            this.rooms = res.data;
-        });
-        this.appointmentService.getServices().subscribe(res => {
-            const services = this.services = res.data;
-            this.appointment.timeInformation.serviceId = services[0].id;
-            this.appointment.timeInformation.noOfSession = services[0].sessions[0].code;
-            this.loadSessions(null);
-        });
     }
 
     loadSessions(e) {
-        if (this.services.length > 0) {
-            let service = this.services.find(el => el.id == this.appointment.timeInformation.serviceId);
+        const service = this.services.find(el => el.id == this.timeInformation.serviceId);
+        this.timeInformation.serviceId = service.id;
+        if (this.isGroupSession()) {
+            this.sessions = service.sessions;
+// console.log('this.timeInformation obj11=', this.timeInformation);
+            this.noOfSession = this.order.free_no_of_session;
+// console.log('this.timeInformation.noOfSession=', this.noOfSession);
+// console.log('this.timeInformation obj11222=', this.timeInformation);
+        } else {
+// console.log('loadSessions this.services=', this.services);
+            if (this.services.length > 0) {
+                this.noOfSession = service.sessions[0].code;
+// console.log('this.timeInformation.noOfSession2222=', this.noOfSession);
 
 // console.log('cus_max_order_duration333 token_quantity=', this.order.token_quantity, this.order.no_of_session)
-            let sessions = [],   // create a new array to store max session.
-                cus_max_order_duration = this.order.token_quantity * this.order.no_of_session * service.session_min;
+                let sessions = [],   // create a new array to store max session.
+                    cus_max_order_duration = this.order.token_quantity * this.order.no_of_session * service.session_min;
 // console.log('cus_max_order_duration333=', cus_max_order_duration, service.sessions[service.sessions.length - 1].duration)
-            if (cus_max_order_duration < service.sessions[service.sessions.length - 1].duration) {
-                // resp.sessions contains 'all' available
-                for (const key of service.sessions) {
-                    // check if customer remaining hour still can book which duration.
-                    if (cus_max_order_duration >= key.duration) {
-                        sessions.push(key);
+                if (cus_max_order_duration < service.sessions[service.sessions.length - 1].duration) {
+                    // resp.sessions contains 'all' available
+                    for (const key of service.sessions) {
+                        // check if customer remaining hour still can book which duration.
+                        if (cus_max_order_duration >= key.duration) {
+                            sessions.push(key);
+                        }
                     }
+                    this.sessions = sessions;
+                } else {
+                    this.sessions = service.sessions;
                 }
-                this.sessions = sessions;
             } else {
-                this.sessions = service.sessions;
+                this.sessions = [];
             }
-        } else {
-            this.sessions = [];
         }
     }
 
@@ -103,14 +119,15 @@ export class OrderAppointmentFormComponent implements OnInit {
         if (this.isGroupSession()) {
             this.loadFreeTimeslotByDate();
         } else {
-            if (this.appointment.timeInformation.date && this.appointment.timeInformation.noOfSession && this.appointment.timeInformation.customerId > 0 && this.appointment.timeInformation.roomId > 0) {
-                this.appointmentService.getTimeslotsByDate(this.appointment.timeInformation).subscribe(res => {
+            if (this.timeInformation.date && this.noOfSession && this.timeInformation.customerId > 0 && this.timeInformation.roomId > 0) {
+                this.timeInformation.noOfSession = this.noOfSession;
+                this.appointmentService.getTimeslotsByDate(this.timeInformation).subscribe(res => {
                     if (res.success == false) {
                         this.lemonade.error(this.messageService, res);
                         this.times = [];
                     } else {
                         this.times = res.data[0].freeslots;
-                        this.appointment.timeInformation.sessionInterval = res.sessionInterval;
+                        this.timeInformation.sessionInterval = res.sessionInterval;
                     }
                 });
             } else {
@@ -128,7 +145,7 @@ export class OrderAppointmentFormComponent implements OnInit {
     }
 
     loadFreeTimeslotByDate() {
-        const d = this.appointment.timeInformation.date;
+        const d = this.timeInformation.date;
         this.freeTimes = [];
         for (const t of this.freeTimeSlots) {
             const sd = new Date(t.start_time);
@@ -143,7 +160,7 @@ export class OrderAppointmentFormComponent implements OnInit {
             if ((this.groupLesson.package.total_space - this.groupLesson.no_of_booked) <= 0) {
                 return;
             }
-            this.appointment.timeInformation.appointment_id = this.groupLesson.id;
+            this.timeInformation.appointment_id = this.groupLesson.id;
         }
     }
 
@@ -179,13 +196,14 @@ export class OrderAppointmentFormComponent implements OnInit {
 
     saveOrderAppointment() {
         this.submitted = true;
-        const timeInfo = this.appointment.timeInformation;
+        const timeInfo = this.timeInformation;
 
+        console.log('save this.timeInformation=', timeInfo);
         if (!timeInfo.orderNo)
             return;
         if (!timeInfo.customerId || timeInfo.customerId <= 0)
             return;
-        if (timeInfo.noOfSession <= 0)
+        if (this.noOfSession <= 0)
             return;
         if (this.isGroupSession()) {
             if (!timeInfo.appointment_id || timeInfo.appointment_id <= 0)
@@ -226,13 +244,14 @@ export class OrderAppointmentFormComponent implements OnInit {
         });
     }
 
-    loadCalendar() {
+    loadCalendar(e) {
+// console.log('loadCalendar e===', e, this.isGroupSession());
+        this.loadSessions(null);
         if (this.isGroupSession()) {
             //
-            this.appointment.timeInformation.noOfSession = this.order.free_no_of_session;
-            this.appointment.timeInformation.trainerId = 0;
-            this.appointment.timeInformation.roomId = 0;
-            this.appointmentService.getTimeslotsForGroupEvent(this.appointment.timeInformation.noOfSession, this.appointment.timeInformation.serviceId).subscribe(res => {
+            this.timeInformation.trainerId = 0;
+            this.timeInformation.roomId = 0;
+            this.appointmentService.getTimeslotsForGroupEvent(this.noOfSession, this.timeInformation.serviceId).subscribe(res => {
                 this.freeTimeSlots = res['data'];
                 let sd = new Date();
                 if (this.freeTimeSlots && this.freeTimeSlots.length > 0) {
@@ -241,8 +260,8 @@ export class OrderAppointmentFormComponent implements OnInit {
                         break;
                     }
                 } else {
-                    this.appointment.timeInformation.date = null;
-                    this.appointment.timeInformation.time = null;
+                    this.timeInformation.date = null;
+                    this.timeInformation.time = null;
                 }
                 this.loadFreeNonWorkDates({
                     year: sd.getFullYear(),
