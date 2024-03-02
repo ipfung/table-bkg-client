@@ -228,6 +228,12 @@ export class FinanceStatusComponent implements OnInit {
         this.order.order_date = new Date(order.order_date);
         this.order.start_date = new Date(order_recurring.start_date);
         this.order.end_date = new Date(order_recurring.end_date);
+        if (order.payment) {
+            const gw = order.payment.gateway;
+            if (gw == 'cash' || gw == 'cheque')
+                this.order.payment_gateway = gw;
+            else this.order.payment_gateway = 'mpay';
+        }
         this.order.recurring = order_recurring;
         this.orderFormDialog = true;
     }
@@ -371,7 +377,7 @@ console.log('this.selectedPackage333===', this.selectedPackage);
     }
 
     copyOrderAmount() {
-        this.order.payment_amount = this.order.order_total;
+        this.order.paid_amount = this.order.order_total;
         this.order.payment_status = 'paid';
     }
 
@@ -411,5 +417,15 @@ console.log('this.selectedPackage333===', this.selectedPackage);
                 }
             }
         });
+    }
+
+    getTransId(payment: any) {
+        const resp = JSON.parse(payment.gateway_response);
+        return resp.ref;
+    }
+
+    getTransAmt(payment: any) {
+        const resp = JSON.parse(payment.gateway_response);
+        return resp.amt;
     }
 }

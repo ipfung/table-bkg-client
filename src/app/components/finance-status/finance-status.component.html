@@ -59,6 +59,7 @@
                 <td style="min-width:100px">
                     <span class="p-column-title">{{ 'Order No.' | translate }}</span>
                     {{ payment.order_number }}
+                    <span class="text-sm text-gray-500">{{ payment.order_total | currency:'HK$' }}</span>
                 </td>
                 <td *ngIf="showCustomer" style="min-width:120px">
                     <span class="p-column-title">{{ 'Customer' | translate }}</span>
@@ -91,7 +92,8 @@
                         {{ payment.payment_status + ' payment' | translate }}
                     </span>
                     <button *ngIf="supportPaymentGateway && payment.payment_status !== 'paid'" pButton type="button" pTooltip="{{ 'Pay Now' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-credit-card" (click)="payNow(payment)"></button>
-                    <div *ngIf="payment.payment.gateway_msg" class="pt-1 text-sm">{{ payment.payment.gateway_msg | translate }}</div>
+                    <div *ngIf="payment.payment.gateway_msg == 'Transaction successful.'" class="pt-1 text-sm">{{ 'mPay ID' | translate }}: {{ getTransId(payment.payment) }} / {{ getTransAmt(payment.payment) | currency:'HK$' }}</div>
+                    <div *ngIf="payment.payment.gateway_msg !== 'Transaction successful.'" class="pt-1 text-sm">{{ payment.payment.gateway_msg | translate }}</div>
                 </td>
                 <td style="min-width:20px">
                     <span class="p-column-title">{{ 'Actions' | translate }}</span>
@@ -201,11 +203,20 @@
             <div class="col-6">{{ 'Status' | translate }}</div>
             <div class="col-6 font-bold">{{ order.payment_status + ' payment' | translate }}</div>
 
-            <div class="col-6">{{ 'Order Method' | translate }}</div>
-            <div class="col-6 font-bold">{{ order.payment.payment_method | translate }}</div>
+<!--            <div class="col-6">{{ 'Order Method' | translate }}</div>-->
+<!--            <div class="col-6 font-bold">{{ order.payment.payment_method | translate }}</div>-->
 
             <div class="col-6">{{ 'Payment Method' | translate }}</div>
-            <div class="col-6 font-bold">{{ lemonade.comboRenderer(payment_methods, order.payment.gateway) | translate }}</div>
+            <div class="col-6 font-bold">{{ lemonade.comboRenderer(payment_methods, order.payment.payment_method) | translate }}</div>
+
+            <div class="col-6">{{ 'Payment Gateway' | translate }}</div>
+            <div class="col-6 font-bold">{{ order.payment.gateway }}</div>
+
+            <div class="col-6">{{ 'mPay  ID' | translate }}</div>
+            <div class="col-6 font-bold">{{ getTransId(order.payment) }}</div>
+
+            <div class="col-6">{{ 'Transaction amount' | translate }}</div>
+            <div class="col-6 font-bold">{{ getTransAmt(order.payment) }}</div>
 
             <div class="col-6 text-xl font-semibold">{{ 'Total' | translate }}</div>
             <div class="col-6 text-xl font-semibold">{{ order.total_amount | currency:'HK$' }}</div>
@@ -465,7 +476,7 @@
         <div class="field">
             <label for="order_payment_amount"><span class="required">*</span> {{ 'Payment Amount' | translate }}</label>
             <div class="p-inputgroup">
-                <p-inputNumber id="order_payment_amount" [(ngModel)]="order.payment_amount" mode="currency" currency="HKD" locale="zh-HK"></p-inputNumber>
+                <p-inputNumber id="order_payment_amount" [(ngModel)]="order.paid_amount" mode="currency" currency="HKD" locale="zh-HK"></p-inputNumber>
                 <div class="p-1"></div>
                 <button pButton pRipple (click)="copyOrderAmount()">{{ 'Copy Total Amount' | translate }}</button>
             </div>
@@ -499,6 +510,23 @@
                 </ng-template>
             </p-dropdown>
             <small class="ng-dirty ng-invalid" *ngIf="submitted && order.payment_status == payment_statuses[1].code && !order.payment_gateway">{{ 'Field is required' | translate: {field: 'Payment Method' | translate} }}</small>
+        </div>
+
+        <div class="grid" *ngIf="order.payment && order.payment.payment_method == 'electronic'">
+            <div class="col-4">
+                {{ 'Payment Gateway' | translate }}
+                <div class="font-bold">{{ order.payment.gateway }}</div>
+            </div>
+
+            <div class="col-4">
+                {{ 'mPay ID' | translate }}
+                <div class="font-bold">{{ getTransId(order.payment) }}</div>
+            </div>
+
+            <div class="col-4">
+                {{ 'Transaction amount' | translate }}
+                <div class="font-bold">{{ getTransAmt(order.payment) | currency:'HK$' }}</div>
+            </div>
         </div>
 
     </ng-template>
