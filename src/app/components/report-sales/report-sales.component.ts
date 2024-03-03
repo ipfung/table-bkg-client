@@ -200,6 +200,17 @@ export class ReportSalesComponent implements OnInit {
         });
     }
 
+    getTransId(payment: any) {
+      if (payment!=null) {
+      const resp = JSON.parse(payment);
+      return resp.ref;
+      //console.log("resp", resp.ref);
+      return resp;
+      } else { 
+        return "" ; 
+      }
+    }
+
     /*  exportExcel() {
 
       const prez = this.bookings ;
@@ -299,5 +310,7 @@ export class ReportSalesComponent implements OnInit {
             });
         });
     } */
+
+    
 
 }

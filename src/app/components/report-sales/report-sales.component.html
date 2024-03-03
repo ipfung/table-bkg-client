@@ -67,9 +67,8 @@
             <td style="min-width:120px">
                 {{ payment.payment.payment_date_time }}
             </td>
-            <td style="min-width:120px">
-               
-                {{ getTransId(payment.payment) }}
+            <td style="min-width:120px">               
+                {{ getTransId(payment.payment.gateway_response) }}
             </td>   
         </tr>
     </ng-template>
