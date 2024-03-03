@@ -422,5 +422,6 @@
         "passwordPrompt": "輸入密碼",
         "emptyMessage": "未找到結果",
         "emptyFilterMessage": "未找到結果"
-    }
+    },
+    "Ref #":"參考編號"
 }
