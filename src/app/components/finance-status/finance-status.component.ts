@@ -187,7 +187,7 @@ export class FinanceStatusComponent implements OnInit {
         this.submitted = false;
         this.orderFormDialog = true;
         const today = new Date();
-        this.minDate = subDays(today, 14);
+        this.minDate = subDays(today, 60);
         this.maxDate = addDays(today, 60);
         this.appointmentService.getServices().subscribe(res => {
             this.services = res.data;
@@ -210,7 +210,7 @@ export class FinanceStatusComponent implements OnInit {
         this.order = {...order};
 
         const today = new Date();
-        this.minDate = subDays(today, 14);
+        this.minDate = subDays(today, 60);
         this.maxDate = addDays(today, 60);
         for (let pkg of this.packages) {   // this.package has to be retrieved in ngOnInit, ajax here won't display to combo correctly.
             if (pkg.id == order_recurring.package_id) {
