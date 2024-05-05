@@ -390,7 +390,7 @@
                                             <ng-template let-item pTemplate="output">
                                                <div *ngIf ="trainerrate.rate_type==1" >{{ '1 to 1 training'  | translate }}</div>
                                                <div *ngIf ="trainerrate.rate_type==2" >{{ 'Group Event' | translate }}</div>
-                                               <div *ngIf ="trainerrate.rate_type==3" >{{ '1 to 1 training (Monthly)' | translate }}</div>
+                                               <div *ngIf ="trainerrate.rate_type==3" >{{ '1 to 1 training' | translate }}( {{ 'monthly' |translate }})</div>
                                             </ng-template>
                                         </p-cellEditor>
 
