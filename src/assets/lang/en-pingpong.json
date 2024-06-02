@@ -293,6 +293,7 @@
     "Remark": "Remark",
     "Packages Information": "Packages Details",
     "Packages": "Packages/Courses",
+    "Monthly Packages": "Monthly Courses",
     "Group Event": "Group Event",
     "Group Time": "Time for group lesson",
     "1 to 1 training": "1 to 1 training",
@@ -360,5 +361,6 @@
     "Access Denied": "Access Denied",
     "You do not have the necessary permissions. Please contact admins.": "You do not have the necessary permissions. Please contact admins.",
     "The record is deleted successfully.": "The record is deleted successfully.",
-    "Succeed": "Succeed"
+    "Succeed": "Succeed",
+    "Ref #":"Ref #"
 }
