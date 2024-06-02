@@ -5,6 +5,7 @@ import {AppointmentService} from "../../service/appointmentservice";
 import {ConfirmationService, LazyLoadEvent, MenuItem, MessageService} from "primeng/api";
 import {TranslateService} from "@ngx-translate/core";
 import {ActivatedRoute} from "@angular/router";
+import  { MultiSelectModule } from 'primeng/multiselect';
 
 @Component({
     selector: 'app-package-list',
@@ -57,6 +58,9 @@ export class PackageListComponent implements OnInit {
     lessonDateFormHeader: string;
     lessonDateSubmitted: boolean;
 
+    selectedRoom_id : [];
+    selectedTrainer_id : [];
+
     constructor(private api: ApiService, public appointmentService: AppointmentService, public lemonade: Lemonade, private translateService: TranslateService, private messageService: MessageService, private confirmationService: ConfirmationService, private route: ActivatedRoute) {
     }
 
@@ -71,9 +75,17 @@ export class PackageListComponent implements OnInit {
             }
         ];
         this.day_of_weeks = this.lemonade.weeks;
-        this.translateService.get(['Packages', 'Group Event']).subscribe( msg => {
+        this.translateService.get(['Packages','Monthly Packages', 'Group Event']).subscribe( msg => {
             this.newActions = [{
                 label: msg['Packages'],
+                icon: 'pi pi-plus',
+                command: () => {
+                    this.openNew();
+                }
+                // }, {
+                //     separator: true
+            },{
+                label: msg['Monthly Packages'],
                 icon: 'pi pi-plus',
                 command: () => {
                     this.openNew();
