@@ -450,8 +450,8 @@ export class PackageListComponent implements OnInit {
         if (!this.pkg.free_of_charge && (!this.pkg.price || this.pkg.price <= 0))
             return;
         if (this.isWeekly(this.pkg)) {
-            if (!this.pkg.room_id || !this.pkg.trainer_id)
-                return;
+           /*  if (!this.pkg.room_id || !this.pkg.trainer_id)
+                return; */
             if (!this.pkg.start_date || !this.pkg.start_time)
                 return;
             if (this.pkg.recurring.repeat == undefined || this.pkg.recurring.repeat.length == 0)
