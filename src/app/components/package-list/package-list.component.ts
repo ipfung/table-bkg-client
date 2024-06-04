@@ -58,9 +58,6 @@ export class PackageListComponent implements OnInit {
     lessonDateFormHeader: string;
     lessonDateSubmitted: boolean;
 
-    selectedRoom_id : [];
-    selectedTrainer_id : [];
-
     constructor(private api: ApiService, public appointmentService: AppointmentService, public lemonade: Lemonade, private translateService: TranslateService, private messageService: MessageService, private confirmationService: ConfirmationService, private route: ActivatedRoute) {
     }
 
