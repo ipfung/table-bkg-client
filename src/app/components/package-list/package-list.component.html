@@ -201,7 +201,7 @@
                     </ng-template>
                 </p-dropdown>
 
-                
+
 
                 <small class="ng-dirty ng-invalid" *ngIf="isWeekly(pkg) && submitted && !pkg.room_id">{{ 'Field is required' | translate: {field: 'Room' | translate} }}</small>
             </div>
@@ -433,12 +433,12 @@
                     </ng-template>
                 </p-dropdown> -->
 <!--this is the new test dropdown  -->
-                <p-multiSelect 
-                        [options]="rooms" 
-                        [(ngModel)]="selectedRoom_id" 
+                <p-multiSelect id="gp_location"
+                        [options]="rooms"
+                        [(ngModel)]="pkg.selectedRoom_id"
                         placeholder="{{'Select field' | translate: {field: 'Room' | translate} }}"
-                        optionLabel="name" 
-                        display="chip" 
+                        optionLabel="name"
+                        display="chip"
                         [showClear]="true" >
                         </p-multiSelect>
 
@@ -457,12 +457,12 @@
                     </ng-template>
                 </p-dropdown> -->
 
-                <p-multiSelect 
-                        [options]="trainers" 
-                        [(ngModel)]="selectedTrainer_id" 
+                <p-multiSelect id="gp_trainer"
+                        [options]="trainers"
+                        [(ngModel)]="pkg.selectedTrainer_id"
                         placeholder="{{'Select field' | translate: {field: 'Trainer' | translate} }}"
-                        optionLabel="name" 
-                        display="chip" 
+                        optionLabel="name"
+                        display="chip"
                         [showClear]="true" >
                         </p-multiSelect>
                 <small class="ng-dirty ng-invalid" *ngIf="isWeekly(pkg) && submitted && !pkg.trainer_id">{{ 'Field is required' | translate: {field: 'Trainer' | translate} }}</small>
