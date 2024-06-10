@@ -435,7 +435,7 @@
 <!--this is the new test dropdown  -->
                 <p-multiSelect id="gp_location"
                         [options]="rooms"
-                        [(ngModel)]="pkg.selectedRoom_id"
+                        [(ngModel)]="pkg.room_id_list"
                         placeholder="{{'Select field' | translate: {field: 'Room' | translate} }}"
                         optionLabel="name"
                         display="chip"
@@ -459,7 +459,7 @@
 
                 <p-multiSelect id="gp_trainer"
                         [options]="trainers"
-                        [(ngModel)]="pkg.selectedTrainer_id"
+                        [(ngModel)]="pkg.trainer_id_list"
                         placeholder="{{'Select field' | translate: {field: 'Trainer' | translate} }}"
                         optionLabel="name"
                         display="chip"
