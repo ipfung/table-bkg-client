@@ -47,6 +47,7 @@ export class PackageListComponent implements OnInit {
     services = [];
     rooms = [];
     trainers = [];
+    trainer_combo = [];   // a simple version of trainers for saving
     day_of_weeks = [];
     times: any[] = [];
     statuses = [];
@@ -139,6 +140,11 @@ export class PackageListComponent implements OnInit {
             this.trainers = res.data;
         });
 
+        this.api.get('api/trainer-list', {
+            status: 'active'
+        }).subscribe( res => {
+            this.trainer_combo = res.data;
+        });
     }
 
     loadData(event?: LazyLoadEvent) {
@@ -397,6 +403,16 @@ export class PackageListComponent implements OnInit {
                 free_of_charge: !pkg.price
             }
         };
+
+        if (pkg.trainer_id_list) {
+            const trainer_list = JSON.parse(pkg.trainer_id_list);
+            const room_list = JSON.parse(pkg.room_id_list);
+            this.pkg = {...this.pkg, ...{
+                    room_id_list: room_list,
+                    trainer_id_list: trainer_list
+                }
+            };
+        }
         this.loadTime();
         // load old lesson dates from appointments.
         this.lessons = [];

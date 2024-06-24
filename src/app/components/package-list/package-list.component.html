@@ -424,48 +424,35 @@
         </div>
 
         <div class="grid">
-            <div class="field col-12 md:col-6">
+
+            <div class="field col-12">
+                <label for="gp_trainer"><span *ngIf="isWeekly(pkg)" class="required">*</span> {{ 'Trainer' | translate }}</label>
+
+                <p-multiSelect id="gp_trainer"
+                               [options]="trainer_combo"
+                               [(ngModel)]="pkg.trainer_id_list"
+                               placeholder="{{'Select field' | translate: {field: 'Trainer' | translate} }}"
+                               optionLabel="name"
+                               optionValue="id"
+                               display="chip"
+                               [showClear]="true" >
+                </p-multiSelect>
+                <small class="ng-dirty ng-invalid" *ngIf="isWeekly(pkg) && submitted && !pkg.trainer_id_list">{{ 'Field is required' | translate: {field: 'Trainer' | translate} }}</small>
+            </div>
+
+            <div class="field col-12">
                 <label for="gp_location"><span class="required">*</span>  {{ 'Room' | translate }}</label>
-               <!--  <p-dropdown id="gp_location" [options]="rooms" [(ngModel)]="pkg.room_id" optionLabel="name" optionValue="id" [showClear]="true" placeholder="{{'Select field' | translate: {field: 'Room' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : isWeekly(pkg) && submitted && !pkg.room_id}">
-                    <ng-template let-item pTemplate="item">
-                        <p-avatar [label]="lemonade.getInitial(item.name)" shape="circle" [style]="{'background-color': item.color, 'color': '#fff'}"></p-avatar>
-                        {{ item.name | translate }}
-                    </ng-template>
-                </p-dropdown> -->
-<!--this is the new test dropdown  -->
                 <p-multiSelect id="gp_location"
                         [options]="rooms"
                         [(ngModel)]="pkg.room_id_list"
                         placeholder="{{'Select field' | translate: {field: 'Room' | translate} }}"
                         optionLabel="name"
+                        optionValue="id"
                         display="chip"
                         [showClear]="true" >
                         </p-multiSelect>
 
-                <small class="ng-dirty ng-invalid" *ngIf="isWeekly(pkg) && submitted && !pkg.room_id">{{ 'Field is required' | translate: {field: 'Room' | translate} }}</small>
-            </div>
-            <div class="field col-12 md:col-6">
-                <label for="gp_trainer"><span *ngIf="isWeekly(pkg)" class="required">*</span> {{ 'Trainer 111' | translate }}</label>
-               <!--  <p-dropdown id="gp_trainer" [options]="trainers" [(ngModel)]="pkg.trainer_id" optionLabel="name" optionValue="id" [showClear]="true" placeholder="{{'Select field' | translate: {field: 'Trainer' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : isWeekly(pkg) && submitted && !pkg.trainer_id}">
-                    <!--                <ng-template pTemplate="selectedItem">-->
-                    <!--                    <i class="pi pi-circle-fill" [style]="{color: (appointment.role_color_name)}"></i>-->
-                    <!--                    {{ appointment.user_id }}-->
-                    <!--                </ng-template>-->
-                <!--    <ng-template let-item pTemplate="item">
-                        <i class="pi pi-circle-fill" [style]="{color: item.role.color_name}"></i>
-                        {{ item.name }}
-                    </ng-template>
-                </p-dropdown> -->
-
-                <p-multiSelect id="gp_trainer"
-                        [options]="trainers"
-                        [(ngModel)]="pkg.trainer_id_list"
-                        placeholder="{{'Select field' | translate: {field: 'Trainer' | translate} }}"
-                        optionLabel="name"
-                        display="chip"
-                        [showClear]="true" >
-                        </p-multiSelect>
-                <small class="ng-dirty ng-invalid" *ngIf="isWeekly(pkg) && submitted && !pkg.trainer_id">{{ 'Field is required' | translate: {field: 'Trainer' | translate} }}</small>
+                <small class="ng-dirty ng-invalid" *ngIf="isWeekly(pkg) && submitted && !pkg.room_id_list">{{ 'Field is required' | translate: {field: 'Room' | translate} }}</small>
             </div>
         </div>
 
