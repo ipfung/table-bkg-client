@@ -4,6 +4,7 @@
     </div>
     <div class="flex align-items-center justify-content-center py-2 border-round">
         <button *ngIf="editable" pButton pRipple label="{{ 'New' | translate }}" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
+        <p-splitButton #ua *ngIf="editable" label="{{ 'New' | translate }}" icon="pi pi-plus" class="p-button-success mr-2" (onClick)="ua.onDropdownButtonClick(null)" [model]="newActions"></p-splitButton>
     </div>
 </div>
 

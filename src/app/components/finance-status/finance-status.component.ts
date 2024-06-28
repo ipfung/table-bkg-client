@@ -2,7 +2,7 @@ import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {addDays, addYears, endOfMonth, isBefore, startOfMonth, subDays} from "date-fns";
 import {ApiService} from "../../service/api.service";
 import {Lemonade} from "../../service/lemonade.service";
-import {LazyLoadEvent, MessageService} from "primeng/api";
+import {LazyLoadEvent, MessageService, MenuItem} from "primeng/api";
 import {TranslateService} from "@ngx-translate/core";
 import {AppointmentService} from "../../service/appointmentservice";
 import {ActivatedRoute} from "@angular/router";
@@ -55,6 +55,13 @@ export class FinanceStatusComponent implements OnInit {
     payment_methods = [];
     new_payment: any;
 
+    //Jeffrey added
+    
+    pkg: any;
+    statuses = [];
+    newActions: MenuItem[];
+    formGroupEventDialog = false;
+    //Jeffrey added end
     constructor(private api: ApiService, public appointmentService: AppointmentService, private orderService: OrderService, private translateService: TranslateService, private messageService: MessageService, public lemonade: Lemonade, private route: ActivatedRoute) {
     }
 
@@ -69,6 +76,33 @@ export class FinanceStatusComponent implements OnInit {
                 {name: res['partially payment'], code: 'partially', color: '#256029'},
             ];
         });
+
+        this.translateService.get(['Packages','Monthly Packages', 'Group Event']).subscribe( msg => {
+            this.newActions = [{
+                label: msg['Packages'],
+                icon: 'pi pi-plus',
+                command: () => {
+                    this.openNew('weekly');
+                }
+                // }, {
+                //     separator: true
+            },{
+                label: msg['Monthly Packages'],
+                icon: 'pi pi-plus',
+                command: () => {
+                    this.openNew('monthly');
+                }
+                // }, {
+                //     separator: true
+            }, {
+                label: msg['Group Event'],
+                icon: 'pi pi-plus',
+                command: () => {
+                    this.openNewGroupEvent();
+                }
+                // label: 'Tokens', icon: 'pi pi-cog', routerLink: ['/setup']
+            }];
+        });
         // support paymentStatus params.
         if (this.route.snapshot.paramMap.get('paymentStatus')) {
             this.searchPaymentStatus = this.route.snapshot.paramMap.get('paymentStatus');
@@ -76,7 +110,7 @@ export class FinanceStatusComponent implements OnInit {
         }
         this.payment_statuses = this.lemonade.paymentStatuses;
         this.appointmentService.getActivePackages({
-            package_type: 'monthly'
+           // package_type: 'monthly'
         }).subscribe(res => {
             this.packages = res.data;
         });
@@ -182,13 +216,20 @@ export class FinanceStatusComponent implements OnInit {
         return order.details.length;
     }
 
-    openNew() {
+    openNew( packagetype ) {
         this.formHeader = "Create Form";
         this.submitted = false;
         this.orderFormDialog = true;
         const today = new Date();
         this.minDate = subDays(today, 60);
         this.maxDate = addDays(today, 60);
+
+        this.appointmentService.getActivePackages({
+            package_type: packagetype
+        }).subscribe(res => {
+            this.packages = res.data;
+        });
+
         this.appointmentService.getServices().subscribe(res => {
             this.services = res.data;
             this.order.serviceId = this.services[0].id;
@@ -200,6 +241,27 @@ export class FinanceStatusComponent implements OnInit {
         this.selectedPackage = null;
         this.customer = null;
     }
+
+    openNewGroupEvent() {
+        this.formHeader = "Create Form";
+        this.pkg = {
+            quantity: 4,
+            free_of_charge: false,
+            status: this.statuses[0].code,
+            total_space: 10,
+            recurring: {
+                cycle: 'group_event',
+                repeat: []
+            }
+        };
+        if (this.services.length > 0) {
+            this.pkg.service_id = this.services[0].id;
+            this.pkg.noOfSession = this.services[0].sessions[0].code;
+        }
+        this.submitted = false;
+        this.formGroupEventDialog = true;
+    }
+
 
     editOrder(order) {
         this.formHeader = "Edit Form";
