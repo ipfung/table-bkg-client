@@ -123,6 +123,7 @@ export class FinanceStatusComponent implements OnInit {
             name: 'Cheque'
         }];
         this.payment_methods = methods.concat(this.lemonade.paymentMethods);
+        
     }
 
     searchCustomers(e) {
@@ -228,8 +229,9 @@ export class FinanceStatusComponent implements OnInit {
             package_type: packagetype
         }).subscribe(res => {
             this.packages = res.data;
+            console.log("package data",res.data)
         });
-
+        
         this.appointmentService.getServices().subscribe(res => {
             this.services = res.data;
             this.order.serviceId = this.services[0].id;
@@ -240,6 +242,7 @@ export class FinanceStatusComponent implements OnInit {
         this.order = this.orderService.order;
         this.selectedPackage = null;
         this.customer = null;
+        this.order.paid_amount = 0;
     }
 
     openNewGroupEvent() {
@@ -343,6 +346,14 @@ console.log('recurring===', recurring);
             this.order.start_date = new Date();
             this.calEndDate();
             this.order.recurring.package_id = pkg.id;
+            console.log("cycle===", recurring.cycle);
+            if (recurring.cycle == 'monthly') {
+                //this.loadSessions(null);
+            } else if (recurring.cycle == 'weekly') {
+                this.order.order_type = "package"
+            } else {
+
+            }
         }
     }
 
@@ -350,6 +361,7 @@ console.log('recurring===', recurring);
         const me = this;
         this.submitted = true;
         const order = this.order;
+        console.log("order obj=",this.order);
         if (!me.customer)
             return;
         if (order.serviceId <= 0)
