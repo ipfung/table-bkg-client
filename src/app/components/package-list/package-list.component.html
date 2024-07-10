@@ -63,12 +63,20 @@
                 </td>
                 <td style="min-width:70px">
                     <span class="p-column-title">{{ 'Trainer' | translate }}</span>
-                    {{ pkg.trainer ? pkg.trainer.name : '' }}
+                    <div *ngIf="pkg.trainer_id_list && pkg.trainer_id_list.length > 1">
+                        {{ 'Multiple trainers' | translate }}
+                    </div>
+                    <div *ngIf="pkg.trainer && !pkg.trainer_id_list">
+                        {{ pkg.trainer ? pkg.trainer.name : '' }}
+                    </div>
                 </td>
                 <td style="min-width:150px">
                     <span class="p-column-title">{{ 'Room' | translate }} / {{ 'Service' | translate }}</span>
                     <div>
-                        <div *ngIf="pkg.room">
+                        <div *ngIf="pkg.room_id_list && pkg.room_id_list.length > 1">
+                            {{ 'Multiple rooms' | translate }}
+                        </div>
+                        <div *ngIf="pkg.room && !pkg.room_id_list">
                             <p-avatar size="small" [label]="lemonade.getInitial(pkg.room.name)" shape="circle" [style]="{'background-color': pkg.room.color, 'color': '#fff'}"></p-avatar>
                             {{ pkg.room.name }}
                         </div>
