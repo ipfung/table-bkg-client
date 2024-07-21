@@ -2,9 +2,9 @@
     <div class="flex align-items-center justify-content-center p-2 border-round mr-1 text-2xl font-bold">
         {{ this.pageHeader | translate }}
     </div>
-    <div class="flex align-items-center justify-content-center py-2 border-round">
-        <button *ngIf="newable" pButton pRipple label="{{ 'New' | translate }}" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
-    </div>
+<!--    <div class="flex align-items-center justify-content-center py-2 border-round">-->
+<!--        <button *ngIf="newable" pButton pRipple label="{{ 'New' | translate }}" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNewAptForm()"></button>-->
+<!--    </div>-->
 </div>
 <div class="card">
     <!-- Search fields -->
@@ -150,11 +150,11 @@
     <iframe #iframe frameborder="0" width="100%" height="100%"></iframe>
 </p-dialog>
 
-<p-dialog [(visible)]="formDialog" [style]="{width:'50em', height: '100vh'}" header="{{ formHeader | translate:{name: 'Appointment' | translate } }}" position="right" [modal]="true" class="p-fluid">
+<p-dialog [(visible)]="aptFormDialog" [style]="{width:'50em', height: '100vh'}" header="{{ formHeader | translate:{name: 'Appointment' | translate } }}" position="right" [modal]="true" class="p-fluid">
     <ng-template pTemplate="content">
         <div class="field" *ngIf="supportPackages">
             <label for="pkg">{{ 'Packages' | translate }}</label>
-            <p-dropdown id="pkg" [options]="packages" [(ngModel)]="selectedPackage" [showClear]="true" (onClick)="loadPackage()" (onClear)="clearPackage()" placeholder="{{'Select field' | translate: {field: 'Packages' | translate} }}">
+            <p-dropdown id="pkg" [options]="packages" [(ngModel)]="selectedPackage" [showClear]="true" (onClick)="loadAptPackage()" (onClear)="clearAptPackage()" placeholder="{{'Select field' | translate: {field: 'Packages' | translate} }}">
                 <ng-template pTemplate="selectedItem">
                     {{ selectedPackage.name }} <span class="text-xs booking-badge bg-pink-50 text-pink-400">{{ lemonade.getRecurringCycle(selectedPackage.recurring) | translate }}: {{ lemonade.displayRecurring(selectedPackage.recurring) }}</span>
                     <span class="text-xs" *ngIf="selectedPackage.start_date"> {{ lemonade.formatDate(selectedPackage.start_date) }}</span><span class="text-xs" *ngIf="selectedPackage.end_date"> {{ 'to' | translate }} {{ lemonade.formatDate(selectedPackage.end_date) }}</span><span class="text-xs booking-badge bg-purple-50 text-purple-400" *ngIf="selectedPackage.start_time"> {{ lemonade.formatTime(selectedPackage.start_time) }} - {{ lemonade.formatTime(selectedPackage.end_time) }}</span>
@@ -171,7 +171,7 @@
 
         <div class="field">
             <label for="customer"><span class="required">*</span> {{ 'Customer' | translate }}</label>
-            <p-autoComplete id="customer" [(ngModel)]="appointment.customer" [forceSelection]="true" [suggestions]="customers" (completeMethod)="searchCustomers($event)" (onSelect)="loadTime($event)" field="name" placeholder="{{'Select field' | translate: {field: 'Customer' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : submitted && !appointment.customer}">
+            <p-autoComplete id="customer" [(ngModel)]="appointment.customer" [forceSelection]="true" [suggestions]="customers" (completeMethod)="searchCustomers($event)" (onSelect)="loadAptTime($event)" field="name" placeholder="{{'Select field' | translate: {field: 'Customer' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : submitted && !appointment.customer}">
                 <!--                <ng-template pTemplate="selectedItem">-->
                 <!--                    <i class="pi pi-circle-fill" [style]="{color: (appointment.role_color_name)}"></i>-->
                 <!--                    {{ appointment.user_id }}-->
@@ -186,7 +186,7 @@
 
         <div class="field" *ngIf="showTrainer">
             <label for="trainer"><span class="required" *ngIf="requiredTrainer">*</span> {{ 'Trainer' | translate }}</label>
-            <p-dropdown id="trainer" [options]="trainers" [(ngModel)]="appointment.timeInformation.trainerId" [disabled]="selectedPackage && selectedPackage.trainer_id" optionLabel="name" optionValue="id" [showClear]="true" (onClick)="loadTime($event)" placeholder="{{'Select field' | translate: {field: 'Trainer' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : submitted && requiredTrainer && appointment.timeInformation.trainerId <= 0}">
+            <p-dropdown id="trainer" [options]="trainers" [(ngModel)]="appointment.timeInformation.trainerId" [disabled]="selectedPackage && selectedPackage.trainer_id" optionLabel="name" optionValue="id" [showClear]="true" (onClick)="loadAptTime($event)" placeholder="{{'Select field' | translate: {field: 'Trainer' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : submitted && requiredTrainer && appointment.timeInformation.trainerId <= 0}">
                 <!--                <ng-template pTemplate="selectedItem">-->
                 <!--                    <i class="pi pi-circle-fill" [style]="{color: (appointment.role_color_name)}"></i>-->
                 <!--                    {{ appointment.user_id }}-->
@@ -201,14 +201,14 @@
 
         <div class="field">
             <label for="service"><span class="required">*</span> {{ 'Service' | translate }}</label>
-            <p-dropdown id="service" [options]="services" [(ngModel)]="appointment.timeInformation.serviceId" [disabled]="selectedPackage && selectedPackage.service_id" optionLabel="name" optionValue="id" (onClick)="loadSessions($event)" [ngClass]="{'ng-invalid ng-dirty' : submitted && appointment.timeInformation.serviceId <= 0}">
+            <p-dropdown id="service" [options]="services" [(ngModel)]="appointment.timeInformation.serviceId" [disabled]="selectedPackage && selectedPackage.service_id" optionLabel="name" optionValue="id" (onClick)="loadAptSessions($event)" [ngClass]="{'ng-invalid ng-dirty' : submitted && appointment.timeInformation.serviceId <= 0}">
             </p-dropdown>
             <small class="ng-dirty ng-invalid" *ngIf="submitted && appointment.timeInformation.serviceId <= 0">{{ 'Field is required' | translate: {field: 'Service' | translate} }}</small>
         </div>
 
         <div class="field">
             <label for="room"><span class="required">*</span> {{ 'Room' | translate }}</label>
-            <p-dropdown id="room" [options]="rooms" [(ngModel)]="appointment.timeInformation.roomId" [disabled]="selectedPackage && selectedPackage.room_id" optionLabel="name" optionValue="id" (onClick)="loadTime($event)" [ngClass]="{'ng-invalid ng-dirty' : submitted && appointment.timeInformation.roomId <= 0}">
+            <p-dropdown id="room" [options]="rooms" [(ngModel)]="appointment.timeInformation.roomId" [disabled]="selectedPackage && selectedPackage.room_id" optionLabel="name" optionValue="id" (onClick)="loadAptTime($event)" [ngClass]="{'ng-invalid ng-dirty' : submitted && appointment.timeInformation.roomId <= 0}">
                 <ng-template let-item pTemplate="item">
                     <p-avatar [label]="lemonade.getInitial(item.name)" shape="circle" [style]="{'background-color': item.color, 'color': '#fff'}"></p-avatar>
                     {{ item.name | translate }}
@@ -219,7 +219,7 @@
 
         <div class="field">
             <label for="duration"><span class="required">*</span> {{ 'Duration' | translate }}</label>
-            <p-dropdown id="duration" [options]="sessions" [disabled]="selectedPackage && selectedPackage.no_of_session" [(ngModel)]="appointment.timeInformation.noOfSession" optionValue="code" (onClick)="loadTime($event)">
+            <p-dropdown id="duration" [options]="sessions" [disabled]="selectedPackage && selectedPackage.no_of_session" [(ngModel)]="appointment.timeInformation.noOfSession" optionValue="code" (onClick)="loadAptTime($event)">
                 <ng-template pTemplate="selectedItem">
                     {{ appointmentService.getSessionName(appointment.timeInformation.noOfSession, sessions) }}
                 </ng-template>
@@ -236,7 +236,7 @@
             <div class="field col-12 md:col-6">
                 <label for="date"><span class="required">*</span> {{ 'Date' | translate }}</label>
                 <small class="text-xs" *ngIf="selectedPackage && selectedPackage.start_date"> <sup>#</sup>{{ 'Date can be changed' | translate }}</small>
-                <p-calendar id="date" [(ngModel)]="appointment.timeInformation.date" [minDate]="minDate" (onSelect)="loadTime($event)" required [ngClass]="{'ng-invalid ng-dirty' : submitted && !appointment.timeInformation.date}"></p-calendar>
+                <p-calendar id="date" [(ngModel)]="appointment.timeInformation.date" [minDate]="minDate" (onSelect)="loadAptTime($event)" required [ngClass]="{'ng-invalid ng-dirty' : submitted && !appointment.timeInformation.date}"></p-calendar>
                 <small class="ng-dirty ng-invalid" *ngIf="submitted && !appointment.timeInformation.date">{{ 'Field is required' | translate: {field: 'Date' | translate} }}</small>
             </div>
 
@@ -329,7 +329,7 @@
                     <div class="p-inputgroup">
                         <p-inputNumber id="lesson_number" [(ngModel)]="appointment.packageInfo.quantity" [disabled]="selectedPackage" mode="decimal" [showButtons]="true" inputId="minmax-buttons" [min]="2" [max]="12"></p-inputNumber>
                         <div class="p-1"></div>
-                        <button pButton pRipple [disabled]="selectedPackage && selectedPackage.start_date && selectedPackage.start_date == lemonade.formatPostDate(appointment.timeInformation.date)" (click)="loadLessonDates()">{{ 'Get Appointments Date' | translate }}</button>
+                        <button pButton pRipple [disabled]="selectedPackage && selectedPackage.start_date && selectedPackage.start_date == lemonade.formatPostDate(appointment.timeInformation.date)" (click)="loadAptLessonDates()">{{ 'Get Appointments Date' | translate }}</button>
                     </div>
                     <small class="ng-dirty ng-invalid" *ngIf="submitted && !appointment.packageInfo.quantity">{{ 'Field is required' | translate: {field: 'No. of Appointments' | translate} }}</small>
                 </div>
@@ -421,8 +421,8 @@
     </ng-template>
 
     <ng-template pTemplate="footer">
-        <button pButton pRipple label="{{ 'Cancel' | translate }}" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
-        <button pButton pRipple label="{{ 'Save' | translate }}" icon="pi pi-check" class="p-button-text" (click)="save()"></button>
+        <button pButton pRipple label="{{ 'Cancel' | translate }}" icon="pi pi-times" class="p-button-text" (click)="hideAptDialog()"></button>
+        <button pButton pRipple label="{{ 'Save' | translate }}" icon="pi pi-check" class="p-button-text" (click)="saveAptForm()"></button>
     </ng-template>
 </p-dialog>
 

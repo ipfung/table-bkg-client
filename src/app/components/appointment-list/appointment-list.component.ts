@@ -49,7 +49,7 @@ export class AppointmentListComponent implements OnInit {
     minDate: Date;
 
     submitted = false;
-    formDialog = false;
+    aptFormDialog = false;
     formHeader = 'Create Form';
     requiredTrainer = false;
     supportPackages = false;
@@ -368,13 +368,13 @@ export class AppointmentListComponent implements OnInit {
         }
     }
 
-    openNew() {
+    openNewAptForm() {
         this.formHeader = "Create Form";
         this.submitted = false;
-        this.formDialog = true;
-        this.prepareForForm();
+        this.aptFormDialog = true;
+        this.prepareForAptForm();
         this.appointmentService.getActivePackages({
-            package_type: 'weekly'
+            package_type: 'weekly,group_event'
         }).subscribe(res => {
             this.packages = res.data;
         });
@@ -394,7 +394,7 @@ export class AppointmentListComponent implements OnInit {
         };
     }
 
-    prepareForForm() {
+    prepareForAptForm() {
         // for form, this wastes memory if user doesn't open the form.
         this.appointmentService.getRooms().subscribe( res => {
             this.rooms = res.data;
@@ -403,7 +403,7 @@ export class AppointmentListComponent implements OnInit {
             this.services = res.data;
             this.appointment.timeInformation.serviceId = this.services[0].id;
             this.appointment.timeInformation.noOfSession = this.services[0].sessions[0].code;
-            this.loadSessions(null);
+            this.loadAptSessions(null);
         });
         this.day_of_weeks = this.lemonade.weeks;
     }
@@ -413,7 +413,7 @@ export class AppointmentListComponent implements OnInit {
         return week.name;
     }
 
-    loadSessions(e) {
+    loadAptSessions(e) {
         if (this.services.length > 0) {
             let service = this.services.find(el => el.id == this.appointment.timeInformation.serviceId);
             this.sessions = service.sessions;
@@ -422,7 +422,7 @@ export class AppointmentListComponent implements OnInit {
         }
     }
 
-    loadPackage() {
+    loadAptPackage() {
         const pkg = this.selectedPackage;
         if (pkg && this.appointment.timeInformation.package_id != pkg.id) {
             this.lessons = [];
@@ -456,18 +456,18 @@ export class AppointmentListComponent implements OnInit {
             this.appointment.isPackage = true;
             this.appointment.timeInformation.package_id = pkg.id;
             if (pkg.start_date) {
-                this.loadPackageTime();
-                this.loadLessonDates();
+                this.loadAptPackageTime();
+                this.loadAptLessonDates();
             }
         }
     }
 
-    clearPackage() {
+    clearAptPackage() {
         this.appointment.timeInformation.package_id = 0;
         this.selectedPackage = null;
     }
 
-    loadPackageTime() {
+    loadAptPackageTime() {
         // always to package info to load data, especially the packageInfo.start_date because timeInformation.date could be changed manually.
         this.appointmentService.getPackageTimeslot(this.selectedPackage.service_id, this.selectedPackage.no_of_session, new Date(this.selectedPackage.start_date)).subscribe(res => {
             this.times = res.data;
@@ -475,7 +475,7 @@ export class AppointmentListComponent implements OnInit {
         });
     }
 
-    loadTime(e) {
+    loadAptTime(e) {
         const customer = this.appointment.customer;
         if (customer && this.selectedCustomerId !== customer.id) {   // fire when change customer.
             if (customer.trainer_rates && customer.trainer_rates && !this.selectedPackage) {
@@ -539,7 +539,7 @@ export class AppointmentListComponent implements OnInit {
             this.selectedCustomerId = customer.id;
         }
         if (this.selectedPackage && this.selectedPackage.start_time) {
-            this.loadPackageTime();
+            this.loadAptPackageTime();
             return;
         }
         if (this.appointment.timeInformation.date && this.appointment.timeInformation.noOfSession && this.appointment.timeInformation.customerId > 0 && this.appointment.timeInformation.roomId > 0) {
@@ -595,8 +595,8 @@ export class AppointmentListComponent implements OnInit {
         }
     }
 
-    hideDialog() {
-        this.formDialog = false;
+    hideAptDialog() {
+        this.aptFormDialog = false;
     }
 
     searchCustomers(e) {
@@ -605,7 +605,7 @@ export class AppointmentListComponent implements OnInit {
         });
     }
 
-    loadLessonDates() {
+    loadAptLessonDates() {
         if (!this.appointment.timeInformation.date) {
             this.submitted = true;
             return;
@@ -630,7 +630,7 @@ export class AppointmentListComponent implements OnInit {
         });
     }
 
-    save() {
+    saveAptForm() {
         this.submitted = true;
         const timeInfo = this.appointment.timeInformation;
 
@@ -670,7 +670,7 @@ export class AppointmentListComponent implements OnInit {
             if (packageInfo.recurring.length == 0)
                 return;
             if (this.lessons.length == 0) {
-                this.loadLessonDates();
+                this.loadAptLessonDates();
                 return;
             }
             const lessonDates = this.lessons.map(function (obj) {
@@ -705,7 +705,7 @@ export class AppointmentListComponent implements OnInit {
                     detail: 'Booking is completed.'
                 });
                 me.loadData();
-                me.formDialog = false;
+                me.aptFormDialog = false;
                 // clean up
                 me.appointment = null;
                 me.holidays = undefined;
