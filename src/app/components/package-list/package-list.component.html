@@ -118,7 +118,7 @@
 
 <p-toast></p-toast>
 
-<p-dialog [(visible)]="formDialog" [style]="{width:'50em', height: '100vh'}" header="{{ formHeader | translate:{name: 'Packages' | translate} }}" position="right" [modal]="true" class="p-fluid">
+<p-dialog [(visible)]="formDialog" [style]="{width:'50em', height: '100vh'}" header="{{ formHeader | translate:{name: packageTitle | translate} }}" position="right" [modal]="true" class="p-fluid">
     <p-confirmDialog header="{{ 'Confirmation' | translate }}" icon="pi pi-clock"></p-confirmDialog>
     <ng-template pTemplate="content">
 
@@ -151,11 +151,12 @@
             <small class="ng-dirty ng-invalid" *ngIf="submitted && !pkg.service_id">{{ 'Field is required' | translate: {field: 'Service' | translate} }}</small>
         </div>
 
-        <div class="field">
-            <label for="recurring_type"><span class="required">*</span> {{ 'Package Type' | translate }}</label>
-            <p-selectButton id="recurring_type" [options]="recurring_types" [(ngModel)]="pkg.recurring.cycle" optionLabel="name" optionValue="code"></p-selectButton>
-            <small class="jws-tips">{{ 'All type will be renewed every month automatically' | translate }}</small>
-        </div>
+<!--        <div class="field">-->
+<!--            <label for="recurring_type"><span class="required">*</span> {{ 'Package Type' | translate }}</label>-->
+<!--            <input type="text" pInputText id="recurring_type" [value]="lemonade.comboRenderer(recurring_types, this.packageType)" [disabled]="true" />-->
+<!--&lt;!&ndash;            <p-selectButton id="recurring_type" [options]="recurring_types" [(ngModel)]="pkg.recurring.cycle" optionLabel="name" optionValue="code"></p-selectButton>&ndash;&gt;-->
+<!--            <small class="jws-tips">{{ 'All type will be renewed every month automatically' | translate }}</small>-->
+<!--        </div>-->
 
         <div class="grid">
             <div class="field col-12 md:col-6">
@@ -241,55 +242,57 @@
             </div>
         </div>
 
-        <p-divider align="center">
-            <span class="p-tag">{{ 'Below fields will be disabled once saved.' | translate }}</span>
-        </p-divider>
+        <div *ngIf="isWeekly(pkg)">
+            <p-divider align="center">
+                <span class="p-tag">{{ 'Below fields will be disabled once saved.' | translate }}</span>
+            </p-divider>
 
-        <div class="field">
-            <label for="dow"><span *ngIf="isWeekly(pkg)" class="required">*</span> {{ 'Day of Week' | translate }}</label>
-            <p-selectButton id="dow" [disabled]="pkg.id > 0" [options]="day_of_weeks" [(ngModel)]="pkg.recurring.repeat" optionLabel="name" optionValue="code" [multiple]="true" [ngClass]="{'ng-invalid ng-dirty' : isWeekly(pkg) && submitted && pkg.recurring.repeat.length == 0}">
-                <ng-template let-item>
-                    <span class="w-full text-center">{{ item.name | translate }}</span>
-                </ng-template>
-            </p-selectButton>
-            <small class="ng-dirty ng-invalid" *ngIf="isWeekly(pkg) && submitted && pkg.recurring.repeat.length == 0">{{ 'Field is required' | translate: {field: 'Day of Week' | translate} }}</small>
-        </div>
-        <div class="grid">
-            <div class="field col-12 md:col-6">
-                <label for="date"><span *ngIf="isWeekly(pkg)" class="required">*</span> {{ 'Start Date' | translate }}</label>
-                <p-calendar id="date" [disabled]="pkg.id > 0" [(ngModel)]="pkg.start_date" (onSelect)="loadTime()" placeholder="{{'Select field' | translate: {field: 'Start Date' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : isWeekly(pkg) && submitted && !pkg.start_date}" [dateFormat]="lemonade.dateFormat"></p-calendar>
-                <small class="ng-dirty ng-invalid" *ngIf="isWeekly(pkg) && submitted && !pkg.start_date">{{ 'Field is required' | translate: {field: 'Start Date' | translate} }}</small>
-            </div>
-
-            <div class="field col-12 md:col-6">
-                <label for="time"><span *ngIf="isWeekly(pkg)" class="required">*</span> {{ 'Start Time' | translate }}</label>
-                <p-dropdown id="time" [disabled]="times.length == 0 || pkg.id > 0" [options]="times" [(ngModel)]="pkg.start_time" optionValue="time" (onClick)="loadLessonDates()" placeholder="{{'Select field' | translate: {field: 'Time' | translate} }}" [showClear]="true" [ngClass]="{'ng-invalid ng-dirty' : isWeekly(pkg) && submitted && !pkg.start_time}">
-                    <ng-template pTemplate="selectedItem">
-                        {{ pkg.start_time ? this.appointmentService.formatTime(pkg.start_time) : '' }}
+            <div class="field">
+                <label for="dow"><span *ngIf="isWeekly(pkg)" class="required">*</span> {{ 'Day of Week' | translate }}</label>
+                <p-selectButton id="dow" [disabled]="pkg.id > 0" [options]="day_of_weeks" [(ngModel)]="pkg.recurring.repeat" optionLabel="name" optionValue="code" [multiple]="true" [ngClass]="{'ng-invalid ng-dirty' : isWeekly(pkg) && submitted && pkg.recurring.repeat.length == 0}">
+                    <ng-template let-item>
+                        <span class="w-full text-center">{{ item.name | translate }}</span>
                     </ng-template>
-                    <ng-template let-item pTemplate="item">
-                        {{ this.appointmentService.formatTime(item.time) }}
-                    </ng-template>
-                </p-dropdown>
-                <small class="ng-dirty ng-invalid" *ngIf="isWeekly(pkg) && submitted && !pkg.start_time">{{ 'Field is required' | translate: {field: 'Start Time' | translate} }}</small>
+                </p-selectButton>
+                <small class="ng-dirty ng-invalid" *ngIf="isWeekly(pkg) && submitted && pkg.recurring.repeat.length == 0">{{ 'Field is required' | translate: {field: 'Day of Week' | translate} }}</small>
             </div>
-        </div>
+            <div class="grid">
+                <div class="field col-12 md:col-6">
+                    <label for="date"><span *ngIf="isWeekly(pkg)" class="required">*</span> {{ 'Start Date' | translate }}</label>
+                    <p-calendar id="date" appendTo="body"  [disabled]="pkg.id > 0" [(ngModel)]="pkg.start_date" (onSelect)="loadTime()" placeholder="{{'Select field' | translate: {field: 'Start Date' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : isWeekly(pkg) && submitted && !pkg.start_date}" [dateFormat]="lemonade.dateFormat"></p-calendar>
+                    <small class="ng-dirty ng-invalid" *ngIf="isWeekly(pkg) && submitted && !pkg.start_date">{{ 'Field is required' | translate: {field: 'Start Date' | translate} }}</small>
+                </div>
 
-        <p-divider align="center">
-            <span class="p-tag">{{ 'Above fields will be disabled once saved.' | translate }}</span>
-        </p-divider>
-
-        <div class="grid">
-            <div class="field col-12 md:col-6">
-                <label for="end_date">{{ 'End Repeat' | translate }}</label>
-                <p-calendar id="end_date" [(ngModel)]="pkg.end_date" [minDate]="pkg.start_date" [dateFormat]="lemonade.dateFormat"></p-calendar>
-                <small class="jws-tips">{{ 'Leave Empty = Never End Repeat' | translate }}</small>
+                <div class="field col-12 md:col-6">
+                    <label for="time"><span *ngIf="isWeekly(pkg)" class="required">*</span> {{ 'Start Time' | translate }}</label>
+                    <p-dropdown id="time" [disabled]="times.length == 0 || pkg.id > 0" [options]="times" [(ngModel)]="pkg.start_time" optionValue="time" (onClick)="loadLessonDates()" placeholder="{{'Select field' | translate: {field: 'Time' | translate} }}" [showClear]="true" [ngClass]="{'ng-invalid ng-dirty' : isWeekly(pkg) && submitted && !pkg.start_time}">
+                        <ng-template pTemplate="selectedItem">
+                            {{ pkg.start_time ? this.appointmentService.formatTime(pkg.start_time) : '' }}
+                        </ng-template>
+                        <ng-template let-item pTemplate="item">
+                            {{ this.appointmentService.formatTime(item.time) }}
+                        </ng-template>
+                    </p-dropdown>
+                    <small class="ng-dirty ng-invalid" *ngIf="isWeekly(pkg) && submitted && !pkg.start_time">{{ 'Field is required' | translate: {field: 'Start Time' | translate} }}</small>
+                </div>
             </div>
 
-            <div class="field col-12 md:col-6">
-                <label for="time">{{ 'End Time' | translate }}</label>
-                <input type="text" pInputText [disabled]="true" value="{{ pkg.start_time && sessionInterval ? lemonade.formatTime(pkg.start_time + (pkg.no_of_session * sessionInterval)) : '' }}"/>
-                <small class="jws-tips">{{ 'Generated by Start Time' | translate }}</small>
+            <p-divider align="center">
+                <span class="p-tag">{{ 'Above fields will be disabled once saved.' | translate }}</span>
+            </p-divider>
+
+            <div class="grid">
+                <div class="field col-12 md:col-6">
+                    <label for="end_date">{{ 'End Repeat' | translate }}</label>
+                    <p-calendar id="end_date" appendTo="body"  [(ngModel)]="pkg.end_date" [minDate]="pkg.start_date" [dateFormat]="lemonade.dateFormat"></p-calendar>
+                    <small class="jws-tips">{{ 'Leave Empty = Never End Repeat' | translate }}</small>
+                </div>
+
+                <div class="field col-12 md:col-6">
+                    <label for="time">{{ 'End Time' | translate }}</label>
+                    <input type="text" pInputText [disabled]="true" value="{{ pkg.start_time && sessionInterval ? lemonade.formatTime(pkg.start_time + (pkg.no_of_session * sessionInterval)) : '' }}"/>
+                    <small class="jws-tips">{{ 'Generated by Start Time' | translate }}</small>
+                </div>
             </div>
         </div>
 
@@ -492,7 +495,7 @@
         <div class="grid">
             <div class="field col-12 md:col-6">
                 <label for="gp_date"><span *ngIf="isWeekly(pkg)" class="required">*</span> {{ 'Start Date' | translate }}</label>
-                <p-calendar id="gp_date" [disabled]="pkg.id > 0" [(ngModel)]="pkg.start_date" (onSelect)="loadTime()" placeholder="{{'Select field' | translate: {field: 'Start Date' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : isWeekly(pkg) && submitted && !pkg.start_date}" [dateFormat]="lemonade.dateFormat"></p-calendar>
+                <p-calendar id="gp_date" appendTo="body"  [disabled]="pkg.id > 0" [(ngModel)]="pkg.start_date" (onSelect)="loadTime()" placeholder="{{'Select field' | translate: {field: 'Start Date' | translate} }}" [ngClass]="{'ng-invalid ng-dirty' : isWeekly(pkg) && submitted && !pkg.start_date}" [dateFormat]="lemonade.dateFormat"></p-calendar>
                 <small class="ng-dirty ng-invalid" *ngIf="isWeekly(pkg) && submitted && !pkg.start_date">{{ 'Field is required' | translate: {field: 'Start Date' | translate} }}</small>
             </div>
 

@@ -40,6 +40,7 @@ export class PackageListComponent implements OnInit {
     formGroupEventDialog = false;
     submitted = false;
     pkg: any;
+    packageType: string = '';
     recurring_types = [];
     lessons: any[] = [];
     holidays: any[];
@@ -58,6 +59,7 @@ export class PackageListComponent implements OnInit {
     lessonDateDialog: boolean;
     lessonDateFormHeader: string;
     lessonDateSubmitted: boolean;
+    packageTitle: any;
 
     constructor(private api: ApiService, public appointmentService: AppointmentService, public lemonade: Lemonade, private translateService: TranslateService, private messageService: MessageService, private confirmationService: ConfirmationService, private route: ActivatedRoute) {
     }
@@ -73,11 +75,13 @@ export class PackageListComponent implements OnInit {
             }
         ];
         this.day_of_weeks = this.lemonade.weeks;
-        this.translateService.get(['Packages','Monthly Packages', 'Group Event']).subscribe( msg => {
+        this.translateService.get(['Packages', 'Fixed Date Packages', 'Monthly Packages', 'Group Event']).subscribe( msg => {
             this.newActions = [{
-                label: msg['Packages'],
+                label: msg['Fixed Date Packages'],
                 icon: 'pi pi-plus',
                 command: () => {
+                    this.packageType = 'weekly';
+                    this.packageTitle = 'Fixed Date Packages';
                     this.openNew();
                 }
                 // }, {
@@ -86,6 +90,8 @@ export class PackageListComponent implements OnInit {
                 label: msg['Monthly Packages'],
                 icon: 'pi pi-plus',
                 command: () => {
+                    this.packageType = 'monthly';
+                    this.packageTitle = 'Monthly Packages';
                     this.openNew();
                 }
                 // }, {
@@ -94,6 +100,7 @@ export class PackageListComponent implements OnInit {
                 label: msg['Group Event'],
                 icon: 'pi pi-plus',
                 command: () => {
+                    this.packageType = 'group_event';
                     this.openNewGroupEvent();
                 }
                 // label: 'Tokens', icon: 'pi pi-cog', routerLink: ['/setup']
@@ -203,7 +210,7 @@ export class PackageListComponent implements OnInit {
             status: this.statuses[0].code,
             total_space: 1,
             recurring: {
-                cycle: 'weekly',
+                cycle: this.packageType,
                 repeat: [],
                 free: {}
             }
@@ -224,7 +231,7 @@ export class PackageListComponent implements OnInit {
             status: this.statuses[0].code,
             total_space: 10,
             recurring: {
-                cycle: 'group_event',
+                cycle: this.packageType,
                 repeat: []
             }
         };
@@ -385,9 +392,11 @@ export class PackageListComponent implements OnInit {
 
     edit(pkg) {
         this.formHeader = "Edit Form";
+        this.packageTitle = 'Monthly Packages';
         // fix pkg.recurring.repeat if it's crashed.
         const recurring = JSON.parse(pkg.recurring);
         if (recurring.cycle == 'weekly') {
+            this.packageTitle = 'Fixed Date Packages';
             // only allow 1-7(monday to sunday)
             const filteredArray = recurring.repeat.filter(e => ([1,2,3,4,5,6,7].includes(e)));
             recurring.repeat = filteredArray;
@@ -531,6 +540,6 @@ export class PackageListComponent implements OnInit {
     }
 
     isWeekly(pkg: any) {
-        return (pkg.recurring.cycle === 'weekly');
+        return (this.packageType === 'weekly');
     }
 }
