@@ -218,7 +218,13 @@ export class AppointmentService {
             this.prepareDefaultAppointment();
         }
         if (!this.tableSessions || !this.selectedService || this.needRefresh) {
-            this.api.get('api/user-service').subscribe(resp => {
+            let params = {};
+            if (this.appointmentInformation.timeInformation.order_id) {
+                params = {
+                    order_id: this.appointmentInformation.timeInformation.order_id
+                };
+            }
+            this.api.get('api/user-service', params).subscribe(resp => {
                 this.needRefresh = false;
                 this.selectedService = resp;
                 this.appointmentInformation.timeInformation.serviceId = resp.id;
@@ -373,6 +379,12 @@ export class AppointmentService {
             noOfSession: timeInfo.noOfSession,
             service_id: timeInfo.serviceId,
         };
+        if (timeInfo.order_id) {
+            // load particular order, usually from Order page.
+            params = {...params, ...{
+                order_id: timeInfo.order_id
+            }};
+        }
         if (this.selectedService.requiredTrainer && timeInfo.trainerId > 0) {
             params = {...params, ...{
                 trainer_id: timeInfo.trainerId
@@ -594,6 +606,8 @@ export class AppointmentService {
                 });
                 return name;
             }
+        } else {
+            return this.getHourBySession(noOfSession);
         }
         return '';
     }
