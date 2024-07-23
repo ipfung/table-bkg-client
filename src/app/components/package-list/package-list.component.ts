@@ -209,6 +209,8 @@ export class PackageListComponent implements OnInit {
             free_of_charge: false,
             status: this.statuses[0].code,
             total_space: 1,
+            start_date: null,
+            start_time: null,
             recurring: {
                 cycle: this.packageType,
                 repeat: [],
