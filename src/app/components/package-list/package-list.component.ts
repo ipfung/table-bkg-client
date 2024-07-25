@@ -6,6 +6,9 @@ import {ConfirmationService, LazyLoadEvent, MenuItem, MessageService} from "prim
 import {TranslateService} from "@ngx-translate/core";
 import {ActivatedRoute} from "@angular/router";
 import  { MultiSelectModule } from 'primeng/multiselect';
+import { TableModule } from 'primeng/table';
+import { Package_Trainer_Rate } from "../../models/package_trainer_rate";
+
 
 @Component({
     selector: 'app-package-list',
@@ -60,6 +63,11 @@ export class PackageListComponent implements OnInit {
     lessonDateFormHeader: string;
     lessonDateSubmitted: boolean;
     packageTitle: any;
+
+
+    bg_trainers!: Package_Trainer_Rate[];
+
+    pTableId: TableModule;
 
     constructor(private api: ApiService, public appointmentService: AppointmentService, public lemonade: Lemonade, private translateService: TranslateService, private messageService: MessageService, private confirmationService: ConfirmationService, private route: ActivatedRoute) {
     }
@@ -152,6 +160,18 @@ export class PackageListComponent implements OnInit {
         }).subscribe( res => {
             this.trainer_combo = res.data;
         });
+
+
+        this.bg_trainers=[
+            {
+               
+            
+            }
+        ] 
+
+/*
+        this.bg_trainers.push({ name:"test2",
+            rate:"120"}) */
     }
 
     loadData(event?: LazyLoadEvent) {
@@ -544,4 +564,46 @@ export class PackageListComponent implements OnInit {
     isWeekly(pkg: any) {
         return (this.packageType === 'weekly');
     }
+
+    add_seltrainer( event: any){
+       console.log("add=" , event)
+        //const index = this.bg_trainers.indexOf(event.itemValue,0)
+        var  tmptrainer = [];
+        tmptrainer = this.trainer_combo.filter((tc) => tc.id== event.itemValue);
+        console.log("the list=", tmptrainer[0].name );
+
+        //if (this.bg_trainers.length >0 ) {
+            var index = this.bg_trainers.findIndex(function(item, i){
+               
+                    return item.name === tmptrainer[0].name;
+               
+            });
+
+
+            var index = this.bg_trainers.findIndex(function(item, i){
+               
+                return item.name === tmptrainer[0].name;
+           
+            });
+            console.log("index", index)
+            if (index <  0 ) //not in list
+            {   
+                console.log("add_seltrainer()" , event );
+                this.bg_trainers.push({ name:tmptrainer[0].name,
+                    rate:"120"})
+
+            } else {
+
+                console.log("remove_seltrainer()" , event );
+                //this.bg_trainers.slice(index, 1);
+                delete this.bg_trainers[index];
+                console.log("new list=", this.bg_trainers);
+               
+
+            }
+        
+    }
+
+   
+
 }

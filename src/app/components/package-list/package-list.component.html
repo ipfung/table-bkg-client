@@ -378,7 +378,7 @@
         </div>
     </ng-template>
 </p-dialog>
-
+<!-- Group Event -->
 <p-dialog [(visible)]="formGroupEventDialog" [style]="{width:'50em', height: '100vh'}" header="{{ formHeader | translate:{name: 'Group Event' | translate} }}" position="right" [modal]="true" class="p-fluid">
     <p-confirmDialog header="{{ 'Confirmation' | translate }}" icon="pi pi-clock"></p-confirmDialog>
     <ng-template pTemplate="content">
@@ -446,9 +446,85 @@
                                optionLabel="name"
                                optionValue="id"
                                display="chip"
+                               (onChange)="add_seltrainer($event)"
                                [showClear]="true" >
                 </p-multiSelect>
                 <small class="ng-dirty ng-invalid" *ngIf="isWeekly(pkg) && submitted && !pkg.trainer_id_list">{{ 'Field is required' | translate: {field: 'Trainer' | translate} }}</small>
+
+
+                <!-- grid for trainer-->
+                <p-table #pTableId [value]="bg_trainers" dataKey="id" editMode="row" [tableStyle]="{'min-width': '95%'}">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width:20%">Trainer</th>
+                            <th style="width:20%">Rate</th>
+                            <th style="width:20%"></th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-bg_trainer let-editing="editing" let-ri="rowIndex">
+                        <tr [pEditableRow]="bg_trainer">
+                            <td>
+                                <p-cellEditor>
+                                    <ng-template pTemplate="input">
+                                        <input 
+                                            pInputText 
+                                            type="text" 
+                                            [(ngModel)]="bg_trainer.name" />
+                                    </ng-template>
+                                    <ng-template pTemplate="output">
+                                        {{bg_trainer.name}}
+                                    </ng-template>
+                                </p-cellEditor>
+                            </td>
+                            <td>
+                                <p-cellEditor>
+                                    <ng-template pTemplate="output">
+                                        <input 
+                                            pInputText type="text" 
+                                            [(ngModel)]="bg_trainer.rate" 
+                                            required />
+                                    </ng-template>
+                                    
+                                </p-cellEditor>
+                            </td>                          
+                           
+                           <!--  <td>
+                                <div class="flex align-items-center justify-content-center gap-2">
+                                    <button 
+                                        *ngIf="!editing" 
+                                        pButton 
+                                        pRipple 
+                                        type="button" 
+                                        pInitEditableRow 
+                                        icon="pi pi-pencil" 
+                                        (click)="onRowEditInit(product)" 
+                                        class="p-button-rounded p-button-text">
+                                    </button>
+                                    <button 
+                                        *ngIf="editing" 
+                                        pButton 
+                                        pRipple 
+                                        type="button" 
+                                        pSaveEditableRow 
+                                        icon="pi pi-check" 
+                                        (click)="onRowEditSave(product)" 
+                                        class="p-button-rounded p-button-text p-button-success mr-2">
+                                    </button>
+                                    <button 
+                                        *ngIf="editing" 
+                                        pButton pRipple 
+                                        type="button" 
+                                        pCancelEditableRow 
+                                        icon="pi pi-times" 
+                                        (click)="onRowEditCancel(product, ri)" 
+                                        class="p-button-rounded p-button-text p-button-danger">
+                                    </button>
+                                </div>
+                            </td> -->
+                        </tr>
+                    </ng-template>
+                </p-table>
+                <!-- end grid for trainer-->
             </div>
 
             <div class="field col-12">
@@ -613,3 +689,4 @@
         </div>
     </ng-template>
 </p-dialog>
+<!-- end Group Event-->
