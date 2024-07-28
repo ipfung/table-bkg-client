@@ -58,6 +58,7 @@ import {NotificationTemplatesComponent} from "./components/notification-template
 import { ReportSalesComponent } from './components/report-sales/report-sales.component';
 import { ReportTrainerCommissionsComponent } from './components/report-trainer-commissions/report-trainer-commissions.component';
 import {AppointmentBlocksComponent} from './components/appointment-blocks/appointment-blocks.component';
+import {AppointmentGroupEventComponent} from './components/appointment-group-event/appointment-group-event.component';
 
 @NgModule({
     imports: [
@@ -89,6 +90,7 @@ import {AppointmentBlocksComponent} from './components/appointment-blocks/appoin
                     {path: 'settings/working-hours-list', component: TimeslotListComponent, canActivate: [ AuthGuardService ]},
                     {path: 'settings/notification-templates', component: NotificationTemplatesComponent, canActivate: [ AuthGuardService ]},
                     {path: 'settings/whatsapp-templates', component: WhatsappTemplatesComponent, canActivate: [ AuthGuardService ]},
+                    {path: 'settings/appointment-group-event', component: AppointmentGroupEventComponent, canActivate: [ AuthGuardService ]},
                     // {path: 'uikit/formlayout', component: FormLayoutComponent},
                     // {path: 'uikit/input', component: InputComponent},
                     // {path: 'uikit/floatlabel', component: FloatLabelComponent},

@@ -1,0 +1,144 @@
+<div class="flex justify-content-between">
+    <div class="flex align-items-center justify-content-center p-2 border-round mr-1 text-2xl font-bold">
+        {{ this.pageHeader | translate }}
+    </div>
+<!--    <div class="flex align-items-center justify-content-center py-2 border-round">-->
+<!--        <button *ngIf="newable" pButton pRipple label="{{ 'New' | translate }}" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNewAptForm()"></button>-->
+<!--    </div>-->
+</div>
+<div class="card">
+    <!-- Search fields -->
+    <div class="p-fluid grid">
+        <div class="field col-12 md:col-3">
+            <p-calendar [(ngModel)]="rangeDates" selectionMode="range" [readonlyInput]="true" (onSelect)="loadData()" inputId="range" [dateFormat]="lemonade.dateFormat"></p-calendar>
+        </div>
+       <!--  <div class="field col-12 md:col-3">
+            <p-autoComplete [(ngModel)]="userObj" [forceSelection]="true" [suggestions]="users" (completeMethod)="searchUsers($event)" (onSelect)="loadData()" field="name" placeholder="{{'Search User' | translate }}">
+                <ng-template let-item pTemplate="item">
+                    <i class="pi pi-circle-fill" [style]="{color: item.role.color_name}"></i>
+                    {{ item.name }}
+                </ng-template>
+            </p-autoComplete>
+        </div> -->
+        <div class="field col-12 md:col-3">
+            <p-dropdown [(ngModel)]="trainerObj" [options]="trainers" optionValue="id" optionLabel="name" (onChange)="loadData()" placeholder="{{'Search F' | translate:{field: 'Trainer' | translate } }}">
+                <ng-template let-item pTemplate="item">
+                    <i class="pi pi-circle-fill" [style]="{color: item.role.color_name}"></i>
+                    {{ item.name }}
+                </ng-template>
+            </p-dropdown>
+        </div>
+        <!-- <div class="field col-12 md:col-3">
+            <p-dropdown [options]="statuses" optionValue="code" [(ngModel)]="aptStatus" (onChange)="loadData()" (onClear)="loadData()" [showClear]="true" placeholder="{{ 'Search F' | translate:{field: 'Status' | translate } }}">
+                <ng-template pTemplate="selectedItem">
+                    {{ lemonade.comboRenderer(statuses, aptStatus) | translate }}
+                </ng-template>
+                <ng-template let-item pTemplate="item">
+                    {{ item.name | translate }}
+                </ng-template>
+            </p-dropdown>
+        </div> -->
+    </div>
+     <!-- End Search fields -->
+
+    <p-table [value]="appointments" [loading]="loading" dataKey="id" sortField="appointment_date" sortMode="single" [scrollable]="true" rowGroupMode="subheader" groupRowsBy="appointment_date" responsiveLayout="scroll">
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="min-width:200px">{{ 'Date & Time' | translate }}</th>
+                <th style="min-width:200px">{{ 'Package' | translate }} </th>
+                <th *ngIf="showTrainer" style="min-width:150px">{{ 'Trainer & Rates' | translate }}</th>                
+                <th style="min-width:120px" *ngIf="supportFinance">{{ 'Payment' | translate }}</th>
+                <th style="min-width:120px">{{ 'Status' | translate }}</th>
+                <th style="min-width:20px"></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage" let-appointment>
+            <tr>
+                <td colspan="8">
+                    <span class="font-bold ml-2" [innerHTML]="'No booking found.' | translate"></span>
+                </td>
+            </tr>
+        </ng-template>
+        <!-- <ng-template pTemplate="groupheader" let-appointment>
+            <tr pRowGroupHeader>
+                <td colspan="8">
+                    <i class="pi pi-calendar"></i>
+                    <img [alt]="customer.representative.name" src="assets/showcase/images/demo/avatar/{{customer.representative.image}}" width="32" style="vertical-align: middle" />
+                    <span class="font-bold ml-2">{{ lemonade.formatDate(appointment.appointment_starttime, true) }}</span>
+                </td>
+            </tr>
+        </ng-template> -->
+<!--        <ng-template pTemplate="groupfooter" let-appointment>-->
+<!--            <tr class="p-rowgroup-footer">-->
+<!--                <td style="min-width: 80%">-->
+<!--                    <div style="text-align: right; width: 100%">Total Customers</div>-->
+<!--                </td>-->
+<!--                <td style="width: 20%">{{calculateCustomerTotal(customer.representative.name)}}</td>-->
+<!--            </tr>-->
+<!--        </ng-template>-->
+        <ng-template pTemplate="body" let-appointment let-rowIndex="rowIndex" let-expanded="expanded">
+            <tr >
+                <td style="min-width:200px">
+                    <span class="p-column-title">{{ 'Date & Time' | translate }}</span>
+                    <span class="booking-badge bg-purple-50 text-purple-400">{{ lemonade.formatDate(appointment.appointment_starttime, true) }} {{ appointmentService.formatDateTime(appointment.appointment_starttime) }} - {{ appointmentService.formatDateTime(appointment.appointment_endtime) }} </span>
+                </td>
+                <td style="min-width:200px">
+                    <span class="p-column-title">{{ 'Package' | translate }}</span>
+                    <div class="flex">                       
+                        <span class="pl-2"> {{appointment.description}} </span>
+                    </div>
+                </td>
+                <td *ngIf="showTrainer" style="min-width:150px">
+                    <span class="p-column-title">{{ 'Trainer' | translate }}</span>
+                    <div>
+                        {{ appointment.user_name }}
+                        <div class="booking-badge bg-blue-50 text-blue-400" *ngIf="appointment.package_name">{{ appointment.package_name }}</div>
+                    </div>
+                </td>
+                <td style="min-width:200px">
+                    <span class="p-column-title">{{ 'Package id' | translate }}</span>
+                    <div class="flex">                       
+                        <span class="pl-2"> {{appointment.trainer_and_rate_list	}}</span>
+                    </div>
+                </td>
+                <td style="min-width:200px">
+                    <span class="p-column-title">{{ 'Package id' | translate }}</span>
+                    <div class="flex">                       
+                        <span class="pl-2"> {{appointment.package_id}} | {{appointment.recurring}}</span>
+                    </div>
+                </td>
+                <!-- <td style="min-width:200px">
+                    <span class="p-column-title">{{ 'Table' | translate }} / {{ 'Duration' | translate }}</span>
+                    <div class="flex">
+                        <p-avatar [label]="lemonade.getInitial(appointment.name)" shape="circle" [style]="{'background-color': appointment.color, 'color': '#fff'}"></p-avatar>
+                        <span class="pl-2"> {{appointment.name}}<br/><span class="booking-badge bg-green-50 text-green-400 pl-2">{{ duration(appointment) }}</span></span>
+                    </div>
+                </td> -->
+                
+                <!--<td style="min-width:120px">
+                    <span class="p-column-title">{{ 'Status' | translate }}</span>
+                    <span [class]="'booking-badge status-' + appointment.status">{{ appointment.status | translate }}</span>
+                     <button pButton type="button" *ngIf="!showCustomer" [disabled]="isPaid(appointment) || !canAmend(appointment)" pTooltip="{{ 'Cancel Booking' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-times" (click)="cancel(appointment)"></button>
+                    <button pButton type="button" *ngIf="showCustomer" [disabled]="!isAbleApprove(appointment)" pTooltip="{{ 'Reject' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-times" (click)="reject(appointment)"></button>
+                    <button pButton type="button" *ngIf="showCustomer" [disabled]="!isAbleApprove(appointment)" pTooltip="{{ 'Approve' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-check" (click)="approve(appointment)"></button>
+                     <p-progressSpinner *ngIf="appointment.loading === true" class="row-spinner ml-2"></p-progressSpinner>
+                </td>  -->              
+                <td style="min-width:20px">
+                    <!-- <button pButton type="button" *ngIf="canReschedule(appointment)" pTooltip="{{ 'Reschedule' | translate }}" tooltipPosition="bottom" class="p-button-text" label="{{ 'Reschedule' | translate }}" icon="pi pi-replay" (click)="reschedule($event, appointment)"></button>
+                    <button pButton type="button" *ngIf="canTakeLeave(appointment)" pTooltip="{{ 'Take Leave' | translate }}" tooltipPosition="bottom" class="p-button-text" label="{{ 'Take Leave' | translate }}" icon="pi pi-shield" (click)="takeLeave(appointment)"></button>
+                     --><div *ngIf="appointment.take_leave_at" class="booking-badge bg-pink-50 text-pink-400">{{ 'Taken Leave' | translate }}</div>
+                    <button *ngIf="supportFinance && supportPaymentGateway && !isTokenOrder(appointment)" pButton type="button" [disabled]="isPaid(appointment) || !isValidStatus(appointment)" pTooltip="{{ 'Pay Now' | translate }}" tooltipPosition="bottom" class="p-button-text" icon="pi pi-credit-card" (click)="payNow(appointment)"></button>
+                </td>
+            </tr>
+        </ng-template>
+<!--        <ng-template pTemplate="rowexpansion" let-appointment>-->
+<!--            <tr>-->
+<!--                <td colspan="8">hihi</td>-->
+<!--            </tr>-->
+<!--        </ng-template>-->
+
+    </p-table>
+
+    <p-confirmDialog header="{{ 'Confirmation' | translate }}" icon="pi pi-clock"></p-confirmDialog>
+    <p-toast></p-toast>
+</div>

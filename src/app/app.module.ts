@@ -190,6 +190,7 @@ import { AppointmentBlockItemsComponent } from './components/appointment-block-i
 import {EditorModule} from "primeng/editor";
 import { TrainerRateListComponent } from './components/trainer-rate-list/trainer-rate-list.component';
 import {DynamicDialogModule} from "primeng/dynamicdialog";
+import { AppointmentGroupEventComponent } from './components/appointment-group-event/appointment-group-event.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/lang/', '-' + environment.project + '.json');
@@ -374,6 +375,7 @@ export function createTranslateLoader(http: HttpClient) {
         AppointmentBlocksComponent,
         AppointmentBlockItemsComponent,
         TrainerRateListComponent,
+        AppointmentGroupEventComponent,
     ],
     providers: [
         {provide: LocationStrategy, useClass: HashLocationStrategy},
