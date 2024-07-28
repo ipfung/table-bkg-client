@@ -625,6 +625,10 @@ export class AppointmentService {
         const session = (no_of_session  / MIN_SESSION);
         return session + ' Hour' + (session > 1 ? 's' : '');
     }
+
+    getGroupEventAppointments(params) {
+        return this.api.get('api/gorup-event-appointments', params);
+    }
 }
 
 @Injectable()
