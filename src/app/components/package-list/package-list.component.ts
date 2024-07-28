@@ -162,12 +162,7 @@ export class PackageListComponent implements OnInit {
         });
 
 
-        this.bg_trainers=[
-            {
-               
-            
-            }
-        ] 
+        this.bg_trainers=[] 
 
 /*
         this.bg_trainers.push({ name:"test2",
@@ -519,6 +514,13 @@ export class PackageListComponent implements OnInit {
                 }
             }
         }
+
+       // if (true) {
+            data = {...data, ...{
+                bg_trainer: this.bg_trainers
+            }}
+        //}
+            console.log("data=", data);
         if (this.pkg.id > 0) {
             call = this.api.update('api/packages/' + this.pkg.id, data)
         } else {
@@ -565,34 +567,32 @@ export class PackageListComponent implements OnInit {
         return (this.packageType === 'weekly');
     }
 
-    add_seltrainer( event: any){
+    add_del_seltrainer( event: any){
        console.log("add=" , event)
         //const index = this.bg_trainers.indexOf(event.itemValue,0)
         var  tmptrainer = [];
+        var trainerId : number =  event.itemValue;
         tmptrainer = this.trainer_combo.filter((tc) => tc.id== event.itemValue);
         console.log("the list=", tmptrainer[0].name );
 
         //if (this.bg_trainers.length >0 ) {
+            // find the name of trainer
             var index = this.bg_trainers.findIndex(function(item, i){
                
                     return item.name === tmptrainer[0].name;
                
             });
 
-
-            var index = this.bg_trainers.findIndex(function(item, i){
-               
-                return item.name === tmptrainer[0].name;
-           
-            });
+          
             console.log("index", index)
-            if (index <  0 ) //not in list
+            if (index <  0 ) //not in list then add
             {   
                 console.log("add_seltrainer()" , event );
-                this.bg_trainers.push({ name:tmptrainer[0].name,
-                    rate:"120"})
+                
+                this.bg_trainers.push({ id:trainerId, name:tmptrainer[0].name,
+                    rate:120})
 
-            } else {
+            } else { //in list then del
 
                 console.log("remove_seltrainer()" , event );
                 //this.bg_trainers.slice(index, 1);

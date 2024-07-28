@@ -446,14 +446,14 @@
                                optionLabel="name"
                                optionValue="id"
                                display="chip"
-                               (onChange)="add_seltrainer($event)"
+                               (onChange)="add_del_seltrainer($event)"
                                [showClear]="true" >
                 </p-multiSelect>
                 <small class="ng-dirty ng-invalid" *ngIf="isWeekly(pkg) && submitted && !pkg.trainer_id_list">{{ 'Field is required' | translate: {field: 'Trainer' | translate} }}</small>
 
 
                 <!-- grid for trainer-->
-                <p-table #pTableId [value]="bg_trainers" dataKey="id" editMode="row" [tableStyle]="{'min-width': '95%'}">
+                <p-table #pTableId [value]="bg_trainers" [lazy]="true" dataKey="id" editMode="row" [tableStyle]="{'min-width': '95%'}">
                     <ng-template pTemplate="header">
                         <tr>
                             <th style="width:20%">Trainer</th>
