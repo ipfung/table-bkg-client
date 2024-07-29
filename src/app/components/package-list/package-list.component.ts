@@ -162,7 +162,7 @@ export class PackageListComponent implements OnInit {
         });
 
 
-        this.bg_trainers=[] 
+        this.bg_trainers=[]
 
 /*
         this.bg_trainers.push({ name:"test2",
@@ -578,32 +578,32 @@ export class PackageListComponent implements OnInit {
         //if (this.bg_trainers.length >0 ) {
             // find the name of trainer
             var index = this.bg_trainers.findIndex(function(item, i){
-               
+
                     return item.name === tmptrainer[0].name;
-               
+
             });
 
-          
+
             console.log("index", index)
             if (index <  0 ) //not in list then add
-            {   
+            {
                 console.log("add_seltrainer()" , event );
-                
+
                 this.bg_trainers.push({ id:trainerId, name:tmptrainer[0].name,
                     rate:120})
 
             } else { //in list then del
 
                 console.log("remove_seltrainer()" , event );
-                //this.bg_trainers.slice(index, 1);
-                delete this.bg_trainers[index];
+                this.bg_trainers.splice(index, 1);
+                // delete this.bg_trainers[index];
                 console.log("new list=", this.bg_trainers);
-               
+
 
             }
-        
+
     }
 
-   
+
 
 }
