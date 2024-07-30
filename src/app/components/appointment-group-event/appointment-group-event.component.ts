@@ -75,7 +75,7 @@ export class AppointmentGroupEventComponent implements OnInit {
                 //this.appointmentService.getGroupEventAppointments(params).subscribe(res => {
                     this.appointments = res.data;
 
-                    console.log("appointments=",this.appointments)
+                    //console.log("appointments111=",this.appointments)
                     this.pageHeader = "Change Trainer of Group Training";
                    /*  this.isManager = res.manager;   // 202303 internal coach or above
                     //
@@ -106,4 +106,18 @@ export class AppointmentGroupEventComponent implements OnInit {
     });
   }
 
+  onRowEditInit(traineratev)
+  {
+    
+  }
+
+  onRowEditSave(trainerate)
+  {
+    console.log(" trainer id=", trainerate.id )
+  }
+
+  onRowEditCancel(trainerate, index: number)
+  {
+    //this.partner.trainerrates = JSON.parse(JSON.stringify(this.clonedTrainerRate));
+  }
 }

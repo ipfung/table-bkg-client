@@ -332,4 +332,18 @@ export class Lemonade {
         doc.write(content);
         doc.close()
     }
+
+    showTrainerRateList(trainerandratelist) {
+        var TRList = ""
+        if (trainerandratelist!=null )
+        {
+                const trainerandratelists = JSON.parse(trainerandratelist);
+                //console.log("trainerandratelists ===", trainerandratelists)
+                TRList = trainerandratelists ;
+        //trainerandrate.cycle
+        }
+         
+
+        return TRList ;
+    }
 }

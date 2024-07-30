@@ -45,10 +45,9 @@
         <ng-template pTemplate="header">
             <tr>
                 <th style="min-width:200px">{{ 'Date & Time' | translate }}</th>
-                <th style="min-width:200px">{{ 'Package' | translate }} </th>
-                <th *ngIf="showTrainer" style="min-width:150px">{{ 'Trainer & Rates' | translate }}</th>                
-                <th style="min-width:120px" *ngIf="supportFinance">{{ 'Payment' | translate }}</th>
-                <th style="min-width:120px">{{ 'Status' | translate }}</th>
+                <th style="min-width:100px">{{ 'Package' | translate }} </th>
+                
+                <th style="min-width:120px">{{ 'Trainer and Rates' | translate }}</th>
                 <th style="min-width:20px"></th>
             </tr>
         </ng-template>
@@ -78,27 +77,107 @@
 <!--        </ng-template>-->
         <ng-template pTemplate="body" let-appointment let-rowIndex="rowIndex" let-expanded="expanded">
             <tr >
-                <td style="min-width:200px">
+                <td style="min-width:150px">
                     <span class="p-column-title">{{ 'Date & Time' | translate }}</span>
                     <span class="booking-badge bg-purple-50 text-purple-400">{{ lemonade.formatDate(appointment.appointment_starttime, true) }} {{ appointmentService.formatDateTime(appointment.appointment_starttime) }} - {{ appointmentService.formatDateTime(appointment.appointment_endtime) }} </span>
                 </td>
-                <td style="min-width:200px">
+               <td style="min-width:100px">
                     <span class="p-column-title">{{ 'Package' | translate }}</span>
                     <div class="flex">                       
                         <span class="pl-2"> {{appointment.description}} </span>
                     </div>
-                </td>
-                <td *ngIf="showTrainer" style="min-width:150px">
+                </td> 
+                <!-- <td *ngIf="showTrainer" style="min-width:150px">
                     <span class="p-column-title">{{ 'Trainer' | translate }}</span>
                     <div>
                         {{ appointment.user_name }}
                         <div class="booking-badge bg-blue-50 text-blue-400" *ngIf="appointment.package_name">{{ appointment.package_name }}</div>
                     </div>
-                </td>
+                </td> -->
                 <td style="min-width:200px">
                     <span class="p-column-title">{{ 'Package id' | translate }}</span>
                     <div class="flex">                       
-                        <span class="pl-2"> {{appointment.trainer_and_rate_list	}}</span>
+                        
+                        <span>
+                            <p-table [value]="lemonade.showTrainerRateList(appointment.trainer_and_rate_list)" dataKey="id" editMode="row" [tableStyle]="{'min-width': '50rem'}">
+                                <ng-template pTemplate="header">
+                                    <tr>                                        
+                                        <th style="width:5%">Name</th>
+                                        <th style="width:5%">Rate</th>
+                                        <th style="width:5%"></th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-trainer_and_rate_list let-editing="editing" let-ri="rowIndex">
+                                    <tr [pEditableRow]="trainer_and_rate_list">
+                                        <td>
+                                            <p-cellEditor>
+                                                <ng-template pTemplate="input">
+                                                    <input 
+                                                        pInputText 
+                                                        type="text" 
+                                                        [(ngModel)]="trainer_and_rate_list.name" />
+                                                </ng-template>
+                                                <ng-template pTemplate="output">
+                                                    {{trainer_and_rate_list.name}}
+                                                </ng-template>
+                                            </p-cellEditor>
+                                        </td>
+                                        <td>
+                                            <p-cellEditor>
+                                                <ng-template pTemplate="input">
+                                                    <input 
+                                                        pInputText type="text" 
+                                                        [(ngModel)]="trainer_and_rate_list.rate" 
+                                                        required />
+                                                </ng-template>
+                                                <ng-template pTemplate="output">
+                                                    {{trainer_and_rate_list.rate}}
+                                                </ng-template>
+                                            </p-cellEditor>
+                                        </td>
+                                       
+                                        
+                                        <td>
+                                            <div class="flex align-items-center justify-content-center gap-2">
+                                                <button 
+                                                    *ngIf="!editing" 
+                                                    pButton 
+                                                    pRipple 
+                                                    type="button" 
+                                                    pInitEditableRow 
+                                                    icon="pi pi-pencil" 
+                                                    (click)="onRowEditInit(trainer_and_rate_list)" 
+                                                    class="p-button-rounded p-button-text">
+                                                </button>
+                                                <button 
+                                                    *ngIf="editing" 
+                                                    pButton 
+                                                    pRipple 
+                                                    type="button" 
+                                                    pSaveEditableRow 
+                                                    icon="pi pi-check" 
+                                                    (click)="onRowEditSave(trainer_and_rate_list)" 
+                                                    class="p-button-rounded p-button-text p-button-success mr-2">
+                                                </button>
+                                                <button 
+                                                    *ngIf="editing" 
+                                                    pButton pRipple 
+                                                    type="button" 
+                                                    pCancelEditableRow 
+                                                    icon="pi pi-times" 
+                                                    (click)="onRowEditCancel(trainer_and_rate_list, ri)" 
+                                                    class="p-button-rounded p-button-text p-button-danger">
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+
+
+                        </span>
+
+                        <span class="pl-2">{{lemonade.showTrainerRateList(appointment.trainer_and_rate_list)  }}  {{appointment.trainer_and_rate_list	}}</span>
                     </div>
                 </td>
                 <td style="min-width:200px">
