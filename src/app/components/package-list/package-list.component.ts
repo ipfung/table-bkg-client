@@ -162,7 +162,7 @@ export class PackageListComponent implements OnInit {
         });
 
 
-        this.bg_trainers=[]
+       
 
 /*
         this.bg_trainers.push({ name:"test2",
@@ -171,6 +171,7 @@ export class PackageListComponent implements OnInit {
 
     loadData(event?: LazyLoadEvent) {
         this.loading = true;
+        this.bg_trainers=[];
         let page = event ? (event.first/event.rows) : 0;
         let params = {
             page: (1 + page),
@@ -588,9 +589,7 @@ export class PackageListComponent implements OnInit {
             if (index <  0 ) //not in list then add
             {
                 console.log("add_seltrainer()" , event );
-
-                this.bg_trainers.push({ id:trainerId, name:tmptrainer[0].name,
-                    rate:120})
+                this.bg_trainers.push({ 'id':trainerId, 'name':tmptrainer[0].name, 'rate':tmptrainer[0].rate})
 
             } else { //in list then del
 
