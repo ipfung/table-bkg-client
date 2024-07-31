@@ -19,6 +19,9 @@ import {ApiService} from "../../service/api.service";
 })
 export class AppointmentGroupEventComponent implements OnInit {
   loading = true;
+  //paginator
+  rows = 0;
+  totalRecords = 0;
 
   pageHeader = '';
    // search fields
@@ -106,9 +109,9 @@ export class AppointmentGroupEventComponent implements OnInit {
     });
   }
 
-  onRowEditInit(traineratev)
+  onRowEditInit(trainerate)
   {
-    
+    //alert("error!");
   }
 
   onRowEditSave(trainerate)
