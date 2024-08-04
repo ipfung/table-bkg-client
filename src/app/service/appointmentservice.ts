@@ -488,6 +488,7 @@ export class AppointmentService {
         // submit to server.
         this.api.post('api/appointment', data).subscribe( res => {
             callback(res);
+            console.log("customer_booking==", res);
         });
     }
 
