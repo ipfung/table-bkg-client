@@ -48,8 +48,9 @@
         <p-table [value]="appointments"  dataKey="appointment_id"  [paginator]="false" [rows]="rows" [loading]="loading" [totalRecords]="totalRecords" sortField="id"  responsiveLayout="stack">
             <ng-template pTemplate="header">
                 <tr>
-                    <th style="width:25%">{{ 'Date & Time' | translate }}</th>
-                    <th style="width:25%">{{ 'Package' | translate }} </th>                
+                    <th style="width:32%">{{ 'Date & Time' | translate }}</th>
+                    <th style="width:18%">{{ 'Package' | translate }} </th>   
+                    <th>{{'Table'}}</th>             
                     <th style="width:35%">{{ 'Trainer and Rates' | translate }}</th>
                     <th style="width:15%"></th>
                 </tr>
@@ -63,6 +64,12 @@
                              <!--    <input pInputText type="text" [(ngModel)]="appointment.description">          -->                   
                                 {{appointment.description}}                           
                     </td> 
+                    <td>
+                        <div class="flex">
+                            
+                            <span class="pl-2"> {{appointment.appointment_room_id}}</span><!-- <span class="booking-badge bg-green-50 text-green-400 pl-2">{{ duration(appointment) }}</span></span>-->
+                        </div>
+                    </td>
                     <td></td>
                     <!-- for debugging -->
                     <!-- <td style="max-width:80px">  

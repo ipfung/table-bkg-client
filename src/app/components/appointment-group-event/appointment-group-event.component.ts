@@ -94,8 +94,7 @@ export class AppointmentGroupEventComponent implements OnInit {
                 this.api.get('api/gorup-event-appointments', params).subscribe( res => {
                 //this.appointmentService.getGroupEventAppointments(params).subscribe(res => {
                     this.appointments = res.data;
-
-                    //console.log("appointments111=",this.appointments)
+                    console.log("appointments111=",this.appointments)
                     this.pageHeader = "Change Trainer of Group Training";
                    /*  this.isManager = res.manager;   // 202303 internal coach or above
                     //
