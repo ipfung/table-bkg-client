@@ -828,13 +828,13 @@ console.log('this.selectedPackage333===', this.selectedPackage);
     saveAptForm() {
         this.submitted = true;
         const timeInfo = this.appointment.timeInformation;
-
+       
         if (!timeInfo.customerId || timeInfo.customerId <= 0)
             return;
         if (timeInfo.serviceId <= 0)
             return;
-        if (timeInfo.roomId <= 0)
-            return;
+       /*  if (timeInfo.roomId <= 0)
+            return; */
         if (timeInfo.noOfSession <= 0)
             return;
         if (!timeInfo.date)
@@ -847,6 +847,7 @@ console.log('this.selectedPackage333===', this.selectedPackage);
             if (this.appointment.paymentInformation.status == 'paid' && !this.paymentGateway)
                 return;
         }
+        console.log("saveaptform");
         let data = {
             ...timeInfo, ...{
                 date: this.lemonade.formatPostDate(timeInfo.date),
@@ -888,10 +889,12 @@ console.log('this.selectedPackage333===', this.selectedPackage);
                     package_commission: packageInfo.commission
                 }
             };
+            console.log("data===",data);
         }
+        console.log("appointment id===",data.appointment_id);
         const me = this;
         this.submittingModal = true;   // show submitting modal after validation.
-
+        console.log("data===",data);
         this.appointmentService.submit(data, function(res) {
             if (res.success == true) {
                 me.messageService.add({
