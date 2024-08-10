@@ -346,4 +346,24 @@ export class Lemonade {
 
         return TRList ;
     }
+
+    showTrainerList(trainerandratelist) {
+        var TRList = ""
+        if (trainerandratelist!=null )
+        {
+                const trainerandratelists = JSON.parse(trainerandratelist);
+               // console.log("trainerandratelists33 ===", trainerandratelists)
+                TRList = trainerandratelists.map((obj)=>{
+                    const {id, name} = obj;
+                    return name;
+                 }
+               )
+               return TRList; 
+             //   TRList = trainerandratelists ;
+        //trainerandrate.cycle
+        }
+         
+
+        return TRList ;
+    }
 }

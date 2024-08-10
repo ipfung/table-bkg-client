@@ -1,7 +1,7 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {AppointmentService} from "../../service/appointmentservice";
-import {ConfirmationService, MessageService} from "primeng/api";
+import {ConfirmationService, MessageService, SelectItem} from "primeng/api";
 import {DialogService, DynamicDialogRef} from "primeng/dynamicdialog";
 import {TranslateService} from "@ngx-translate/core";
 import {Lemonade} from "../../service/lemonade.service";
@@ -11,6 +11,10 @@ import {addDays, addMinutes, isAfter, isWithinInterval, subHours, subMinutes} fr
 import {ApiService} from "../../service/api.service";
 import { collectExternalReferences } from '@angular/compiler';
 
+interface Trainer {  
+  id: number;
+  name: string;
+}
 
 @Component({
   selector: 'app-appointment-group-event',  
@@ -56,6 +60,10 @@ export class AppointmentGroupEventComponent implements OnInit {
    dialog_end_time : any;
    dialog_trainer_and_rate : [];
    clonedTrainerRate : [][];
+   tr_trainer;
+   tr_trainer_rate = 0 ;
+   selectedLevel;
+   ddtrainers :[];
 
    constructor(private api: ApiService,private route: ActivatedRoute, public appointmentService: AppointmentService, private router: Router, private confirmationService: ConfirmationService, public dialogService: DialogService, public messageService: MessageService, private translateService: TranslateService, public lemonade: Lemonade) {
     this.paramBookId = this.route.snapshot.paramMap.get('id');
@@ -65,7 +73,7 @@ export class AppointmentGroupEventComponent implements OnInit {
   ngOnInit(): void {
     this.date = new Date();
     this.pageHeader = "Change Trainer of Group Training";
-    this.rangeDates = [new Date(), addDays(new Date(), 14)];
+    this.rangeDates = [new Date(), addDays(new Date(), 30)];
     this.loadData();
     //this.statuses = this.lemonade.appointmentStatus;
   }
@@ -115,6 +123,24 @@ export class AppointmentGroupEventComponent implements OnInit {
                     } */
                     this.loading = false;
                 });
+
+                this.api.get('api/trainers', {
+                  status: 'active',
+                  role: 'Trainer'
+                }).subscribe( res => {
+                    this.trainers = res.data;
+                   // this.ddtrainers = res.data;
+                    //this.ddtrainers = res.data.map(({id, name})=> [ id,  name] );
+                    this.ddtrainers = res.data.map((obj)=>{
+                         const {id, name} = obj;
+                         return {value:id , label:name};
+                      }
+                    )
+                    console.log("trainer list==", this.trainers);
+                    console.log("trainer list==", this.ddtrainers);
+                }); 
+
+                this.tr_trainer_rate = 0 ;
            // } 
   }
 
@@ -127,16 +153,33 @@ export class AppointmentGroupEventComponent implements OnInit {
 
   onRowEditInit(trainer_and_rate_list)
   {
-
+    console.log("edit init trainer_and_rate_list==", trainer_and_rate_list);
     this.clonedTrainerRate = JSON.parse(JSON.stringify(this.trainer_and_rate_lists));
     //console.log("trainer====", trainer_and_rate_list.id) ;
     
     console.log("temp1=", this.clonedTrainerRate);
   }
 
-  onRowEditSave(appointment_id, trainer_and_rate_lists)
+  onRowEditSave(appointment_id, trainer_and_rate_list)
   {
-    this.saveform(appointment_id, trainer_and_rate_lists)
+    var index = this.trainer_and_rate_lists.findIndex(function(item, i){
+      return item.id === trainer_and_rate_list.id;
+    });
+    console.log("trainer_and_rate_list==", trainer_and_rate_list);
+    console.log("index==", index);
+    console.log("this row==", trainer_and_rate_list);
+    var tempid = trainer_and_rate_list.name.id;
+    var tempname = trainer_and_rate_list.name.name;
+    var temprate = trainer_and_rate_list.rate;
+    console.log("this row==", tempname);
+    console.log("this row==", tempid);
+    this.trainer_and_rate_lists[index]={
+      id: tempid,
+      name: tempname,
+      rate : temprate
+    }
+    console.log("trainer_and_rate1=", this.trainer_and_rate_lists)
+    this.saveform(appointment_id, this.trainer_and_rate_lists)
     
 
   }
@@ -216,6 +259,7 @@ export class AppointmentGroupEventComponent implements OnInit {
       trainerandratelist: trainer_and_rate_lists,
       
     };
+    console.log("trainer data===",  data);
     let call = this.api.post('api/group-event-update-trainer', data)
 
     call.subscribe( res => {
@@ -233,4 +277,44 @@ export class AppointmentGroupEventComponent implements OnInit {
         this.lemonade.validateError(this.messageService, error);
     });;
  }   
+
+
+ doAddTrainerRate(event, dd, appointment_id, trainer_and_rate_lists )
+ {
+    this.submitted = true;
+    console.log("ttt=",this.trainer_and_rate_lists);
+    console.log("yyy===", this.tr_trainer.name);
+    console.log("zzz===", this.tr_trainer);
+    trainer_and_rate_lists.push({ 'id':this.tr_trainer.id, 'name':this.tr_trainer.name , 'rate':this.tr_trainer_rate}) 
+    let data = {
+      appointmentid: appointment_id,
+      trainerandratelist: trainer_and_rate_lists,
+      
+    };
+    console.log("trainer data===",  data);
+    let call = this.api.post('api/group-event-update-trainer', data)
+
+    call.subscribe( res => {
+        console.log('save package res=', res);
+        if (res.success == true) {
+            this.submitted = false;
+            this.loadData();
+            this.hideDialog();
+            this.lemonade.ok(this.messageService);
+        } else {
+            // error.
+            this.lemonade.error(this.messageService, res);
+        }
+    }, error => {
+        this.lemonade.validateError(this.messageService, error);
+    });;
+ }
+
+
+ selTrainerName(e, tr_trainer)
+ {
+    console.log("ee==", this.tr_trainer.name);
+ }
+
+  
 }

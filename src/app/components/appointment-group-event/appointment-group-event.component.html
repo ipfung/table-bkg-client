@@ -20,14 +20,14 @@
                 </ng-template>
             </p-autoComplete>
         </div> -->
-        <div class="field col-12 md:col-3">
+       <!--  <div class="field col-12 md:col-3">
             <p-dropdown [(ngModel)]="trainerObj" [options]="trainers" optionValue="id" optionLabel="name" (onChange)="loadData()" placeholder="{{'Search F' | translate:{field: 'Trainer' | translate } }}">
                 <ng-template let-item pTemplate="item">
                     <i class="pi pi-circle-fill" [style]="{color: item.role.color_name}"></i>
                     {{ item.name }}
                 </ng-template>
             </p-dropdown>
-        </div>
+        </div> -->
         <!-- <div class="field col-12 md:col-3">
             <p-dropdown [options]="statuses" optionValue="code" [(ngModel)]="aptStatus" (onChange)="loadData()" (onClear)="loadData()" [showClear]="true" placeholder="{{ 'Search F' | translate:{field: 'Status' | translate } }}">
                 <ng-template pTemplate="selectedItem">
@@ -51,7 +51,7 @@
                     <th style="width:32%">{{ 'Date & Time' | translate }}</th>
                     <th style="width:18%">{{ 'Package' | translate }} </th>   
                     <th>{{'Table'}}</th>             
-                    <th style="width:35%">{{ 'Trainer and Rates' | translate }}</th>
+                    <th style="width:35%">{{ 'Trainer' | translate }}</th>
                     <th style="width:15%"></th>
                 </tr>
             </ng-template>
@@ -69,13 +69,12 @@
                             
                             <span class="pl-2"> {{appointment.appointment_room_id}}</span><!-- <span class="booking-badge bg-green-50 text-green-400 pl-2">{{ duration(appointment) }}</span></span>-->
                         </div>
-                    </td>
-                    <td></td>
+                    </td>                   
                     <!-- for debugging -->
-                    <!-- <td style="max-width:80px">  
-                        <span>id= {{appointment.appointment_id}}</span> <br />                    
-                                {{lemonade.showTrainerRateList(appointment.trainer_and_rate_list)  }}  {{appointment.trainer_and_rate_list	}}                           
-                    </td> -->
+                    <td>  
+                                        
+                                {{lemonade.showTrainerList(appointment.trainer_and_rate_list)  }}                            
+                    </td>
                     <!-- end for debugging -->
 
                     <td>
@@ -276,7 +275,23 @@
                    <div>{{ 'Package' | translate }}: {{this.dialog_package_description}}</div>                           
                    <div>{{ 'Date & Time' | translate }}: {{ lemonade.formatDate(this.dialog_appointment_starttime, true) }} {{ appointmentService.formatDateTime(this.dialog_start_time) }}  to {{appointmentService.formatDateTime(this.dialog_end_time)}} </div>
                     {{ 'Trainer and Rates' | translate }}
-                    <p-table [value]="trainer_and_rate_lists"  dataKey="id" editMode="row"  [paginator]="false" [rows]="rows" [loading]="loading" sortField="id"  responsiveLayout="stack">
+                    <div class="grid" >
+                        <div class="field col-12 md:col-4">
+                            <label for="trainer">{{ 'Trainer' | translate }}</label>
+                            <p-dropdown [options]="trainers" [(ngModel)]="tr_trainer" optionLabel="name" ></p-dropdown>                            
+                        </div>                       
+                        <div class="field col-12 md:col-4">
+                            <label for="trainer_charge">{{ 'Rate' | translate }}</label>
+                            <p-inputNumber id="tr_trainer_charge" [(ngModel)]="tr_trainer_rate"   locale="zh-HK" ></p-inputNumber>
+                        </div>  
+                        <div class="field col-12 md:col-2">
+                            <label for="add_new">{{ 'New' | translate }}</label><br/>
+                            <button pButton pRipple type="button" class="p-button-rounded p-button-text p-button-success mr-2" (click)="doAddTrainerRate($event,dd, this.dialog_appointment_id, trainer_and_rate_lists)" icon="pi pi-plus" ></button>
+                        </div>
+    
+                    </div>
+
+                    <p-table [value]="trainer_and_rate_lists"  dataKey="id" editMode="row"  [paginator]="false" [rows]="rows" [loading]="loading"  responsiveLayout="stack">
                         <ng-template pTemplate="header">
                             <tr>
                                 <th style="width:25%">Name</th>
@@ -286,9 +301,17 @@
                         </ng-template> 
                         <ng-template pTemplate="body" let-trainer_and_rate_list let-editing="editing" let-ri="rowIndex1">
                             <tr [pEditableRow]="trainer_and_rate_list">
-                                <td style="min-width:120px">                                        
-                                    {{ trainer_and_rate_list.name }}                                     
-                                </td>                    
+                                <td style="min-width:120px">         
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <p-dropdown [options]="ddtrainers" appendTo="body" [(ngModel)]="trainer_and_rate_list.name" ></p-dropdown>
+
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            {{ trainer_and_rate_list.name }}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>               
                                 <td style="min-width:80px">    
                                     <p-cellEditor>
                                         <ng-template pTemplate="input">
@@ -304,7 +327,7 @@
             
                                     <div class="flex align-items-center justify-content-center gap-2">
                                         <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(trainer_and_rate_list)" class="p-button-rounded p-button-text"></button>
-                                        <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave(this.dialog_appointment_id, trainer_and_rate_lists)" class="p-button-rounded p-button-text p-button-success mr-2"></button>
+                                        <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave(this.dialog_appointment_id, trainer_and_rate_list)" class="p-button-rounded p-button-text p-button-success mr-2"></button>
                                         <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel(trainer_and_rate_list, ri)" class="p-button-rounded p-button-text p-button-danger"></button>
                                         <button pButton type="button" pTooltip="{{ 'Delete' | translate }}" tooltipPosition="bottom" class="p-0 p-button-text" icon="pi pi-trash" [ngStyle]="{'color':'red'}" (click)="doDelTrainerRate(this.dialog_appointment_id, trainer_and_rate_list, trainer_and_rate_lists)"></button>
                                     </div>
