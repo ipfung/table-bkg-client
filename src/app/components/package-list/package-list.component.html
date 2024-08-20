@@ -466,9 +466,9 @@
                             <td>
                                 <p-cellEditor>
                                     <ng-template pTemplate="input">
-                                        <input 
-                                            pInputText 
-                                            type="text" 
+                                        <input
+                                            pInputText
+                                            type="text"
                                             [(ngModel)]="bg_trainer.name" />
                                     </ng-template>
                                     <ng-template pTemplate="output">
@@ -479,44 +479,44 @@
                             <td>
                                 <p-cellEditor>
                                     <ng-template pTemplate="output">
-                                        <input 
-                                            pInputText type="text" 
-                                            [(ngModel)]="bg_trainer.rate" 
+                                        <input
+                                            pInputText type="text"
+                                            [(ngModel)]="bg_trainer.rate"
                                             required />
                                     </ng-template>
-                                    
+
                                 </p-cellEditor>
-                            </td>                          
-                           
+                            </td>
+
                            <!--  <td>
                                 <div class="flex align-items-center justify-content-center gap-2">
-                                    <button 
-                                        *ngIf="!editing" 
-                                        pButton 
-                                        pRipple 
-                                        type="button" 
-                                        pInitEditableRow 
-                                        icon="pi pi-pencil" 
-                                        (click)="onRowEditInit(product)" 
+                                    <button
+                                        *ngIf="!editing"
+                                        pButton
+                                        pRipple
+                                        type="button"
+                                        pInitEditableRow
+                                        icon="pi pi-pencil"
+                                        (click)="onRowEditInit(product)"
                                         class="p-button-rounded p-button-text">
                                     </button>
-                                    <button 
-                                        *ngIf="editing" 
-                                        pButton 
-                                        pRipple 
-                                        type="button" 
-                                        pSaveEditableRow 
-                                        icon="pi pi-check" 
-                                        (click)="onRowEditSave(product)" 
+                                    <button
+                                        *ngIf="editing"
+                                        pButton
+                                        pRipple
+                                        type="button"
+                                        pSaveEditableRow
+                                        icon="pi pi-check"
+                                        (click)="onRowEditSave(product)"
                                         class="p-button-rounded p-button-text p-button-success mr-2">
                                     </button>
-                                    <button 
-                                        *ngIf="editing" 
-                                        pButton pRipple 
-                                        type="button" 
-                                        pCancelEditableRow 
-                                        icon="pi pi-times" 
-                                        (click)="onRowEditCancel(product, ri)" 
+                                    <button
+                                        *ngIf="editing"
+                                        pButton pRipple
+                                        type="button"
+                                        pCancelEditableRow
+                                        icon="pi pi-times"
+                                        (click)="onRowEditCancel(product, ri)"
                                         class="p-button-rounded p-button-text p-button-danger">
                                     </button>
                                 </div>
@@ -613,6 +613,10 @@
             <div *ngIf="lessonDateDialog" class="mb-3 p-2 surface-50">
                 <h6>{{ lessonDateFormHeader | translate:{ name: 'Custom Date' | translate } }}</h6>
                 <div class="field col-12" *ngIf="lesson.date">
+                    <label for="gp_do-oldroom">{{ 'Room' | translate }}</label>
+                    <input id="gp_do-oldroom" type="text" pInputText [disabled]="true" value="{{ getRoom(lesson.room_id)}}" />
+                </div>
+                <div class="field col-12" *ngIf="lesson.date">
                     <label for="gp_do-old">{{ 'Original Date' | translate }}</label>
                     <p-calendar id="gp_do-old" [disabled]="true" [(ngModel)]="lesson.date" selectionMode="single" required [readonlyInput]="true" [dateFormat]="lemonade.dateFormat" inputId="do-old"></p-calendar>
                 </div>
@@ -637,8 +641,9 @@
                 <ng-template pTemplate="header">
                     <tr>
                         <th style="max-width:35px"></th>
-                        <th style="min-width:170px"><div>{{ 'Lesson Date & Time' | translate }}</div><div><small class="jws-tips text-xs">{{ 'Auto Generate Appointments ASAP' | translate }}</small></div></th>
-                        <th style="max-width:90px">{{ 'Registered' | translate }}</th>
+                        <th style="min-width:140px"><div>{{ 'Lesson Date & Time' | translate }}</div><div class="line"><br/><small class="jws-tips text-xs">{{ 'Auto Generate Appointments ASAP' | translate }}</small></div></th>
+                        <th style="min-width:30px">{{ 'Room' | translate }}</th>
+                        <th style="max-width:60px">{{ 'Registered' | translate }}</th>
                         <th style="max-width:100px">
                             <button *ngIf="pkg.id > 0 && editable" pButton pRipple pTooltip="{{ 'Create Form' | translate:{ name: 'Custom Date' | translate } }}" icon="pi pi-plus" class="p-button-sm p-button-text" (click)="addCustomDate()"></button>
                             <button pButton *ngIf="pkg.id > 0 && editable" [disabled]="disableLoadMore" pTooltip="{{ 'Generate More Lesson Dates' | translate }}" icon="pi pi-spin pi-cog" class="p-button-sm p-button-text" (click)="generateLessonDates()"></button>
@@ -655,11 +660,15 @@
                 <ng-template pTemplate="body" let-lesson let-rowIndex="rowIndex" let-expanded="expanded">
                     <tr class="lemonade-row-edit-{{ isEditingLessonDate(lesson) }}">
                         <td style="max-width:35px">{{ 1+rowIndex }}.</td>
-                        <td style="min-width:170px">
+                        <td style="min-width:140px">
                             <span class="p-column-title">{{ 'Date & Time' | translate }}</span>
                             <span [class]="'booking-badge bg-purple-50 text-purple-400 jws-' + lesson.action ">{{ appointmentService.getBookedDateTime(lesson.date, pkg.start_time, sessionInterval, pkg.no_of_session) }}</span>
                         </td>
-                        <td style="max-width:90px">
+                        <td style="min-width:30px">
+                            <span class="p-column-title">{{ 'Room' | translate }}</span>
+                            {{ lesson.room_id ? getRoom(lesson.room_id) : '' }}
+                        </td>
+                        <td style="max-width:60px">
                             <span class="p-column-title">{{ 'Registered' | translate }}</span>
                             {{ lesson.total_booked ? lesson.total_booked : 0 }}
                         </td>

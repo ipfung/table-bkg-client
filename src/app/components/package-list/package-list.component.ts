@@ -162,7 +162,7 @@ export class PackageListComponent implements OnInit {
         });
 
 
-       
+
 
 /*
         this.bg_trainers.push({ name:"test2",
@@ -286,10 +286,14 @@ export class PackageListComponent implements OnInit {
     }
 
     loadLessonDates() {
+        let qty = this.pkg.quantity;
+        if (!this.pkg.end_date) {
+            qty *= 3;
+        }
         this.appointmentService.getPackageDates({
             start_date: this.lemonade.formatPostDate(this.pkg.start_date),
             dow: this.pkg.recurring.repeat,
-            quantity: this.pkg.quantity
+            quantity: qty
         }).subscribe(res => {
             if (res.data.length > 0)
                 this.lessons = res.data;
@@ -306,7 +310,8 @@ export class PackageListComponent implements OnInit {
                 accept: () => {
                     this.api.delete('api/package-lesson-date/' + this.pkg.id, {
                         params: {
-                            old_date: this.lemonade.formatPostDate(this.lesson.date)
+                            old_date: this.lemonade.formatPostDate(this.lesson.date),
+                            room_id: this.lesson.room_id
                         }
                     }).subscribe(res => {
                         if (res.success == true) {
@@ -339,7 +344,7 @@ export class PackageListComponent implements OnInit {
     }
 
     isEditingLessonDate(lesson) {
-        return this.lesson && this.lemonade.formatPostDate(this.lesson.date) == lesson.date;
+        return this.lesson && this.lemonade.formatPostDate(this.lesson.date) == lesson.date && this.lesson.room_id == lesson.room_id;
     }
 
     editLessonDate(lesson, idx) {
@@ -368,6 +373,7 @@ export class PackageListComponent implements OnInit {
         if (this.lesson.date) {   // update
             this.api.update('api/package-lesson-date/' + this.pkg.id, {
                 sessionInterval: this.sessionInterval,
+                room_id: this.lesson.room_id,
                 new_date: this.lemonade.formatPostDate(new Date(this.lesson.new_date)),
                 old_date: this.lemonade.formatPostDate(this.lesson.date)
             }).subscribe(res => {
@@ -396,9 +402,13 @@ export class PackageListComponent implements OnInit {
                     this.lemonade.ok(this.messageService, {
                         message: 'Date has been stored successfully'
                     });
-                    this.lessons.push({
-                        date: d
-                    });
+                    if (res.data && this.packageType == 'group_event') {
+                        this.appendDate(res.data);
+                    } else {
+                        this.lessons.push({
+                            date: d
+                        });
+                    }
                     this.hideLessonDateDialog();
                 } else {
                     // error.
@@ -413,6 +423,7 @@ export class PackageListComponent implements OnInit {
         this.packageTitle = 'Monthly Packages';
         // fix pkg.recurring.repeat if it's crashed.
         const recurring = JSON.parse(pkg.recurring);
+        this.packageType = recurring.cycle;
         if (recurring.cycle == 'weekly') {
             this.packageTitle = 'Fixed Date Packages';
             // only allow 1-7(monday to sunday)
@@ -443,16 +454,21 @@ export class PackageListComponent implements OnInit {
         this.loadTime();
         // load old lesson dates from appointments.
         this.lessons = [];
-        for (const obj in pkg.appointments) {
-            const apt = pkg.appointments[obj];
-            this.lessons.push({
-                date: apt.start_time.substr(0, 10),
-                total_booked: apt.customer_bookings ? apt.customer_bookings.length : 0
-            });
-        }
+        this.appendDate(pkg.appointments);
         if (recurring.cycle == 'group_event')
             this.formGroupEventDialog = true;
         else this.formDialog = true;
+    }
+
+    appendDate(dates) {
+        for (const obj in dates) {
+            const apt = dates[obj];
+            this.lessons.push({
+                date: apt.start_time.substr(0, 10),
+                room_id: apt.room_id,
+                total_booked: apt.customer_bookings ? apt.customer_bookings.length : 0
+            });
+        }
     }
 
     freeOfCharge(evt) {
@@ -501,7 +517,11 @@ export class PackageListComponent implements OnInit {
         const lessonDates = this.lessons.map(function (obj) {
             return obj.date;
         });
-        const recurring = {...{quantity: this.pkg.quantity, repeat: this.pkg.recurring.repeat.sort()}, ...this.pkg.recurring};
+        const recurring = {...{
+            quantity: this.pkg.quantity,
+            repeat: this.pkg.recurring.repeat.sort(),
+            bg_trainer: this.bg_trainers
+        }, ...this.pkg.recurring};
         let data = {...this.pkg, ...{
                 recurring: recurring,
                 start_date: this.lemonade.formatPostDate(this.pkg.start_date),
@@ -516,12 +536,7 @@ export class PackageListComponent implements OnInit {
             }
         }
 
-       // if (true) {
-            data = {...data, ...{
-                bg_trainer: this.bg_trainers
-            }}
-        //}
-            console.log("data=", data);
+console.log("data=", data);
         if (this.pkg.id > 0) {
             call = this.api.update('api/packages/' + this.pkg.id, data)
         } else {
@@ -603,6 +618,9 @@ export class PackageListComponent implements OnInit {
 
     }
 
-
-
+    getRoom(room_id: any) {
+        const room = this.rooms.find(val => val.id == room_id);
+        console.log('roommmmm=', room);
+        return room["name"];
+    }
 }
