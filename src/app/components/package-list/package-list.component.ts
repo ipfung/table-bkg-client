@@ -233,6 +233,8 @@ export class PackageListComponent implements OnInit {
                 free: {}
             }
         };
+        this.lesson = null;
+        this.hideLessonDateDialog();
         if (this.services.length > 0) {
             this.pkg.service_id = this.services[0].id;
             this.pkg.noOfSession = this.services[0].sessions[0].code;
@@ -429,6 +431,8 @@ export class PackageListComponent implements OnInit {
             // only allow 1-7(monday to sunday)
             const filteredArray = recurring.repeat.filter(e => ([1,2,3,4,5,6,7].includes(e)));
             recurring.repeat = filteredArray;
+        } else if (recurring.cycle == 'group_event') {
+            this.bg_trainers = recurring.bg_trainer;
         }
         if (!recurring.free) {
             recurring.free = {};
@@ -620,7 +624,6 @@ console.log("data=", data);
 
     getRoom(room_id: any) {
         const room = this.rooms.find(val => val.id == room_id);
-        console.log('roommmmm=', room);
         return room["name"];
     }
 }
