@@ -130,6 +130,7 @@ export class FinanceStatusComponent implements OnInit {
                 icon: 'pi pi-plus',
                 command: () => {
                     this.packageType = 'group_event';
+                    this.aptTitle = "Group Event";
                     this.openNewAptForm();
                 }
                 // label: 'Tokens', icon: 'pi pi-cog', routerLink: ['/setup']
@@ -828,7 +829,7 @@ console.log('this.selectedPackage333===', this.selectedPackage);
     saveAptForm() {
         this.submitted = true;
         const timeInfo = this.appointment.timeInformation;
-       
+
         if (!timeInfo.customerId || timeInfo.customerId <= 0)
             return;
         if (timeInfo.serviceId <= 0)
