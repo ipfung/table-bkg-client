@@ -230,7 +230,7 @@ export class PackageListComponent implements OnInit {
             recurring: {
                 cycle: this.packageType,
                 repeat: [],
-                free: {}
+                free: {quantity: 0}
             }
         };
         this.lesson = null;
@@ -289,9 +289,11 @@ export class PackageListComponent implements OnInit {
 
     loadLessonDates() {
         let qty = this.pkg.quantity;
+        console.log ("qty 1=", qty);
         if (!this.pkg.end_date) {
             qty *= 3;
         }
+        console.log ("qty 2=", qty);
         this.appointmentService.getPackageDates({
             start_date: this.lemonade.formatPostDate(this.pkg.start_date),
             dow: this.pkg.recurring.repeat,
@@ -626,4 +628,6 @@ console.log("data=", data);
         const room = this.rooms.find(val => val.id == room_id);
         return room["name"];
     }
+
+  
 }
