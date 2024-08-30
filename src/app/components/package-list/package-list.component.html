@@ -284,7 +284,7 @@
             <div class="grid">
                 <div class="field col-12 md:col-6">
                     <label for="end_date">{{ 'End Repeat' | translate }}</label>
-                    <p-calendar id="end_date" appendTo="body"  [(ngModel)]="pkg.end_date" [minDate]="pkg.start_date" [dateFormat]="lemonade.dateFormat"></p-calendar>
+                    <p-calendar id="end_date" appendTo="body"  [(ngModel)]="pkg.end_date" (onSelect)="loadLessonDates()" [minDate]="pkg.start_date" [dateFormat]="lemonade.dateFormat"></p-calendar>
                     <small class="jws-tips">{{ 'Leave Empty = Never End Repeat' | translate }}</small>
                 </div>
 
@@ -596,7 +596,7 @@
         <div class="grid">
             <div class="field col-12 md:col-6">
                 <label for="gp_end_date">{{ 'End Repeat' | translate }}</label>
-                <p-calendar id="gp_end_date" [(ngModel)]="pkg.end_date" [minDate]="pkg.start_date" [dateFormat]="lemonade.dateFormat"></p-calendar>
+                <p-calendar id="gp_end_date" [(ngModel)]="pkg.end_date" (onSelect)="loadLessonDates()" [minDate]="pkg.start_date" [dateFormat]="lemonade.dateFormat"></p-calendar>
                 <small class="jws-tips">{{ 'Leave Empty = Never End Repeat' | translate }}</small>
             </div>
 
